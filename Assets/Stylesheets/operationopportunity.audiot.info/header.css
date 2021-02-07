@@ -13,9 +13,20 @@ ul {
 	list-style-type: none;
 }
 
+/*****************
+*   Navigation   *
+*****************/
+
+body>nav {
+	position: fixed;
+	width: 100%;
+	top: 0;
+}
+
 /**************
 *   Heading   *
 **************/
 
 header {
+
 }

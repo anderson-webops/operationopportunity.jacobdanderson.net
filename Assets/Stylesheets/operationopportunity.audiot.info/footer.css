@@ -3,5 +3,29 @@
 *************/
 
 footer{
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  color: grey;
+  flex-direction: row;
+  padding-top: 10px;
+  width: 100%;
+}
 
+footer div{ width: calc(100%/2); }
+
+footer h2{
+  text-transform: uppercase;
+  font-size: 19px;
+  letter-spacing: 2px;
+  font-family: Trebuchet, Trebuchet MS, Tahoma, Arial, sans-serif;
+}
+
+footer ul {
+	position: relative;
+	left: -19px;
+}
+
+footer li{
+	font-size: 12px;
 }
