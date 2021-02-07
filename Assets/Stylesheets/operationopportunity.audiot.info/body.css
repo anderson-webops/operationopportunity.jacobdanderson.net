@@ -3,32 +3,15 @@
 **************/
 
 section {
-	
+	height: 100%;
+	margin: 4% 10%;
 }
 
 section p {
 	font-size: 25px;
 }
 
-section img {
-
-}
-
-/************
-*   Aside   *
-************/
-
-aside {
-
-}
-
-/**************
-*   Article   *
-**************/
-
-article{
-  
-}
+/* About Page Paragraph */
 
 #about_p {
 	font-size: 15px;
