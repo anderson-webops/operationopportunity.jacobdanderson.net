@@ -9,7 +9,6 @@ footer {
     padding-top: 10px;
     width: 100%;
     background-color: rgb(247, 247, 247);
-    font-family: "Courier New", Arial, sans-serif;
 }
 
 footer div {
@@ -20,7 +19,7 @@ footer h2 {
     text-transform: uppercase;
     font-size: 19px;
     letter-spacing: 2px;
-    font-family: Trebuchet, Trebuchet MS, Tahoma, Arial, sans-serif;
+    font-family: Optima, Tahoma, Trebuchet, Arial, sans-serif;
 }
 
 footer ul {
@@ -30,6 +29,7 @@ footer ul {
 
 footer li {
     font-size: 12px;
+    font-family: Arial, "Courier New", sans-serif, serif;
 }
 
 /********************
@@ -37,12 +37,12 @@ footer li {
 ********************/
 
 /* Tablet Styles */
-@media only screen and (min-width: 401px) and (max-width: 960px) {
+@media only screen and (min-width: 1px) and (max-width: 960px) {
     section p {
         font-size: 15px;
     }
 
     img {
-        width: 80%;
+        width: 100%;
     }
 }
