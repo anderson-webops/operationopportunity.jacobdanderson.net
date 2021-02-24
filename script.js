@@ -1,13 +1,13 @@
-document.getElementById("weatherSubmit").addEventListener("click", function(event) {
+document.getElementById("weatherSubmit").addEventListener("click", function (event) {
     event.preventDefault();
     const value = document.getElementById("weatherInput").value;
     if (value === "") return;
     console.log(value);
 
-    const url = "http://api.openweathermap.org/data/2.5/weather?q=" + value + ",US&units=imperial" + "&APPID=df7bc103bcbf6c9ae5b9af86e5d6c07b";
-    fetch(url).then(function(response) {
+    const url = "http://api.openweathermap.org/data/2.5/weather?q=" + value + ",US&units=imperial" + "&APPID=";
+    fetch(url).then(function (response) {
         return response.json();
-    }).then(function(json) {
+    }).then(function (json) {
         let results = "";
         results += '<h2>Weather in ' + json.name + "</h2>";
         for (let i = 0; i < json.weather.length; i++) {
@@ -30,10 +30,10 @@ document.getElementById("weatherSubmit").addEventListener("click", function(even
         console.log(json)
     });
 
-    const url2 = "http://api.openweathermap.org/data/2.5/forecast?q=" + value + ", US&units=imperial" + "&APPID=df7bc103bcbf6c9ae5b9af86e5d6c07b";
-    fetch(url2).then(function(response) {
+    const url2 = "http://api.openweathermap.org/data/2.5/forecast?q=" + value + ", US&units=imperial" + "&APPID=";
+    fetch(url2).then(function (response) {
         return response.json();
-    }).then(function(json) {
+    }).then(function (json) {
         let forecast = "";
         forecast += "<table class='projected'>";
         forecast += "<caption>5 Day Forecast</caption>";
@@ -59,7 +59,7 @@ document.getElementById("weatherSubmit").addEventListener("click", function(even
                 forecast += "</tr>";
                 if (i !== 39) {
                     forecast += "<tr>";
-                    forecast += "<td><strong>Day " + currentHours/24 + "</strong></td>";
+                    forecast += "<td><strong>Day " + currentHours / 24 + "</strong></td>";
                     currentHours += 24
                 }
             }

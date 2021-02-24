@@ -2,31 +2,34 @@
 *   Footer   *
 *************/
 
-footer{
-  display: flex;
-  color: grey;
-  flex-direction: row;
-  padding-top: 10px;
-  width: 100%;
-  background-color: rgb(247, 247, 247);
+footer {
+    display: flex;
+    color: grey;
+    flex-direction: row;
+    padding-top: 10px;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+    font-family: "Courier New", Arial, sans-serif;
 }
 
-footer div{ width: calc(100%/2); }
+footer div {
+    width: calc(100% / 2);
+}
 
-footer h2{
-  text-transform: uppercase;
-  font-size: 19px;
-  letter-spacing: 2px;
-  font-family: Trebuchet, Trebuchet MS, Tahoma, Arial, sans-serif;
+footer h2 {
+    text-transform: uppercase;
+    font-size: 19px;
+    letter-spacing: 2px;
+    font-family: Trebuchet, Trebuchet MS, Tahoma, Arial, sans-serif;
 }
 
 footer ul {
-	position: relative;
-	left: -19px;
+    position: relative;
+    left: -19px;
 }
 
-footer li{
-	font-size: 12px;
+footer li {
+    font-size: 12px;
 }
 
 /********************
@@ -35,7 +38,11 @@ footer li{
 
 /* Tablet Styles */
 @media only screen and (min-width: 401px) and (max-width: 960px) {
-  	section p {
-  		font-size: 15px;
-  	}
+    section p {
+        font-size: 15px;
+    }
+
+    img {
+        width: 80%;
+    }
 }
