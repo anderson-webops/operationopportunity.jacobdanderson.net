@@ -14,10 +14,14 @@ section h2 {
     font-size: 35px;
 }
 
-section p {
+section p, label {
     font-size: 18px;
     text-align: justify;
     font-family: Optima, sans-serif;
+}
+
+input {
+    border: lightgrey solid 1px;
 }
 
 .quote {
