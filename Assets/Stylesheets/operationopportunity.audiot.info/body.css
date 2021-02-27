@@ -20,6 +20,11 @@ section p, label {
     font-family: Optima, sans-serif;
 }
 
+#valid {
+    display: none;
+    text-align: center;
+}
+
 input {
     border: lightgrey solid 1px;
 }
