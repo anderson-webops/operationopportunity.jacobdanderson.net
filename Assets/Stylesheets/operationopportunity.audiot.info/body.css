@@ -20,6 +20,17 @@ section p {
     font-family: Optima, sans-serif;
 }
 
+.quote {
+    text-align: left;
+    width: 50%;
+    margin: 0 auto;
+    background-color: whitesmoke;
+}
+
+q {
+    font-style: italic;
+}
+
 img {
     width: 50%;
 }
