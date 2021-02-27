@@ -13,7 +13,7 @@ updateQuote().then(data => {
     let results = "";
     results += quote.quoteText;
     results += "<br>"
-    results += "&emsp;&emsp;&emsp;-" + quote.quoteAuthor;
+    results += "&emsp;&emsp;&emsp;<span>-" + quote.quoteAuthor + "</span>";
     document.getElementById("quotation").innerHTML = results;
 });
 
@@ -52,6 +52,3 @@ document.getElementById("infoSubmit").addEventListener("click", function(event) 
     });
 
 });
-
-
-

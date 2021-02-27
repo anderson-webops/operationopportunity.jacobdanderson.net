@@ -20,6 +20,10 @@ section p, label {
     font-family: Optima, sans-serif;
 }
 
+span {
+    font-family: cursive;
+}
+
 #valid {
     display: none;
     text-align: center;
