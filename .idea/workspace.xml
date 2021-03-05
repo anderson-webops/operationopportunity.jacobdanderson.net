@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Open gofundme link in a new page">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Stylesheets/operationopportunity.audiot.info/header.css" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Stylesheets/operationopportunity.audiot.info/header.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/supportus.html" beforeDir="false" afterPath="$PROJECT_DIR$/supportus.html" afterDir="false" />
+    </list>
+    <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="6rpmy4so" />
+  </component>
+  <component name="ProjectId" id="1ox7YxWZCXLzr2rwHJ3Tkqlu0P0" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task id="LOCAL-00001" summary="Font and image sizing">
+      <created>1614196834135</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1614196834135</updated>
+    </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Font and image sizing" />
+      <created>1614216456161</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1614216456161</updated>
+      <workItem from="1614216476686" duration="865000" />
+      <workItem from="1614295589051" duration="564000" />
+      <workItem from="1614322115532" duration="229000" />
+      <workItem from="1614354998647" duration="18934000" />
+      <workItem from="1614409058515" duration="509000" />
+      <workItem from="1614618757972" duration="2768000" />
+      <workItem from="1614628191737" duration="1516000" />
+      <workItem from="1614654538991" duration="789000" />
+      <workItem from="1614746326740" duration="626000" />
+      <workItem from="1614750329990" duration="32000" />
+      <workItem from="1614972926600" duration="1401000" />
+      <workItem from="1614976969639" duration="1036000" />
+      <workItem from="1614978781485" duration="1668000" />
+      <workItem from="1614982808867" duration="334000" />
+    </task>
+    <task id="LOCAL-00002" summary="Quote API/JS implementation">
+      <created>1614398280046</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1614398280047</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Name and email input html and css, JS to follow">
+      <created>1614400607087</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1614400607089</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Adding input/email verification">
+      <created>1614402797169</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1614402797171</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Final touches, including add API and formatting, ip detector shown in lower right corner">
+      <created>1614407606053</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614407606054</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added Cursive font to the author's name">
+      <created>1614409251522</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1614409251522</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Addition of favicons and metadata, as well as updating the gofundme link to reflect a real gofundme page. (Slight alterations were made to the wording of the paragraph on the main page)">
+      <created>1614634693571</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1614634693571</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Open gofundme link in a new page">
+      <created>1614655375950</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1614655375950</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Font and image sizing" />
+    <MESSAGE value="Quote API/JS implementation" />
+    <MESSAGE value="Name and email input html and css, JS to follow" />
+    <MESSAGE value="Adding input/email verification" />
+    <MESSAGE value="Final touches, including add API and formatting, ip detector shown in lower right corner" />
+    <MESSAGE value="Added Cursive font to the author's name" />
+    <MESSAGE value="Addition of favicons and metadata, as well as updating the gofundme link to reflect a real gofundme page. (Slight alterations were made to the wording of the paragraph on the main page)" />
+    <MESSAGE value="Open gofundme link in a new page" />
+    <option name="LAST_COMMIT_MESSAGE" value="Open gofundme link in a new page" />
+  </component>
+</project>
