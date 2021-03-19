@@ -4,7 +4,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Design edit and stylesheet ordering">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Design edit and stylesheet ordering, change background color">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
@@ -79,7 +79,13 @@
       <workItem from="1614976969639" duration="1036000" />
       <workItem from="1614978781485" duration="1668000" />
       <workItem from="1614982808867" duration="680000" />
-      <workItem from="1614988455670" duration="351000" />
+      <workItem from="1614988455670" duration="950000" />
+      <workItem from="1615005219596" duration="379000" />
+      <workItem from="1615007923324" duration="315000" />
+      <workItem from="1615047805093" duration="492000" />
+      <workItem from="1615344563011" duration="7000" />
+      <workItem from="1616126281971" duration="25000" />
+      <workItem from="1616126888094" duration="8000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -137,7 +143,14 @@
       <option name="project" value="LOCAL" />
       <updated>1614983370885</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Design edit and stylesheet ordering, change background color">
+      <created>1614990815980</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1614990815980</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +179,7 @@
     <MESSAGE value="Addition of favicons and metadata, as well as updating the gofundme link to reflect a real gofundme page. (Slight alterations were made to the wording of the paragraph on the main page)" />
     <MESSAGE value="Open gofundme link in a new page" />
     <MESSAGE value="Design edit and stylesheet ordering" />
-    <option name="LAST_COMMIT_MESSAGE" value="Design edit and stylesheet ordering" />
+    <MESSAGE value="Design edit and stylesheet ordering, change background color" />
+    <option name="LAST_COMMIT_MESSAGE" value="Design edit and stylesheet ordering, change background color" />
   </component>
 </project>
