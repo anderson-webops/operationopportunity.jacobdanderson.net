@@ -6,7 +6,21 @@ import mock from "./mock-data.js";
 Vue.config.productionTip = false;
 
 let data = {
-    tutors: mock
+    currentID: 6,
+    tutors: mock,
+    addedTutors: [],
+    addTutor(id, name, email, age, gender, city, state) {
+        this.currentID += 1;
+        this.addedTutors.push({
+            id: this.currentID,
+            name: name,
+            email: email,
+            age: age,
+            gender: gender,
+            city: city,
+            state: state
+        });
+    }
 }
 
 new Vue({

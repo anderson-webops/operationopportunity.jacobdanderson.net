@@ -8,11 +8,10 @@
           Operation Opportunity
       </h1>
       <div v-if="quotePresent" class="quote">
-        <q>{{ quote }}</q>
+        <q>{{ quoteText }}</q>
         <br>
         <q> &emsp;&emsp;&emsp; <span>- {{ quoteAuthor }}</span></q>
       </div>
-
 
       <img
           alt="Tutor helping college student"
@@ -36,7 +35,7 @@ export default {
   data() {
     return {
       quotePresent: false,
-      quote: "",
+      quoteText: "",
       quoteAuthor: ""
     }
   },
@@ -51,7 +50,7 @@ export default {
     updateQuote().then(data => {
       let random = Math.floor(Math.random() * 99);
       let quote = data.data[random];
-      this.quote = quote.quoteText;
+      this.quoteText = quote.quoteText;
       this.quoteAuthor = quote.quoteAuthor;
       this.quotePresent = true
     });
