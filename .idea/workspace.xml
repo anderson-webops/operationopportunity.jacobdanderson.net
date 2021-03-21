@@ -4,13 +4,9 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Moving CSS and reinitializing quote functionality">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding and deleting tutors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mock-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/mock-data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Home.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Signup.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/Supportus.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Supportus.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +110,7 @@
       <workItem from="1616126888094" duration="8000" />
       <workItem from="1616127000619" duration="56000" />
       <workItem from="1616274520476" duration="14815000" />
-      <workItem from="1616290151168" duration="13903000" />
+      <workItem from="1616290151168" duration="14828000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -200,7 +196,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616282148483</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Adding and deleting tutors">
+      <created>1616305200472</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1616305200475</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -233,6 +236,7 @@
     <MESSAGE value="Setting up Vue for Creative Project 3" />
     <MESSAGE value="Integrating previous creative project with new view layout" />
     <MESSAGE value="Moving CSS and reinitializing quote functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moving CSS and reinitializing quote functionality" />
+    <MESSAGE value="Adding and deleting tutors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding and deleting tutors" />
   </component>
 </project>

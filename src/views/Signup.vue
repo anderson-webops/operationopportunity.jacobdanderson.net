@@ -49,10 +49,10 @@
 <!--              <input class="mt-3" id="infoSubmit" type="submit" value="Submit" v-bind:disabled="tutor.personName.length < 2">-->
               <button class="mt-3" id="infoSubmit" type="submit" v-bind:disabled="name.length < 2 && email.length < 2 && age.length < 1 && gender.length < 2 &&
             city.length < 2 && state.length < 1">Submit</button>
-            <button @click="showTutorsTrue">Show tutors</button>
-            <button @click="showTutorsFalse">Hide tutors</button>
           </form>
 
+          <button @click="showTutors = true">Show tutors</button>
+          <button @click="showTutors = false">Hide tutors</button>
           <div v-show="showTutors" v-for="tutor in addedTutorsArray" v-bind:key="tutor.id">
               <h1>{{tutor.id}}</h1>
               <p>{{tutor.name}}</p>
@@ -107,12 +107,6 @@
         this.gender = '';
         this.city = '';
         this.state = '';
-      },
-      showTutorsTrue(){
-        this.showTutors = true;
-      },
-      showTutorsFalse(){
-        this.showTutors = false;
       },
       removeTutor(index){
         this.$root.$data.addedTutors.pop(index)
