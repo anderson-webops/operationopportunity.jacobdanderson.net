@@ -12,7 +12,7 @@
       <h2>
           Want to help out?
       </h2>
-      <p>
+      <p class="mt-3">
           You can sign up by becoming a tutor or consultant wherever you are!
 
           Becoming a part of our team means you can join us in the work of bringing college within reach for so many.
@@ -61,7 +61,7 @@
               <p>{{tutor.gender}}</p>
               <p>{{tutor.city}}</p>
               <p>{{tutor.state}}</p>
-            <button @click='removeTutor("tutor.id - 1")'>Delete</button>
+            <button @click='removeTutor(tutor.id - 1)'>Delete</button>
           </div>
       </div>
 
@@ -108,10 +108,10 @@
         this.city = '';
         this.state = '';
       },
-      removeTutor(index){
-        this.$root.$data.addedTutors.pop(index)
-        if (this.$root.$data.currentID > 0)
-          this.$root.$data.currentID -= 1;
+      removeTutor(index) {
+        this.$root.$data.addedTutors.splice(index, 1)
+        for (let i = 0; i < this.$root.$data.addedTutors.length; i++ )
+          this.$root.$data.addedTutors[i].id = i + 1;
       }
     }
   }

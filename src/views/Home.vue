@@ -7,7 +7,7 @@
       <h1>
           Operation Opportunity
       </h1>
-      <div v-if="quotePresent" class="quote">
+      <div v-if="quotePresent" class="quote mt-3">
         <q>{{ quoteText }}</q>
         <br>
         <q> &emsp;&emsp;&emsp; <span>- {{ quoteAuthor }}</span></q>
@@ -21,7 +21,7 @@
       <h2>
           Welcome to Operation Opportunity!
       </h2>
-      <p>
+      <p class="mt-3">
           Operation Opportunity is dedicated to helping all students everywhere become ready and prepared for college.
           Starting early on, our priority is to help students develope study and critical thinking skills,
           aid them through the college application process, and make higher education more accesible to everyone.
@@ -57,7 +57,6 @@ export default {
   },
   methods: {},
 }
-
 
 </script>
 

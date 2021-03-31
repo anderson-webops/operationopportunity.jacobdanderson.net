@@ -13,7 +13,7 @@
       <h2>
           Contribute to our Campaign!
       </h2>
-      <p>
+      <p class="mt-3">
           As a charity and completely nonprofit, your support goes directly towards helping kids prepare for their futures. You can contribute by donating to our gofundme page:
           <a
           href="https://www.gofundme.com/f/operationopportunity" target="_blank">

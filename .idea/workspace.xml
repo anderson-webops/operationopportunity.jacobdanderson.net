@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
   <component name="CMakeSettings">
     <configurations />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding and deleting tutors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mock-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/mock-data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/About.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/About.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Home.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Signup.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/Supportus.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/Supportus.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -110,7 +123,14 @@
       <workItem from="1616126888094" duration="8000" />
       <workItem from="1616127000619" duration="56000" />
       <workItem from="1616274520476" duration="14815000" />
-      <workItem from="1616290151168" duration="14828000" />
+      <workItem from="1616290151168" duration="17674000" />
+      <workItem from="1616309480505" duration="52000" />
+      <workItem from="1616310517229" duration="3112000" />
+      <workItem from="1617069959453" duration="2404000" />
+      <workItem from="1617111929526" duration="153000" />
+      <workItem from="1617112517753" duration="329000" />
+      <workItem from="1617112898229" duration="3746000" />
+      <workItem from="1617134302132" duration="525000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -203,7 +223,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616305200475</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Stopped show and hide tutors from adding a tutor">
+      <created>1616306431961</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1616306431961</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -237,6 +264,7 @@
     <MESSAGE value="Integrating previous creative project with new view layout" />
     <MESSAGE value="Moving CSS and reinitializing quote functionality" />
     <MESSAGE value="Adding and deleting tutors" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding and deleting tutors" />
+    <MESSAGE value="Stopped show and hide tutors from adding a tutor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Stopped show and hide tutors from adding a tutor" />
   </component>
 </project>
