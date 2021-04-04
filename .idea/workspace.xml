@@ -7,9 +7,11 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Setting up Creative Project 4">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Fixing package.json/vue-cli problems">
+      <change afterPath="$PROJECT_DIR$/front-end/vue.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Home.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -81,6 +83,13 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="Font and image sizing">
@@ -130,6 +139,10 @@
       <workItem from="1617207267539" duration="1363000" />
       <workItem from="1617323586568" duration="801000" />
       <workItem from="1617384800364" duration="2987000" />
+      <workItem from="1617397838141" duration="1946000" />
+      <workItem from="1617465602032" duration="540000" />
+      <workItem from="1617468760177" duration="513000" />
+      <workItem from="1617517154020" duration="1463000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -250,7 +263,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617388360277</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Fixing package.json/vue-cli problems">
+      <created>1617398060474</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1617398060474</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -287,7 +307,8 @@
     <MESSAGE value="Stopped show and hide tutors from adding a tutor" />
     <MESSAGE value="Updates" />
     <MESSAGE value="Setting up Creative Project 4" />
-    <option name="LAST_COMMIT_MESSAGE" value="Setting up Creative Project 4" />
+    <MESSAGE value="Fixing package.json/vue-cli problems" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixing package.json/vue-cli problems" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
