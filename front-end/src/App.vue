@@ -118,89 +118,23 @@
 
 <style>
 /**************
-  *   Default   *
-  **************/
+*   Default   *
+**************/
 
-html,
-body,
-div,
-span,
-applet,
-object,
-iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-big,
-cite,
-code,
-del,
-dfn,
-em,
-img,
-ins,
-kbd,
-q,
-s,
-samp,
-small,
-strike,
-strong,
-sub,
-sup,
-tt,
-var,
-b,
-u,
-center,
-dl,
-dt,
-dd,
-ol,
-ul,
-li,
-fieldset,
-form,
-label,
-legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td,
-article,
-aside,
-canvas,
-details,
-embed,
-figure,
-figcaption,
-footer,
-header,
-hgroup,
-menu,
-nav,
-output,
-ruby,
-section,
-summary,
-time,
-mark,
-audio,
-video {
+/*noinspection CssOverwrittenProperties*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video /* eslint-disable-line */ {
   margin: 0;
   padding: 0;
   border: 0;
@@ -210,17 +144,8 @@ video {
 }
 
 /* HTML5 display-role reset for older browsers */
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section /* eslint-disable-line */ {
   display: block;
 }
 
@@ -253,8 +178,8 @@ table {
 }
 
 /**************
-  *   General   *
-  **************/
+*   General   *
+**************/
 
 * {
   box-sizing: border-box;
@@ -263,6 +188,10 @@ table {
 
 body {
   background-color: rgb(255, 255, 255);
+  /*--common_area_background_color: white;*/
+
+  --size_adjustment: 1.5;
+  --text_scalar: 1;
 }
 
 h1,
@@ -274,9 +203,15 @@ nav {
   font-family: Verdana, Calibri, Candara, sans-serif;
 }
 
+@media only screen and (min-width: 1px) and (max-width: 960px) {
+  body {
+    --text_scalar: 0.8;
+  }
+}
+
 /**************
-  *   Section   *
-  **************/
+*   Section   *
+**************/
 
 section {
   margin: 4% 10%;
@@ -303,14 +238,14 @@ img {
 }
 
 /*************
-  *   Footer   *
-  *************/
+*   Footer   *
+*************/
 
 footer {
   display: flex;
   color: grey;
   flex-flow: row wrap;
-  padding-top: 10px;
+  padding: 10px;
   width: 100%;
   background-color: rgb(247, 247, 247);
 }
@@ -321,24 +256,20 @@ footer div {
 
 footer h2 {
   text-transform: uppercase;
-  font-size: 19px;
+  font-size: calc(19px * var(--text_scalar));
   letter-spacing: 2px;
   font-family: Optima, Tahoma, Trebuchet, Arial, sans-serif;
-}
-
-footer ul {
-  position: relative;
-  left: -19px;
 }
 
 footer li {
   font-size: 12px;
   font-family: Arial, "Courier New", sans-serif, serif;
+  height: 100%;
 }
 
 /********************
-  *	Media Screens   *
-  ********************/
+*   Media Screens   *
+********************/
 
 @media only screen and (min-width: 1px) and (max-width: 960px) {
   section p {
