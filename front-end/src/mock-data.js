@@ -7,6 +7,8 @@ let mock = [
     gender: "male",
     city: "Aurora",
     state: "CO",
+    editTutors: false,
+    saveEdit: "Edit",
   },
   {
     id: 2,
@@ -16,6 +18,8 @@ let mock = [
     gender: "male",
     city: "Greensboro",
     state: "NC",
+    editTutors: false,
+    saveEdit: "Edit",
   },
   {
     id: 3,
@@ -25,6 +29,8 @@ let mock = [
     gender: "female",
     city: "Sunnyvale",
     state: "CA",
+    editTutors: false,
+    saveEdit: "Edit",
   },
   {
     id: 4,
@@ -34,6 +40,8 @@ let mock = [
     gender: "female",
     city: "Tuscaloosa",
     state: "AL",
+    editTutors: false,
+    saveEdit: "Edit",
   },
   {
     id: 5,
@@ -43,6 +51,8 @@ let mock = [
     gender: "male",
     city: "Alpharetta",
     state: "GA",
+    editTutors: false,
+    saveEdit: "Edit",
   },
   {
     id: 6,
@@ -52,6 +62,8 @@ let mock = [
     gender: "male",
     city: "Victorville",
     state: "CA",
+    editTutors: false,
+    saveEdit: "Edit",
   },
 ];
 

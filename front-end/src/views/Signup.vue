@@ -64,21 +64,48 @@
         </button>
       </form>
 
-      <button @click="showTutors = true">Show tutors</button>
-      <button @click="showTutors = false">Hide tutors</button>
+      <button @click="showTutors = !showTutors" v-bind="showHideTutors">
+        {{ this.showHide }} tutors
+      </button>
+
+      <hr v-show="showTutors">
+
       <div
         v-show="showTutors"
         v-for="tutor in addedTutorsArray"
         v-bind:key="tutor.id"
       >
-        <h1>{{ tutor.id }}</h1>
-        <p>{{ tutor.name }}</p>
-        <p>{{ tutor.email }}</p>
-        <p>{{ tutor.age }}</p>
-        <p>{{ tutor.gender }}</p>
-        <p>{{ tutor.city }}</p>
-        <p>{{ tutor.state }}</p>
+        <label>
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.name" />
+          <br />
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.email" />
+          <br />
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.age" />
+          <br />
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.gender" />
+          <br />
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.city" />
+          <br />
+          <input type="text" v-show="tutor.editTutors" v-model="tutor.state" />
+        </label>
+        <h1 v-show="!tutor.editTutors">{{ tutor.id }}</h1>
+        <p v-show="!tutor.editTutors">{{ tutor.name }}</p>
+        <p v-show="!tutor.editTutors">{{ tutor.email }}</p>
+        <p v-show="!tutor.editTutors">{{ tutor.age }}</p>
+        <p v-show="!tutor.editTutors">{{ tutor.gender }}</p>
+        <p v-show="!tutor.editTutors">{{ tutor.city }}</p>
+        <p v-show="!tutor.editTutors">{{ tutor.state }}</p>
+        <br />
         <button @click="removeTutor(tutor.id - 1)">Delete</button>
+        <button
+          @click="
+            (tutor.saveEdit = tutor.editTutors ? 'Edit' : 'Save') &&
+              (tutor.editTutors = !tutor.editTutors)
+          "
+          v-bind="tutor.saveEdit"
+        >
+          {{ tutor.saveEdit }}
+        </button>
       </div>
     </div>
   </section>
@@ -96,22 +123,26 @@ export default {
       city: "",
       state: "",
       showTutors: false,
+      showHide: "Show",
+      editTutors: false,
+      saveEdit: "Edit",
     };
   },
   computed: {
     addedTutorsArray() {
       return this.$root.$data.addedTutors;
     },
-  },
-  created() {
-    this.addTutorDatabase();
-  },
-  methods: {
-    addTutorDatabase() {
-      for (let i = 0; i < 6; i++) {
-        this.$root.$data.addedTutors.push(this.$root.$data.tutors[i]);
-      }
+    showHideTutors() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return (this.showHide = this.showTutors ? "Hide" : "Show");
     },
+    saveEditTutors() {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      return (this.saveEdit = this.editTutors ? "Edit" : "Save");
+    },
+  },
+  created() {},
+  methods: {
     addTutor() {
       this.$root.$data.addTutor(
         this.name,
@@ -119,7 +150,9 @@ export default {
         this.age,
         this.gender,
         this.city,
-        this.state
+        this.state,
+        this.editTutors,
+        this.saveEdit
       );
       this.resetData();
     },
@@ -130,6 +163,7 @@ export default {
       this.gender = "";
       this.city = "";
       this.state = "";
+      this.editTutors = false;
     },
     removeTutor(index) {
       this.$root.$data.addedTutors.splice(index, 1);
@@ -139,3 +173,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>

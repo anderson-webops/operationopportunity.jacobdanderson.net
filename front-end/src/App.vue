@@ -108,7 +108,7 @@
 
       <div class="parter">
         <br />
-        <h2>Programming Partner</h2>
+        <h2>Project Partner</h2>
         <br />
         <nav class="footer_nav">
           <ul class="semantic_list">
@@ -130,6 +130,26 @@
     </footer>
   </div>
 </template>
+
+<script>
+export default {
+  name: "App",
+  components: {},
+  data() {
+    return {};
+  },
+  created() {
+    this.addTutorDatabase();
+  },
+  methods: {
+    addTutorDatabase() {
+      for (let i = 0; i < 6; i++) {
+        this.$root.$data.addedTutors.push(this.$root.$data.tutors[i]);
+      }
+    },
+  },
+};
+</script>
 
 <style>
 /**************
