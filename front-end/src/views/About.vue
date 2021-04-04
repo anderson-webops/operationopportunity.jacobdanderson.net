@@ -29,7 +29,10 @@
 export default {
   name: "About",
   components: {},
-  data() {},
+  data() {
+    return {};
+  },
+  created() {},
   computed: {},
 };
 </script>

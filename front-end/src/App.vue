@@ -25,7 +25,7 @@
           data-bs-toggle="collapse"
           type="button"
         >
-          <span class="navbar-toggler-icon"> </span>
+          <span class="navbar-toggler-icon"></span>
         </button>
         <div id="navbarSupportedContent" class="collapse navbar-collapse">
           <ul class="nav navbar-nav me-auto mb-2 mb-lg-0">
@@ -93,7 +93,15 @@
         <nav class="footer_nav">
           <ul class="semantic_list">
             <li>Provo, UT, USA</li>
-            <li>©2021 AudioT. All rights reserved.</li>
+            <li>
+              ©2021
+              <a
+                href="http://audiot.info"
+                target="_blank"
+                style="text-decoration: none; color: inherit"
+                >AudioT</a
+              >. All rights reserved.
+            </li>
           </ul>
         </nav>
       </div>
@@ -104,7 +112,14 @@
         <br />
         <nav class="footer_nav">
           <ul class="semantic_list">
-            <li>Nathaniel Judd</li>
+            <li>
+              <a
+                href="http://nathanielcs260.com"
+                target="_blank"
+                style="text-decoration: none; color: inherit"
+                >Nathaniel Judd</a
+              >
+            </li>
           </ul>
         </nav>
       </div>

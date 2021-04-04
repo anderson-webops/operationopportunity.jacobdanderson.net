@@ -27,7 +27,10 @@
 export default {
   name: "Supportus",
   components: {},
-  data() {},
+  data() {
+    return {};
+  },
+  created() {},
   computed: {},
 };
 </script>
