@@ -7,11 +7,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Fixing Navigation">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/mock-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/mock-data.js" afterDir="false" />
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Formatting and finalizing edits for now">
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
@@ -143,7 +139,7 @@
       <workItem from="1617397838141" duration="1946000" />
       <workItem from="1617465602032" duration="540000" />
       <workItem from="1617468760177" duration="513000" />
-      <workItem from="1617517154020" duration="14045000" />
+      <workItem from="1617517154020" duration="20667000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -292,7 +288,21 @@
       <option name="project" value="LOCAL" />
       <updated>1617555699739</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Adding Tutor edit functionality">
+      <created>1617580112496</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1617580112496</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Formatting and finalizing edits for now">
+      <created>1617596446017</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1617596446017</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -332,7 +342,9 @@
     <MESSAGE value="Fixing package.json/vue-cli problems" />
     <MESSAGE value="Footer formatting" />
     <MESSAGE value="Fixing Navigation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing Navigation" />
+    <MESSAGE value="Adding Tutor edit functionality" />
+    <MESSAGE value="Formatting and finalizing edits for now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Formatting and finalizing edits for now" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
