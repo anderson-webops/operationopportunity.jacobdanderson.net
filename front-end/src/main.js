@@ -9,7 +9,7 @@ let data = {
   currentID: mock.length,
   tutors: mock,
   addedTutors: [],
-  addTutor(name, email, age, gender, city, state, editTutors) {
+  addTutor(name, email, age, gender, city, state, editTutors, saveEdit) {
     this.addedTutors.push({
       id: this.addedTutors.length + 1,
       name: name,
@@ -19,6 +19,7 @@ let data = {
       city: city,
       state: state,
       editTutors: editTutors,
+      saveEdit: saveEdit,
     });
   },
 };

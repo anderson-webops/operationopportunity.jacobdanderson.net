@@ -46,7 +46,7 @@
         <br />
         <input id="state" type="text" v-model="state" />
         <br />
-        <!--              <input class="mt-3" id="infoSubmit" type="submit" value="Submit" v-bind:disabled="tutor.personName.length < 2">-->
+
         <button
           class="mt-3"
           id="infoSubmit"
@@ -68,33 +68,32 @@
         {{ this.showHide }} tutors
       </button>
 
-      <hr v-show="showTutors">
+      <hr v-show="showTutors" />
 
       <div
+        class="tutorList mt-2"
         v-show="showTutors"
         v-for="tutor in addedTutorsArray"
         v-bind:key="tutor.id"
       >
-        <label>
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.name" />
-          <br />
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.email" />
-          <br />
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.age" />
-          <br />
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.gender" />
-          <br />
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.city" />
-          <br />
-          <input type="text" v-show="tutor.editTutors" v-model="tutor.state" />
-        </label>
-        <h1 v-show="!tutor.editTutors">{{ tutor.id }}</h1>
-        <p v-show="!tutor.editTutors">{{ tutor.name }}</p>
-        <p v-show="!tutor.editTutors">{{ tutor.email }}</p>
-        <p v-show="!tutor.editTutors">{{ tutor.age }}</p>
-        <p v-show="!tutor.editTutors">{{ tutor.gender }}</p>
-        <p v-show="!tutor.editTutors">{{ tutor.city }}</p>
-        <p v-show="!tutor.editTutors">{{ tutor.state }}</p>
+        <br />
+        <ul>
+          <!-- eslint-disable-->
+          <li v-show="tutor.editTutors"><label for="i1">Name:</label>&emsp;<input id="i1" class="editTutor" type="text" v-model="tutor.name" /></li>
+          <li v-show="tutor.editTutors"><label for="i2">Email:</label>&emsp;<input id="i2" class="editTutor" type="text" v-model="tutor.email" /></li>
+          <li v-show="tutor.editTutors"><label for="i3">Age:</label>&emsp;<input id="i3" class="editTutor" type="text" v-model="tutor.age" /></li>
+          <li v-show="tutor.editTutors"><label for="i4">Gender:</label>&emsp;<input id="i4" class="editTutor" type="text" v-model="tutor.gender" /></li>
+          <li v-show="tutor.editTutors"><label for="i5">City:</label>&emsp;<input id="i5" class="editTutor" type="text" v-model="tutor.city" /></li>
+          <li v-show="tutor.editTutors"><label for="i6">State:</label>&emsp;<input id="i6" class="editTutor" type="text" v-model="tutor.state" /></li>
+
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p1">Name:</label>&emsp;<p id="p1">{{ tutor.name }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p2">Email:</label>&emsp;<p id="p2">{{ tutor.email }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p3">Age:</label>&emsp;<p id="p3">{{ tutor.age }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p4">Gender:</label>&emsp;<p id="p4">{{ tutor.gender }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p5">City:</label>&emsp;<p id="p5">{{ tutor.city }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden" for="p6">State:</label>&emsp;<p id="p6">{{ tutor.state }}</p></li>
+          <!-- eslint-enable-->
+        </ul>
         <br />
         <button @click="removeTutor(tutor.id - 1)">Delete</button>
         <button
@@ -136,10 +135,6 @@ export default {
       // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       return (this.showHide = this.showTutors ? "Hide" : "Show");
     },
-    saveEditTutors() {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      return (this.saveEdit = this.editTutors ? "Edit" : "Save");
-    },
   },
   created() {},
   methods: {
@@ -174,4 +169,28 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+ul {
+  display: flex;
+  flex-flow: column;
+}
+
+ul p {
+  display: inline;
+}
+
+div.tutorList, li /* eslint-disable */ {
+  align-self: center;
+}
+
+.hidden {
+  display: none;
+}
+
+div.tutorList {
+  outline: black solid 1px;
+  padding-bottom: 1%;
+  width: 35%;
+  margin: auto;
+}
+</style>
