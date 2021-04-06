@@ -33,7 +33,7 @@
               <router-link class="nav-link" to="/">Home</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/signup">Sign Up</router-link>
+              <router-link class="nav-link" to="/tutor">Tutors</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/supportus"
@@ -48,7 +48,7 @@
           <button
             class="btn btn-outline-success"
             type="submit"
-            onclick="document.getElementById('id01').style.display='block'"
+            v-on:click="changeLoginView(true)"
           >
             Login
           </button>
@@ -56,7 +56,7 @@
           <button
             class="btn btn-outline-primary"
             type="submit"
-            onclick="document.getElementById('id02').style.display='block'"
+            v-on:click="changeSignupView(true)"
           >
             Signup
           </button>
@@ -69,16 +69,16 @@
     ----------------->
 
     <!-- The Modal -->
-    <div id="id01" class="modal loginForm">
-      <span
-        onclick="document.getElementById('id01').style.display='none'"
-        class="close"
-        title="Close Modal"
-        >&times;</span
-      >
-
+    <div v-bind:class="{ showLogin: loginBlock }" class="modal loginForm">
       <!-- Modal Content -->
-      <form class="modal-content animate">
+      <form class="modal-content animate" v-on:submit.prevent="selectUser">
+        <span
+          v-on:click="changeLoginView(false)"
+          class="close"
+          title="Close Modal"
+          >&times;</span
+        >
+
         <div class="imgcontainer">
           <img
             src="https://www.w3schools.com/howto/img_avatar2.png"
@@ -108,7 +108,10 @@
             >Don't have an account?
             <a
               href="#"
-              onclick="document.getElementById('id01').style.display='none'; document.getElementById('id02').style.display='block'"
+              v-on:click="
+                changeLoginView(false);
+                changeSignupView(true);
+              "
               >Sign Up</a
             ></span
           >
@@ -117,7 +120,7 @@
         <div class="container" style="background-color: #f1f1f1">
           <button
             type="button"
-            onclick="document.getElementById('id01').style.display='none'"
+            v-on:click="changeLoginView(false)"
             class="cancelbtn"
           >
             Cancel
@@ -128,14 +131,15 @@
     </div>
 
     <!-- The Modal (contains the Sign Up form) -->
-    <div id="id02" class="modal signupForm">
-      <span
-        onclick="document.getElementById('id02').style.display='none'"
-        class="close"
-        title="Close Modal"
-        >&times;</span
-      >
-      <form class="modal-content">
+    <div v-bind:class="{ showSignup: signupBlock }" class="modal signupForm">
+      <form class="modal-content animate" v-on:submit.prevent="addUser">
+        <span
+          v-on:click="changeSignupView(false)"
+          class="close"
+          title="Close Modal"
+          >&times;</span
+        >
+
         <div class="container">
           <h1>Sign Up</h1>
           <p>Please fill in this form to create an account.</p>
@@ -143,6 +147,12 @@
 
           <label for="name"><b>Email</b></label>
           <input type="text" placeholder="Enter Name" id="name" required />
+
+          <label for="age"><b>Age</b></label>
+          <input type="text" placeholder="Enter Age" id="age" required />
+
+          <label for="state"><b>State</b></label>
+          <input type="text" placeholder="Enter State" id="state" required />
 
           <label for="email"><b>Email</b></label>
           <input type="text" placeholder="Enter Email" id="email" required />
@@ -174,7 +184,7 @@
             Remember me
           </label>
 
-          <p class="disclamer">
+          <p class="disclamer" style="font-family: Optima, sans-serif">
             By creating an account you agree to our
             <a href="#" style="color: dodgerblue">Terms & Privacy</a>.
           </p>
@@ -182,7 +192,7 @@
           <div class="container clearfix" style="background-color: #f1f1f1">
             <button
               type="button"
-              onclick="document.getElementById('id02').style.display='none'"
+              v-on:click="changeSignupView(false)"
               class="cancelbtn"
             >
               Cancel
@@ -191,7 +201,10 @@
               >Already have an account?
               <a
                 href="#"
-                onclick="document.getElementById('id02').style.display='none'; document.getElementById('id01').style.display='block'"
+                v-on:click="
+                  changeSignupView(false);
+                  changeSignupView(true);
+                "
                 >Login</a
               ></span
             >
@@ -273,14 +286,106 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "App",
   components: {},
   data() {
-    return {};
+    return {
+      users: [],
+      user: null,
+      name: "",
+      email: "",
+      age: "",
+      // gender: "",
+      // city: "",
+      state: "",
+      showTutors: false,
+      showHide: "Show",
+      editTutors: false,
+      saveEdit: "Edit",
+      loginBlock: false,
+      signupBlock: false,
+    };
   },
-  created() {},
-  methods: {},
+  computed: {
+    getUsersArray() {
+      return this.users;
+    },
+  },
+  created() {
+    // this.getUsers();
+  },
+  methods: {
+    async addUser() {
+      try {
+        await axios.post(`/api/tutors/${this.tutor._id}/users`, {
+          name: this.name,
+          email: this.email,
+          age: this.age,
+          state: this.state,
+        });
+        this.resetData();
+        await this.getUsers();
+      } catch (error) {
+        await this.sendError(error);
+      }
+    },
+    async getUsers() {
+      try {
+        const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
+        this.items = response.data;
+      } catch (error) {
+        await this.sendError(error);
+      }
+    },
+    async editUser(user) {
+      try {
+        await axios.put(`/api/tutors/${this.tutor._id}/items/${user._id}`, {
+          name: user.name,
+          email: user.email,
+          age: user.age,
+          state: user.state,
+          editTutors: !user.editTutors,
+          saveEdit: user.editTutors ? "Edit" : "Save",
+        });
+        await this.getUsers();
+        return true;
+      } catch (error) {
+        await this.sendError(error);
+      }
+    },
+    async deleteUser(user) {
+      try {
+        await axios.delete(`/api/tutors/${this.tutor._id}/users/${user._id}`);
+        await this.getUsers();
+      } catch (error) {
+        await this.sendError(error);
+      }
+    },
+    async sendError(error) {
+      await axios.post(`/api/error/${error}`);
+    },
+    changeSignupView(showHide) {
+      this.signupBlock = showHide;
+    },
+    changeLoginView(showHide) {
+      this.loginBlock = showHide;
+    },
+    selectUser(user) {
+      this.user = user;
+      this.getUsers();
+    },
+    resetData() {
+      this.name = "";
+      this.email = "";
+      this.age = "";
+      // this.gender = "";
+      // this.city = "";
+      this.state = "";
+    },
+  },
 };
 
 // When the user clicks anywhere outside of the modal, close it
@@ -383,9 +488,64 @@ nav {
   }
 }
 
-/* General Formats for the Signup and Login Forms */
+/*****************************
+*   Login and Signup Forms   *
+*****************************/
 
-/* Set a style for all buttons */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  padding-top: 50px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  margin: auto; /* 15% from the top and centered was login */
+  /* margin: auto; 5% auto 15% auto; 5% from the top, 15% from the bottom and centered signup*/
+}
+
+.showSignup {
+  display: block !important;
+}
+
+.showLogin {
+  display: block !important;
+}
+
+div.loginForm span, div.signupForm span /* eslint-disable-line */ {
+  font-family: Optima, sans-serif;
+}
+
+/* The Close Button (x) */
+.close {
+  /* Position it in the top right corner outside of the modal */
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  color: #dc3545;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+  color: #f44336; /* was red */
+  cursor: pointer;
+}
+
+/* Set a style for login and signup buttons */
 .button {
   background-color: #4caf50;
   color: white;
@@ -407,6 +567,30 @@ nav {
   width: auto;
   padding: 10px 18px;
   background-color: #f44336;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s;
+}
+
+@-webkit-keyframes animatezoom {
+  from {
+    -webkit-transform: scale(0);
+  }
+  to {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes animatezoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 /*****************
@@ -442,7 +626,7 @@ div.loginForm .imgcontainer {
 
 /* Avatar image */
 div.loginForm img.avatar {
-  width: 40% !important;
+  width: 25% !important;
   border-radius: 50%;
 }
 
@@ -466,88 +650,6 @@ div.loginForm span.signup {
   }
   div.loginForm .cancelbtn {
     width: 100%;
-  }
-}
-
-/*   Modal Formatting for both Signup and Login   */
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-  padding-top: 60px;
-}
-
-/* Modal Content/Box */
-div.loginForm .modal-content {
-  background-color: #fefefe;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}
-
-div.loginForm .modal-content {
-  margin: 5px auto; /* 15% from the top and centered */
-}
-
-div.signupForm .modal-content {
-  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-}
-
-/* The Close Button (x) */
-div.loginForm .close {
-  /* Position it in the top right corner outside of the modal */
-  position: absolute;
-  right: 25px;
-  top: 0;
-  color: #000;
-  font-size: 35px;
-  font-weight: bold;
-}
-
-div.signupForm .close {
-  position: absolute;
-  right: 35px;
-  top: 15px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #f1f1f1;
-}
-
-/* Close button on hover */
-.close:hover,
-.close:focus {
-  color: #f44336; /* was red */
-  cursor: pointer;
-}
-
-/* Add Zoom Animation */
-div.loginForm .animate {
-  -webkit-animation: animatezoom 0.6s;
-  animation: animatezoom 0.6s;
-}
-
-@-webkit-keyframes animatezoom {
-  from {
-    -webkit-transform: scale(0);
-  }
-  to {
-    -webkit-transform: scale(1);
-  }
-}
-
-@keyframes animatezoom {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
   }
 }
 
