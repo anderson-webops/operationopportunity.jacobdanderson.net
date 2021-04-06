@@ -233,8 +233,16 @@
             <li>
               <a
                 href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"
-                >www.github.com</a
-              >
+                target="_blank"
+                ><img
+                  id="githubIcon"
+                  src="../public/Images/github-dark.09072337.svg"
+                  alt="github Icon"
+              /></a>
+              <!--              <a-->
+              <!--                href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"-->
+              <!--                >www.github.com</a-->
+              <!--              >-->
             </li>
           </ul>
         </nav>
@@ -256,6 +264,31 @@
                 >AudioT</a
               >. All rights reserved.
             </li>
+            <!--            <li>
+              ©2021
+              <a
+                href="http://audiot.info"
+                target="_blank"
+                style="text-decoration: none; color: inherit"
+                ><img
+                  id="audiotLogo"
+                  src="../public/Images/audiot-logo.png"
+                  alt="audiot Icon" /></a
+              >. All rights reserved.
+            </li>-->
+            <!--            <li>
+              ©2021
+              <a
+                href="http://audiot.info"
+                target="_blank"
+                style="text-decoration: none; color: inherit"
+                >Audio<img
+                  id="audiotIcon"
+                  src="../public/Images/favicon-16x16.png"
+                  alt="audiot Icon"
+                /> </a
+              >. All rights reserved.
+            </li>-->
           </ul>
         </nav>
       </div>
@@ -735,6 +768,19 @@ label {
 
 img {
   width: 50%;
+}
+
+#githubIcon {
+  width: 10%;
+}
+
+#audiotIcon {
+  width: 1.6%;
+}
+
+#audiotLogo {
+  width: 9%;
+  transform: translateY(1px);
 }
 
 /*************

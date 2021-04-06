@@ -8,7 +8,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Merge remote-tracking branch 'origin/master'">
+      <change afterPath="$PROJECT_DIR$/front-end/public/Images/audiot-logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/public/Images/favicon-16x16.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/public/Images/github-dark.09072337.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/android-chrome-192x192.png" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/android-chrome-192x192.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/android-chrome-512x512.png" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/android-chrome-512x512.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/apple-touch-icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/apple-touch-icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/favicon-16x16.png" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/favicon-16x16.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/favicon-32x32.png" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/favicon-32x32.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/Favicons/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,6 +87,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/front-end/public/Images" />
+      <recent name="$PROJECT_DIR$/front-end/public/Favicons" />
       <recent name="$PROJECT_DIR$/front-end" />
       <recent name="$PROJECT_DIR$/public" />
     </key>
@@ -143,7 +156,7 @@
       <workItem from="1617634995720" duration="352000" />
       <workItem from="1617662965197" duration="13166000" />
       <workItem from="1617679449934" duration="23000" />
-      <workItem from="1617679545593" duration="18589000" />
+      <workItem from="1617679545593" duration="20587000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -362,7 +375,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617735656807</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Merge remote-tracking branch 'origin/master'">
+      <created>1617736273735</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1617736273735</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
