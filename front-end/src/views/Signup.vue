@@ -50,7 +50,7 @@
         <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
       </form>
 
-      <button @click="showTutors = !showTutors" v-bind="showHideTutors">
+      <button @click="showTutors = !showTutors" v-bind="tutors">
         {{ this.showHide }} tutors
       </button>
 
@@ -65,24 +65,24 @@
         <br />
         <ul>
           <!-- eslint-disable-->
-          <li v-show="tutor.editTutors"><label for="i1">Name:</label>&emsp;<input id="i1" class="editTutor" type="text" v-model="tutor.name" /></li>
-          <li v-show="tutor.editTutors"><label for="i2">Email:</label>&emsp;<input id="i2" class="editTutor" type="text" v-model="tutor.email" /></li>
-          <li v-show="tutor.editTutors"><label for="i3">Age:</label>&emsp;<input id="i3" class="editTutor" type="text" v-model="tutor.age" /></li>
+          <li v-show="tutor.editTutors"><label>Name:&emsp;<input class="editTutor" type="text" v-model="tutor.name" /></label></li>
+          <li v-show="tutor.editTutors"><label>Email:&emsp;<input class="editTutor" type="text" v-model="tutor.email" /></label></li>
+          <li v-show="tutor.editTutors"><label>Age:&emsp;<input class="editTutor" type="text" v-model="tutor.age" /></label></li>
 <!--          <li v-show="tutor.editTutors"><label for="i4">Gender:</label>&emsp;<input id="i4" class="editTutor" type="text" v-model="tutor.gender" /></li>-->
 <!--          <li v-show="tutor.editTutors"><label for="i5">City:</label>&emsp;<input id="i5" class="editTutor" type="text" v-model="tutor.city" /></li>-->
-          <li v-show="tutor.editTutors"><label for="i6">State:</label>&emsp;<input id="i6" class="editTutor" type="text" v-model="tutor.state" /></li>
+          <li v-show="tutor.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="tutor.state" /></label></li>
 
-          <li v-show="!tutor.editTutors"><label class="hidden" for="p1">Name:</label>&emsp;<p id="p1">{{ tutor.name }}</p></li>
-          <li v-show="!tutor.editTutors"><label class="hidden" for="p2">Email:</label>&emsp;<p id="p2">{{ tutor.email }}</p></li>
-          <li v-show="!tutor.editTutors"><label class="hidden" for="p3">Age:</label>&emsp;<p id="p3">{{ tutor.age }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ tutor.name }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutor.email }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ tutor.age }}</p></li>
 <!--          <li v-show="!tutor.editTutors"><label class="hidden" for="p4">Gender:</label>&emsp;<p id="p4">{{ tutor.gender }}</p></li>-->
 <!--          <li v-show="!tutor.editTutors"><label class="hidden" for="p5">City:</label>&emsp;<p id="p5">{{ tutor.city }}</p></li>-->
-          <li v-show="!tutor.editTutors"><label class="hidden" for="p6">State:</label>&emsp;<p id="p6">{{ tutor.state }}</p></li>
+          <li v-show="!tutor.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutor.state }}</p></li>
           <!-- eslint-enable-->
         </ul>
         <br />
         <button @click="deleteTutor(tutor)">Delete</button>
-        <button @click="editTutor(tutor)" v-bind="tutor.saveEdit">
+        <button @click="editTutor(tutor)" v-bind="tutor">
           {{ tutor.saveEdit }}
         </button>
       </div>

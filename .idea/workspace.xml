@@ -7,11 +7,8 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding Login and Signup forms with help from w3schools">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding the majority of the database functionality, especially with respect to the tutors database">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/server.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
@@ -147,7 +144,7 @@
       <workItem from="1617634995720" duration="352000" />
       <workItem from="1617662965197" duration="13166000" />
       <workItem from="1617679449934" duration="23000" />
-      <workItem from="1617679545593" duration="4621000" />
+      <workItem from="1617679545593" duration="6952000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -324,7 +321,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617672169000</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Adding the majority of the database functionality, especially with respect to the tutors database">
+      <created>1617690798065</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1617690798065</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,7 +371,8 @@
     <MESSAGE value="Adding Tutor edit functionality" />
     <MESSAGE value="Formatting and finalizing edits for now" />
     <MESSAGE value="Adding Login and Signup forms with help from w3schools" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding Login and Signup forms with help from w3schools" />
+    <MESSAGE value="Adding the majority of the database functionality, especially with respect to the tutors database" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding the majority of the database functionality, especially with respect to the tutors database" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
