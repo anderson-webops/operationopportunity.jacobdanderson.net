@@ -7,12 +7,8 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Fixed warnings with v-bind">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Merge remote-tracking branch 'origin/master'">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Home.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Tutor.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -147,7 +143,7 @@
       <workItem from="1617634995720" duration="352000" />
       <workItem from="1617662965197" duration="13166000" />
       <workItem from="1617679449934" duration="23000" />
-      <workItem from="1617679545593" duration="18074000" />
+      <workItem from="1617679545593" duration="18589000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -338,7 +334,35 @@
       <option name="project" value="LOCAL" />
       <updated>1617722696977</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Converted base vanilla javascript fuctionality to vue">
+      <created>1617735491575</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1617735491575</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Converted base vanilla javascript fuctionality to vue">
+      <created>1617735511181</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1617735511181</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Converted base vanilla javascript functionality to vue">
+      <created>1617735540196</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1617735540196</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Merge remote-tracking branch 'origin/master'">
+      <created>1617735656807</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1617735656807</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -358,9 +382,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Font and image sizing" />
-    <MESSAGE value="Quote API/JS implementation" />
-    <MESSAGE value="Name and email input html and css, JS to follow" />
     <MESSAGE value="Adding input/email verification" />
     <MESSAGE value="Final touches, including add API and formatting, ip detector shown in lower right corner" />
     <MESSAGE value="Added Cursive font to the author's name" />
@@ -383,7 +404,10 @@
     <MESSAGE value="Adding Login and Signup forms with help from w3schools" />
     <MESSAGE value="Adding the majority of the database functionality, especially with respect to the tutors database" />
     <MESSAGE value="Fixed warnings with v-bind" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed warnings with v-bind" />
+    <MESSAGE value="Converted base vanilla javascript fuctionality to vue" />
+    <MESSAGE value="Converted base vanilla javascript functionality to vue" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/master'" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/master'" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

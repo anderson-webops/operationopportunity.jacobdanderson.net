@@ -203,7 +203,7 @@
                 href="#"
                 v-on:click="
                   changeSignupView(false);
-                  changeSignupView(true);
+                  changeLoginView(true);
                 "
                 >Login</a
               ></span
