@@ -9,7 +9,7 @@
       <q>{{ quoteText }}</q>
       <br />
       <q>
-        &emsp;&emsp;&emsp; <span>- {{ quoteAuthor }}</span></q
+        <span>- {{ quoteAuthor }}</span></q
       >
     </div>
 
@@ -62,6 +62,7 @@ export default {
 <style scoped>
 span {
   font-family: cursive;
+  margin-left: 30px;
 }
 
 .quote {

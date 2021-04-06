@@ -3,8 +3,8 @@
   -   Section   -
   -------------->
 
-  <section class="Signup text-center">
-    <h1>Sign up</h1>
+  <section class="Tutor text-center">
+    <h1>Become a Tutor</h1>
     <img
       src="https://thumbs.dreamstime.com/b/closeup-person-signing-form-letter-intent-land-acquisition-closeup-person-signing-form-letter-intent-188466918.jpg"
       alt="Signing up"
@@ -50,7 +50,7 @@
         <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
       </form>
 
-      <button @click="showTutors = !showTutors" v-bind="tutors">
+      <button @click="showTutors = !showTutors" v-bind:string="showHideTutors">
         {{ this.showHide }} tutors
       </button>
 
@@ -82,9 +82,11 @@
         </ul>
         <br />
         <button @click="deleteTutor(tutor)">Delete</button>
-        <button @click="editTutor(tutor)" v-bind="tutor">
+        <button @click="editTutor(tutor)" v-bind:string="tutor.saveEdit">
           {{ tutor.saveEdit }}
         </button>
+        <br />
+        <button @click="selectTutor(tutor, user)">Select</button>
       </div>
     </div>
   </section>
@@ -94,7 +96,7 @@
 import axios from "axios";
 
 export default {
-  name: "Signup",
+  name: "Tutor",
   data() {
     return {
       tutors: [],
@@ -150,23 +152,6 @@ export default {
         await this.sendError(error);
       }
     },
-    resetData() {
-      this.name = "";
-      this.email = "";
-      this.age = "";
-      // this.gender = "";
-      // this.city = "";
-      this.state = "";
-      this.editTutors = false;
-    },
-    async deleteTutor(tutor) {
-      try {
-        await axios.delete(`/api/tutors/${tutor._id}`);
-        await this.getTutors();
-      } catch (error) {
-        await this.sendError(error);
-      }
-    },
     async editTutor(tutor) {
       try {
         await axios.put(`/api/tutors/${tutor._id}`, {
@@ -183,38 +168,22 @@ export default {
         await this.sendError(error);
       }
     },
-    async getUsers() {
+    async deleteTutor(tutor) {
       try {
-        const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
-        this.items = response.data;
+        await axios.delete(`/api/tutors/${tutor._id}`);
+        await this.getTutors();
       } catch (error) {
         await this.sendError(error);
       }
     },
-    async addUser() {
-      try {
-        await axios.post(`/api/tutors/${this.tutor._id}/users`, {
-          name: this.name,
-          email: this.email,
-          age: this.age,
-          state: this.state,
-        });
-        this.resetData();
-        await this.getUsers();
-      } catch (error) {
-        await this.sendError(error);
-      }
-    },
-    async deleteUser(user) {
-      try {
-        await axios.delete(`/api/tutors/${this.tutor._id}/users/${user._id}`);
-        await this.getUsers();
-      } catch (error) {
-        await this.sendError(error);
-      }
-    },
-    async sendError(error) {
-      await axios.post(`/api/error/${error}`, {});
+    resetData() {
+      this.name = "";
+      this.email = "";
+      this.age = "";
+      // this.gender = "";
+      // this.city = "";
+      this.state = "";
+      this.editTutors = false;
     },
   },
 };
