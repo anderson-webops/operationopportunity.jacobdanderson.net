@@ -52,7 +52,7 @@
           >
             Login
           </button>
-          <!-- Button to open the modal login form -->
+          <!-- Button to open the modal signup form -->
           <button
             class="btn btn-outline-primary"
             type="submit"
@@ -140,6 +140,10 @@
           <h1>Sign Up</h1>
           <p>Please fill in this form to create an account.</p>
           <hr />
+
+          <label for="name"><b>Email</b></label>
+          <input type="text" placeholder="Enter Name" id="name" required />
+
           <label for="email"><b>Email</b></label>
           <input type="text" placeholder="Enter Email" id="email" required />
 
@@ -275,16 +279,8 @@ export default {
   data() {
     return {};
   },
-  created() {
-    this.addTutorDatabase();
-  },
-  methods: {
-    addTutorDatabase() {
-      for (let i = 0; i < 6; i++) {
-        this.$root.$data.addedTutors.push(this.$root.$data.tutors[i]);
-      }
-    },
-  },
+  created() {},
+  methods: {},
 };
 
 // When the user clicks anywhere outside of the modal, close it
@@ -335,21 +331,17 @@ body {
   line-height: 1;
 }
 
-ol,
-ul {
+ol, ul /* eslint-disable-line */ {
   list-style: none;
 }
 
-blockquote,
-q {
+blockquote, q /* eslint-disable-line */ {
   quotes: none;
 }
 
 /*noinspection CssOverwrittenProperties*/
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
+blockquote:before, blockquote:after,
+q:before, q:after /* eslint-disable-line */ {
   content: "";
   content: none;
 }
@@ -450,7 +442,7 @@ div.loginForm .imgcontainer {
 
 /* Avatar image */
 div.loginForm img.avatar {
-  width: 40%;
+  width: 40% !important;
   border-radius: 50%;
 }
 

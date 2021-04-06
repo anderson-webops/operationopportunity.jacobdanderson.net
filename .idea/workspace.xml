@@ -7,10 +7,12 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Formatting and finalizing edits for now">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding Login and Signup forms with help from w3schools">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/server.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -143,7 +145,9 @@
       <workItem from="1617468760177" duration="513000" />
       <workItem from="1617517154020" duration="20891000" />
       <workItem from="1617634995720" duration="352000" />
-      <workItem from="1617662965197" duration="7263000" />
+      <workItem from="1617662965197" duration="13166000" />
+      <workItem from="1617679449934" duration="23000" />
+      <workItem from="1617679545593" duration="4621000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -313,7 +317,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617597047130</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Adding Login and Signup forms with help from w3schools">
+      <created>1617672169000</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1617672169000</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -355,7 +366,8 @@
     <MESSAGE value="Fixing Navigation" />
     <MESSAGE value="Adding Tutor edit functionality" />
     <MESSAGE value="Formatting and finalizing edits for now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Formatting and finalizing edits for now" />
+    <MESSAGE value="Adding Login and Signup forms with help from w3schools" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding Login and Signup forms with help from w3schools" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

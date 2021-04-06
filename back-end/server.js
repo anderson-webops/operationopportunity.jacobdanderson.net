@@ -18,119 +18,189 @@ mongoose.connect('mongodb://localhost:27017/operationopportunity', {
     useUnifiedTopology: true
 });
 
-// Create a scheme for projects
-/*const projectSchema = new mongoose.Schema({
+/********************
+*   Tutor Methods   *
+********************/
+
+// Create a scheme for tutors
+const tutorSchema = new mongoose.Schema({
     name: String,
-    color: String
-});*/
+    email: String,
+    age: String,
+    state: String,
+    editTutors: Boolean,
+    saveEdit: String,
+});
 
-// Create a model for projects
-// const Project = mongoose.model('Project', projectSchema);
+// Create a model for tutors
+const Tutor = mongoose.model('Tutor', tutorSchema);
 
-// Create a project
-app.post('/api/', async (req, res) => {
-/*    const project = new Project({
+// Create a tutor
+app.post('/api/tutors', async (req, res) => {
+    const tutor = new Tutor({
         name: req.body.name,
-        color: req.body.color
-    });*/
+        email: req.body.email,
+        age: req.body.age,
+        state: req.body.state,
+        editTutors: req.body.editTutors,
+        saveEdit: req.body.saveEdit,
+    });
     try {
-/*        await project.save();
-        res.send(project);*/
+        await tutor.save();
+        res.send(tutor);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
 });
 
-// Get a list of all projects
-app.get('/api/', async (req, res) => {
+// Get a list of all tutors
+app.get('/api/tutors', async (req, res) => {
     try {
-/*        let projects = await Project.find();
-        res.send(projects);*/
+        let tutors = await Tutor.find();
+        res.send(tutors);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
 });
 
-// Schema for items
-const itemSchema = new mongoose.Schema({
-    project: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Project'
-    },
-    text: String,
-    completed: Boolean,
-})
-
-// Model for items
-// const Item = mongoose.model('Item',itemSchema);
-
-app.post('/api/', async (req, res) => {
+// Update tutor info
+app.put('/api/tutors/:id', async (req, res) => {
     try {
-/*        let project = await Project.findOne({_id: req.params.projectID});
-        if (!project) {
-            res.sendStatus(404);
-            return;
-        }
-        let item = new Item({
-            project: project,
-            text: req.body.text,
-            completed: req.body.completed,
-        });
-        await item.save();
-        res.send(item);*/
-    } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-app.get('/api/', async (req, res) => {
-    try {
-/*        let project = await Project.findOne({_id: req.params.projectID});
-        if (!project) {
-            res.sendStatus(404);
-            return;
-        }
-        let items = await Item.find({project:project});
-        res.send(items);*/
-    } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-app.put('/api/', async (req, res) => {
-    try {
-        /*let item = await Item.findOne({_id:req.params.itemID, project: req.params.projectID});
-        if (!item) {
+        let editedTutor = await Tutor.findOne({_id: req.params.id});
+        if (!editedTutor) {
             res.send(404);
             return;
         }
-        item.text = req.body.text;
-        item.completed = req.body.completed;
-        await item.save();
-        res.send(item);*/
-    } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-app.delete('/api/', async (req, res) => {
-    try {
-/*        let item = await Item.findOne({_id:req.params.itemID, project: req.params.projectID});
-        if (!item) {
-            res.send(404);
-            return;
-        }
-        await item.delete();*/
+        editedTutor.name = req.body.name;
+        editedTutor.email = req.body.email;
+        editedTutor.age = req.body.age;
+        editedTutor.state = req.body.state;
+        editedTutor.editTutors = req.body.editTutors;
+        editedTutor.saveEdit = req.body.saveEdit;
+        await editedTutor.save();
         res.sendStatus(200);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
+});
+
+// Delete a tutor
+app.delete('/api/tutors/:tutorID', async (req, res) => {
+    try {
+        let tutor = await Tutor.findOne({_id: req.params.tutorID});
+        if (!tutor) {
+            res.send(404);
+            return;
+        }
+        await tutor.delete();
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+/*******************
+*   User Methods   *
+*******************/
+
+// Schema for users
+const userSchema = new mongoose.Schema({
+    tutor: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Tutor'
+    },
+    name: String,
+    email: String,
+    age: String,
+    state: String,
+})
+
+// Model for users
+const User = mongoose.model('User',userSchema);
+
+// Create a user
+app.post('/api/tutors/:tutorID/users', async (req, res) => {
+    try {
+        let tutor = await Tutor.findOne({_id: req.params.tutorID});
+        if (!tutor) {
+            res.sendStatus(404);
+            return;
+        }
+        let user = new User({
+            tutor: tutor,
+            name: req.body.name,
+            email: req.body.email,
+            age: req.body.age,
+            state: req.body.state,
+        });
+        await user.save();
+        res.send(user);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Get a specific
+app.get('/api/tutors/:tutorID/users', async (req, res) => {
+    try {
+        let tutor = await Tutor.findOne({_id: req.params.tutorID});
+        if (!tutor) {
+            res.sendStatus(404);
+            return;
+        }
+        let users = await User.find({project:tutor});
+        res.send(users);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Update user info
+app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
+    try {
+        let user = await User.findOne({_id:req.params.userID, project: req.params.tutorID});
+        if (!user) {
+            res.send(404);
+            return;
+        }
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.age = req.body.age;
+        user.state = req.body.state;
+        await user.save();
+        res.send(user);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Delete the user
+app.delete('/api/tutors/:tutorID/users/:userID', async (req, res) => {
+    try {
+        let user = await User.findOne({_id:req.params.userID, project: req.params.tutorID});
+        if (!user) {
+            res.send(404);
+            return;
+        }
+        await user.delete();
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Catch Error
+app.post('/api/error/:error', async (req, res) => {
+    console.log(req.params.error);
+    res.sendStatus(500);
 });
 
 app.listen(3002, () => console.log('Server listening on port 3002!'));
