@@ -28,13 +28,8 @@
 
         <div class="container">
           <label for="uname"><b>Username</b></label>
-          <input
-            type="text"
-            placeholder="Enter Username"
-            id="uname"
-            required
-          />
-<!--                      v-model="loginEmail"-->
+          <input type="text" placeholder="Enter Username" id="uname" required />
+          <!--                      v-model="loginEmail"-->
 
           <label for="psw1"><b>Password</b></label>
           <input
@@ -43,7 +38,7 @@
             id="psw1"
             required
           />
-<!--            v-model="loginPassword"-->
+          <!--            v-model="loginPassword"-->
 
           <button type="submit" class="button">Login</button>
           <label>

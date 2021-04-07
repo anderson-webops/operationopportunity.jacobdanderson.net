@@ -4,21 +4,21 @@
   -------------->
 
   <section class="Signup text-center">
-    <h1>Signup under a tutor</h1>
+    <h1>Signup Under a Tutor</h1>
     <img
       src="https://thumbs.dreamstime.com/b/closeup-person-signing-form-letter-intent-land-acquisition-closeup-person-signing-form-letter-intent-188466918.jpg"
       alt="Signing up"
       width="30%"
       class="m-5"
     />
-    <h2>Want to help out?</h2>
+    <h2>How does it work?</h2>
     <p class="mt-3">
-      You can sign up by becoming a tutor or consultant wherever you are!
-      Becoming a part of our team means you can join us in the work of bringing
-      college within reach for so many.
+      You can sign up under a tutor or consultant wherever you are! Simply enter
+      your information, select the tutor you want and your tutor will contact
+      you!
     </p>
 
-    <h2>How do I join?</h2>
+    <h2 class="mt-5">Sign Up</h2>
 
     <div id="signup">
       <form id="signupForm" v-on:submit.prevent="addUser">
@@ -69,6 +69,8 @@
       <hr v-show="showTutors" />
 
       <!--   List Tutors   -->
+      <h3>Total Users: {{ $root.$data.allUsers.length }}</h3>
+
       <div
         class="tutorList mt-2"
         v-show="showTutors"
@@ -91,6 +93,7 @@
 <!--          <li v-show="!tutor.editTutors"><label class="hidden" for="p4">Gender:</label>&emsp;<p id="p4">{{ tutor.gender }}</p></li>
           <li v-show="!tutor.editTutors"><label class="hidden" for="p5">City:</label>&emsp;<p id="p5">{{ tutor.city }}</p></li>-->
           <li v-show="!tutorIt.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p></li>
+          <li v-show="!tutorIt.editTutors" v-on:load="getUsersSpecificTutors(tutorIt)"><label class="hidden">Users:</label>&emsp;<p>{{ tutorIt.usersOfTutorLength }}</p></li>
           <!-- eslint-enable-->
         </ul>
         <br />
@@ -98,6 +101,7 @@
         <button @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
           {{ tutorIt.saveEdit }}
         </button>
+        <button @click="selectTutor(tutorIt)">Select</button>
       </div>
     </div>
   </section>
@@ -119,6 +123,7 @@ export default {
       showHide: "Show",
       editTutors: false,
       saveEdit: "Edit",
+      usersOfTutorLength: "",
     };
   },
   computed: {
@@ -130,8 +135,14 @@ export default {
       return (this.showHide = this.showTutors ? "Hide" : "Show");
     },
   },
+  // async mounted(tutor) {
+  //   await this.$nextTick();
+  //   await this.getUsersSpecificTutors(tutor);
+  // },
   created() {
     this.getTutors();
+    this.getUsers();
+    this.getAllUsers();
   },
   methods: {
     async addUser() {
@@ -141,6 +152,8 @@ export default {
           email: this.email,
           age: this.age,
           state: this.state,
+          editTutors: !this.editTutors,
+          saveEdit: this.editTutors ? "Edit" : "Save",
         });
         await this.getUsers();
         this.resetData();
@@ -150,8 +163,26 @@ export default {
     },
     async getUsers() {
       try {
-        const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
-        this.$root.$data.users = response.data;
+        if (this.tutor != null) {
+          const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
+          this.$root.$data.users = response.data;
+        }
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async getAllUsers() {
+      try {
+        const response = await axios.get(`/api/tutors/allusers`);
+        this.$root.$data.allUsers = response.data;
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async getUsersSpecificTutors(tutor) {
+      try {
+        const response = await axios.get(`/api/tutors/${tutor._id}/users`);
+        this.usersOfTutorLength = response.data.length;
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
@@ -188,13 +219,28 @@ export default {
         await this.$root.$data.sendError(error);
       }
     },
+    async deleteUsersUnderTutor(tutor) {
+      try {
+        await axios.delete(`/api/tutors/${tutor._id}/users`);
+        await this.getTutors();
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
     async deleteTutor(tutor) {
       try {
+        await this.deleteUsersUnderTutor(tutor);
         await axios.delete(`/api/tutors/${tutor._id}`);
         await this.getTutors();
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
+    },
+    selectTutor(tutor) {
+      this.$root.$data.currentTutor = tutor;
+      this.$root.$data.showUsers = true;
+      this.$root.$data.profileLink = true;
+      this.getUsersSpecificTutors(tutor);
     },
     resetData() {
       this.name = "";
