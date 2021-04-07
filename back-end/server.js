@@ -28,6 +28,8 @@ const tutorSchema = new mongoose.Schema({
     email: String,
     age: String,
     state: String,
+    password: String,
+    passwordRepeat: String,
     editTutors: Boolean,
     saveEdit: String,
 });
@@ -42,6 +44,8 @@ app.post('/api/tutors', async (req, res) => {
         email: req.body.email,
         age: req.body.age,
         state: req.body.state,
+        password: req.body.password,
+        passwordRepeat: req.body.passwordRepeat,
         editTutors: req.body.editTutors,
         saveEdit: req.body.saveEdit,
     });
@@ -49,8 +53,10 @@ app.post('/api/tutors', async (req, res) => {
         await tutor.save();
         res.send(tutor);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
 });
 
@@ -60,15 +66,17 @@ app.get('/api/tutors', async (req, res) => {
         let tutors = await Tutor.find();
         res.send(tutors);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${req.body.lineNumber}`
+        });
     }
 });
 
 // Update tutor info
-app.put('/api/tutors/:id', async (req, res) => {
+app.put('/api/tutors/:tutorID', async (req, res) => {
     try {
-        let editedTutor = await Tutor.findOne({_id: req.params.id});
+        let editedTutor = await Tutor.findOne({_id: req.params.tutorID});
         if (!editedTutor) {
             res.send(404);
             return;
@@ -82,8 +90,10 @@ app.put('/api/tutors/:id', async (req, res) => {
         await editedTutor.save();
         res.sendStatus(200);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
 });
 
@@ -98,8 +108,10 @@ app.delete('/api/tutors/:tutorID', async (req, res) => {
         await tutor.delete();
         res.sendStatus(200);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
 });
 
@@ -140,12 +152,14 @@ app.post('/api/tutors/:tutorID/users', async (req, res) => {
         await user.save();
         res.send(user);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
 });
 
-// Get a specific
+// Get users belonging to a tutor
 app.get('/api/tutors/:tutorID/users', async (req, res) => {
     try {
         let tutor = await Tutor.findOne({_id: req.params.tutorID});
@@ -153,18 +167,20 @@ app.get('/api/tutors/:tutorID/users', async (req, res) => {
             res.sendStatus(404);
             return;
         }
-        let users = await User.find({project:tutor});
+        let users = await User.find({tutor: tutor});
         res.send(users);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
 });
 
 // Update user info
-app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
+/*app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
     try {
-        let user = await User.findOne({_id:req.params.userID, project: req.params.tutorID});
+        let user = await User.findOne({_id: req.params.userID, tutor: req.params.tutorID});
         if (!user) {
             res.send(404);
             return;
@@ -173,18 +189,21 @@ app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
         user.email = req.body.email;
         user.age = req.body.age;
         user.state = req.body.state;
+        user.tutorName = req.body.tutorName;
         await user.save();
         res.send(user);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
-});
+});*/
 
 // Delete the user
-app.delete('/api/tutors/:tutorID/users/:userID', async (req, res) => {
+/*app.delete('/api/tutors/:tutorID/users/:userID', async (req, res) => {
     try {
-        let user = await User.findOne({_id:req.params.userID, project: req.params.tutorID});
+        let user = await User.findOne({_id: req.params.userID, tutor: req.params.tutorID});
         if (!user) {
             res.send(404);
             return;
@@ -192,15 +211,19 @@ app.delete('/api/tutors/:tutorID/users/:userID', async (req, res) => {
         await user.delete();
         res.sendStatus(200);
     } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
+        console.log(`${error} at line: ${error.lineNumber}`);
+        res.sendStatus(500).send({
+            message: `Error: ${error} at line: ${error.lineNumber}`
+        });
     }
-});
+});*/
 
 // Catch Error
 app.post('/api/error/:error', async (req, res) => {
-    console.log(req.params.error);
-    res.sendStatus(500);
+    console.log(`${req.params.error} at line: ${req.params.lineNumber}`);
+    res.sendStatus(500).send({
+        message: `Error: ${req.params.error} at line: ${req.params.error.lineNumber}`
+    });
 });
 
 app.listen(3002, () => console.log('Server listening on port 3002!'));

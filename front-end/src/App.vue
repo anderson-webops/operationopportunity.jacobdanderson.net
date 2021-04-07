@@ -33,12 +33,10 @@
               <router-link class="nav-link" to="/">Home</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/tutor">Tutors</router-link>
+              <router-link class="nav-link" to="/signup">Signup</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/supportus"
-                >Support Us</router-link
-              >
+              <router-link class="nav-link" to="/supportus">Support Us</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">About</router-link>
@@ -48,7 +46,7 @@
           <button
             class="btn btn-outline-success"
             type="submit"
-            v-on:click="changeLoginView(true)"
+            v-on:click="$root.$data.changeLoginView(true)"
           >
             Login
           </button>
@@ -56,7 +54,7 @@
           <button
             class="btn btn-outline-primary"
             type="submit"
-            v-on:click="changeSignupView(true)"
+            v-on:click="$root.$data.changeSignupView(true)"
           >
             Signup
           </button>
@@ -64,154 +62,11 @@
       </div>
     </nav>
 
-    <!----------------
-    -   Login Form   -
-    ----------------->
+    <!----------------------------
+    -   Login and Signup Forms   -
+    ----------------------------->
 
-    <!-- The Modal -->
-    <div v-bind:class="{ showLogin: loginBlock }" class="modal loginForm">
-      <!-- Modal Content -->
-      <form class="modal-content animate" v-on:submit.prevent="selectUser">
-        <span
-          v-on:click="changeLoginView(false)"
-          class="close"
-          title="Close Modal"
-          >&times;</span
-        >
-
-        <div class="imgcontainer">
-          <img
-            src="https://www.w3schools.com/howto/img_avatar2.png"
-            alt="Avatar"
-            class="avatar"
-          />
-        </div>
-
-        <div class="container">
-          <label for="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" id="uname" required />
-
-          <label for="psw1"><b>Password</b></label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            id="psw1"
-            required
-          />
-
-          <button type="submit" class="button">Login</button>
-          <label>
-            <input type="checkbox" checked="checked" name="remember" /> Remember
-            me
-          </label>
-          <span class="signup"
-            >Don't have an account?
-            <a
-              href="#"
-              v-on:click="
-                changeLoginView(false);
-                changeSignupView(true);
-              "
-              >Sign Up</a
-            ></span
-          >
-        </div>
-
-        <div class="container" style="background-color: #f1f1f1">
-          <button
-            type="button"
-            v-on:click="changeLoginView(false)"
-            class="cancelbtn"
-          >
-            Cancel
-          </button>
-          <span class="psw">Forgot <a href="#">password?</a></span>
-        </div>
-      </form>
-    </div>
-
-    <!-- The Modal (contains the Sign Up form) -->
-    <div v-bind:class="{ showSignup: signupBlock }" class="modal signupForm">
-      <form class="modal-content animate" v-on:submit.prevent="addUser">
-        <span
-          v-on:click="changeSignupView(false)"
-          class="close"
-          title="Close Modal"
-          >&times;</span
-        >
-
-        <div class="container">
-          <h1 class="mb-2">Sign Up</h1>
-          <p>Please fill in this form to create an account.</p>
-          <hr />
-
-          <label for="name"><b>Email</b></label>
-          <input type="text" placeholder="Enter Name" id="name" required />
-
-          <label for="age"><b>Age</b></label>
-          <input type="text" placeholder="Enter Age" id="age" required />
-
-          <label for="state"><b>State</b></label>
-          <input type="text" placeholder="Enter State" id="state" required />
-
-          <label for="email"><b>Email</b></label>
-          <input type="text" placeholder="Enter Email" id="email" required />
-
-          <label for="psw2"><b>Password</b></label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            id="psw2"
-            required
-          />
-
-          <label for="psw-repeat"><b>Repeat Password</b></label>
-          <input
-            type="password"
-            placeholder="Repeat Password"
-            id="psw-repeat"
-            required
-          />
-
-          <button type="submit" class="signup button">Sign Up</button>
-          <label>
-            <input
-              type="checkbox"
-              checked="checked"
-              name="remember"
-              style="margin-bottom: 15px"
-            />
-            Remember me
-          </label>
-
-          <p class="disclamer" style="font-family: Optima, sans-serif">
-            By creating an account you agree to our
-            <a href="#" style="color: dodgerblue">Terms & Privacy</a>.
-          </p>
-
-          <div class="container clearfix" style="background-color: #f1f1f1">
-            <button
-              type="button"
-              v-on:click="changeSignupView(false)"
-              class="cancelbtn"
-            >
-              Cancel
-            </button>
-            <span class="account"
-              >Already have an account?
-              <a
-                href="#"
-                v-on:click="
-                  changeSignupView(false);
-                  changeLoginView(true);
-                "
-                >Login</a
-              ></span
-            >
-          </div>
-        </div>
-      </form>
-    </div>
+    <TutorManagement />
 
     <!-----------------
     -   Router View   -
@@ -319,105 +174,60 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
+import TutorManagement from "@/components/TutorManagement";
 
 export default {
   name: "App",
-  components: {},
+  components: { TutorManagement },
   data() {
     return {
-      users: [],
-      user: null,
-      name: "",
+      /*      name: "",
       email: "",
       age: "",
-      // gender: "",
-      // city: "",
-      state: "",
-      showTutors: false,
-      showHide: "Show",
-      editTutors: false,
-      saveEdit: "Edit",
-      loginBlock: false,
-      signupBlock: false,
+      state: "",*/
     };
   },
   computed: {
-    getUsersArray() {
-      return this.users;
-    },
+    /*    getUsersArray() {
+      return this.$root.$data.users;
+    },*/
   },
-  created() {
-    // this.getUsers();
-  },
+  created() {},
   methods: {
-    async addUser() {
+    /*    async editUser(user) {
       try {
-        await axios.post(`/api/tutors/${this.tutor._id}/users`, {
-          name: this.name,
-          email: this.email,
-          age: this.age,
-          state: this.state,
-        });
-        this.resetData();
-        await this.getUsers();
-      } catch (error) {
-        await this.sendError(error);
-      }
-    },
-    async getUsers() {
-      try {
-        const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
-        this.items = response.data;
-      } catch (error) {
-        await this.sendError(error);
-      }
-    },
-    async editUser(user) {
-      try {
-        await axios.put(`/api/tutors/${this.tutor._id}/items/${user._id}`, {
-          name: user.name,
-          email: user.email,
-          age: user.age,
-          state: user.state,
-          editTutors: !user.editTutors,
-          saveEdit: user.editTutors ? "Edit" : "Save",
-        });
+        await axios.put(
+          `/api/tutors/${this.$root.$data.tutors._id}/users/${user._id}`,
+          {
+            name: user.name,
+            email: user.email,
+            age: user.age,
+            state: user.state,
+            editTutors: !user.editTutors,
+            saveEdit: user.editTutors ? "Edit" : "Save",
+          }
+        );
         await this.getUsers();
         return true;
       } catch (error) {
-        await this.sendError(error);
+        await this.$root.$data.sendError(error);
       }
-    },
-    async deleteUser(user) {
+    },*/
+    /*    async deleteUser(user) {
       try {
-        await axios.delete(`/api/tutors/${this.tutor._id}/users/${user._id}`);
+        await axios.delete(
+          `/api/tutors/${this.$root.$data.tutors._id}/users/${user._id}`
+        );
         await this.getUsers();
       } catch (error) {
-        await this.sendError(error);
+        await this.$root.$data.sendError(error);
       }
-    },
-    async sendError(error) {
-      await axios.post(`/api/error/${error}`);
-    },
-    changeSignupView(showHide) {
-      this.signupBlock = showHide;
-    },
-    changeLoginView(showHide) {
-      this.loginBlock = showHide;
-    },
-    selectUser(user) {
+    },*/
+    /*    selectUser(user) {
       this.user = user;
       this.getUsers();
-    },
-    resetData() {
-      this.name = "";
-      this.email = "";
-      this.age = "";
-      // this.gender = "";
-      // this.city = "";
-      this.state = "";
-    },
+    },*/
   },
 };
 
@@ -518,171 +328,6 @@ nav {
 @media only screen and (min-width: 1px) and (max-width: 960px) {
   body {
     --text_scalar: 0.8;
-  }
-}
-
-/*****************************
-*   Login and Signup Forms   *
-*****************************/
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-  padding-top: 50px;
-}
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  margin: auto; /* 15% from the top and centered was login */
-  /* margin: auto; 5% auto 15% auto; 5% from the top, 15% from the bottom and centered signup*/
-}
-
-.showSignup {
-  display: block !important;
-}
-
-.showLogin {
-  display: block !important;
-}
-
-div.loginForm span, div.signupForm span /* eslint-disable-line */ {
-  font-family: Optima, sans-serif;
-}
-
-/* The Close Button (x) */
-.close {
-  /* Position it in the top right corner outside of the modal */
-  position: absolute;
-  right: 3%;
-  top: 3%;
-  color: #dc3545;
-  font-size: 35px;
-  font-weight: bold;
-}
-
-/* Close button on hover */
-.close:hover,
-.close:focus {
-  color: #f44336; /* was red */
-  cursor: pointer;
-}
-
-/* Set a style for login and signup buttons */
-.button {
-  background-color: #4caf50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  /*opacity: 0.9;*/ /*Optional, was on the signup button*/
-}
-
-/* Add padding to containers */
-.container {
-  padding: 16px;
-}
-
-/* Extra style for the cancel button (red) */
-.cancelbtn {
-  width: auto;
-  padding: 10px 18px;
-  background-color: #f44336;
-}
-
-/* Add Zoom Animation */
-.animate {
-  -webkit-animation: animatezoom 0.6s;
-  animation: animatezoom 0.6s;
-}
-
-@-webkit-keyframes animatezoom {
-  from {
-    -webkit-transform: scale(0);
-  }
-  to {
-    -webkit-transform: scale(1);
-  }
-}
-
-@keyframes animatezoom {
-  from {
-    transform: scale(0);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-/*****************
-*   Login Form   *
-*****************/
-
-/* Bordered form */
-div.loginForm form {
-  border: 3px solid #f1f1f1;
-}
-
-/* Full-width inputs */
-div.loginForm input[type="text"],
-div.loginForm input[type="password"] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-/* Add a hover effect for buttons */
-div.loginForm button:hover {
-  opacity: 0.8;
-}
-
-/* Center the avatar image inside this container */
-div.loginForm .imgcontainer {
-  text-align: center;
-  margin: 24px 0 12px 0;
-}
-
-/* Avatar image */
-div.loginForm img.avatar {
-  width: 25% !important;
-  border-radius: 50%;
-}
-
-/* The "Forgot password" text */
-div.loginForm span.psw {
-  float: right;
-  padding-top: 16px;
-}
-
-div.loginForm span.signup {
-  float: right;
-  margin-right: 2px;
-}
-
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-  div.loginForm span.psw,
-  div.loginForm span.signup {
-    display: block;
-    float: none;
-  }
-  div.loginForm .cancelbtn {
-    width: 100%;
   }
 }
 

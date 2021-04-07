@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
-import Tutor from "../views/Tutor.vue";
+import Signup from "../views/Signup.vue";
 import Supportus from "../views/Supportus.vue";
 import About from "../views/About.vue";
 
@@ -14,9 +14,9 @@ const routes = [
     component: Home,
   },
   {
-    path: "/tutor",
-    name: "Tutor",
-    component: Tutor,
+    path: "/signup",
+    name: "Signup",
+    component: Signup,
   },
   {
     path: "/supportus",
