@@ -28,7 +28,13 @@
 
         <div class="container">
           <label for="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" id="uname" required />
+          <input
+            type="text"
+            placeholder="Enter Username"
+            id="uname"
+            required
+          />
+<!--                      v-model="loginEmail"-->
 
           <label for="psw1"><b>Password</b></label>
           <input
@@ -37,6 +43,7 @@
             id="psw1"
             required
           />
+<!--            v-model="loginPassword"-->
 
           <button type="submit" class="button">Login</button>
           <label>
@@ -405,6 +412,62 @@ div.loginForm span.signup {
     float: none;
   }
   div.loginForm .cancelbtn {
+    width: 100%;
+  }
+}
+
+/******************
+*   Signup Form   *
+******************/
+
+/* Full-width input fields */
+div.signupForm input[type="text"],
+div.signupForm input[type="password"] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+div.signupForm input[type="text"]:focus,
+div.signupForm input[type="password"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+div.signupForm hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+div.signupForm button:hover {
+  opacity: 1;
+}
+
+/* Clear floats */
+div.signupForm .clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+div.signupForm p.disclamer {
+  display: inline-block;
+  float: right;
+}
+
+/* The "All ready have an account" text */
+div.signupForm span.account {
+  float: right;
+  padding-top: 16px;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+  div.signupForm .cancelbtn,
+  div.signupForm .signupbtn {
     width: 100%;
   }
 }

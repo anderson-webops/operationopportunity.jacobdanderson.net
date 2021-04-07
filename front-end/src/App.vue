@@ -41,10 +41,14 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
+            <li v-bind:class="{ showProfile: $root.$data.profileLink }" class="nav-item hidden">
+              <router-link class="nav-link" to="/profile"></router-link>
+            </li>
           </ul>
           <!-- Button to open the modal login form -->
           <button
             class="btn btn-outline-success"
+            type="submit"
             type="submit"
             v-on:click="$root.$data.changeLoginView(true)"
           >
@@ -325,65 +329,17 @@ nav {
   font-family: Verdana, Calibri, Candara, sans-serif;
 }
 
+.hidden {
+  display: none;
+}
+
+.showProfile {
+  display: block !important;
+}
+
 @media only screen and (min-width: 1px) and (max-width: 960px) {
   body {
     --text_scalar: 0.8;
-  }
-}
-
-/******************
-*   Signup Form   *
-******************/
-
-/* Full-width input fields */
-div.signupForm input[type="text"],
-div.signupForm input[type="password"] {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  display: inline-block;
-  border: none;
-  background: #f1f1f1;
-}
-
-div.signupForm input[type="text"]:focus,
-div.signupForm input[type="password"]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-div.signupForm hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
-
-div.signupForm button:hover {
-  opacity: 1;
-}
-
-/* Clear floats */
-div.signupForm .clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-div.signupForm p.disclamer {
-  display: inline-block;
-  float: right;
-}
-
-/* The "All ready have an account" text */
-div.signupForm span.account {
-  float: right;
-  padding-top: 16px;
-}
-
-/* Change styles for cancel button and signup button on extra small screens */
-@media screen and (max-width: 300px) {
-  div.signupForm .cancelbtn,
-  div.signupForm .signupbtn {
-    width: 100%;
   }
 }
 

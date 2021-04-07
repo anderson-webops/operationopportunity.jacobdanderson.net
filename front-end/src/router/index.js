@@ -28,6 +28,11 @@ const routes = [
     name: "About",
     component: About,
   },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
+  },
 ];
 
 const router = new VueRouter({

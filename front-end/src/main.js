@@ -10,6 +10,7 @@ let data = {
   users: [],
   loginBlock: false,
   signupBlock: false,
+  profileLink: false,
   changeSignupView(showHide) {
     this.signupBlock = showHide;
   },
