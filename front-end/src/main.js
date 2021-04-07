@@ -7,10 +7,13 @@ Vue.config.productionTip = false;
 
 let data = {
   tutors: [],
+  allUsers: [],
   users: [],
+  currentTutor: "",
   loginBlock: false,
   signupBlock: false,
   profileLink: false,
+  showUsers: false,
   changeSignupView(showHide) {
     this.signupBlock = showHide;
   },

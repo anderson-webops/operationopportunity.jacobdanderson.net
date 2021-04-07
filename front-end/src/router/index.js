@@ -1,9 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Signup from "../views/Signup.vue";
-import Supportus from "../views/Supportus.vue";
-import About from "../views/About.vue";
+import Home from "@/views/Home.vue";
+import Signup from "@/views/Signup.vue";
+import Supportus from "@/views/Supportus.vue";
+import About from "@/views/About.vue";
+import Profile from "@/views/Profile";
 
 Vue.use(VueRouter);
 

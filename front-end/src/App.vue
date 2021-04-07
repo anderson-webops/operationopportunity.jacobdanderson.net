@@ -36,19 +36,23 @@
               <router-link class="nav-link" to="/signup">Signup</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/supportus">Support Us</router-link>
+              <router-link class="nav-link" to="/supportus"
+                >Support Us</router-link
+              >
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
-            <li v-bind:class="{ showProfile: $root.$data.profileLink }" class="nav-item hidden">
-              <router-link class="nav-link" to="/profile"></router-link>
+            <li
+              v-bind:class="{ showProfile: $root.$data.profileLink }"
+              class="nav-item hidden"
+            >
+              <router-link class="nav-link" to="/profile">Profile</router-link>
             </li>
           </ul>
           <!-- Button to open the modal login form -->
           <button
             class="btn btn-outline-success"
-            type="submit"
             type="submit"
             v-on:click="$root.$data.changeLoginView(true)"
           >
@@ -198,41 +202,7 @@ export default {
     },*/
   },
   created() {},
-  methods: {
-    /*    async editUser(user) {
-      try {
-        await axios.put(
-          `/api/tutors/${this.$root.$data.tutors._id}/users/${user._id}`,
-          {
-            name: user.name,
-            email: user.email,
-            age: user.age,
-            state: user.state,
-            editTutors: !user.editTutors,
-            saveEdit: user.editTutors ? "Edit" : "Save",
-          }
-        );
-        await this.getUsers();
-        return true;
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },*/
-    /*    async deleteUser(user) {
-      try {
-        await axios.delete(
-          `/api/tutors/${this.$root.$data.tutors._id}/users/${user._id}`
-        );
-        await this.getUsers();
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },*/
-    /*    selectUser(user) {
-      this.user = user;
-      this.getUsers();
-    },*/
-  },
+  methods: {},
 };
 
 // When the user clicks anywhere outside of the modal, close it
