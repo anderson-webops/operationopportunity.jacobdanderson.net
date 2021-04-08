@@ -124,6 +124,7 @@ export default {
       showTutors: false,
       showHide: "Show",
       editTutors: false,
+      editUsers: false,
       saveEdit: "Edit",
       usersOfTutorLength: "",
     };
@@ -137,10 +138,6 @@ export default {
       return (this.showHide = this.showTutors ? "Hide" : "Show");
     },
   },
-  // async mounted(tutor) {
-  //   await this.$nextTick();
-  //   await this.getUsersSpecificTutors(tutor);
-  // },
   created() {
     this.getTutors();
     this.getUsers();
@@ -156,6 +153,7 @@ export default {
           editUsers: !this.editUsers,
           saveEdit: this.editUsers ? "Edit" : "Save",
         });
+        /* FIXME will need to send this number to the backend somehow and get on load to keep track of */
         this.$root.$data.numberOfUsers += 1;
         await this.getUsers();
         this.resetData();
@@ -238,6 +236,7 @@ export default {
       this.state = "";
       this.tutor = null;
       this.editTutors = false;
+      this.editUsers = false;
     },
   },
 };

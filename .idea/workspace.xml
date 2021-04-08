@@ -9,7 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Final Edits">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Profile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
@@ -150,7 +149,7 @@
       <workItem from="1617662965197" duration="13166000" />
       <workItem from="1617679449934" duration="23000" />
       <workItem from="1617679545593" duration="68092000" />
-      <workItem from="1617838984043" duration="18065000" />
+      <workItem from="1617838984043" duration="19940000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -418,7 +417,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617852377940</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="Final Edits">
+      <created>1617871366359</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1617871366359</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
