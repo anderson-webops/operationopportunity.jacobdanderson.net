@@ -5,20 +5,24 @@
 
   <section class="Signup text-center">
     <!--   Show Current Tutor Profile   -->
-    <label for="tutorSelectProfile">Select a Tutor:</label>
-    <select v-model="tutor" id="tutorSelectProfile" required>
+    <label for="tutorSelectProfile" class="mr-2">Select a Tutor:</label>
+    <select
+      v-model="tutor"
+      @change="selectTutor(tutor)"
+      id="tutorSelectProfile"
+      required
+    >
       <option
         v-for="tutorIt in getTutorsArray"
         :value="tutorIt"
         v-bind:key="tutorIt.id"
-        @click="getUsers && selectTutor(tutorIt)"
       >
         {{ tutorIt.name }}
       </option>
     </select>
 
     <!--    <label for="tutorName"><h3>Tutor</h3></label>-->
-    <h3 id="tutorName">Tutor: {{ $root.$data.currentTutor.name }}</h3>
+    <!--    <h3 id="tutorName">Tutor: {{ $root.$data.currentTutor.name }}</h3>-->
 
     <hr />
 
@@ -78,11 +82,20 @@ export default {
     },
   },
   created() {
+    this.getTutors();
     this.getUsers();
   },
   methods: {
-    async getUsers() {
+    /*    async getUsers(tutorIt) {
       try {
+        tutorIt = this.getTutorsArray[0];
+        if (this.$root.$data.currentTutor !== null) {
+          tutorIt = this.$root.$data.currentTutor;
+          console.log(tutorIt);
+        } else this.$root.$data.currentTutor = tutorIt;
+        console.log(this.$root.$data.currentTutor);
+        console.log(this.$root.$data.currentTutor._id);
+        console.log(tutorIt);
         const response = await axios.get(
           `/api/tutors/${this.$root.$data.currentTutor._id}/users`
         );
@@ -90,15 +103,19 @@ export default {
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
-    },
-    /*    async getUsers() {
+    },*/
+    async getUsers() {
       try {
-        const response = await axios.get(`/api/users`);
-        this.$root.$data.users = response.data;
+        if (this.tutor != null) {
+          const response = await axios.get(
+            `/api/tutors/${this.tutor._id}/users`
+          );
+          this.$root.$data.users = response.data;
+        }
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
-    },*/
+    },
     async editUser(user) {
       try {
         await axios.put(
@@ -123,21 +140,39 @@ export default {
         await axios.delete(
           `/api/tutors/${this.$root.$data.currentTutor._id}/users/${user._id}`
         );
+        if (this.$root.$data.numberOfUsers > 1)
+          this.$root.$data.numberOfUsers -= 1;
         await this.getUsers();
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
     },
-    selectTutor(tutor) {
-      this.$root.$data.currentTutor = tutor;
-      this.$root.$data.showUsers = true;
-      this.$root.$data.profileLink = true;
-      this.getUsersSpecificTutors(tutor);
+    async getUsersSpecificTutors(tutor) {
+      try {
+        const response = await axios.get(`/api/tutors/${tutor._id}/users`);
+        this.usersOfTutorLength = response.data.length;
+        await this.getUsers();
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
     },
-    selectUser(user) {
+    async getTutors() {
+      try {
+        const response = await axios.get("/api/tutors");
+        this.$root.$data.tutors = response.data;
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    selectTutor() {
+      this.$root.$data.currentTutor = this.tutor;
+      this.$root.$data.showUsers = true;
+      this.getUsersSpecificTutors(this.tutor);
+    },
+    /*    selectUser(user) {
       this.user = user;
       this.getUsers();
-    },
+    },*/
   },
 };
 </script>
