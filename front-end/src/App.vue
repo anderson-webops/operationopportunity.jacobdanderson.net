@@ -44,7 +44,7 @@
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
             <li
-              v-bind:class="{ showProfile: $root.$data.profileLink }"
+              v-bind:class="{ showProfile: ($root.$data.tutors.length > 0) }"
               class="nav-item hidden"
             >
               <router-link class="nav-link" to="/profile">Profile</router-link>
@@ -189,17 +189,15 @@ export default {
   name: "App",
   components: { TutorManagement },
   data() {
-    return {
-      /*      name: "",
-      email: "",
-      age: "",
-      state: "",*/
-    };
+    return {};
   },
   computed: {
-    /*    getUsersArray() {
+    getUsersArray() {
       return this.$root.$data.users;
-    },*/
+    },
+    getTutorsArray() {
+      return this.$root.$data.tutors;
+    },
   },
   created() {},
   methods: {},

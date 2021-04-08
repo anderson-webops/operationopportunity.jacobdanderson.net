@@ -49,6 +49,7 @@
         <label for="tutorSelect" class="mt-3">Tutor: </label>
         <br />
         <select v-model="tutor" id="tutorSelect" required>
+          <!--   FIXME May need to hide and display message saying that a tutor is needed   -->
           <option
             v-for="tutorIt in getTutorsArray"
             :value="tutorIt"
@@ -69,7 +70,8 @@
       <hr v-show="showTutors" />
 
       <!--   List Tutors   -->
-      <h3>Total Users: {{ $root.$data.allUsers.length }}</h3>
+      <h3>Total Tutors: {{ $root.$data.tutors.length }}</h3>
+      <h3>Total Users: {{ $root.$data.numberOfUsers }}</h3>
 
       <div
         class="tutorList mt-2"
@@ -101,7 +103,7 @@
         <button @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
           {{ tutorIt.saveEdit }}
         </button>
-        <button @click="selectTutor(tutorIt)">Select</button>
+        <!--        <button @click="selectTutor(tutorIt)">Select</button>-->
       </div>
     </div>
   </section>
@@ -142,7 +144,6 @@ export default {
   created() {
     this.getTutors();
     this.getUsers();
-    this.getAllUsers();
   },
   methods: {
     async addUser() {
@@ -152,9 +153,10 @@ export default {
           email: this.email,
           age: this.age,
           state: this.state,
-          editTutors: !this.editTutors,
-          saveEdit: this.editTutors ? "Edit" : "Save",
+          editUsers: !this.editUsers,
+          saveEdit: this.editUsers ? "Edit" : "Save",
         });
+        this.$root.$data.numberOfUsers += 1;
         await this.getUsers();
         this.resetData();
       } catch (error) {
@@ -164,17 +166,11 @@ export default {
     async getUsers() {
       try {
         if (this.tutor != null) {
-          const response = await axios.get(`/api/tutors/${this.tutor._id}/users`);
+          const response = await axios.get(
+            `/api/tutors/${this.tutor._id}/users`
+          );
           this.$root.$data.users = response.data;
         }
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },
-    async getAllUsers() {
-      try {
-        const response = await axios.get(`/api/tutors/allusers`);
-        this.$root.$data.allUsers = response.data;
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
@@ -187,14 +183,6 @@ export default {
         await this.$root.$data.sendError(error);
       }
     },
-    /*    async getUsers() {
-      try {
-        const response = await axios.get(`/api/users`);
-        this.$root.$data.users = response.data;
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },*/
     async getTutors() {
       try {
         const response = await axios.get("/api/tutors");
@@ -221,6 +209,7 @@ export default {
     },
     async deleteUsersUnderTutor(tutor) {
       try {
+        /*FIXME May need to find a way to decrease the "number" of users when deleted this way*/
         await axios.delete(`/api/tutors/${tutor._id}/users`);
         await this.getTutors();
       } catch (error) {

@@ -4,21 +4,25 @@
   -------------->
 
   <section class="Signup text-center">
+    <h2>Tutor</h2>
+    <h2 class="mb-3">{{ $root.$data.currentTutor.name }}</h2>
+
     <!--   Show Current Tutor Profile   -->
-    <label for="tutorSelectProfile">Select a Tutor:</label>
-    <select v-model="tutor" id="tutorSelectProfile" required>
+    <label for="tutorSelectProfile" class="mr-2">Select a Tutor:</label>
+    <select
+      v-model="tutor"
+      @change="selectTutor(tutor)"
+      id="tutorSelectProfile"
+      required
+    >
       <option
         v-for="tutorIt in getTutorsArray"
         :value="tutorIt"
         v-bind:key="tutorIt.id"
-        @click="getUsers && selectTutor(tutorIt)"
       >
         {{ tutorIt.name }}
       </option>
     </select>
-
-    <!--    <label for="tutorName"><h3>Tutor</h3></label>-->
-    <h3 id="tutorName">Tutor: {{ $root.$data.currentTutor.name }}</h3>
 
     <hr />
 
@@ -26,7 +30,6 @@
     <h2>Users</h2>
     <div
       class="tutorList mt-2"
-      v-show="$root.$data.showUsers"
       v-for="userIt in getUsersArray"
       v-bind:key="userIt.id"
     >
@@ -76,13 +79,29 @@ export default {
     getTutorsArray() {
       return this.$root.$data.tutors;
     },
+    /*    getCurrentTutorName() {
+      if (this.$root.$data.currentTutor === null) {
+        return this.getTutorsArray[0].name;
+      } else {
+        return this.$root.$data.currentTutor.name;
+      }
+    },*/
   },
   created() {
+    this.getTutors();
     this.getUsers();
   },
   methods: {
-    async getUsers() {
+    /*    async getUsers(tutorIt) {
       try {
+        tutorIt = this.getTutorsArray[0];
+        if (this.$root.$data.currentTutor !== null) {
+          tutorIt = this.$root.$data.currentTutor;
+          console.log(tutorIt);
+        } else this.$root.$data.currentTutor = tutorIt;
+        console.log(this.$root.$data.currentTutor);
+        console.log(this.$root.$data.currentTutor._id);
+        console.log(tutorIt);
         const response = await axios.get(
           `/api/tutors/${this.$root.$data.currentTutor._id}/users`
         );
@@ -90,15 +109,25 @@ export default {
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
-    },
-    /*    async getUsers() {
+    },*/
+    async getUsers() {
       try {
-        const response = await axios.get(`/api/users`);
-        this.$root.$data.users = response.data;
+        if (this.tutor != null) {
+          const response = await axios.get(
+            `/api/tutors/${this.tutor._id}/users`
+          );
+          this.$root.$data.users = response.data;
+        } else {
+          /* if no tutor is currently selected, default to the first tutor in the array */
+          const response = await axios.get(
+            `/api/tutors/${this.$root.$data.tutors[0]._id}/users`
+          );
+          this.$root.$data.users = response.data;
+        }
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
-    },*/
+    },
     async editUser(user) {
       try {
         await axios.put(
@@ -123,21 +152,33 @@ export default {
         await axios.delete(
           `/api/tutors/${this.$root.$data.currentTutor._id}/users/${user._id}`
         );
+        if (this.$root.$data.numberOfUsers > 0)
+          this.$root.$data.numberOfUsers -= 1;
         await this.getUsers();
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
     },
-    selectTutor(tutor) {
-      this.$root.$data.currentTutor = tutor;
-      this.$root.$data.showUsers = true;
-      this.$root.$data.profileLink = true;
-      this.getUsersSpecificTutors(tutor);
+    async getTutors() {
+      try {
+        const response = await axios.get("/api/tutors");
+        this.$root.$data.tutors = response.data;
+        /* Make sure name is loaded for the header */
+        if (this.tutor === null) {
+          this.$root.$data.currentTutor = this.getTutorsArray[0];
+        }
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
     },
-    selectUser(user) {
-      this.user = user;
+    selectTutor() {
+      this.$root.$data.currentTutor = this.tutor;
       this.getUsers();
     },
+    /*    selectUser(user) {
+      this.user = user;
+      this.getUsers();
+    },*/
   },
 };
 </script>

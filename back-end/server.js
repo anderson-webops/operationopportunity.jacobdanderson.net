@@ -149,7 +149,7 @@ const userSchema = new mongoose.Schema({
     email: String,
     age: String,
     state: String,
-    editTutors: Boolean,
+    editUsers: Boolean,
     saveEdit: String,
 })
 
@@ -201,19 +201,6 @@ app.get('/api/tutors/:tutorID/users', async (req, res) => {
     }
 });
 
-// Get all users
-app.get('/api/tutors/allusers', async (req, res) => {
-    try {
-        let users = await User.find();
-        res.send(users);
-    } catch (error) {
-        console.log(`${error} at line: ${error.lineNumber}`);
-        res.sendStatus(500).send({
-            message: `Error: ${error} at line: ${error.lineNumber}`
-        });
-    }
-});
-
 // Update user info
 app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
     try {
@@ -226,10 +213,10 @@ app.put('/api/tutors/:tutorID/users/:userID', async (req, res) => {
         user.email = req.body.email;
         user.age = req.body.age;
         user.state = req.body.state;
-        user.editTutors = req.body.editTutors;
+        user.editUsers = req.body.editUsers;
         user.saveEdit = req.body.saveEdit;
         await user.save();
-        res.send(user);
+        res.sendStatus(200);
     } catch (error) {
         console.log(`${error} at line: ${error.lineNumber}`);
         res.sendStatus(500).send({
