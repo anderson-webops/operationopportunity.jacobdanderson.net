@@ -70,6 +70,7 @@ export default {
       tutor: null,
       editUsers: false,
       saveEdit: "Edit",
+      error: "",
     };
   },
   computed: {
@@ -87,9 +88,13 @@ export default {
       }
     },*/
   },
-  created() {
-    this.getTutors();
-    this.getUsers();
+  async created() {
+    try {
+      await this.getTutors();
+      await this.getUsers();
+    } catch (error) {
+      this.error = error.response.data.message;
+    }
   },
   methods: {
     /*    async getUsers(tutorIt) {
@@ -149,11 +154,10 @@ export default {
     },
     async deleteUser(user) {
       try {
+        await this.updateNumberOfUsers(-1);
         await axios.delete(
           `/api/tutors/${this.$root.$data.currentTutor._id}/users/${user._id}`
         );
-        if (this.$root.$data.numberOfUsers > 0)
-          this.$root.$data.numberOfUsers -= 1;
         await this.getUsers();
       } catch (error) {
         await this.$root.$data.sendError(error);
@@ -174,6 +178,34 @@ export default {
     selectTutor() {
       this.$root.$data.currentTutor = this.tutor;
       this.getUsers();
+    },
+    async updateNumberOfUsers(inc) {
+      try {
+        console.log("About to Put");
+        console.log(this.$root.$data.numberOfUsers);
+        await axios.put(`/api/numberofusers`, {
+          numberOfUsers: this.$root.$data.numberOfUsers + inc,
+        });
+        await this.getNumberOfUsers();
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async getNumberOfUsers() {
+      try {
+        console.log("Get Number of Users");
+        const response = await axios.get(`/api/numberofusers`);
+        console.log("Await completed");
+        this.$root.$data.numberOfUsers = response.data;
+        console.log(
+          "Response: ",
+          response.data,
+          " New Number: ",
+          this.$root.$data.numberOfUsers
+        );
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
     },
     /*    selectUser(user) {
       this.user = user;

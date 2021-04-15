@@ -32,12 +32,8 @@
           <!--                      v-model="loginEmail"-->
 
           <label for="psw1"><b>Password</b></label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            id="psw1"
-            required
-          />
+          <input type="password" placeholder="Enter Password" id="psw1" />
+          <!--          required-->
           <!--            v-model="loginPassword"-->
 
           <button type="submit" class="button">Login</button>
@@ -87,7 +83,9 @@
 
         <div class="container">
           <h1 class="mb-2">Sign Up</h1>
-          <p>Please fill in this form to create an account.</p>
+          <p>
+            Please fill in this form to create an account and become a tutor.
+          </p>
           <hr />
 
           <label for="name"><b>Name</b></label>
@@ -132,8 +130,8 @@
             placeholder="Enter Password"
             id="psw2"
             v-model="password"
-            required
           />
+          <!--            required-->
 
           <label for="psw-repeat"><b>Repeat Password</b></label>
           <input
@@ -141,8 +139,8 @@
             placeholder="Repeat Password"
             id="psw-repeat"
             v-model="passwordRepeat"
-            required
           />
+          <!--            required-->
 
           <button type="submit" class="signup button">Sign Up</button>
           <label>

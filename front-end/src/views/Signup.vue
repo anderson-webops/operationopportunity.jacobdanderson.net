@@ -48,7 +48,12 @@
         <br />
         <label for="tutorSelect" class="mt-3">Tutor: </label>
         <br />
-        <select v-model="tutor" id="tutorSelect" required>
+        <select
+          v-if="$root.$data.tutors.length > 0"
+          v-model="tutor"
+          id="tutorSelect"
+          required
+        >
           <!--   FIXME May need to hide and display message saying that a tutor is needed   -->
           <option
             v-for="tutorIt in getTutorsArray"
@@ -58,6 +63,7 @@
             {{ tutorIt.name }}
           </option>
         </select>
+        <p v-else>No Tutors are available</p>
         <br />
 
         <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
@@ -127,6 +133,7 @@ export default {
       editUsers: false,
       saveEdit: "Edit",
       usersOfTutorLength: "",
+      error: "",
     };
   },
   computed: {
@@ -138,9 +145,14 @@ export default {
       return (this.showHide = this.showTutors ? "Hide" : "Show");
     },
   },
-  created() {
-    this.getTutors();
-    this.getUsers();
+  async created() {
+    try {
+      await this.getTutors();
+      await this.getUsers();
+      await this.getNumberOfUsers();
+    } catch (error) {
+      this.error = error.response.data.message;
+    }
   },
   methods: {
     async addUser() {
@@ -150,22 +162,29 @@ export default {
           email: this.email,
           age: this.age,
           state: this.state,
-          editUsers: !this.editUsers,
-          saveEdit: this.editUsers ? "Edit" : "Save",
+          editUsers: false,
+          saveEdit: "Edit",
         });
-        /* FIXME will need to send this number to the backend somehow and get on load to keep track of */
-        this.$root.$data.numberOfUsers += 1;
+        await this.updateNumberOfUsers(1);
         await this.getUsers();
         this.resetData();
       } catch (error) {
         await this.$root.$data.sendError(error);
       }
     },
-    async getUsers() {
+    async getUsers(tutorIt) {
       try {
         if (this.tutor != null) {
           const response = await axios.get(
             `/api/tutors/${this.tutor._id}/users`
+          );
+          this.$root.$data.users = response.data;
+        } else if (tutorIt != null) {
+          const response = await axios.get(`/api/tutors/${tutorIt._id}/users`);
+          this.$root.$data.users = response.data;
+        } else {
+          const response = await axios.get(
+            `/api/tutors/${this.$root.$data.tutors[0]._id}/users`
           );
           this.$root.$data.users = response.data;
         }
@@ -207,7 +226,6 @@ export default {
     },
     async deleteUsersUnderTutor(tutor) {
       try {
-        /*FIXME May need to find a way to decrease the "number" of users when deleted this way*/
         await axios.delete(`/api/tutors/${tutor._id}/users`);
         await this.getTutors();
       } catch (error) {
@@ -216,9 +234,33 @@ export default {
     },
     async deleteTutor(tutor) {
       try {
+        this.tutor = tutor; // as extra security
+        await this.getUsers(tutor);
+        // eslint-disable-next-line no-unused-vars
+        for (let userIt = 0; userIt < this.$root.$data.users.length; userIt++) {
+          await this.updateNumberOfUsers(-1);
+        }
         await this.deleteUsersUnderTutor(tutor);
         await axios.delete(`/api/tutors/${tutor._id}`);
         await this.getTutors();
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async updateNumberOfUsers(inc) {
+      try {
+        await axios.put(`/api/numberofusers`, {
+          numberOfUsers: this.$root.$data.numberOfUsers + inc,
+        });
+        await this.getNumberOfUsers();
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async getNumberOfUsers() {
+      try {
+        const response = await axios.get(`/api/numberofusers`);
+        this.$root.$data.numberOfUsers = response.data.numberOfUsers;
       } catch (error) {
         await this.$root.$data.sendError(error);
       }

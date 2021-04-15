@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated />
   </component>
@@ -8,8 +11,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Final Edits">
+      <change afterPath="$PROJECT_DIR$/.run/OperationOpportunity.run.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.run/serve.run.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/.eslintrc.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/numberofusers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/tutors.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Profile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/vue.config.js" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,11 +39,14 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="Vue Single File Component" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -40,8 +62,21 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/back-end/server.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/views/Signup.vue" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/views/Profile.vue" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/App.vue" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/vue.config.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/back-end/numberofusers.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/main.js" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="6rpmy4so" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
   </component>
   <component name="ProjectId" id="1ox7YxWZCXLzr2rwHJ3Tkqlu0P0" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -53,6 +88,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_MARK_IGNORED_FILES_AS_EXCLUDED" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -72,12 +108,18 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path" value="$PROJECT_DIR$/../.nvm/versions/node/v15.14.0/bin/node" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.folding" />
+    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/back-end" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/front-end/public/Images" />
       <recent name="$PROJECT_DIR$/front-end/public/Favicons" />
@@ -85,12 +127,20 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="npm.serve">
     <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="OperationOpportunity JavaScript" type="JavascriptDebugType" uri="http://localhost:8080/">
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.OperationOpportunity JavaScript" />
+      <item itemvalue="npm.serve" />
+      <item itemvalue="Node.js.OperationOpportunity" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -149,7 +199,24 @@
       <workItem from="1617662965197" duration="13166000" />
       <workItem from="1617679449934" duration="23000" />
       <workItem from="1617679545593" duration="68092000" />
-      <workItem from="1617838984043" duration="19940000" />
+      <workItem from="1617838984043" duration="24902000" />
+      <workItem from="1617906512031" duration="16950000" />
+      <workItem from="1617937180163" duration="3138000" />
+      <workItem from="1617988452779" duration="2251000" />
+      <workItem from="1617991786489" duration="621000" />
+      <workItem from="1617992437241" duration="92000" />
+      <workItem from="1617992558271" duration="300000" />
+      <workItem from="1617993298109" duration="659000" />
+      <workItem from="1617994173057" duration="400000" />
+      <workItem from="1617994623715" duration="365000" />
+      <workItem from="1618038195014" duration="3235000" />
+      <workItem from="1618067975018" duration="523000" />
+      <workItem from="1618068587258" duration="56000" />
+      <workItem from="1618068752650" duration="2300000" />
+      <workItem from="1618417367833" duration="89000" />
+      <workItem from="1618441190192" duration="183000" />
+      <workItem from="1618441535495" duration="3668000" />
+      <workItem from="1618510654807" duration="5465000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -424,7 +491,21 @@
       <option name="project" value="LOCAL" />
       <updated>1617871366359</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Final Edits">
+      <created>1617873411541</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1617873411541</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Final Edits">
+      <created>1617873417204</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1617873417204</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -444,6 +525,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/googletest" />
+    </ignored-roots>
     <MESSAGE value="Design edit and stylesheet ordering" />
     <MESSAGE value="Design edit and stylesheet ordering, change background color" />
     <MESSAGE value="Setting up Vue for Creative Project 3" />
@@ -470,6 +554,17 @@
     <MESSAGE value="Near Final Updates" />
     <MESSAGE value="Final Edits" />
     <option name="LAST_COMMIT_MESSAGE" value="Final Edits" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

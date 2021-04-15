@@ -44,7 +44,7 @@
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
             <li
-              v-bind:class="{ showProfile: ($root.$data.tutors.length > 0) }"
+              v-bind:class="{ showProfile: $root.$data.tutors.length > 0 }"
               class="nav-item hidden"
             >
               <router-link class="nav-link" to="/profile">Profile</router-link>
@@ -184,12 +184,15 @@
 <script>
 // import axios from "axios";
 import TutorManagement from "@/components/TutorManagement";
+import axios from "axios";
 
 export default {
   name: "App",
   components: { TutorManagement },
   data() {
-    return {};
+    return {
+      error: "",
+    };
   },
   computed: {
     getUsersArray() {
@@ -199,8 +202,35 @@ export default {
       return this.$root.$data.tutors;
     },
   },
-  created() {},
-  methods: {},
+  async created() {
+    try {
+      await this.setNumberOfUsers();
+    } catch (error) {
+      this.error = error.response.data.message;
+    }
+  },
+  methods: {
+    async setNumberOfUsers() {
+      try {
+        await this.getNumberOfUsers();
+        if (this.$root.$data.numberOfUsers == undefined) {
+          await axios.post(`/api/numberofusers`, {
+            numberOfUsers: 0,
+          });
+        }
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+    async getNumberOfUsers() {
+      try {
+        const response = await axios.get(`/api/numberofusers`);
+        this.$root.$data.numberOfUsers = response.data.numberOfUsers;
+      } catch (error) {
+        await this.$root.$data.sendError(error);
+      }
+    },
+  },
 };
 
 // When the user clicks anywhere outside of the modal, close it
@@ -329,6 +359,7 @@ section h2 {
 }
 
 section p,
+select,
 label {
   font-size: 18px;
   text-align: justify;
