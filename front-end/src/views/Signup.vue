@@ -63,45 +63,55 @@
             {{ tutorIt.name }}
           </option>
         </select>
-        <p v-else>No Tutors are available</p>
+        <p class="notutors" v-else>No Tutors are available</p>
         <br />
 
         <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
       </form>
 
-      <button @click="showTutors = !showTutors" v-bind:string="showHideTutors">
+      <button
+        v-show="$root.$data.tutors.length > 0"
+        @click="showTutors = !showTutors"
+        v-bind:string="showHideTutors"
+      >
         {{ this.showHide }} tutors
       </button>
 
-      <hr v-show="showTutors" />
+      <hr v-show="showTutors && $root.$data.tutors.length > 0" />
 
       <!--   List Tutors   -->
-      <h3>Total Tutors: {{ $root.$data.tutors.length }}</h3>
-      <h3>Total Users: {{ $root.$data.numberOfUsers }}</h3>
+      <h3 v-show="$root.$data.tutors.length > 0">
+        Total Tutors: {{ $root.$data.tutors.length }}
+      </h3>
+      <h3 v-show="$root.$data.tutors.length > 0">
+        Total Users: {{ numberOfUsers }}
+      </h3>
 
       <div
         class="tutorList mt-2"
-        v-show="showTutors"
+        v-show="showTutors && $root.$data.tutors.length > 0"
         v-for="tutorIt in getTutorsArray"
         v-bind:key="tutorIt.id"
       >
         <br />
         <ul>
           <!-- eslint-disable-->
+          <!--   EDIT   -->
           <li v-show="tutorIt.editTutors"><label>Name:&emsp;<input class="editTutor" type="text" v-model="tutorIt.name" /></label></li>
           <li v-show="tutorIt.editTutors"><label>Email:&emsp;<input class="editTutor" type="text" v-model="tutorIt.email" /></label></li>
           <li v-show="tutorIt.editTutors"><label>Age:&emsp;<input class="editTutor" type="text" v-model="tutorIt.age" /></label></li>
-<!--          <li v-show="tutor.editTutors"><label for="i4">Gender:</label>&emsp;<input id="i4" class="editTutor" type="text" v-model="tutor.gender" /></li>
-          <li v-show="tutor.editTutors"><label for="i5">City:</label>&emsp;<input id="i5" class="editTutor" type="text" v-model="tutor.city" /></li>-->
+          <!--          <li v-show="tutor.editTutors"><label for="i4">Gender:</label>&emsp;<input id="i4" class="editTutor" type="text" v-model="tutor.gender" /></li>
+                    <li v-show="tutor.editTutors"><label for="i5">City:</label>&emsp;<input id="i5" class="editTutor" type="text" v-model="tutor.city" /></li>-->
           <li v-show="tutorIt.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="tutorIt.state" /></label></li>
 
+          <!--   DISPLAY   -->
           <li v-show="!tutorIt.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ tutorIt.name }}</p></li>
           <li v-show="!tutorIt.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p></li>
           <li v-show="!tutorIt.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ tutorIt.age }}</p></li>
-<!--          <li v-show="!tutor.editTutors"><label class="hidden" for="p4">Gender:</label>&emsp;<p id="p4">{{ tutor.gender }}</p></li>
-          <li v-show="!tutor.editTutors"><label class="hidden" for="p5">City:</label>&emsp;<p id="p5">{{ tutor.city }}</p></li>-->
+          <!--          <li v-show="!tutor.editTutors"><label class="hidden" for="p4">Gender:</label>&emsp;<p id="p4">{{ tutor.gender }}</p></li>
+                    <li v-show="!tutor.editTutors"><label class="hidden" for="p5">City:</label>&emsp;<p id="p5">{{ tutor.city }}</p></li>-->
           <li v-show="!tutorIt.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p></li>
-          <li v-show="!tutorIt.editTutors" v-on:load="getUsersSpecificTutors(tutorIt)"><label class="hidden">Users:</label>&emsp;<p>{{ tutorIt.usersOfTutorLength }}</p></li>
+          <li v-show="!tutorIt.editTutors"><label class="hidden">Users:</label>&emsp;<p>{{ tutorIt.usersOfTutorLength }}</p></li>
           <!-- eslint-enable-->
         </ul>
         <br />
@@ -112,6 +122,7 @@
         <!--        <button @click="selectTutor(tutorIt)">Select</button>-->
       </div>
     </div>
+    <p v-if="error" class="error">{{ error }}</p>
   </section>
 </template>
 
@@ -132,7 +143,7 @@ export default {
       editTutors: false,
       editUsers: false,
       saveEdit: "Edit",
-      usersOfTutorLength: "",
+      numberOfUsers: 0,
       error: "",
     };
   },
@@ -148,16 +159,16 @@ export default {
   async created() {
     try {
       await this.getTutors();
-      await this.getUsers();
-      await this.getNumberOfUsers();
+      await this.getUsers(this.tutor);
+      // await this.getNumberOfUsers(); // This is already called in getUsers
     } catch (error) {
-      this.error = error.response.data.message;
+      this.error = "Error: " + error.response.data.message;
     }
   },
   methods: {
     async addUser() {
       try {
-        await axios.post(`/api/tutors/${this.tutor._id}/users`, {
+        await axios.post(`/api/users/${this.tutor._id}`, {
           name: this.name,
           email: this.email,
           age: this.age,
@@ -165,47 +176,32 @@ export default {
           editUsers: false,
           saveEdit: "Edit",
         });
-        await this.updateNumberOfUsers(1);
-        await this.getUsers();
+        await this.getUsers(this.tutor);
+        await this.getNumberOfUsers();
         this.resetData();
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
-    async getUsers(tutorIt) {
+    async getUsers(tutor) {
       try {
-        if (this.tutor != null) {
-          const response = await axios.get(
-            `/api/tutors/${this.tutor._id}/users`
-          );
+        await this.getNumberOfUsers();
+        if (this.numberOfUsers !== 0) {
+          const response = await axios.get(`/api/users/oftutor/${tutor._id}`);
           this.$root.$data.users = response.data;
-        } else if (tutorIt != null) {
-          const response = await axios.get(`/api/tutors/${tutorIt._id}/users`);
-          this.$root.$data.users = response.data;
-        } else {
-          const response = await axios.get(
-            `/api/tutors/${this.$root.$data.tutors[0]._id}/users`
-          );
-          this.$root.$data.users = response.data;
+          await this.numberOfUsersTaughtByTutor(tutor, response.data.length);
         }
       } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },
-    async getUsersSpecificTutors(tutor) {
-      try {
-        const response = await axios.get(`/api/tutors/${tutor._id}/users`);
-        this.usersOfTutorLength = response.data.length;
-      } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async getTutors() {
       try {
         const response = await axios.get("/api/tutors");
         this.$root.$data.tutors = response.data;
+        this.tutor = this.$root.$data.tutors[0]; //default the current tutor to the first tutor
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async editTutor(tutor) {
@@ -221,55 +217,59 @@ export default {
         await this.getTutors();
         return true;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
-    async deleteUsersUnderTutor(tutor) {
+    async numberOfUsersTaughtByTutor(tutor, numberOfUsers) {
       try {
-        await axios.delete(`/api/tutors/${tutor._id}/users`);
+        await axios.put(`/api/tutors/${tutor._id}`, {
+          name: tutor.name,
+          email: tutor.email,
+          age: tutor.age,
+          state: tutor.state,
+          usersOfTutorLength: numberOfUsers,
+          editTutors: tutor.editTutors,
+          saveEdit: tutor.saveEdit,
+        });
         await this.getTutors();
+        return true;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async deleteTutor(tutor) {
       try {
-        this.tutor = tutor; // as extra security
         await this.getUsers(tutor);
-        // eslint-disable-next-line no-unused-vars
-        for (let userIt = 0; userIt < this.$root.$data.users.length; userIt++) {
-          await this.updateNumberOfUsers(-1);
-        }
-        await this.deleteUsersUnderTutor(tutor);
+
+        // await this.deleteUsersUnderTutor(tutor);
+        await axios.delete(`/api/users/under/${tutor._id}`);
         await axios.delete(`/api/tutors/${tutor._id}`);
         await this.getTutors();
+        await this.getUsers();
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
-    async updateNumberOfUsers(inc) {
+    /*    async deleteUsersUnderTutor(tutor) {
       try {
-        await axios.put(`/api/numberofusers`, {
-          numberOfUsers: this.$root.$data.numberOfUsers + inc,
-        });
-        await this.getNumberOfUsers();
+        await axios.delete(`/api/users/under/${tutor._id}`);
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
-    },
+    },*/
     async getNumberOfUsers() {
       try {
-        const response = await axios.get(`/api/numberofusers`);
-        this.$root.$data.numberOfUsers = response.data.numberOfUsers;
+        const response = await axios.get(`/api/users/all`);
+        this.numberOfUsers = response.data.length;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
+        this.numberOfUsers = 0;
       }
     },
     selectTutor(tutor) {
       this.$root.$data.currentTutor = tutor;
       this.$root.$data.showUsers = true;
       this.$root.$data.profileLink = true;
-      this.getUsersSpecificTutors(tutor);
     },
     resetData() {
       this.name = "";
@@ -307,6 +307,10 @@ div.tutorList {
   padding-bottom: 1%;
   width: 35%;
   margin: auto;
+}
+
+.notutors {
+  text-align: center;
 }
 
 @media only screen and (min-width: 1px) and (max-width: 960px) {

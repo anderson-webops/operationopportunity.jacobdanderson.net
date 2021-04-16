@@ -35,13 +35,12 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
-    // generate a hash. argon2 does the salting and hashing for us
-    const hash = await argon2.hash(this.password);
+    // generate a hash. argon2 does the salting and hashing for us and
     // override the plaintext password with the hashed one
-    this.password = hash;
+    this.password = await argon2.hash(this.password); //was variable hash
     next();
   } catch (error) {
-    console.log(error);
+    console.log(`Error: ${error}`);
     next(error);
   }
 });
@@ -54,8 +53,7 @@ userSchema.methods.comparePassword = async function (password) {
     // note that we supply the hash stored in the database (first argument) and
     // the plaintext password. argon2 will do the hashing and salting and
     // comparison for us.
-    const isMatch = await argon2.verify(this.password, password);
-    return isMatch;
+    return await argon2.verify(this.password, password); //was variable isMatch
   } catch (error) {
     return false;
   }
@@ -106,7 +104,7 @@ const validUser = async (req, res, next) => {
 };
 
 // Create a user
-router.post("/:tutorID/users", async (req, res) => {
+router.post("/:tutorID", async (req, res) => {
   try {
     let tutor = await Tutor.findOne({ _id: req.params.tutorID });
     if (!tutor) {
@@ -124,15 +122,13 @@ router.post("/:tutorID/users", async (req, res) => {
     await user.save();
     return res.send(user);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
-    return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
-    });
+    console.log(error);
+    return res.sendStatus(500);
   }
 });
 
 // Get users belonging to a tutor
-router.get("/:tutorID/users", async (req, res) => {
+router.get("/oftutor/:tutorID", async (req, res) => {
   try {
     let tutor = await Tutor.findOne({ _id: req.params.tutorID });
     if (!tutor) {
@@ -141,19 +137,31 @@ router.get("/:tutorID/users", async (req, res) => {
     let users = await User.find({ tutor: tutor });
     return res.send(users);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+// Get all users
+router.get("/all", async (req, res) => {
+  try {
+    let users = await User.find();
+    return res.send(users);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+    /*    console.log(`Error: ${error}`);
     return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
-    });
+      message: `Error: ${error}`,
+    });*/
   }
 });
 
 // Update user info
-router.put("/:tutorID/users/:userID", async (req, res) => {
+router.put("/:userID", async (req, res) => {
   try {
     let user = await User.findOne({
       _id: req.params.userID,
-      tutor: req.params.tutorID,
     });
     if (!user) {
       return res.sendStatus(404);
@@ -167,19 +175,16 @@ router.put("/:tutorID/users/:userID", async (req, res) => {
     await user.save();
     return res.sendStatus(200);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
-    return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
-    });
+    console.log(error);
+    return res.sendStatus(500);
   }
 });
 
 // Delete the user
-router.delete("/:tutorID/users/:userID", async (req, res) => {
+router.delete("/user/:userID", async (req, res) => {
   try {
     let user = await User.findOne({
       _id: req.params.userID,
-      tutor: req.params.tutorID,
     });
     if (!user) {
       return res.sendStatus(404);
@@ -188,14 +193,35 @@ router.delete("/:tutorID/users/:userID", async (req, res) => {
 
     return res.sendStatus(200);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
-    return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
-    });
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+// Delete users under tutor
+router.delete("/under/:tutorID", async (req, res) => {
+  try {
+    let tutor = await Tutor.findOne({ _id: req.params.tutorID });
+    if (!tutor) {
+      return res.sendStatus(404);
+    }
+    let users = await User.find({ tutor: tutor });
+    if (!users) {
+      return res.sendStatus(404);
+    }
+
+    for (let userIt = 0; userIt < users.length; userIt++) {
+      await User.deleteOne({ _id: users[userIt]._id });
+    }
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
   }
 });
 
 module.exports = {
   model: User,
   routes: router,
+  valid: validUser,
 };

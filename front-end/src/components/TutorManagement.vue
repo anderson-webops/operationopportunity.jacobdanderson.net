@@ -12,7 +12,7 @@
       <!-- Modal Content -->
       <form class="modal-content animate" v-on:submit.prevent="addTutor">
         <span
-          v-on:click="$root.$data.changeLoginView(false)"
+          v-on:click="changeLoginView(false)"
           class="close"
           title="Close Modal"
           >&times;</span
@@ -46,8 +46,8 @@
             <a
               href="#"
               v-on:click="
-                $root.$data.changeLoginView(false);
-                $root.$data.changeSignupView(true);
+                changeLoginView(false);
+                changeSignupView(true);
               "
               >Sign Up</a
             ></span
@@ -57,7 +57,7 @@
         <div class="container" style="background-color: #f1f1f1">
           <button
             type="button"
-            v-on:click="$root.$data.changeLoginView(false)"
+            v-on:click="changeLoginView(false)"
             class="cancelbtn"
           >
             Cancel
@@ -75,7 +75,7 @@
       <!-- Modal Content -->
       <form class="modal-content animate" v-on:submit.prevent="addTutor">
         <span
-          v-on:click="$root.$data.changeSignupView(false)"
+          v-on:click="changeSignupView(false)"
           class="close"
           title="Close Modal"
           >&times;</span
@@ -143,6 +143,9 @@
           <!--            required-->
 
           <button type="submit" class="signup button">Sign Up</button>
+          <p v-if="!passwordMatch" class="passwordMatchError">
+            Passwords do not match
+          </p>
           <label>
             <input
               type="checkbox"
@@ -161,7 +164,7 @@
           <div class="container clearfix" style="background-color: #f1f1f1">
             <button
               type="button"
-              v-on:click="$root.$data.changeSignupView(false)"
+              v-on:click="changeSignupView(false)"
               class="cancelbtn"
             >
               Cancel
@@ -171,8 +174,8 @@
               <a
                 href="#"
                 v-on:click="
-                  $root.$data.changeSignupView(false);
-                  $root.$data.changeLoginView(true);
+                  changeSignupView(false);
+                  changeLoginView(true);
                 "
                 >Login</a
               ></span
@@ -181,6 +184,7 @@
         </div>
       </form>
     </div>
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
@@ -199,9 +203,14 @@ export default {
       passwordRepeat: "",
       editTutors: false,
       saveEdit: "Edit",
+      error: "",
     };
   },
-  computed: {},
+  computed: {
+    passwordMatch() {
+      return this.password === this.passwordRepeat;
+    },
+  },
   created() {},
   methods: {
     async addTutor() {
@@ -213,13 +222,14 @@ export default {
           state: this.state,
           password: this.password,
           passwordRepeat: this.passwordRepeat,
+          usersOfTutorLength: 0,
           editTutors: false,
           saveEdit: "Edit",
         });
         this.resetData();
         await this.getTutors();
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async getTutors() {
@@ -227,7 +237,7 @@ export default {
         const response = await axios.get("/api/tutors");
         this.$root.$data.tutors = response.data;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     resetData() {
@@ -238,6 +248,12 @@ export default {
       this.password = "";
       this.passwordRepeat = "";
       this.editTutors = false;
+    },
+    changeSignupView(showHide) {
+      this.$root.$data.signupBlock = showHide;
+    },
+    changeLoginView(showHide) {
+      this.$root.$data.loginBlock = showHide;
     },
   },
 };
@@ -329,6 +345,11 @@ div.loginForm span, div.signupForm span /* eslint-disable-line */ {
 .animate {
   -webkit-animation: animatezoom 0.6s;
   animation: animatezoom 0.6s;
+}
+
+.passwordMatchError {
+  color: red;
+  font-weight: bold;
 }
 
 @-webkit-keyframes animatezoom {
@@ -460,7 +481,7 @@ div.signupForm span.account {
 /* Change styles for cancel button and signup button on extra small screens */
 @media screen and (max-width: 300px) {
   div.signupForm .cancelbtn,
-  div.signupForm .signupbtn {
+  div.signupForm {
     width: 100%;
   }
 }
