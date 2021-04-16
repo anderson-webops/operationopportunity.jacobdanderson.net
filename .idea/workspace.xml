@@ -10,25 +10,20 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Final Edits">
-      <change afterPath="$PROJECT_DIR$/.run/OperationOpportunity.run.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.run/serve.run.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/back-end/.eslintrc.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/back-end/numberofusers.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/back-end/tutors.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/back-end/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="General updates and improvements in getting and setting users and tutors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/numberofusers.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/tutors.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/tutors.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Profile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/vue.config.js" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -68,7 +63,6 @@
     <setting file="file://$PROJECT_DIR$/front-end/src/views/Profile.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/App.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/vue.config.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/back-end/numberofusers.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/main.js" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -127,10 +121,10 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.serve">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+  <component name="RunManager" selected="JavaScript Debug.OperationOpportunity JavaScript">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="OperationOpportunity JavaScript" type="JavascriptDebugType" uri="http://localhost:8080/">
@@ -216,7 +210,9 @@
       <workItem from="1618417367833" duration="89000" />
       <workItem from="1618441190192" duration="183000" />
       <workItem from="1618441535495" duration="3668000" />
-      <workItem from="1618510654807" duration="5465000" />
+      <workItem from="1618510654807" duration="19190000" />
+      <workItem from="1618585502258" duration="3278000" />
+      <workItem from="1618606879090" duration="5208000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -505,7 +501,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617873417204</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="General updates and improvements in getting and setting users and tutors">
+      <created>1618519591334</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1618519591334</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -528,7 +531,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/googletest" />
     </ignored-roots>
-    <MESSAGE value="Design edit and stylesheet ordering" />
     <MESSAGE value="Design edit and stylesheet ordering, change background color" />
     <MESSAGE value="Setting up Vue for Creative Project 3" />
     <MESSAGE value="Integrating previous creative project with new view layout" />
@@ -553,7 +555,8 @@
     <MESSAGE value="Basic addition for showing the Tutor profile and list it's teachees." />
     <MESSAGE value="Near Final Updates" />
     <MESSAGE value="Final Edits" />
-    <option name="LAST_COMMIT_MESSAGE" value="Final Edits" />
+    <MESSAGE value="General updates and improvements in getting and setting users and tutors" />
+    <option name="LAST_COMMIT_MESSAGE" value="General updates and improvements in getting and setting users and tutors" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

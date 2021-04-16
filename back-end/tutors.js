@@ -3,10 +3,6 @@ const express = require("express");
 
 const router = express.Router();
 
-const users = require("./users.js");
-const User = users.model;
-// const validUser = users.valid;
-
 /********************
  *   Tutor Methods   *
  ********************/
@@ -18,7 +14,6 @@ const tutorSchema = new mongoose.Schema({
   age: String,
   state: String,
   password: String,
-  passwordRepeat: String,
   editTutors: Boolean,
   saveEdit: String,
 });
@@ -34,7 +29,6 @@ router.post("/", async (req, res) => {
     age: req.body.age,
     state: req.body.state,
     password: req.body.password,
-    passwordRepeat: req.body.passwordRepeat,
     editTutors: req.body.editTutors,
     saveEdit: req.body.saveEdit,
   });
@@ -42,9 +36,9 @@ router.post("/", async (req, res) => {
     await tutor.save();
     return res.send(tutor);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
+    console.log(`Error: ${error}`);
     return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
+      message: `Error: ${error}`,
     });
   }
 });
@@ -55,9 +49,9 @@ router.get("/", async (req, res) => {
     let tutors = await Tutor.find();
     return res.send(tutors);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
+    console.log(`Error: ${error}`);
     return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${req.body.lineNumber}`,
+      message: `Error: ${error}`,
     });
   }
 });
@@ -78,9 +72,9 @@ router.put("/:tutorID", async (req, res) => {
     await editedTutor.save();
     return res.sendStatus(200);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
+    console.log(`Error: ${error}`);
     return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
+      message: `Error: ${error}`,
     });
   }
 });
@@ -95,33 +89,9 @@ router.delete("/:tutorID", async (req, res) => {
     await tutor.delete();
     return res.sendStatus(200);
   } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
+    console.log(`Error: ${error}`);
     return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
-    });
-  }
-});
-
-// Delete users under tutor
-router.delete("/:tutorID/users", async (req, res) => {
-  try {
-    let tutor = await Tutor.findOne({ _id: req.params.tutorID });
-    let users = await User.find({ tutor: tutor });
-    if (!tutor || !users) {
-      return res.sendStatus(404);
-    }
-
-    for (let userIt in users) {
-      console.log(users);
-      console.log(userIt);
-      console.log("Delete ITeration");
-      await User.deleteOne({ _id: userIt._id });
-    }
-    return res.sendStatus(200);
-  } catch (error) {
-    console.log(`${error} at line: ${error.lineNumber}`);
-    return res.sendStatus(500).send({
-      message: `Error: ${error} at line: ${error.lineNumber}`,
+      message: `Error: ${error}`,
     });
   }
 });

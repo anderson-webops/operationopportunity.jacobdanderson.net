@@ -63,7 +63,7 @@
             {{ tutorIt.name }}
           </option>
         </select>
-        <p v-else>No Tutors are available</p>
+        <p class="notutors" v-else>No Tutors are available</p>
         <br />
 
         <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
@@ -77,7 +77,7 @@
 
       <!--   List Tutors   -->
       <h3>Total Tutors: {{ $root.$data.tutors.length }}</h3>
-      <h3>Total Users: {{ $root.$data.numberOfUsers }}</h3>
+      <h3>Total Users: {{ numberOfUsers }}</h3>
 
       <div
         class="tutorList mt-2"
@@ -94,6 +94,7 @@
 <!--          <li v-show="tutor.editTutors"><label for="i4">Gender:</label>&emsp;<input id="i4" class="editTutor" type="text" v-model="tutor.gender" /></li>
           <li v-show="tutor.editTutors"><label for="i5">City:</label>&emsp;<input id="i5" class="editTutor" type="text" v-model="tutor.city" /></li>-->
           <li v-show="tutorIt.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="tutorIt.state" /></label></li>
+          <li v-show="tutorIt.editTutors" v-on:load="getUsersSpecificTutors(tutorIt)"><p>Users:&emsp;{{ tutorIt.usersOfTutorLength }}</p></li>
 
           <li v-show="!tutorIt.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ tutorIt.name }}</p></li>
           <li v-show="!tutorIt.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p></li>
@@ -112,6 +113,7 @@
         <!--        <button @click="selectTutor(tutorIt)">Select</button>-->
       </div>
     </div>
+    <p v-if="error" class="error">{{ error }}</p>
   </section>
 </template>
 
@@ -132,6 +134,7 @@ export default {
       editTutors: false,
       editUsers: false,
       saveEdit: "Edit",
+      numberOfUsers: 0,
       usersOfTutorLength: "",
       error: "",
     };
@@ -148,16 +151,16 @@ export default {
   async created() {
     try {
       await this.getTutors();
-      await this.getUsers();
-      await this.getNumberOfUsers();
+      await this.getUsers(this.tutor);
+      // await this.getNumberOfUsers(); // This is already called in getUsers
     } catch (error) {
-      this.error = error.response.data.message;
+      this.error = "Error: " + error.response.data.message;
     }
   },
   methods: {
     async addUser() {
       try {
-        await axios.post(`/api/tutors/${this.tutor._id}/users`, {
+        await axios.post(`/api/users/${this.tutor._id}`, {
           name: this.name,
           email: this.email,
           age: this.age,
@@ -165,47 +168,39 @@ export default {
           editUsers: false,
           saveEdit: "Edit",
         });
-        await this.updateNumberOfUsers(1);
-        await this.getUsers();
+        await this.getUsers(this.tutor);
+        await this.getNumberOfUsers();
         this.resetData();
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
-    async getUsers(tutorIt) {
+    async getUsers(tutor) {
       try {
-        if (this.tutor != null) {
-          const response = await axios.get(
-            `/api/tutors/${this.tutor._id}/users`
-          );
-          this.$root.$data.users = response.data;
-        } else if (tutorIt != null) {
-          const response = await axios.get(`/api/tutors/${tutorIt._id}/users`);
-          this.$root.$data.users = response.data;
-        } else {
-          const response = await axios.get(
-            `/api/tutors/${this.$root.$data.tutors[0]._id}/users`
-          );
+        await this.getNumberOfUsers();
+        if (this.numberOfUsers !== 0) {
+          const response = await axios.get(`/api/users/oftutor/${tutor._id}`);
           this.$root.$data.users = response.data;
         }
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async getUsersSpecificTutors(tutor) {
       try {
-        const response = await axios.get(`/api/tutors/${tutor._id}/users`);
+        const response = await axios.get(`/api/users/oftutor/${tutor._id}`);
         this.usersOfTutorLength = response.data.length;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async getTutors() {
       try {
         const response = await axios.get("/api/tutors");
         this.$root.$data.tutors = response.data;
+        this.tutor = this.$root.$data.tutors[0]; //default the current tutor to the first tutor
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async editTutor(tutor) {
@@ -221,48 +216,38 @@ export default {
         await this.getTutors();
         return true;
       } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
-    },
-    async deleteUsersUnderTutor(tutor) {
-      try {
-        await axios.delete(`/api/tutors/${tutor._id}/users`);
-        await this.getTutors();
-      } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
     async deleteTutor(tutor) {
       try {
-        this.tutor = tutor; // as extra security
         await this.getUsers(tutor);
-        // eslint-disable-next-line no-unused-vars
-        for (let userIt = 0; userIt < this.$root.$data.users.length; userIt++) {
-          await this.updateNumberOfUsers(-1);
-        }
-        await this.deleteUsersUnderTutor(tutor);
+
+        // await this.deleteUsersUnderTutor(tutor);
+        console.log("Loaded 2!!");
+        await axios.delete(`/api/users/under/${tutor._id}`);
+        console.log("Finished deleting multiple users");
         await axios.delete(`/api/tutors/${tutor._id}`);
         await this.getTutors();
+        await this.getUsers();
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
     },
-    async updateNumberOfUsers(inc) {
+    /*    async deleteUsersUnderTutor(tutor) {
       try {
-        await axios.put(`/api/numberofusers`, {
-          numberOfUsers: this.$root.$data.numberOfUsers + inc,
-        });
-        await this.getNumberOfUsers();
+        await axios.delete(`/api/users/under/${tutor._id}`);
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
       }
-    },
+    },*/
     async getNumberOfUsers() {
       try {
-        const response = await axios.get(`/api/numberofusers`);
-        this.$root.$data.numberOfUsers = response.data.numberOfUsers;
+        const response = await axios.get(`/api/users/all`);
+        this.numberOfUsers = response.data.length;
       } catch (error) {
-        await this.$root.$data.sendError(error);
+        this.error = "Error: " + error.response.data.message;
+        this.numberOfUsers = 0;
       }
     },
     selectTutor(tutor) {
@@ -307,6 +292,10 @@ div.tutorList {
   padding-bottom: 1%;
   width: 35%;
   margin: auto;
+}
+
+.notutors {
+  text-align: center;
 }
 
 @media only screen and (min-width: 1px) and (max-width: 960px) {

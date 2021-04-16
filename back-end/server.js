@@ -34,22 +34,19 @@ app.use(
   })
 );
 
-// import the users module and setup its API path
-const users = require("./users.js");
-app.use("/api/tutors", users.routes);
-
 const tutors = require("./tutors.js");
 app.use("/api/tutors", tutors.routes);
 
-const numberofusers = require("./numberofusers.js");
-app.use("/api/numberofusers", numberofusers.routes);
+// import the users module and setup its API path
+const users = require("./users.js");
+app.use("/api/users", users.routes);
 
 // Catch Error
-app.post("/api/error/:error", async (req, res) => {
+/*app.post("/api/error/:error", async (req, res) => {
   console.log(`${req.params.error} at line: ${req.params.lineNumber}`);
   res.sendStatus(500).send({
     message: `Error: ${req.params.error} at line: ${req.params.error.lineNumber}`,
   });
-});
+});*/
 
 app.listen(3002, () => console.log("Server listening on port 3002!"));

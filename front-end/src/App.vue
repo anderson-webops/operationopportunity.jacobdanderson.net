@@ -54,7 +54,7 @@
           <button
             class="btn btn-outline-success"
             type="submit"
-            v-on:click="$root.$data.changeLoginView(true)"
+            v-on:click="changeLoginView(true)"
           >
             Login
           </button>
@@ -62,7 +62,7 @@
           <button
             class="btn btn-outline-primary"
             type="submit"
-            v-on:click="$root.$data.changeSignupView(true)"
+            v-on:click="changeSignupView(true)"
           >
             Signup
           </button>
@@ -121,7 +121,7 @@
             <li>
               ©2021
               <a
-                href="http://audiot.info"
+                href="https://audiot.info"
                 target="_blank"
                 style="text-decoration: none; color: inherit"
                 >AudioT</a
@@ -130,7 +130,7 @@
             <!--            <li>
               ©2021
               <a
-                href="http://audiot.info"
+                href="https://audiot.info"
                 target="_blank"
                 style="text-decoration: none; color: inherit"
                 ><img
@@ -142,7 +142,7 @@
             <!--            <li>
               ©2021
               <a
-                href="http://audiot.info"
+                href="https://audiot.info"
                 target="_blank"
                 style="text-decoration: none; color: inherit"
                 >Audio<img
@@ -164,7 +164,7 @@
           <ul class="semantic_list">
             <li>
               <a
-                href="http://nathanielcs260.com"
+                href="https://nathanielcs260.com"
                 target="_blank"
                 style="text-decoration: none; color: inherit"
                 >Nathaniel Judd</a
@@ -173,6 +173,8 @@
           </ul>
         </nav>
       </div>
+
+      <p v-if="error" class="error">{{ error }}</p>
 
       <div class="ip pb-1">
         <p id="ip"></p>
@@ -184,7 +186,6 @@
 <script>
 // import axios from "axios";
 import TutorManagement from "@/components/TutorManagement";
-import axios from "axios";
 
 export default {
   name: "App",
@@ -202,33 +203,13 @@ export default {
       return this.$root.$data.tutors;
     },
   },
-  async created() {
-    try {
-      await this.setNumberOfUsers();
-    } catch (error) {
-      this.error = error.response.data.message;
-    }
-  },
+  created() {},
   methods: {
-    async setNumberOfUsers() {
-      try {
-        await this.getNumberOfUsers();
-        if (this.$root.$data.numberOfUsers == undefined) {
-          await axios.post(`/api/numberofusers`, {
-            numberOfUsers: 0,
-          });
-        }
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
+    changeSignupView(showHide) {
+      this.$root.$data.signupBlock = showHide;
     },
-    async getNumberOfUsers() {
-      try {
-        const response = await axios.get(`/api/numberofusers`);
-        this.$root.$data.numberOfUsers = response.data.numberOfUsers;
-      } catch (error) {
-        await this.$root.$data.sendError(error);
-      }
+    changeLoginView(showHide) {
+      this.$root.$data.loginBlock = showHide;
     },
   },
 };
@@ -335,6 +316,16 @@ nav {
   display: block !important;
 }
 
+.error {
+  margin-top: 10px;
+  display: inline;
+  padding: 5px 20px;
+  border-radius: 30px;
+  font-size: 10px;
+  background-color: #d9534f;
+  color: #fff;
+}
+
 @media only screen and (min-width: 1px) and (max-width: 960px) {
   body {
     --text_scalar: 0.8;
@@ -374,14 +365,14 @@ img {
   width: 10%;
 }
 
-#audiotIcon {
+/*#audiotIcon {
   width: 1.6%;
 }
 
 #audiotLogo {
   width: 9%;
   transform: translateY(1px);
-}
+}*/
 
 /*************
 *   Footer   *
