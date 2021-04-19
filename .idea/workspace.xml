@@ -12,11 +12,10 @@
   <component name="ChangeListManager">
     <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Updates finalized for adding and deleting users and tutors and displaying their respective amounts!!!!!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/tutors.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/tutors.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Profile.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/package.json" afterDir="false" />
     </list>
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -56,6 +55,8 @@
     <setting file="file://$PROJECT_DIR$/front-end/src/views/Profile.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/App.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/vue.config.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/back-end/users.js" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/back-end/tutors.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/main.js" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -115,11 +116,6 @@
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.OperationOpportunity JavaScript">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="OperationOpportunity JavaScript" type="JavascriptDebugType" uri="http://localhost:8080/">
       <method v="2" />
     </configuration>
@@ -205,7 +201,12 @@
       <workItem from="1618441535495" duration="3668000" />
       <workItem from="1618510654807" duration="19190000" />
       <workItem from="1618585502258" duration="3278000" />
-      <workItem from="1618606879090" duration="9632000" />
+      <workItem from="1618606879090" duration="10128000" />
+      <workItem from="1618688037683" duration="122000" />
+      <workItem from="1618688387276" duration="292000" />
+      <workItem from="1618712219778" duration="224000" />
+      <workItem from="1618776463365" duration="195000" />
+      <workItem from="1618860040319" duration="362000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -508,7 +509,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618612541482</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Updates finalized for adding and deleting users and tutors and displaying their respective amounts!!!!!">
+      <created>1618625270524</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1618625270524</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
