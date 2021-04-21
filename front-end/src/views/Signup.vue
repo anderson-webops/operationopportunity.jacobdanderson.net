@@ -114,8 +114,14 @@
           <!-- eslint-enable-->
         </ul>
         <br />
-        <button v-show="$root.$data.admin" @click="deleteTutor(tutorIt)">Delete</button>
-        <button v-show="$root.$data.admin" @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
+        <button v-show="$root.$data.admin" @click="deleteTutor(tutorIt)">
+          Delete
+        </button>
+        <button
+          v-show="$root.$data.admin"
+          @click="editTutor(tutorIt)"
+          v-bind:string="tutorIt.saveEdit"
+        >
           {{ tutorIt.saveEdit }}
         </button>
       </div>

@@ -237,6 +237,16 @@ export default {
   created() {},
   methods: {
     async addTutor() {
+      if (
+        !this.name ||
+        !this.age ||
+        !this.state ||
+        !this.email ||
+        !this.password ||
+        !this.passwordRepeat
+      )
+        return;
+
       try {
         let response = await axios.post("/api/tutors", {
           name: this.name,
