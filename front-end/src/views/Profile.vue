@@ -8,7 +8,7 @@
     <h2 class="mb-3">{{ $root.$data.currentTutor.name }}</h2>
 
     <!--   Show Current Tutor Profile   -->
-    <label for="tutorSelectProfile" class="mr-2">Select a Tutor:</label>
+    <!--    <label for="tutorSelectProfile" class="mr-2">Select a Tutor:</label>
     <select
       v-model="tutor"
       @change="selectTutor(tutor)"
@@ -22,11 +22,11 @@
       >
         {{ tutorIt.name }}
       </option>
-    </select>
+    </select>-->
 
     <hr />
 
-    <!--   List Tutors   -->
+    <!--   List Users   -->
     <h2>Users</h2>
     <div
       class="tutorList mt-2"
@@ -68,7 +68,7 @@ export default {
   name: "Profile",
   data() {
     return {
-      tutor: null,
+      // tutor: null,
       editUsers: false,
       saveEdit: "Edit",
       error: "",
@@ -78,36 +78,30 @@ export default {
     getUsersArray() {
       return this.$root.$data.users;
     },
-    getTutorsArray() {
+    /*    getTutorsArray() {
       return this.$root.$data.tutors;
-    },
+    },*/
   },
   async created() {
-    try {
+    /*    try {
       this.selectTutor(this.$root.$data.tutors[0]);
       await this.getTutors();
       await this.getUsers();
     } catch (error) {
       this.error = "Error: " + error.response.data.message;
-    }
+    }*/
   },
   methods: {
     async getUsers() {
       try {
-        if (this.tutor != null) {
+        if (this.$root.$data.currentTutor) {
           const response = await axios.get(
-            `/api/users/oftutor/${this.tutor._id}`
-          );
-          this.$root.$data.users = response.data;
-        } else {
-          /* if no tutor is currently selected, default to the first tutor in the array */
-          const response = await axios.get(
-            `/api/users/oftutor/${this.$root.$data.tutors[0]._id}`
+            `/api/users/oftutor/${this.$root.$data.currentTutor._id}`
           );
           this.$root.$data.users = response.data;
         }
         await this.numberOfUsersTaughtByTutor(
-          this.tutor,
+          this.$root.$data.currentTutor,
           this.$root.$data.users.length
         );
       } catch (error) {
@@ -138,11 +132,12 @@ export default {
         this.error = "Error: " + error.response.data.message;
       }
     },
-    async getTutors() {
+    /*   Reinstate these when Admin functionality is added so that the Admin can manage the tutors   */
+    /*    async getTutors() {
       try {
         const response = await axios.get("/api/tutors");
         this.$root.$data.tutors = response.data;
-        /* Make sure name is loaded for the header */
+        /!* Make sure name is loaded for the header *!/
         if (this.tutor === null) {
           this.$root.$data.currentTutor = this.$root.$data.tutors[0];
           this.tutor = this.$root.$data.currentTutor;
@@ -150,12 +145,34 @@ export default {
       } catch (error) {
         this.error = "Error: " + error.response.data.message;
       }
-    },
-    selectTutor(tutor) {
+    },*/
+    /*    selectTutor(tutor) {
       this.$root.$data.currentTutor = tutor;
       this.tutor = tutor;
       this.getUsers();
-    },
+    },*/
+    /*    async getUsers() {
+      try {
+        if (this.tutor != null) {
+          const response = await axios.get(
+              `/api/users/oftutor/${this.tutor._id}`
+          );
+          this.$root.$data.users = response.data;
+        } else {
+          /!* if no tutor is currently selected, default to the first tutor in the array *!/
+          const response = await axios.get(
+              `/api/users/oftutor/${this.$root.$data.tutors[0]._id}`
+          );
+          this.$root.$data.users = response.data;
+        }
+        await this.numberOfUsersTaughtByTutor(
+            this.tutor,
+            this.$root.$data.users.length
+        );
+      } catch (error) {
+        this.error = "Error: " + error.response.data.message;
+      }
+    },*/
     async numberOfUsersTaughtByTutor(tutor, numberOfUsers) {
       try {
         await axios.put(`/api/tutors/${tutor._id}`, {
@@ -167,16 +184,12 @@ export default {
           editTutors: tutor.editTutors,
           saveEdit: tutor.saveEdit,
         });
-        await this.getTutors();
+        // await this.getTutors();
         return true;
       } catch (error) {
         this.error = "Error: " + error.response.data.message;
       }
     },
-    /*    selectUser(user) {
-      this.user = user;
-      this.getUsers();
-    },*/
   },
 };
 </script>

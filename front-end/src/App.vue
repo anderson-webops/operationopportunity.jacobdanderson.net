@@ -44,16 +44,26 @@
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
             <li
-              v-bind:class="{ showProfile: $root.$data.tutors.length > 0 }"
+              v-bind:class="{ showProfile: loggedIn }"
               class="nav-item hidden"
             >
               <router-link class="nav-link" to="/profile">Profile</router-link>
             </li>
           </ul>
+          <!-- Button to logout -->
+          <button
+            class="btn btn-outline-danger"
+            type="submit"
+            v-show="loggedIn"
+            v-on:click="logout()"
+          >
+            Logout
+          </button>
           <!-- Button to open the modal login form -->
           <button
             class="btn btn-outline-success"
             type="submit"
+            v-show="!loggedIn"
             v-on:click="changeLoginView(true)"
           >
             Login
@@ -62,6 +72,7 @@
           <button
             class="btn btn-outline-primary"
             type="submit"
+            v-show="!loggedIn"
             v-on:click="changeSignupView(true)"
           >
             Signup
@@ -102,10 +113,10 @@
                   src="../public/Images/github-dark.09072337.svg"
                   alt="github Icon"
               /></a>
-              <!--              <a-->
-              <!--                href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"-->
-              <!--                >www.github.com</a-->
-              <!--              >-->
+              <!--                            <a
+                              href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"
+                              >www.github.com</a
+                            >-->
             </li>
           </ul>
         </nav>
@@ -203,10 +214,14 @@ export default {
     getTutorsArray() {
       return this.$root.$data.tutors;
     },
+    loggedIn() {
+      return this.$root.$data.currentTutor != null;
+    },
   },
-  created() {
-    this.getTutors();
-    this.getUsers();
+  async created() {
+    await this.getTutors();
+    await this.getUsers();
+    await this.getCurrentTutor();
   },
   methods: {
     changeSignupView(showHide) {
@@ -219,8 +234,6 @@ export default {
       try {
         const response = await axios.get("/api/tutors");
         this.$root.$data.tutors = response.data;
-        /* Make sure name is loaded for the header */
-        this.$root.$data.currentTutor = this.$root.$data.tutors[0];
       } catch (error) {
         this.error = "Error: " + error.response.data.message;
       }
@@ -228,11 +241,27 @@ export default {
     async getUsers() {
       try {
         const response = await axios.get(
-          `/api/users/oftutor/${this.$root.$data.tutors[0]._id}`
+          `/api/users/oftutor/${this.$root.$data.currentTutor._id}`
         );
         this.$root.$data.users = response.data;
       } catch (error) {
         this.error = "Error: " + error.response.data.message;
+      }
+    },
+    async getCurrentTutor() {
+      try {
+        let response = await axios.get("/api/tutors/loggedin");
+        this.$root.$data.currentTutor = response.data.currentTutor;
+      } catch (error) {
+        this.$root.$data.currentTutor = null;
+      }
+    },
+    async logout() {
+      try {
+        await axios.delete("/api/tutors/logout");
+        this.$root.$data.currentTutor = null;
+      } catch (error) {
+        this.$root.$data.currentTutor = null;
       }
     },
   },

@@ -54,7 +54,6 @@
           id="tutorSelect"
           required
         >
-          <!--   FIXME May need to hide and display message saying that a tutor is needed   -->
           <option
             v-for="tutorIt in getTutorsArray"
             :value="tutorIt"
@@ -115,11 +114,10 @@
           <!-- eslint-enable-->
         </ul>
         <br />
-        <button @click="deleteTutor(tutorIt)">Delete</button>
-        <button @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
+        <button v-show="$root.$data.admin" @click="deleteTutor(tutorIt)">Delete</button>
+        <button v-show="$root.$data.admin" @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
           {{ tutorIt.saveEdit }}
         </button>
-        <!--        <button @click="selectTutor(tutorIt)">Select</button>-->
       </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>
@@ -250,13 +248,6 @@ export default {
         this.error = "Error: " + error.response.data.message;
       }
     },
-    /*    async deleteUsersUnderTutor(tutor) {
-      try {
-        await axios.delete(`/api/users/under/${tutor._id}`);
-      } catch (error) {
-        this.error = "Error: " + error.response.data.message;
-      }
-    },*/
     async getNumberOfUsers() {
       try {
         const response = await axios.get(`/api/users/all`);
@@ -265,11 +256,6 @@ export default {
         this.error = "Error: " + error.response.data.message;
         this.numberOfUsers = 0;
       }
-    },
-    selectTutor(tutor) {
-      this.$root.$data.currentTutor = tutor;
-      this.$root.$data.showUsers = true;
-      this.$root.$data.profileLink = true;
     },
     resetData() {
       this.name = "";

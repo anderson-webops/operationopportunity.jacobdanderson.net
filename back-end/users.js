@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
   email: String,
   age: String,
   state: String,
-  username: String,
   password: String,
   editUsers: Boolean,
   saveEdit: String,
@@ -71,37 +70,6 @@ userSchema.methods.toJSON = function () {
 
 // create a User model from the User schema
 const User = mongoose.model("User", userSchema);
-
-/* Middleware */
-
-// middleware function to check for logged-in users
-// eslint-disable-next-line no-unused-vars
-const validUser = async (req, res, next) => {
-  if (!req.session.userID)
-    return res.status(403).send({
-      message: "not logged in",
-    });
-  try {
-    const user = await User.findOne({
-      _id: req.session.userID,
-    });
-    if (!user) {
-      return res.status(403).send({
-        message: "not logged in",
-      });
-    }
-    // set the user field in the request
-    req.user = user;
-  } catch (error) {
-    // Return an error if user does not exist.
-    return res.status(403).send({
-      message: "not logged in",
-    });
-  }
-
-  // if everything succeeds, move to the next middleware
-  next();
-};
 
 // Create a user
 router.post("/:tutorID", async (req, res) => {
@@ -223,5 +191,4 @@ router.delete("/under/:tutorID", async (req, res) => {
 module.exports = {
   model: User,
   routes: router,
-  valid: validUser,
 };

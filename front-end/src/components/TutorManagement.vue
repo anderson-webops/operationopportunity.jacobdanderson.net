@@ -6,11 +6,13 @@
 
     <!-- The Modal -->
     <div
-      v-bind:class="{ showLogin: $root.$data.loginBlock }"
+      v-bind:class="{
+        showLogin: $root.$data.loginBlock && !$root.$data.currentTutor,
+      }"
       class="modal loginForm"
     >
       <!-- Modal Content -->
-      <form class="modal-content animate" v-on:submit.prevent="addTutor">
+      <form class="modal-content animate" v-on:submit.prevent="login">
         <span
           v-on:click="changeLoginView(false)"
           class="close"
@@ -28,13 +30,22 @@
 
         <div class="container">
           <label for="uname"><b>Username</b></label>
-          <input type="text" placeholder="Enter Username" id="uname" required />
-          <!--                      v-model="loginEmail"-->
+          <input
+            type="text"
+            placeholder="Enter Email"
+            id="uname"
+            v-model="loginEmail"
+            required
+          />
 
           <label for="psw1"><b>Password</b></label>
-          <input type="password" placeholder="Enter Password" id="psw1" />
-          <!--          required-->
-          <!--            v-model="loginPassword"-->
+          <input
+            type="password"
+            placeholder="Enter Password"
+            id="psw1"
+            v-model="loginPassword"
+            required
+          />
 
           <button type="submit" class="button">Login</button>
           <label>
@@ -65,11 +76,18 @@
           <span class="psw">Forgot <a href="#">password?</a></span>
         </div>
       </form>
+      <p v-if="errorLogin" class="error">{{ errorLogin }}</p>
     </div>
+
+    <!-----------------
+    -   Signup Form   -
+    ------------------>
 
     <!-- The Modal (contains the Sign Up form) -->
     <div
-      v-bind:class="{ showSignup: $root.$data.signupBlock }"
+      v-bind:class="{
+        showSignup: $root.$data.signupBlock && !$root.$data.currentTutor,
+      }"
       class="modal signupForm"
     >
       <!-- Modal Content -->
@@ -181,6 +199,7 @@
               ></span
             >
           </div>
+          <p v-if="errorSignup" class="error">{{ errorSignup }}</p>
         </div>
       </form>
     </div>
@@ -204,6 +223,10 @@ export default {
       editTutors: false,
       saveEdit: "Edit",
       error: "",
+      errorSignup: "",
+      errorLogin: "",
+      loginEmail: "",
+      loginPassword: "",
     };
   },
   computed: {
@@ -215,21 +238,21 @@ export default {
   methods: {
     async addTutor() {
       try {
-        await axios.post("/api/tutors", {
+        let response = await axios.post("/api/tutors", {
           name: this.name,
           email: this.email,
           age: this.age,
           state: this.state,
           password: this.password,
-          passwordRepeat: this.passwordRepeat,
           usersOfTutorLength: 0,
           editTutors: false,
           saveEdit: "Edit",
         });
+        this.$root.$data.currentTutor = response.data.currentTutor;
         this.resetData();
         await this.getTutors();
       } catch (error) {
-        this.error = "Error: " + error.response.data.message;
+        this.errorSignup = "Error: " + error.response.data.message;
       }
     },
     async getTutors() {
@@ -240,6 +263,21 @@ export default {
         this.error = "Error: " + error.response.data.message;
       }
     },
+    async login() {
+      this.errorLogin = "";
+      if (!this.loginEmail || !this.loginPassword) return;
+      try {
+        let response = await axios.post("/api/tutors/login", {
+          email: this.loginEmail,
+          password: this.loginPassword,
+        });
+        this.$root.$data.currentTutor = response.data.currentTutor;
+        this.resetData();
+      } catch (error) {
+        this.errorLogin = "Error: " + error.response.data.message;
+        this.$root.$data.user = null;
+      }
+    },
     resetData() {
       this.name = "";
       this.email = "";
@@ -248,6 +286,11 @@ export default {
       this.password = "";
       this.passwordRepeat = "";
       this.editTutors = false;
+      this.error = "";
+      this.errorSignup = "";
+      this.errorLogin = "";
+      this.loginEmail = "";
+      this.loginPassword = "";
     },
     changeSignupView(showHide) {
       this.$root.$data.signupBlock = showHide;
