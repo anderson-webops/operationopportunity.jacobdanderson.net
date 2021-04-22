@@ -29,7 +29,7 @@
         </div>
 
         <div class="container">
-          <label for="uname"><b>Username</b></label>
+          <label for="uname"><b>Email</b></label>
           <input
             type="text"
             placeholder="Enter Email"
@@ -73,10 +73,10 @@
           >
             Cancel
           </button>
+          <p v-if="errorLogin" class="error loginError">{{ errorLogin }}</p>
           <span class="psw">Forgot <a href="#">password?</a></span>
         </div>
       </form>
-      <p v-if="errorLogin" class="error">{{ errorLogin }}</p>
     </div>
 
     <!-----------------
@@ -91,7 +91,7 @@
       class="modal signupForm"
     >
       <!-- Modal Content -->
-      <form class="modal-content animate" v-on:submit.prevent="addTutor">
+      <form class="modal-content animate" v-on:submit.prevent="addAccount">
         <span
           v-on:click="changeSignupView(false)"
           class="close"
@@ -104,6 +104,29 @@
           <p>
             Please fill in this form to create an account and become a tutor.
           </p>
+
+          <hr />
+
+          <div class="radio">
+            <label class="radioLabel" for="tutorChoice">Tutor</label>
+            <input
+              class="radioInput"
+              type="radio"
+              id="tutorChoice"
+              value="tutor"
+              v-model="accountType"
+            />
+
+            <label class="radioLabel" for="userChoice">User</label>
+            <input
+              class="radioInput"
+              type="radio"
+              id="userChoice"
+              value="user"
+              v-model="accountType"
+            />
+          </div>
+
           <hr />
 
           <label for="name"><b>Name</b></label>
@@ -148,8 +171,8 @@
             placeholder="Enter Password"
             id="psw2"
             v-model="password"
+            required
           />
-          <!--            required-->
 
           <label for="psw-repeat"><b>Repeat Password</b></label>
           <input
@@ -157,8 +180,8 @@
             placeholder="Repeat Password"
             id="psw-repeat"
             v-model="passwordRepeat"
+            required
           />
-          <!--            required-->
 
           <button type="submit" class="signup button">Sign Up</button>
           <p v-if="!passwordMatch" class="passwordMatchError">
@@ -187,6 +210,7 @@
             >
               Cancel
             </button>
+            <p v-if="errorSignup" class="error">{{ errorSignup }}</p>
             <span class="account"
               >Already have an account?
               <a
@@ -199,7 +223,6 @@
               ></span
             >
           </div>
-          <p v-if="errorSignup" class="error">{{ errorSignup }}</p>
         </div>
       </form>
     </div>
@@ -227,6 +250,7 @@ export default {
       errorLogin: "",
       loginEmail: "",
       loginPassword: "",
+      accountType: "",
     };
   },
   computed: {
@@ -234,9 +258,11 @@ export default {
       return this.password === this.passwordRepeat;
     },
   },
-  created() {},
+  async created() {
+    await this.getCurrentAccount();
+  },
   methods: {
-    async addTutor() {
+    async addAccount() {
       if (
         !this.name ||
         !this.age ||
@@ -248,22 +274,51 @@ export default {
         return;
 
       try {
-        let response = await axios.post("/api/tutors", {
-          name: this.name,
+        await axios.post("/api/accounts", {
           email: this.email,
-          age: this.age,
-          state: this.state,
-          password: this.password,
-          usersOfTutorLength: 0,
-          editTutors: false,
-          saveEdit: "Edit",
         });
-        this.$root.$data.currentTutor = response.data.currentTutor;
-        this.resetData();
-        await this.getTutors();
       } catch (error) {
         this.errorSignup = "Error: " + error.response.data.message;
       }
+
+      if (this.accountType === "tutor") {
+        try {
+          let response = await axios.post("/api/tutors", {
+            name: this.name,
+            email: this.email,
+            age: this.age,
+            state: this.state,
+            password: this.password,
+            usersOfTutorLength: 0,
+            editTutors: false,
+            saveEdit: "Edit",
+          });
+          this.$root.$data.currentTutor = response.data.currentTutor;
+        } catch (error) {
+          this.$root.$data.currentTutor = null;
+        }
+      } else if (this.accountType === "user") {
+        try {
+          let response = await axios.post(`/api/users`, {
+            name: this.name,
+            age: this.age,
+            state: this.state,
+            email: this.email,
+            password: this.password,
+            editUsers: false,
+            saveEdit: "Edit",
+          });
+          this.$root.$data.currentUser = response.data.currentUser;
+        } catch (error) {
+          this.$root.$data.currentUser = null;
+        }
+      } else {
+        this.errorSignup = "Please select an account type";
+      }
+
+      this.changeSignupView(false);
+      await this.getTutors();
+      this.resetData();
     },
     async getTutors() {
       try {
@@ -277,15 +332,43 @@ export default {
       this.errorLogin = "";
       if (!this.loginEmail || !this.loginPassword) return;
       try {
-        let response = await axios.post("/api/tutors/login", {
+        let response = await axios.post("/api/accounts/login", {
           email: this.loginEmail,
           password: this.loginPassword,
         });
-        this.$root.$data.currentTutor = response.data.currentTutor;
+        if (response.data.currentTutor != null)
+          this.$root.$data.currentTutor = response.data.currentTutor;
+        if (response.data.currentAdmin != null)
+          this.$root.$data.currentAdmin = response.data.currentAdmin;
+        if (response.data.currentUser != null)
+          this.$root.$data.currentUser = response.data.currentUser;
+        // May want to add checking that there isn't more than one type at a time...
+
         this.resetData();
+        this.changeLoginView(false);
       } catch (error) {
         this.errorLogin = "Error: " + error.response.data.message;
         this.$root.$data.user = null;
+      }
+    },
+    async getCurrentAccount() {
+      try {
+        let response = await axios.get("/api/tutors/loggedin");
+        this.$root.$data.currentTutor = response.data.currentTutor;
+      } catch (error) {
+        this.$root.$data.currentTutor = null;
+      }
+      try {
+        let response = await axios.get("/api/users/loggedin");
+        this.$root.$data.currentUser = response.data.currentUser;
+      } catch (error) {
+        this.$root.$data.currentUser = null;
+      }
+      try {
+        let response = await axios.get("/api/admins/loggedin");
+        this.$root.$data.currentAdmin = response.data.currentAdmin;
+      } catch (error) {
+        this.$root.$data.currentAdmin = null;
       }
     },
     resetData() {
@@ -296,6 +379,7 @@ export default {
       this.password = "";
       this.passwordRepeat = "";
       this.editTutors = false;
+      this.editUsers = false;
       this.error = "";
       this.errorSignup = "";
       this.errorLogin = "";
@@ -352,6 +436,20 @@ div.loginForm span, div.signupForm span /* eslint-disable-line */ {
   font-family: Optima, sans-serif;
 }
 
+div.radio {
+  margin: 0 15%;
+}
+
+.radioInput {
+  margin-right: 2%;
+}
+
+.radioLabel {
+  font-size: 25px;
+  margin-left: 25%;
+  margin-right: 5px;
+}
+
 /* The Close Button (x) */
 .close {
   /* Position it in the top right corner outside of the modal */
@@ -403,6 +501,10 @@ div.loginForm span, div.signupForm span /* eslint-disable-line */ {
 .passwordMatchError {
   color: red;
   font-weight: bold;
+}
+
+p.loginError {
+  margin-left: 24%;
 }
 
 @-webkit-keyframes animatezoom {

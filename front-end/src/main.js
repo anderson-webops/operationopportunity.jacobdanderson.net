@@ -7,8 +7,10 @@ Vue.config.productionTip = false;
 let data = {
   tutors: [],
   users: [],
+  admins: [],
   currentTutor: null,
-  admin: null,
+  currentUser: null,
+  currentAdmin: null,
   loginBlock: false,
   signupBlock: false,
   showUsers: false,
