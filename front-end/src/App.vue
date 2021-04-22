@@ -43,10 +43,7 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/about">About</router-link>
             </li>
-            <li
-              v-bind:class="{ showProfile: loggedIn }"
-              class="nav-item hidden"
-            >
+            <li class="nav-item">
               <router-link class="nav-link" to="/profile">Profile</router-link>
             </li>
           </ul>
@@ -113,10 +110,6 @@
                   src="../public/Images/github-dark.09072337.svg"
                   alt="github Icon"
               /></a>
-              <!--                            <a
-                              href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"
-                              >www.github.com</a
-                            >-->
             </li>
           </ul>
         </nav>
@@ -138,31 +131,6 @@
                 >AudioT</a
               >. All rights reserved.
             </li>
-            <!--            <li>
-              ©2021
-              <a
-                href="https://audiot.info"
-                target="_blank"
-                style="text-decoration: none; color: inherit"
-                ><img
-                  id="audiotLogo"
-                  src="../public/Images/audiot-logo.png"
-                  alt="audiot Icon" /></a
-              >. All rights reserved.
-            </li>-->
-            <!--            <li>
-              ©2021
-              <a
-                href="https://audiot.info"
-                target="_blank"
-                style="text-decoration: none; color: inherit"
-                >Audio<img
-                  id="audiotIcon"
-                  src="../public/Images/favicon-16x16.png"
-                  alt="audiot Icon"
-                /> </a
-              >. All rights reserved.
-            </li>-->
           </ul>
         </nav>
       </div>
@@ -182,6 +150,8 @@
               >
             </li>
           </ul>
+          <br />
+          <p>Time Spent: 4 hours</p>
         </nav>
       </div>
 
@@ -195,8 +165,7 @@
 </template>
 
 <script>
-// import axios from "axios";
-import TutorManagement from "@/components/TutorManagement";
+import TutorManagement from "@/components/AccountManagement";
 import axios from "axios";
 
 export default {
@@ -215,13 +184,16 @@ export default {
       return this.$root.$data.tutors;
     },
     loggedIn() {
-      return this.$root.$data.currentTutor != null;
+      return (
+        this.$root.$data.currentTutor != null ||
+        this.$root.$data.currentUser != null ||
+        this.$root.$data.currentAdmin != null
+      );
     },
   },
   async created() {
     await this.getTutors();
     await this.getUsers();
-    await this.getCurrentTutor();
   },
   methods: {
     changeSignupView(showHide) {
@@ -239,6 +211,7 @@ export default {
       }
     },
     async getUsers() {
+      if (this.$root.$data.currentTutor == null) return;
       try {
         const response = await axios.get(
           `/api/users/oftutor/${this.$root.$data.currentTutor._id}`
@@ -248,20 +221,21 @@ export default {
         this.error = "Error: " + error.response.data.message;
       }
     },
-    async getCurrentTutor() {
-      try {
-        let response = await axios.get("/api/tutors/loggedin");
-        this.$root.$data.currentTutor = response.data.currentTutor;
-      } catch (error) {
-        this.$root.$data.currentTutor = null;
-      }
-    },
     async logout() {
       try {
-        await axios.delete("/api/tutors/logout");
+        if (this.$root.$data.currentTutor)
+          await axios.delete("/api/tutors/logout");
+        if (this.$root.$data.currentUser)
+          await axios.delete("/api/users/logout");
+        if (this.$root.$data.currentAdmin)
+          await axios.delete("/api/admins/logout");
         this.$root.$data.currentTutor = null;
+        this.$root.$data.currentUser = null;
+        this.$root.$data.currentAdmin = null;
       } catch (error) {
         this.$root.$data.currentTutor = null;
+        this.$root.$data.currentUser = null;
+        this.$root.$data.currentAdmin = null;
       }
     },
   },
@@ -352,21 +326,12 @@ body {
   --text_scalar: 1;
 }
 
-h1,
-h2 {
+h1, h2, h3, h4 /* eslint-disable-line */ {
   font-family: Didot, Calibri, Candara, sans-serif;
 }
 
 nav {
   font-family: Verdana, Calibri, Candara, sans-serif;
-}
-
-.hidden {
-  display: none;
-}
-
-.showProfile {
-  display: block !important;
 }
 
 .error {

@@ -18,6 +18,10 @@ const tutorSchema = new mongoose.Schema({
   usersOfTutorLength: Number,
   editTutors: Boolean,
   saveEdit: String,
+  role: {
+    type: String,
+    default: "tutor",
+  },
 });
 
 // This is a hook that will be called before a user record is saved,
@@ -106,15 +110,7 @@ router.post("/", async (req, res) => {
   )
     return res.status(400).send({ message: "All fields required" });
   try {
-    //  Check to see if username already exists and if not send a 403 error. A 403
-    // error means permission denied.
-    const existingTutor = await Tutor.findOne({
-      email: req.body.email,
-    });
-    if (existingTutor)
-      return res.status(403).send({
-        message: "username already exists",
-      });
+    // existing account name is checked in a separate call in user.js
 
     const tutor = new Tutor({
       name: req.body.name,
@@ -138,42 +134,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// login a tutor
-router.post("/login", async (req, res) => {
-  // Make sure that the form coming from the browser includes a username and a
-  // password, otherwise return an error.
-  if (!req.body.email || !req.body.password) return res.sendStatus(400);
-
-  try {
-    //  lookup user record
-    const tutor = await Tutor.findOne({
-      email: req.body.email,
-    });
-    // Return an error if user does not exist.
-    if (!tutor)
-      return res.status(403).send({
-        message: "username or password is incorrect",
-      });
-
-    // Return the SAME error if the password is wrong. This ensure we don't
-    // leak any information about which users exist.
-    if (!(await tutor.comparePassword(req.body.password)))
-      return res.status(403).send({
-        message: "username or password is incorrect",
-      });
-
-    // set user session info
-    req.session.tutorID = tutor._id;
-
-    return res.send({
-      currentTutor: tutor,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
 // Get a list of all tutors
 router.get("/", async (req, res) => {
   try {
@@ -188,7 +148,7 @@ router.get("/", async (req, res) => {
 });
 
 // Update tutor info
-router.put("/:tutorID", async (req, res) => {
+router.put("/:tutorID", validTutor, async (req, res) => {
   try {
     let editedTutor = await Tutor.findOne({ _id: req.params.tutorID });
     if (!editedTutor) {
@@ -215,7 +175,7 @@ router.put("/:tutorID", async (req, res) => {
 router.get("/loggedin", validTutor, async (req, res) => {
   try {
     res.send({
-      tutor: req.tutor,
+      currentTutor: req.currentTutor,
     });
   } catch (error) {
     console.log(error);
@@ -223,19 +183,8 @@ router.get("/loggedin", validTutor, async (req, res) => {
   }
 });
 
-// logout
-router.delete("/logout", validTutor, async (req, res) => {
-  try {
-    req.session = null;
-    res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
 // Delete a tutor
-router.delete("/:tutorID", async (req, res) => {
+router.delete("/remove/:tutorID", async (req, res) => {
   try {
     let tutor = await Tutor.findOne({ _id: req.params.tutorID });
     if (!tutor) {
@@ -248,6 +197,17 @@ router.delete("/:tutorID", async (req, res) => {
     return res.sendStatus(500).send({
       message: `Error: ${error}`,
     });
+  }
+});
+
+// logout
+router.delete("/logout", validTutor, async (req, res) => {
+  try {
+    req.session = null;
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
   }
 });
 

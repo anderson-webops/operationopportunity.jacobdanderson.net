@@ -6,6 +6,7 @@ const router = express.Router();
 
 const tutors = require("./tutors.js");
 const Tutor = tutors.model;
+const validTutor = tutors.valid;
 
 /********************
  *   User Methods   *
@@ -17,6 +18,7 @@ const userSchema = new mongoose.Schema({
   tutor: {
     type: mongoose.Schema.ObjectId,
     ref: "Tutor",
+    default: null,
   },
   name: String,
   email: String,
@@ -25,6 +27,10 @@ const userSchema = new mongoose.Schema({
   password: String,
   editUsers: Boolean,
   saveEdit: String,
+  role: {
+    type: String,
+    default: "user",
+  },
 });
 
 // This is a hook that will be called before a user record is saved,
@@ -71,29 +77,79 @@ userSchema.methods.toJSON = function () {
 // create a User model from the User schema
 const User = mongoose.model("User", userSchema);
 
-// Create a user
-router.post("/:tutorID", async (req, res) => {
+/* Middleware */
+
+// middleware function to check for logged-in users
+// eslint-disable-next-line no-unused-vars
+const validUser = async (req, res, next) => {
+  if (!req.session.userID)
+    return res.status(403).send({
+      message: "not logged in",
+    });
   try {
-    let tutor = await Tutor.findOne({ _id: req.params.tutorID });
-    if (!tutor) {
-      return res.sendStatus(404);
+    const user = await User.findOne({
+      _id: req.session.userID,
+    });
+    if (!user) {
+      return res.status(403).send({
+        message: "not logged in",
+      });
     }
+    // set the user field in the request
+    req.currentUser = user;
+  } catch (error) {
+    // Return an error if user does not exist.
+    return res.status(403).send({
+      message: "not logged in",
+    });
+  }
+
+  // if everything succeeds, move to the next middleware
+  next();
+};
+
+// Create a user
+router.post("/", async (req, res) => {
+  if (
+    !req.body.name ||
+    !req.body.age ||
+    !req.body.state ||
+    !req.body.email ||
+    !req.body.password
+  )
+    return res.status(400).send({ message: "All fields required" });
+  try {
     let user = new User({
-      tutor: tutor,
       name: req.body.name,
       email: req.body.email,
       age: req.body.age,
       state: req.body.state,
+      password: req.body.password,
       editUsers: req.body.editUsers,
       saveEdit: req.body.saveEdit,
     });
     await user.save();
-    return res.send(user);
+    req.session.userID = user._id;
+    return res.send({ currentUser: user });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 });
+
+// // Get users belonging to a tutor
+// router.get("/user/:userID", async (req, res) => {
+//   try {
+//     let user = await User.findOne({ _id: req.params.userID });
+//     if (!user) {
+//       return res.sendStatus(404);
+//     }
+//     return res.send(user);
+//   } catch (error) {
+//     console.log(error);
+//     return res.sendStatus(500);
+//   }
+// });
 
 // Get users belonging to a tutor
 router.get("/oftutor/:tutorID", async (req, res) => {
@@ -118,15 +174,11 @@ router.get("/all", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
-    /*    console.log(`Error: ${error}`);
-    return res.sendStatus(500).send({
-      message: `Error: ${error}`,
-    });*/
   }
 });
 
 // Update user info
-router.put("/:userID", async (req, res) => {
+router.put("/user/:userID", validUser, async (req, res) => {
   try {
     let user = await User.findOne({
       _id: req.params.userID,
@@ -148,8 +200,76 @@ router.put("/:userID", async (req, res) => {
   }
 });
 
+// Update user info NOTE: these are here to avoid circular dependencies
+router.put("/tutor/:userID", validTutor, async (req, res) => {
+  try {
+    let user = await User.findOne({
+      _id: req.params.userID,
+    });
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    user.name = req.body.name;
+    user.email = req.body.email;
+    user.age = req.body.age;
+    user.state = req.body.state;
+    user.editUsers = req.body.editUsers;
+    user.saveEdit = req.body.saveEdit;
+    await user.save();
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+// Update user info
+router.put("/selectTutor/:userID/:tutorID", async (req, res) => {
+  try {
+    let user = await User.findOne({
+      _id: req.params.userID,
+    });
+    if (!user) {
+      return res.sendStatus(404);
+    }
+
+    let tutor = await Tutor.findOne({
+      _id: req.params.tutorID,
+    });
+    if (!tutor) {
+      return res.sendStatus(404);
+    }
+
+    user.tutor = tutor;
+
+    await user.save();
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 // Delete the user
-router.delete("/user/:userID", async (req, res) => {
+router.delete("/user/:userID", validUser, async (req, res) => {
+  try {
+    let user = await User.findOne({
+      _id: req.params.userID,
+    });
+    if (!user) {
+      return res.sendStatus(404);
+    }
+    await user.delete();
+
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+// Delete the user NOTE: these are here to avoid circular dependencies
+router.delete("/tutor/:userID", validTutor, async (req, res) => {
   try {
     let user = await User.findOne({
       _id: req.params.userID,
@@ -188,7 +308,31 @@ router.delete("/under/:tutorID", async (req, res) => {
   }
 });
 
+// get logged in user
+router.get("/loggedin", validUser, async (req, res) => {
+  try {
+    res.send({
+      currentUser: req.currentUser,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+// logout
+router.delete("/logout", validUser, async (req, res) => {
+  try {
+    req.session = null;
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 module.exports = {
   model: User,
   routes: router,
+  valid: validUser,
 };

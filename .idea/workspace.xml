@@ -10,19 +10,28 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Adding authentication for the Final Project 5">
+    <list default="true" id="704a913b-513f-4c0a-9189-b1b467915b0b" name="Default Changelist" comment="Changes by Nathaniel :)">
+      <change afterPath="$PROJECT_DIR$/back-end/accounts.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/admins.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/create-admin-user.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/src/components/AdminProfile.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/src/components/TutorProfile.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/src/components/UserProfile.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/front-end/src/components/UserSignup.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/server.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/tutors.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/tutors.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/users.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/components/HelloWorld.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/AccountManagement.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/front-end/src/mock-data.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Profile.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/front-end/src/views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/views/Signup.vue" afterDir="false" />
     </list>
-    <list id="79d6aea7-e95c-4d39-a42e-8f066e59fa93" name="Changes by Nathaniel :)" comment="">
-      <change beforePath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" beforeDir="false" afterPath="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" afterDir="false" />
-    </list>
+    <list id="79d6aea7-e95c-4d39-a42e-8f066e59fa93" name="Changes by Nathaniel :)" comment="Changes by Nathaniel :)" />
     <list id="14850a23-58ba-4675-858a-f67f22af8e7b" name="Changes by njudd" comment="" />
     <list id="a63ebdc1-a11c-4f41-9263-ecfa4d92a9f0" name="Font and image sizing" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,8 +48,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Vue Single File Component" />
         <option value="JavaScript File" />
+        <option value="Vue Single File Component" />
       </list>
     </option>
   </component>
@@ -64,30 +73,8 @@
     <setting file="file://$PROJECT_DIR$/front-end/vue.config.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/back-end/users.js" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/back-end/tutors.js" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/front-end/src/components/TutorManagement.vue" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/front-end/src/components/AccountManagement.vue" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/front-end/src/main.js" root0="FORCE_HIGHLIGHTING" />
-  </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/front-end/src/components/TutorManagement.vue">
-      <ranges>
-        <range start1="8" end1="9" start2="8" end2="11" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="12" end1="13" start2="14" end2="15" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="30" end1="32" start2="32" end2="39" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="34" end1="37" start2="41" end2="48" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="67" end1="67" start2="78" end2="79" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="69" end1="69" start2="81" end2="85" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="71" end1="72" start2="87" end2="90" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="183" end1="183" start2="201" end2="202" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="206" end1="206" start2="225" end2="229" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="216" end1="216" start2="239" end2="249" changelist="79d6aea7-e95c-4d39-a42e-8f066e59fa93" />
-        <range start1="217" end1="218" start2="250" end2="251" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="223" end1="224" start2="256" end2="256" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="228" end1="228" start2="260" end2="261" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="231" end1="232" start2="264" end2="265" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="240" end1="240" start2="273" end2="288" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-        <range start1="250" end1="250" start2="298" end2="303" changelist="704a913b-513f-4c0a-9189-b1b467915b0b" />
-      </ranges>
-    </file>
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="6rpmy4so" />
@@ -246,6 +233,7 @@
       <workItem from="1619017943307" duration="31000" />
       <workItem from="1619018020553" duration="2858000" />
       <workItem from="1619021474226" duration="5982000" />
+      <workItem from="1619027488263" duration="38992000" />
     </task>
     <task id="LOCAL-00002" summary="Quote API/JS implementation">
       <created>1614398280046</created>
@@ -562,7 +550,28 @@
       <option name="project" value="LOCAL" />
       <updated>1618860637423</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Adding authentication for the Final Project 5">
+      <created>1619027508216</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1619027508216</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Changes by Nathaniel :)">
+      <created>1619027527635</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1619027527635</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Changes by Nathaniel :)">
+      <created>1619027613956</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1619027613956</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -585,7 +594,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/googletest" />
     </ignored-roots>
-    <MESSAGE value="Moving CSS and reinitializing quote functionality" />
     <MESSAGE value="Adding and deleting tutors" />
     <MESSAGE value="Stopped show and hide tutors from adding a tutor" />
     <MESSAGE value="Updates" />
@@ -610,7 +618,8 @@
     <MESSAGE value="Updates finalized for adding and deleting users and tutors and displaying their respective amounts!!!!!" />
     <MESSAGE value="Updating dependencies" />
     <MESSAGE value="Adding authentication for the Final Project 5" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding authentication for the Final Project 5" />
+    <MESSAGE value="Changes by Nathaniel :)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes by Nathaniel :)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
