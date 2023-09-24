@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="OperationOpportunity" type="NodeJSConfigurationType" path-to-js-file="back-end/server.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="OperationOpportunity" type="NodeJSConfigurationType" path-to-js-file="server.js" working-dir="$PROJECT_DIR$/back-end">
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
       <browser with-js-debugger="true" url="http://localhost:8080" />
     </EXTENSION>
