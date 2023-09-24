@@ -1,26 +1,21 @@
 {
   "name": "back-end",
   "version": "1.0.0",
-  "description": "Operation Opportunity Creative Project 4",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "lint": "eslint.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "argon2": "^0.27.2",
-    "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.5",
-    "cookie-session": "^1.4.0",
-    "express": "^4.17.1",
-    "lint": "^0.7.0",
-    "moment": "^2.29.1",
-    "mongoose": "^5.12.5",
-    "multer": "^1.4.2",
+    "argon2": "^0.31.1",
+    "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
+    "express": "^4.18.2",
+    "mongoose": "^7.5.2",
+    "multer": "^1.4.5-lts.1",
     "readline-sync": "^1.4.10"
   }
 }
