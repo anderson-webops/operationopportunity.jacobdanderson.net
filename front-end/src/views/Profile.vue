@@ -3,7 +3,7 @@
     <AdminProfile v-if="admin" />
     <TutorProfile v-else-if="tutor" />
     <UserProfile v-else-if="user" />
-    <div class="loginSignup" v-else>
+    <div v-else class="loginSignup">
       <h3>Please login or signup!</h3>
     </div>
   </div>
@@ -13,6 +13,7 @@
 import AdminProfile from "@/components/AdminProfile";
 import TutorProfile from "@/components/TutorProfile";
 import UserProfile from "@/components/UserProfile";
+
 export default {
   name: "Profile",
   components: {

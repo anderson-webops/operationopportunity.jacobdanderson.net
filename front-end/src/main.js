@@ -1,8 +1,6 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-
-Vue.config.productionTip = false;
 
 let data = {
   tutors: [],
@@ -16,8 +14,4 @@ let data = {
   showUsers: false,
 };
 
-new Vue({
-  router,
-  data,
-  render: (h) => h(App),
-}).$mount("#app");
+createApp(App).provide("appData", data).use(router).mount("#app");

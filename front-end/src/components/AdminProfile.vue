@@ -6,25 +6,29 @@
   <section class="Signup text-center">
     <!--   Admin's Profile   -->
     <h2>Profile</h2>
-    <div class="tutorList mt-2" v-bind:key="currentAdmin.id">
+    <div v-bind:key="currentAdmin.id" class="tutorList mt-2">
       <br />
       <ul>
         <!-- eslint-disable-->
-          <li><h4>Admin</h4></li>
-          <li v-show="currentAdmin.editAdmins"><label>Name:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.name" /></label></li>
-          <li v-show="currentAdmin.editAdmins"><label>Email:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.email" /></label></li>
-<!--          <li v-show="currentAdmin.editAdmins"><label>Age:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.age" /></label></li>-->
-<!--          <li v-show="currentAdmin.editAdmins"><label>State:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.state" /></label></li>-->
+        <li><h4>Admin</h4></li>
+        <li v-show="currentAdmin.editAdmins"><label>Name:&emsp;<input v-model="currentAdmin.name" class="editTutor"
+                                                                      type="text"/></label></li>
+        <li v-show="currentAdmin.editAdmins"><label>Email:&emsp;<input v-model="currentAdmin.email" class="editTutor"
+                                                                       type="text"/></label></li>
+        <!--          <li v-show="currentAdmin.editAdmins"><label>Age:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.age" /></label></li>-->
+        <!--          <li v-show="currentAdmin.editAdmins"><label>State:&emsp;<input class="editTutor" type="text" v-model="currentAdmin.state" /></label></li>-->
 
-          <li v-show="!currentAdmin.editAdmins"><label class="hidden">Name:</label>&emsp;<p>{{ currentAdmin.name }}</p></li>
-          <li v-show="!currentAdmin.editAdmins"><label class="hidden">Email:</label>&emsp;<p>{{ currentAdmin.email }}</p></li>
-<!--          <li v-show="!currentAdmin.editAdmins"><label class="hidden">Age:</label>&emsp;<p>{{ currentAdmin.age }}</p></li>-->
-<!--          <li v-show="!currentAdmin.editAdmins"><label class="hidden">State:</label>&emsp;<p>{{ currentAdmin.state }}</p></li>-->
+        <li v-show="!currentAdmin.editAdmins"><label class="hidden">Name:</label>&emsp;<p>{{ currentAdmin.name }}</p>
+        </li>
+        <li v-show="!currentAdmin.editAdmins"><label class="hidden">Email:</label>&emsp;<p>{{ currentAdmin.email }}</p>
+        </li>
+        <!--          <li v-show="!currentAdmin.editAdmins"><label class="hidden">Age:</label>&emsp;<p>{{ currentAdmin.age }}</p></li>-->
+        <!--          <li v-show="!currentAdmin.editAdmins"><label class="hidden">State:</label>&emsp;<p>{{ currentAdmin.state }}</p></li>-->
         <!-- eslint-enable-->
       </ul>
       <br />
       <button @click="deleteAdmin()">Delete</button>
-      <button @click="editAdmin()" v-bind:string="currentAdmin.saveEdit">
+      <button v-bind:string="currentAdmin.saveEdit" @click="editAdmin()">
         {{ currentAdmin.saveEdit }}
       </button>
     </div>
@@ -34,28 +38,32 @@
     <!--   List Tutors   -->
     <h2>Tutors</h2>
     <div
-      class="tutorList mt-2"
       v-for="tutorIt in getTutorsArray"
       v-bind:key="tutorIt.id"
+      class="tutorList mt-2"
     >
       <br />
       <ul>
         <!-- eslint-disable-->
-          <li><h4>Tutor</h4></li>
-          <li v-show="tutorIt.editTutors"><label>Name:&emsp;<input class="editTutor" type="text" v-model="tutorIt.name" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>Email:&emsp;<input class="editTutor" type="text" v-model="tutorIt.email" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>Age:&emsp;<input class="editTutor" type="text" v-model="tutorIt.age" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="tutorIt.state" /></label></li>
+        <li><h4>Tutor</h4></li>
+        <li v-show="tutorIt.editTutors"><label>Name:&emsp;<input v-model="tutorIt.name" class="editTutor" type="text"/></label>
+        </li>
+        <li v-show="tutorIt.editTutors"><label>Email:&emsp;<input v-model="tutorIt.email" class="editTutor"
+                                                                  type="text"/></label></li>
+        <li v-show="tutorIt.editTutors"><label>Age:&emsp;<input v-model="tutorIt.age" class="editTutor"
+                                                                type="text"/></label></li>
+        <li v-show="tutorIt.editTutors"><label>State:&emsp;<input v-model="tutorIt.state" class="editTutor"
+                                                                  type="text"/></label></li>
 
-          <li v-show="!tutorIt.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ tutorIt.name }}</p></li>
-          <li v-show="!tutorIt.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p></li>
-          <li v-show="!tutorIt.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ tutorIt.age }}</p></li>
-          <li v-show="!tutorIt.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p></li>
+        <li v-show="!tutorIt.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ tutorIt.name }}</p></li>
+        <li v-show="!tutorIt.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p></li>
+        <li v-show="!tutorIt.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ tutorIt.age }}</p></li>
+        <li v-show="!tutorIt.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p></li>
         <!-- eslint-enable-->
       </ul>
       <br />
       <button @click="deleteTutor(tutorIt)">Delete</button>
-      <button @click="editTutor(tutorIt)" v-bind:string="tutorIt.saveEdit">
+      <button v-bind:string="tutorIt.saveEdit" @click="editTutor(tutorIt)">
         {{ tutorIt.saveEdit }}
       </button>
     </div>
@@ -65,27 +73,31 @@
     <!--   List Users   -->
     <h2>Users</h2>
     <div
-      class="tutorList mt-2"
       v-for="userIt in getUsersArray"
       v-bind:key="userIt.id"
+      class="tutorList mt-2"
     >
       <br />
       <ul>
         <!-- eslint-disable-->
-          <li v-show="userIt.editUsers"><label>Name:&emsp;<input class="editTutor" type="text" v-model="userIt.name" /></label></li>
-          <li v-show="userIt.editUsers"><label>Email:&emsp;<input class="editTutor" type="text" v-model="userIt.email" /></label></li>
-          <li v-show="userIt.editUsers"><label>Age:&emsp;<input class="editTutor" type="text" v-model="userIt.age" /></label></li>
-          <li v-show="userIt.editUsers"><label>State:&emsp;<input class="editTutor" type="text" v-model="userIt.state" /></label></li>
+        <li v-show="userIt.editUsers"><label>Name:&emsp;<input v-model="userIt.name" class="editTutor"
+                                                               type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>Email:&emsp;<input v-model="userIt.email" class="editTutor"
+                                                                type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>Age:&emsp;<input v-model="userIt.age" class="editTutor"
+                                                              type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>State:&emsp;<input v-model="userIt.state" class="editTutor"
+                                                                type="text"/></label></li>
 
-          <li v-show="!userIt.editUsers"><label class="hidden">Name:</label>&emsp;<p>{{ userIt.name }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">Email:</label>&emsp;<p>{{ userIt.email }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">Age:</label>&emsp;<p>{{ userIt.age }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">State:</label>&emsp;<p>{{ userIt.state }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Name:</label>&emsp;<p>{{ userIt.name }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Email:</label>&emsp;<p>{{ userIt.email }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Age:</label>&emsp;<p>{{ userIt.age }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">State:</label>&emsp;<p>{{ userIt.state }}</p></li>
         <!-- eslint-enable-->
       </ul>
       <br />
       <button @click="deleteUser(userIt)">Delete</button>
-      <button @click="editUser(userIt)" v-bind:string="userIt.saveEdit">
+      <button v-bind:string="userIt.saveEdit" @click="editUser(userIt)">
         {{ userIt.saveEdit }}
       </button>
     </div>

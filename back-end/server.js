@@ -15,10 +15,7 @@ app.use(
 app.use(bodyParser.json());
 
 // connect to the database
-mongoose.connect("mongodb://localhost:27017/operationopportunity", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect('mongodb://localhost:27017/operationopportunity');
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());

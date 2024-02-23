@@ -6,10 +6,10 @@
   <section class="Signup text-center">
     <h1>Signup Under a Tutor</h1>
     <img
-      src="https://thumbs.dreamstime.com/b/closeup-person-signing-form-letter-intent-land-acquisition-closeup-person-signing-form-letter-intent-188466918.jpg"
       alt="Signing up"
-      width="30%"
       class="m-5"
+      src="https://thumbs.dreamstime.com/b/closeup-person-signing-form-letter-intent-land-acquisition-closeup-person-signing-form-letter-intent-188466918.jpg"
+      width="30%"
     />
     <h2>How does it work?</h2>
     <p class="mt-3">

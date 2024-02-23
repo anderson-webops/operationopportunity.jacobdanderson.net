@@ -6,50 +6,50 @@
 
     <!-- The Modal -->
     <div
+      class="modal loginForm"
       v-bind:class="{
         showLogin: $root.$data.loginBlock && !$root.$data.currentTutor,
       }"
-      class="modal loginForm"
     >
       <!-- Modal Content -->
       <form class="modal-content animate" v-on:submit.prevent="login">
         <span
-          v-on:click="changeLoginView(false)"
           class="close"
           title="Close Modal"
+          v-on:click="changeLoginView(false)"
           >&times;</span
         >
 
         <div class="imgcontainer">
           <img
-            src="https://www.w3schools.com/howto/img_avatar2.png"
             alt="Avatar"
             class="avatar"
+            src="https://www.w3schools.com/howto/img_avatar2.png"
           />
         </div>
 
         <div class="container">
           <label for="uname"><b>Email</b></label>
           <input
-            type="text"
-            placeholder="Enter Email"
             id="uname"
             v-model="loginEmail"
+            placeholder="Enter Email"
             required
+            type="text"
           />
 
           <label for="psw1"><b>Password</b></label>
           <input
-            type="password"
-            placeholder="Enter Password"
             id="psw1"
             v-model="loginPassword"
+            placeholder="Enter Password"
             required
+            type="password"
           />
 
-          <button type="submit" class="button">Login</button>
+          <button class="button" type="submit">Login</button>
           <label>
-            <input type="checkbox" checked="checked" name="remember" /> Remember
+            <input checked="checked" name="remember" type="checkbox" /> Remember
             me
           </label>
           <span class="signup"
@@ -67,9 +67,9 @@
 
         <div class="container" style="background-color: #f1f1f1">
           <button
+            class="cancelbtn"
             type="button"
             v-on:click="changeLoginView(false)"
-            class="cancelbtn"
           >
             Cancel
           </button>
@@ -85,17 +85,17 @@
 
     <!-- The Modal (contains the Sign Up form) -->
     <div
+      class="modal signupForm"
       v-bind:class="{
         showSignup: $root.$data.signupBlock && !$root.$data.currentTutor,
       }"
-      class="modal signupForm"
     >
       <!-- Modal Content -->
       <form class="modal-content animate" v-on:submit.prevent="addAccount">
         <span
-          v-on:click="changeSignupView(false)"
           class="close"
           title="Close Modal"
+          v-on:click="changeSignupView(false)"
           >&times;</span
         >
 
@@ -110,20 +110,20 @@
           <div class="radio">
             <label class="radioLabel" for="tutorChoice">Tutor</label>
             <input
+              id="tutorChoice"
+              v-model="accountType"
               class="radioInput"
               type="radio"
-              id="tutorChoice"
               value="tutor"
-              v-model="accountType"
             />
 
             <label class="radioLabel" for="userChoice">User</label>
             <input
+              id="userChoice"
+              v-model="accountType"
               class="radioInput"
               type="radio"
-              id="userChoice"
               value="user"
-              v-model="accountType"
             />
           </div>
 
@@ -131,68 +131,68 @@
 
           <label for="name"><b>Name</b></label>
           <input
-            type="text"
-            placeholder="Enter Name"
             id="name"
             v-model="name"
+            placeholder="Enter Name"
             required
+            type="text"
           />
 
           <label for="age"><b>Age</b></label>
           <input
-            type="text"
-            placeholder="Enter Age"
             id="age"
             v-model="age"
+            placeholder="Enter Age"
             required
+            type="text"
           />
 
           <label for="state"><b>State</b></label>
           <input
-            type="text"
-            placeholder="Enter State"
             id="state"
             v-model="state"
+            placeholder="Enter State"
             required
+            type="text"
           />
 
           <label for="email"><b>Email</b></label>
           <input
-            type="text"
-            placeholder="Enter Email"
             id="email"
             v-model="email"
+            placeholder="Enter Email"
             required
+            type="text"
           />
 
           <label for="psw2"><b>Password</b></label>
           <input
-            type="password"
-            placeholder="Enter Password"
             id="psw2"
             v-model="password"
+            placeholder="Enter Password"
             required
+            type="password"
           />
 
           <label for="psw-repeat"><b>Repeat Password</b></label>
           <input
-            type="password"
-            placeholder="Repeat Password"
             id="psw-repeat"
             v-model="passwordRepeat"
+            placeholder="Repeat Password"
             required
+            type="password"
           />
 
-          <button type="submit" class="signup button">Sign Up</button>
+          <button class="signup button" type="submit">Sign Up</button>
           <p v-if="!passwordMatch" class="passwordMatchError">
             Passwords do not match
           </p>
           <label>
             <input
-              type="checkbox"
               checked="checked"
               name="remember"
               style="margin-bottom: 15px"
+              type="checkbox"
             />
             Remember me
           </label>
@@ -204,9 +204,9 @@
 
           <div class="container clearfix" style="background-color: #f1f1f1">
             <button
+              class="cancelbtn"
               type="button"
               v-on:click="changeSignupView(false)"
-              class="cancelbtn"
             >
               Cancel
             </button>
@@ -580,6 +580,7 @@ div.loginForm span.signup {
     display: block;
     float: none;
   }
+
   div.loginForm .cancelbtn {
     width: 100%;
   }

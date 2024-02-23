@@ -1,9 +1,9 @@
 **/.DS_Store
-**/node_modules
-**/package-lock.json
+**/node_modules*
+**/.node_modules*.nosync
+**/package-lock*.json
 /dist
 .run
-.idea
 
 # local env files
 .env.local

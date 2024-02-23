@@ -6,25 +6,32 @@
   <section class="Signup text-center">
     <!--   Tutor's Profile   -->
     <h2>Profile</h2>
-    <div class="tutorList mt-2" v-bind:key="currentTutor.id">
+    <div v-bind:key="currentTutor.id" class="tutorList mt-2">
       <br />
       <ul>
         <!-- eslint-disable-->
-          <li><h4>Tutor</h4></li>
-          <li v-show="currentTutor.editTutors"><label>Name:&emsp;<input class="editTutor" type="text" v-model="currentTutor.name" /></label></li>
-          <li v-show="currentTutor.editTutors"><label>Email:&emsp;<input class="editTutor" type="text" v-model="currentTutor.email" /></label></li>
-          <li v-show="currentTutor.editTutors"><label>Age:&emsp;<input class="editTutor" type="text" v-model="currentTutor.age" /></label></li>
-          <li v-show="currentTutor.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="currentTutor.state" /></label></li>
+        <li><h4>Tutor</h4></li>
+        <li v-show="currentTutor.editTutors"><label>Name:&emsp;<input v-model="currentTutor.name" class="editTutor"
+                                                                      type="text"/></label></li>
+        <li v-show="currentTutor.editTutors"><label>Email:&emsp;<input v-model="currentTutor.email" class="editTutor"
+                                                                       type="text"/></label></li>
+        <li v-show="currentTutor.editTutors"><label>Age:&emsp;<input v-model="currentTutor.age" class="editTutor"
+                                                                     type="text"/></label></li>
+        <li v-show="currentTutor.editTutors"><label>State:&emsp;<input v-model="currentTutor.state" class="editTutor"
+                                                                       type="text"/></label></li>
 
-          <li v-show="!currentTutor.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ currentTutor.name }}</p></li>
-          <li v-show="!currentTutor.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ currentTutor.email }}</p></li>
-          <li v-show="!currentTutor.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ currentTutor.age }}</p></li>
-          <li v-show="!currentTutor.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ currentTutor.state }}</p></li>
+        <li v-show="!currentTutor.editTutors"><label class="hidden">Name:</label>&emsp;<p>{{ currentTutor.name }}</p>
+        </li>
+        <li v-show="!currentTutor.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ currentTutor.email }}</p>
+        </li>
+        <li v-show="!currentTutor.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ currentTutor.age }}</p></li>
+        <li v-show="!currentTutor.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ currentTutor.state }}</p>
+        </li>
         <!-- eslint-enable-->
       </ul>
       <br />
       <button @click="deleteCurrentTutor()">Delete</button>
-      <button @click="editCurrentTutor()" v-bind:string="currentTutor.saveEdit">
+      <button v-bind:string="currentTutor.saveEdit" @click="editCurrentTutor()">
         {{ currentTutor.saveEdit }}
       </button>
     </div>
@@ -34,27 +41,31 @@
     <!--   List Users   -->
     <h2>Users</h2>
     <div
-      class="tutorList mt-2"
       v-for="userIt in getUsersArray"
       v-bind:key="userIt.id"
+      class="tutorList mt-2"
     >
       <br />
       <ul>
         <!-- eslint-disable-->
-          <li v-show="userIt.editUsers"><label>Name:&emsp;<input class="editTutor" type="text" v-model="userIt.name" /></label></li>
-          <li v-show="userIt.editUsers"><label>Email:&emsp;<input class="editTutor" type="text" v-model="userIt.email" /></label></li>
-          <li v-show="userIt.editUsers"><label>Age:&emsp;<input class="editTutor" type="text" v-model="userIt.age" /></label></li>
-          <li v-show="userIt.editUsers"><label>State:&emsp;<input class="editTutor" type="text" v-model="userIt.state" /></label></li>
+        <li v-show="userIt.editUsers"><label>Name:&emsp;<input v-model="userIt.name" class="editTutor"
+                                                               type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>Email:&emsp;<input v-model="userIt.email" class="editTutor"
+                                                                type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>Age:&emsp;<input v-model="userIt.age" class="editTutor"
+                                                              type="text"/></label></li>
+        <li v-show="userIt.editUsers"><label>State:&emsp;<input v-model="userIt.state" class="editTutor"
+                                                                type="text"/></label></li>
 
-          <li v-show="!userIt.editUsers"><label class="hidden">Name:</label>&emsp;<p>{{ userIt.name }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">Email:</label>&emsp;<p>{{ userIt.email }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">Age:</label>&emsp;<p>{{ userIt.age }}</p></li>
-          <li v-show="!userIt.editUsers"><label class="hidden">State:</label>&emsp;<p>{{ userIt.state }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Name:</label>&emsp;<p>{{ userIt.name }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Email:</label>&emsp;<p>{{ userIt.email }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">Age:</label>&emsp;<p>{{ userIt.age }}</p></li>
+        <li v-show="!userIt.editUsers"><label class="hidden">State:</label>&emsp;<p>{{ userIt.state }}</p></li>
         <!-- eslint-enable-->
       </ul>
       <br />
       <button @click="deleteUser(userIt)">Delete</button>
-      <button @click="editUser(userIt)" v-bind:string="userIt.saveEdit">
+      <button v-bind:string="userIt.saveEdit" @click="editUser(userIt)">
         {{ userIt.saveEdit }}
       </button>
     </div>
@@ -90,7 +101,7 @@ export default {
       try {
         if (this.$root.$data.currentTutor) {
           const response = await axios.get(
-            `/api/users/oftutor/${this.$root.$data.currentTutor._id}`
+            `/api/users/oftutor/${this.$root.$data.currentTutor._id}`,
           );
           this.$root.$data.users = response.data;
         }

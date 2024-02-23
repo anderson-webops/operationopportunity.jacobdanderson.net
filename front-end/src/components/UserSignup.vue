@@ -6,28 +6,28 @@
       <form id="signupForm" v-on:submit.prevent="addUser">
         <select
           v-if="$root.$data.tutors.length > 0"
-          v-model="tutor"
           id="tutorSelect"
+          v-model="tutor"
           required
         >
           <option
             v-for="tutorIt in getTutorsArray"
-            :value="tutorIt"
             v-bind:key="tutorIt.id"
+            :value="tutorIt"
           >
             {{ tutorIt.name }}
           </option>
         </select>
-        <p class="notutors" v-else>No Tutors are available</p>
+        <p v-else class="notutors">No Tutors are available</p>
         <br />
 
-        <button class="mt-3" id="infoSubmit" type="submit">Submit</button>
+        <button id="infoSubmit" class="mt-3" type="submit">Submit</button>
       </form>
 
       <button
         v-show="$root.$data.tutors.length > 0"
-        @click="showTutors = !showTutors"
         v-bind:string="showHideTutors"
+        @click="showTutors = !showTutors"
       >
         {{ this.showHide }} tutors
       </button>
@@ -43,10 +43,10 @@
       </h3>
 
       <div
-        class="tutorList mt-2"
-        v-show="showTutors && $root.$data.tutors.length > 0"
         v-for="tutorIt in getTutorsArray"
+        v-show="showTutors && $root.$data.tutors.length > 0"
         v-bind:key="tutorIt.id"
+        class="tutorList mt-2"
       >
         <br />
         <ul>
@@ -56,13 +56,19 @@
           <li v-show="!tutorIt.editTutors"><label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p></li>
           <li v-show="!tutorIt.editTutors"><label class="hidden">Age:</label>&emsp;<p>{{ tutorIt.age }}</p></li>
           <li v-show="!tutorIt.editTutors"><label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p></li>
-          <li v-show="!tutorIt.editTutors"><label class="hidden">Users:</label>&emsp;<p>{{ tutorIt.usersOfTutorLength }}</p></li>
+          <li v-show="!tutorIt.editTutors"><label class="hidden">Users:</label>&emsp;<p>{{
+              tutorIt.usersOfTutorLength
+            }}</p></li>
 
           <!--   EDIT   -->
-          <li v-show="tutorIt.editTutors"><label>Name:&emsp;<input class="editTutor" type="text" v-model="tutorIt.name" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>Email:&emsp;<input class="editTutor" type="text" v-model="tutorIt.email" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>Age:&emsp;<input class="editTutor" type="text" v-model="tutorIt.age" /></label></li>
-          <li v-show="tutorIt.editTutors"><label>State:&emsp;<input class="editTutor" type="text" v-model="tutorIt.state" /></label></li>
+          <li v-show="tutorIt.editTutors"><label>Name:&emsp;<input v-model="tutorIt.name" class="editTutor"
+                                                                   type="text"/></label></li>
+          <li v-show="tutorIt.editTutors"><label>Email:&emsp;<input v-model="tutorIt.email" class="editTutor"
+                                                                    type="text"/></label></li>
+          <li v-show="tutorIt.editTutors"><label>Age:&emsp;<input v-model="tutorIt.age" class="editTutor" type="text"/></label>
+          </li>
+          <li v-show="tutorIt.editTutors"><label>State:&emsp;<input v-model="tutorIt.state" class="editTutor"
+                                                                    type="text"/></label></li>
           <!-- eslint-enable-->
         </ul>
         <br />
@@ -78,16 +84,16 @@
           v-show="
             $root.$data.currentAdmin || $root.$data.currentTutor === tutorIt
           "
-          @click="editTutor(tutorIt)"
           v-bind:string="tutorIt.saveEdit"
+          @click="editTutor(tutorIt)"
         >
           {{ tutorIt.saveEdit }}
         </button>
         <button
+          v-show="$root.$data.currentUser"
           v-bind:class="{
             colorSelect: tutorIt === $root.$data.currentUser.tutor,
           }"
-          v-show="$root.$data.currentUser"
           @click="selectTutor(tutorIt)"
         >
           Select
@@ -245,7 +251,7 @@ export default {
       if (this.$root.$data.currentUser == null) return;
       try {
         await axios.put(
-          `/api/users/selectTutor/${this.$root.$data.currentUser._id}/${tutor._id}`
+          `/api/users/selectTutor/${this.$root.$data.currentUser._id}/${tutor._id}`,
         );
 
         // Refresh the current user

@@ -37,8 +37,8 @@
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/supportus"
-                >Support Us</router-link
-              >
+                >Support Us
+              </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">About</router-link>
@@ -49,27 +49,27 @@
           </ul>
           <!-- Button to logout -->
           <button
+            v-show="loggedIn"
             class="btn btn-outline-danger"
             type="submit"
-            v-show="loggedIn"
             v-on:click="logout()"
           >
             Logout
           </button>
           <!-- Button to open the modal login form -->
           <button
+            v-show="!loggedIn"
             class="btn btn-outline-success"
             type="submit"
-            v-show="!loggedIn"
             v-on:click="changeLoginView(true)"
           >
             Login
           </button>
           <!-- Button to open the modal signup form -->
           <button
+            v-show="!loggedIn"
             class="btn btn-outline-primary"
             type="submit"
-            v-show="!loggedIn"
             v-on:click="changeSignupView(true)"
           >
             Signup
@@ -107,8 +107,8 @@
                 target="_blank"
                 ><img
                   id="githubIcon"
-                  src="../public/Images/github-dark.09072337.svg"
                   alt="github Icon"
+                  src="../public/Images/github-dark.09072337.svg"
               /></a>
             </li>
           </ul>
@@ -126,8 +126,8 @@
               ©2021
               <a
                 href="https://audiot.info"
-                target="_blank"
                 style="text-decoration: none; color: inherit"
+                target="_blank"
                 >AudioT</a
               >. All rights reserved.
             </li>
@@ -144,8 +144,8 @@
             <li>
               <a
                 href="https://nathanielcs260.com"
-                target="_blank"
                 style="text-decoration: none; color: inherit"
+                target="_blank"
                 >Nathaniel Judd</a
               >
             </li>
@@ -214,7 +214,7 @@ export default {
       if (this.$root.$data.currentTutor == null) return;
       try {
         const response = await axios.get(
-          `/api/users/oftutor/${this.$root.$data.currentTutor._id}`
+          `/api/users/oftutor/${this.$root.$data.currentTutor._id}`,
         );
         this.$root.$data.users = response.data;
       } catch (error) {

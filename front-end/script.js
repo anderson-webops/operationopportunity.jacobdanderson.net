@@ -1,10 +1,14 @@
 const updateQuote = async () => {
-  const url =
-    "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-  let response = await fetch(url);
-  let json = await response.json();
-  console.log(json);
-  return json;
+  const url = "";//"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
+  try {
+    let response = await fetch(url);
+    let json = await response.json();
+    console.log(json);
+    return json;
+  } catch (error) {
+    console.error(error);
+    return {}; // return an empty object or any default value
+  }
 };
 
 updateQuote().then((data) => {
