@@ -3,7 +3,7 @@ import Home from "@/views/Home.vue";
 import Signup from "@/views/Signup.vue";
 import Supportus from "@/views/Supportus.vue";
 import About from "@/views/About.vue";
-import Profile from "@/views/Profile";
+import Profile from "@/views/Profile.vue";
 
 const routes = [
   {
