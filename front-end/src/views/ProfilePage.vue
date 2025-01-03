@@ -9,7 +9,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import AdminProfile from "@/components/AdminProfile";
 import TutorProfile from "@/components/TutorProfile";
 import UserProfile from "@/components/UserProfile";

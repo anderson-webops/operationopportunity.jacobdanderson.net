@@ -21,7 +21,7 @@
 	</section>
 </template>
 
-<script>
+<script lang="ts">
 import UserSignup from "@/components/UserSignup";
 
 export default {

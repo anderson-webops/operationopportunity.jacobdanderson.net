@@ -1,8 +1,8 @@
 <template>
 	<div id="app">
 		<!----------------
-		-   Navigation   -
-		----------------->
+    -   Navigation   -
+    ----------------->
 
 		<nav
 			class="navbar navbar-expand-lg navbar-light"
@@ -37,8 +37,8 @@
 						</li>
 						<li class="nav-item">
 							<router-link class="nav-link" to="/supportus"
-								>Support Us</router-link
-							>
+								>Support Us
+							</router-link>
 						</li>
 						<li class="nav-item">
 							<router-link class="nav-link" to="/about">About</router-link>
@@ -47,30 +47,27 @@
 							<router-link class="nav-link" to="/profile">Profile</router-link>
 						</li>
 					</ul>
-					<!-- Button to logout -->
+					<!-- Logout Button -->
 					<button
+						v-if="loggedIn"
 						class="btn btn-outline-danger"
-						type="submit"
-						v-show="loggedIn"
-						v-on:click="logout()"
+						@click="logoutUser"
 					>
 						Logout
 					</button>
-					<!-- Button to open the modal login form -->
+					<!-- Login Button -->
 					<button
+						v-else
 						class="btn btn-outline-success"
-						type="submit"
-						v-show="!loggedIn"
-						v-on:click="changeLoginView(true)"
+						@click="showLoginModal"
 					>
 						Login
 					</button>
-					<!-- Button to open the modal signup form -->
+					<!-- Signup Button -->
 					<button
+						v-if="!loggedIn"
 						class="btn btn-outline-primary"
-						type="submit"
-						v-show="!loggedIn"
-						v-on:click="changeSignupView(true)"
+						@click="showSignupModal"
 					>
 						Signup
 					</button>
@@ -79,20 +76,20 @@
 		</nav>
 
 		<!----------------------------
-		-   Login and Signup Forms   -
-		----------------------------->
+    -   Login and Signup Forms   -
+    ----------------------------->
 
 		<TutorManagement />
 
 		<!-----------------
-		-   Router View   -
-		------------------>
+    -   Router View   -
+    ------------------>
 
 		<router-view />
 
 		<!------------
-		-   Footer   -
-		------------->
+    -   Footer   -
+    ------------->
 
 		<footer class="text-center">
 			<div class="github">
@@ -107,8 +104,8 @@
 								target="_blank"
 								><img
 									id="githubIcon"
-									src="../public/Images/github-dark.09072337.svg"
 									alt="github Icon"
+									src="../public/Images/github-dark.09072337.svg"
 							/></a>
 						</li>
 					</ul>
@@ -126,8 +123,8 @@
 							©2021
 							<a
 								href="https://audiot.info"
-								target="_blank"
 								style="text-decoration: none; color: inherit"
+								target="_blank"
 								>AudioT</a
 							>. All rights reserved.
 						</li>
@@ -144,8 +141,8 @@
 						<li>
 							<a
 								href="https://nathanielcs260.com"
-								target="_blank"
 								style="text-decoration: none; color: inherit"
+								target="_blank"
 								>Nathaniel Judd</a
 							>
 						</li>
@@ -155,7 +152,7 @@
 				</nav>
 			</div>
 
-			<p v-if="error" class="error">{{ error }}</p>
+			<!--			<p v-if="error" class="error">{{ error }}</p>-->
 
 			<div class="ip pb-1">
 				<p id="ip"></p>
@@ -165,146 +162,32 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import axios from "axios";
-import TutorManagement from "@/components/AccountManagement.vue"; // Ensure path is correct
+import { defineComponent, computed } from "vue";
+import { useStore } from "vuex";
 
-interface RootData {
-	users: never | null[];
-	tutors: never | null[];
-	currentTutor?: { _id: string } | null;
-	currentUser: never | null;
-	currentAdmin: never | null;
-	signupBlock: boolean;
-	loginBlock: boolean;
-}
+export default defineComponent({
+	name: "App", // Replace with your component name
+	setup() {
+		const store = useStore();
 
-@Options({
-	components: {
-		TutorManagement
+		const loggedIn = computed(() => store.state.loggedIn);
+
+		const logoutUser = () => {
+			store.dispatch("logout");
+			// Additional logout logic here if needed
+		};
+
+		const showLoginModal = () => {
+			// Logic to show login modal
+		};
+
+		const showSignupModal = () => {
+			// Logic to show signup modal
+		};
+
+		return { loggedIn, logoutUser, showLoginModal, showSignupModal };
 	}
-})
-export default class App extends Vue {
-	error: string = "";
-
-	get getUsersArray() {
-		if (!this.$root || !this.$root.$data) {
-			return null;
-		}
-
-		return (this.$root.$data as RootData).users;
-	}
-
-	get getTutorsArray() {
-		if (!this.$root || !this.$root.$data) {
-			return null;
-		}
-
-		return (this.$root.$data as RootData).tutors;
-	}
-
-	get loggedIn() {
-		if (!this.$root || !this.$root.$data) {
-			return null;
-		}
-
-		const data = this.$root.$data as RootData;
-		return (
-			data.currentTutor !== null ||
-			data.currentUser !== null ||
-			data.currentAdmin !== null
-		);
-	}
-
-	async created() {
-		await this.getTutors();
-		await this.getUsers();
-	}
-
-	changeSignupView(showHide: boolean) {
-		if (!this.$root || !this.$root.$data) {
-			return;
-		}
-
-		(this.$root.$data as RootData).signupBlock = showHide;
-	}
-
-	changeLoginView(showHide: boolean) {
-		if (!this.$root || !this.$root.$data) {
-			return;
-		}
-
-		(this.$root.$data as RootData).loginBlock = showHide;
-	}
-
-	async getTutors() {
-		if (!this.$root || !this.$root.$data) {
-			return;
-		}
-
-		try {
-			const response = await axios.get("/api/tutors");
-			(this.$root.$data as RootData).tutors = response.data;
-		} catch (error) {
-			console.log(`Error: ${error}`);
-			if (error instanceof Error) {
-				this.error = "Error: " + error.message;
-			} else {
-				// Handle the case where error is not an instance of Error
-				this.error = "An unknown error occurred";
-			}
-		}
-	}
-
-	async getUsers() {
-		if (!this.$root || !this.$root.$data) {
-			return;
-		}
-
-		if ((this.$root.$data as RootData).currentTutor === null) return;
-
-		try {
-			const response = await axios.get(
-				`/api/users/oftutor/${(this.$root.$data as RootData).currentTutor!._id}`
-			);
-
-			(this.$root.$data as RootData).users = response.data;
-		} catch (error) {
-			console.log(`Error: ${error}`);
-			if (error instanceof Error) {
-				this.error = "Error: " + error.message;
-			} else {
-				// Handle the case where error is not an instance of Error
-				this.error = "An unknown error occurred";
-			}
-		}
-	}
-
-	async logout() {
-		if (!this.$root || !this.$root.$data) {
-			return;
-		}
-
-		try {
-			if ((this.$root.$data as RootData).currentTutor)
-				await axios.delete("/api/tutors/logout");
-			if ((this.$root.$data as RootData).currentUser)
-				await axios.delete("/api/users/logout");
-			if ((this.$root.$data as RootData).currentAdmin)
-				await axios.delete("/api/admins/logout");
-			(this.$root.$data as RootData).currentTutor = null;
-			(this.$root.$data as RootData).currentUser = null;
-			(this.$root.$data as RootData).currentAdmin = null;
-		} catch (error) {
-			(this.$root.$data as RootData).currentTutor = null;
-			(this.$root.$data as RootData).currentUser = null;
-			(this.$root.$data as RootData).currentAdmin = null;
-		}
-	}
-}
-
-// TypeScript does not allow the direct manipulation of `window` object in the same way as JavaScript.
-// You might want to handle the modal logic inside mounted lifecycle hook or use Vue directives in your template for a more Vue-centric approach.
+});
 </script>
 
 <style>
