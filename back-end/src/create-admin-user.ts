@@ -1,51 +1,48 @@
 import * as readlineSync from "readline-sync";
 import mongoose from "mongoose";
+import { Admin, IAdmin } from "./admins.js";
 
-import {Admin, IAdmin} from "./admins.js";
+// Connect to MongoDB
+mongoose
+	.connect("mongodb://localhost:27017/operationopportunity")
+	.then(() => console.log("Connected to MongoDB"))
+	.catch((err) => console.error("Error connecting to MongoDB:", err));
 
-// connect to Mongo
-mongoose.connect("mongodb://localhost:27017/operationopportunity").then(() => console.log("Connected to MongoDB"));
-
-// get the needed info
+// Gather info
 const name: string = readlineSync.question("Name: ");
 const username: string = readlineSync.question("Username or email: ");
 const password: string = readlineSync.question("Password: ", {
 	hideEchoBack: true,
 });
 
-if (name === "" || username === "" || password === "") {
-	console.log(
-		"You need to enter a first name, last name, username, and password"
-	);
-	process.exit();
+if (!name || !username || !password) {
+	console.log("You need to enter name, username (email), and password!");
+	process.exit(1);
 }
 
-Admin.findOne({ email: username })
-	.then((admin : mongoose.Document<never, NonNullable<unknown>, IAdmin> | null) : void => {
-		if (admin) {
+(async () => {
+	try {
+		const existingAdmin = await Admin.findOne({ email: username });
+		if (existingAdmin) {
 			console.log("That username already exists");
-			process.exit();
+			process.exit(1);
 		}
-	})
-	.then(() => {
-		const admin : mongoose.Document<never, NonNullable<unknown>, IAdmin> = new Admin({
+
+		const admin: IAdmin = new Admin({
 			name: name,
 			email: username,
 			password: password,
-			editUsers: false,
+			editAdmins: false,
 			saveEdit: "Edit",
 			role: "admin",
 		});
-		admin.save().then(() : void => {
-			console.log(
-				"OK, admin user created for",
-				name,
-				"with username",
-				username
-			);
-			process.exit();
-		});
-	}).catch((error) : void => {
-		console.log(`Error: ${error}`);
-		console.log("Error in create-admin-user.ts AdminModel.findOne()");
-	});
+
+		await admin.save();
+		console.log("OK, admin user created for", name, "with username", username);
+		process.exit(0);
+	} catch (error) {
+		console.error(`Error: ${error}`);
+		console.error("Error in create-admin-user.ts AdminModel.findOne()");
+		process.exit(1);
+	}
+})();

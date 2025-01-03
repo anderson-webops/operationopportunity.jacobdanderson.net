@@ -2,54 +2,46 @@ import * as mongoose from "mongoose";
 import * as argon2 from "argon2";
 import express, { Router, Request, Response } from "express";
 import { Session } from "express-session";
+import { hashPasswordIfModified } from "./hash";
 
 const router: Router = Router();
 
-interface ITutor extends mongoose.Document {
-  name: string;
-  email: string;
-  age: string;
-  state: string;
-  password: string;
-  usersOfTutorLength: number;
-  editTutors: boolean;
-  saveEdit: string;
-  role: string;
-  comparePassword(password: string): Promise<boolean>;
+export interface ITutor extends mongoose.Document {
+	name: string;
+	email: string;
+	age: string;
+	state: string;
+	password: string;
+	usersOfTutorLength: number;
+	editTutors: boolean;
+	saveEdit: string;
+	role: string;
+	comparePassword(password: string): Promise<boolean>;
 }
 
-const tutorSchema : mongoose.Schema = new mongoose.Schema({
+const tutorSchema = new mongoose.Schema({
 	name: { type: String, required: true },
 	email: { type: String, required: true },
 	age: { type: String, required: true },
 	state: { type: String, required: true },
 	password: { type: String, required: true },
-	usersOfTutorLength: { type: Number, required: true },
-	editTutors: { type: Boolean, required: true },
-	saveEdit: { type: String, required: true },
+	usersOfTutorLength: { type: Number, required: true, default: 0 },
+	editTutors: { type: Boolean, required: true, default: false },
+	saveEdit: { type: String, required: true, default: "Edit" },
 	role: {
 		type: String,
 		default: "tutor",
 	},
 });
 
-tutorSchema.pre<ITutor>("save", async function(next) {
-	if (!this.isModified("password")) return next();
+// Pre-save hook for password hashing
+tutorSchema.pre("save", hashPasswordIfModified);
 
-	try {
-		this.password = await argon2.hash(this.password);
-		next();
-	} catch (error) {
-		console.log(`Error: ${error}`);
-		if (error instanceof Error) {
-			next(error);
-		} else { // Handle the case where error is not an instance of Error
-			next(new Error("An unknown error occurred"));
-		}
-	}
-});
-
-tutorSchema.methods.comparePassword = async function(this: ITutor, password: string): Promise<boolean> {
+// Compare password
+tutorSchema.methods.comparePassword = async function (
+	this: ITutor,
+	password: string
+): Promise<boolean> {
 	try {
 		return await argon2.verify(this.password, password);
 	} catch (error) {
@@ -57,127 +49,125 @@ tutorSchema.methods.comparePassword = async function(this: ITutor, password: str
 	}
 };
 
-tutorSchema.methods.toJSON = function() {
+// Remove password field from JSON
+tutorSchema.methods.toJSON = function () {
 	const obj = this.toObject();
 	delete obj.password;
 	return obj;
 };
 
-const Tutor = mongoose.model<ITutor>("Tutor", tutorSchema);
+export const Tutor = mongoose.model<ITutor>("Tutor", tutorSchema);
 
+// Extend session interface
 interface CustomSession extends Session {
 	tutorID?: string;
 }
 
-interface TutorRequest extends Request {
+export interface TutorRequest extends Request {
 	session: CustomSession;
 	currentTutor?: ITutor;
 }
 
-
 // Create a tutor
-router.post("/", async (req : TutorRequest, res : Response) => {
+router.post("/", async (req: TutorRequest, res: Response) => {
 	if (
 		!req.body.name ||
-    !req.body.age ||
-    !req.body.state ||
-    !req.body.email ||
-    !req.body.password
-	)
+		!req.body.age ||
+		!req.body.state ||
+		!req.body.email ||
+		!req.body.password
+	) {
 		return res.status(400).send({ message: "All fields required" });
+	}
 	try {
-		// existing account name is checked in a separate call in user.js
-
 		const tutor = new Tutor({
 			name: req.body.name,
 			email: req.body.email,
 			age: req.body.age,
 			state: req.body.state,
 			password: req.body.password,
-			usersOfTutorLength: 0,
-			editTutors: req.body.editTutors,
-			saveEdit: req.body.saveEdit,
+			usersOfTutorLength: req.body.usersOfTutorLength ?? 0,
+			editTutors: req.body.editTutors ?? false,
+			saveEdit: req.body.saveEdit ?? "Edit",
 		});
 		await tutor.save();
+
 		// set user session info
-		req.session.tutorID = tutor._id;
+		req.session.tutorID = tutor._id.toString();
 		return res.send({ currentTutor: tutor });
 	} catch (error) {
-		console.log(`Error: ${error}`);
-		return res.sendStatus(500).send({
+		console.error(`Error: ${error}`);
+		return res.status(500).send({
 			message: `Error: ${error}`,
 		});
 	}
 });
 
-// Get a list of all tutors
-router.get("/", async (req: Request, res: Response) => {
+// Get all tutors
+router.get("/", async (_req: Request, res: Response) => {
 	try {
 		const tutors = await Tutor.find();
-		res.send(tutors);
+		return res.send(tutors);
 	} catch (error) {
 		console.error(`Error: ${error}`);
-		res.status(500).send({
+		return res.status(500).send({
 			message: `Error: ${error}`,
 		});
 	}
 });
 
-// Update tutor info
+// Update tutor
 router.put("/:tutorID", async (req: TutorRequest, res: Response) => {
 	try {
 		const editedTutor = await Tutor.findOne({ _id: req.params.tutorID });
 		if (!editedTutor) {
 			return res.sendStatus(404);
 		}
-		// Assuming body has been validated or sanitized before reaching this point
-		editedTutor.name = req.body.name;
-		editedTutor.email = req.body.email;
-		editedTutor.age = req.body.age;
-		editedTutor.state = req.body.state;
-		editedTutor.usersOfTutorLength = req.body.usersOfTutorLength;
-		editedTutor.editTutors = req.body.editTutors;
-		editedTutor.saveEdit = req.body.saveEdit;
+		editedTutor.name = req.body.name ?? editedTutor.name;
+		editedTutor.email = req.body.email ?? editedTutor.email;
+		editedTutor.age = req.body.age ?? editedTutor.age;
+		editedTutor.state = req.body.state ?? editedTutor.state;
+		editedTutor.usersOfTutorLength =
+			req.body.usersOfTutorLength ?? editedTutor.usersOfTutorLength;
+		editedTutor.editTutors = req.body.editTutors ?? editedTutor.editTutors;
+		editedTutor.saveEdit = req.body.saveEdit ?? editedTutor.saveEdit;
+
+		// If you'd like to let them change their password, you'd handle hashing again
+		// if (req.body.password) { ... }
+
 		await editedTutor.save();
-		res.sendStatus(200);
+		return res.sendStatus(200);
 	} catch (error) {
 		console.error(`Error: ${error}`);
-		res.status(500).send({
+		return res.status(500).send({
 			message: `Error: ${error}`,
 		});
 	}
 });
 
-// Get logged in user
+// Check logged in tutor
 router.get("/loggedin", async (req: TutorRequest, res: Response) => {
 	try {
 		if (req.currentTutor) {
-			res.send({
-				currentTutor: req.currentTutor,
-			});
-		} else {
-			res.sendStatus(404);
+			return res.send({ currentTutor: req.currentTutor });
 		}
+		return res.sendStatus(404);
 	} catch (error) {
 		console.error(error);
-		res.status(500);
+		return res.sendStatus(500);
 	}
 });
 
 // Delete a tutor
 router.delete("/remove/:tutorID", async (req: Request, res: Response) => {
 	try {
-		// Use deleteOne with the condition
-		const result = await Tutor.deleteOne({
-			_id: req.params.tutorID,
-		});
-		// Check if a document was deleted
+		const result = await Tutor.deleteOne({ _id: req.params.tutorID });
 		if (result.deletedCount === 0) {
 			return res.sendStatus(404);
 		}
 		return res.sendStatus(200);
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return res.sendStatus(500);
 	}
 });
@@ -185,28 +175,21 @@ router.delete("/remove/:tutorID", async (req: Request, res: Response) => {
 // Logout
 router.delete("/logout", async (req: TutorRequest, res: Response) => {
 	try {
-		// Check if session exists and use the destroy method to invalidate it
 		if (req.session) {
 			req.session.destroy((err) => {
 				if (err) {
-					// Log the error and send a 500 status code if session destruction fails
-					console.log(err);
+					console.error(err);
 					return res.sendStatus(500);
-				} else {
-					// Send a 200 status code on successful session destruction
-					res.sendStatus(200);
 				}
+				return res.sendStatus(200);
 			});
 		} else {
-			// If there is no session to destroy, still respond with 200
-			// This caters for the case where the user is not logged in but hits the logout endpoint
-			res.sendStatus(200);
+			return res.sendStatus(200);
 		}
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return res.sendStatus(500);
 	}
 });
 
-const tutorRoutes : express.Router = router;
-export { TutorRequest, ITutor, Tutor, tutorRoutes };
+export const tutorRoutes: express.Router = router;
