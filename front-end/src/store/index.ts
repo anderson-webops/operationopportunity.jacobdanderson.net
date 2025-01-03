@@ -1,108 +1,131 @@
 import { createStore } from "vuex";
 import axios from "axios";
 
-const state = {
-	currentUser: null,
-	currentTutor: null,
-	currentAdmin: null,
+interface Tutor {
+	_id: string;
+	name: string;
+	email: string;
+	age: number;
+	state: string;
+	usersOfTutorLength: number;
+	editTutors: boolean;
+	saveEdit: string;
+}
+
+interface User {
+	_id: string;
+	name: string;
+	email: string;
+	age: number;
+	state: string;
+	editUsers: boolean;
+	saveEdit: string;
+}
+
+interface Admin {
+	_id: string;
+	name: string;
+	email: string;
+	// Add other admin properties as needed
+}
+
+interface State {
+	users: User[];
+	tutors: Tutor[];
+	admins: Admin[];
+	currentTutor: Tutor | null;
+	currentUser: User | null;
+	currentAdmin: Admin | null;
+	loginBlock: boolean;
+	signupBlock: boolean;
+	showUsers: boolean;
+	error: string | null;
+}
+
+const state: State = {
 	users: [],
 	tutors: [],
-	signupBlock: false,
+	admins: [],
+	currentTutor: null,
+	currentUser: null,
+	currentAdmin: null,
 	loginBlock: false,
-	error: ""
+	signupBlock: false,
+	showUsers: false,
+	error: null,
 };
 
 const mutations = {
-	setCurrentUser(state, user) {
-		state.currentUser = user;
-	},
-	setCurrentTutor(state, tutor) {
-		state.currentTutor = tutor;
-	},
-	setCurrentAdmin(state, admin) {
-		state.currentAdmin = admin;
-	},
-	setUsers(state, users) {
+	setUsers(state: State, users: User[]) {
 		state.users = users;
 	},
-	setTutors(state, tutors) {
+	setTutors(state: State, tutors: Tutor[]) {
 		state.tutors = tutors;
 	},
-	setSignupBlock(state, value) {
+	setAdmins(state: State, admins: Admin[]) {
+		state.admins = admins;
+	},
+	setCurrentTutor(state: State, tutor: Tutor | null) {
+		state.currentTutor = tutor;
+	},
+	setCurrentUser(state: State, user: User | null) {
+		state.currentUser = user;
+	},
+	setCurrentAdmin(state: State, admin: Admin | null) {
+		state.currentAdmin = admin;
+	},
+	setSignupBlock(state: State, value: boolean) {
 		state.signupBlock = value;
 	},
-	setLoginBlock(state, value) {
+	setLoginBlock(state: State, value: boolean) {
 		state.loginBlock = value;
 	},
-	setError(state, error) {
+	setError(state: State, error: string | null) {
 		state.error = error;
-	}
+	},
 };
 
 const actions = {
-	async fetchUsers({ commit }) {
+	async fetchUsers({ commit }: { commit: Function }) {
 		try {
 			const response = await axios.get("/api/users");
 			commit("setUsers", response.data);
 		} catch (error) {
-			commit(
-				"setError",
-				error instanceof Error ? error.message : "Failed to fetch users"
-			);
+			console.error(error);
 		}
 	},
-	async fetchTutors({ commit }) {
+	async fetchTutors({ commit }: { commit: Function }) {
 		try {
 			const response = await axios.get("/api/tutors");
 			commit("setTutors", response.data);
 		} catch (error) {
-			console.error(`Error fetching tutors: ${error}`);
-			commit(
-				"setError",
-				error instanceof Error
-					? error.message
-					: "An unknown error occurred while fetching tutors"
-			);
+			console.error(error);
 		}
 	},
-	changeSignupView({ commit }, value) {
+	changeSignupView({ commit }: { commit: Function }, value: boolean) {
 		commit("setSignupBlock", value);
 	},
-	changeLoginView({ commit }, value) {
+	changeLoginView({ commit }: { commit: Function }, value: boolean) {
 		commit("setLoginBlock", value);
 	},
-	async getTutors({ commit }) {
+	async getTutors({ commit }: { commit: Function }) {
 		try {
 			const response = await axios.get("/api/tutors");
 			commit("setTutors", response.data);
 		} catch (error) {
-			console.error(`Error fetching tutors: ${error}`);
-			commit(
-				"setError",
-				error instanceof Error
-					? error.message
-					: "An unknown error occurred while fetching tutors"
-			);
+			console.error(error);
 		}
 	},
-	async getUsers({ commit, state }) {
+	async getUsers({ commit, state }: { commit: Function; state: State }) {
 		if (!state.currentTutor) return;
 		try {
-			const response = await axios.get(
-				`/api/users/oftutor/${state.currentTutor._id}`
-			);
+			const response = await axios.get(`/api/users/oftutor/${state.currentTutor._id}`);
 			commit("setUsers", response.data);
 		} catch (error) {
-			console.error(`Error fetching users: ${error}`);
-			commit(
-				"setError",
-				error instanceof Error
-					? error.message
-					: "An unknown error occurred while fetching users"
-			);
+			console.error(error);
 		}
 	},
-	async logout({ commit }) {
+	async logout({ commit, state }: { commit: Function; state: State }) {
 		try {
 			if (state.currentTutor) await axios.delete("/api/tutors/logout");
 			if (state.currentUser) await axios.delete("/api/users/logout");
@@ -110,24 +133,22 @@ const actions = {
 			commit("setCurrentTutor", null);
 			commit("setCurrentUser", null);
 			commit("setCurrentAdmin", null);
-		} catch (error) {
-			console.error(`Logout failed: ${error}`);
-			commit("setCurrentTutor", null);
-			commit("setCurrentUser", null);
-			commit("setCurrentAdmin", null);
+			commit("setError", null);
+		} catch (error: any) {
+			commit("setError", error.message);
 		}
-	}
+	},
 };
 
 const getters = {
-	isLoggedIn: state => {
-		return state.currentUser || state.currentTutor || state.currentAdmin;
-	}
+	isLoggedIn: (state: State) => {
+		return !!state.currentUser || !!state.currentTutor || !!state.currentAdmin;
+	},
 };
 
 export default createStore({
 	state,
 	mutations,
 	actions,
-	getters
+	getters,
 });

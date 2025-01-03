@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import UserSignup from "@/components/UserSignup";
+import UserSignup from "@/components/UserSignup.vue";
 
 export default {
 	name: "SignupPage",

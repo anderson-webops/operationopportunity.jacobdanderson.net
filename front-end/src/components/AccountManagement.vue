@@ -1,24 +1,21 @@
 <template>
 	<div>
 		<!----------------
-    -   Login Form   -
-    ----------------->
+		-   Login Form   -
+		----------------->
 
-		<!-- The Modal -->
+		<!-- The Login Modal -->
 		<div
 			class="modal loginForm"
-			v-bind:class="{
-				showLogin: $root.$data.loginBlock && !$root.$data.currentTutor
-			}"
+			v-show="loginBlock && !currentTutor"
 		>
 			<!-- Modal Content -->
-			<form class="modal-content animate" v-on:submit.prevent="login">
-				<span
+			<form class="modal-content animate" @submit.prevent="login">
+        <span
 					class="close"
 					title="Close Modal"
-					v-on:click="changeLoginView(false)"
-					>&times;</span
-				>
+					@click="changeLoginView(false)"
+				>&times;</span>
 
 				<div class="imgcontainer">
 					<img
@@ -29,18 +26,18 @@
 				</div>
 
 				<div class="container">
-					<label for="uname"><b>Email</b></label>
+					<label for="login-email"><b>Email</b></label>
 					<input
-						id="uname"
+						id="login-email"
 						v-model="loginEmail"
 						placeholder="Enter Email"
 						required
-						type="text"
+						type="email"
 					/>
 
-					<label for="psw1"><b>Password</b></label>
+					<label for="login-password"><b>Password</b></label>
 					<input
-						id="psw1"
+						id="login-password"
 						v-model="loginPassword"
 						placeholder="Enter Password"
 						required
@@ -49,27 +46,29 @@
 
 					<button class="button" type="submit">Login</button>
 					<label>
-						<input checked="checked" name="remember" type="checkbox" /> Remember
-						me
+						<input
+							checked
+							name="remember"
+							type="checkbox"
+						/> Remember me
 					</label>
-					<span class="signup"
-						>Don't have an account?
-						<a
-							href="#"
-							v-on:click="
-								changeLoginView(false);
-								changeSignupView(true);
-							"
-							>Sign Up</a
-						></span
-					>
+					<span class="signup">
+            Don't have an account?
+            <button
+							type="button"
+							@click="toggleSignupModal"
+							class="link-button"
+						>
+              Sign Up
+            </button>
+          </span>
 				</div>
 
 				<div class="container" style="background-color: #f1f1f1">
 					<button
 						class="cancelbtn"
 						type="button"
-						v-on:click="changeLoginView(false)"
+						@click="changeLoginView(false)"
 					>
 						Cancel
 					</button>
@@ -80,24 +79,21 @@
 		</div>
 
 		<!-----------------
-    -   Signup Form   -
-    ------------------>
+		-   Signup Form   -
+		------------------>
 
-		<!-- The Modal (contains the Sign Up form) -->
+		<!-- The Signup Modal -->
 		<div
 			class="modal signupForm"
-			v-bind:class="{
-				showSignup: $root.$data.signupBlock && !$root.$data.currentTutor
-			}"
+			v-show="signupBlock && !currentTutor"
 		>
 			<!-- Modal Content -->
-			<form class="modal-content animate" v-on:submit.prevent="addAccount">
-				<span
+			<form class="modal-content animate" @submit.prevent="addAccount">
+        <span
 					class="close"
 					title="Close Modal"
-					v-on:click="changeSignupView(false)"
-					>&times;</span
-				>
+					@click="changeSignupView(false)"
+				>&times;</span>
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
@@ -129,54 +125,55 @@
 
 					<hr />
 
-					<label for="name"><b>Name</b></label>
+					<label for="signup-name"><b>Name</b></label>
 					<input
-						id="name"
+						id="signup-name"
 						v-model="name"
 						placeholder="Enter Name"
 						required
 						type="text"
 					/>
 
-					<label for="age"><b>Age</b></label>
+					<label for="signup-age"><b>Age</b></label>
 					<input
-						id="age"
-						v-model="age"
+						id="signup-age"
+						v-model.number="age"
 						placeholder="Enter Age"
 						required
-						type="text"
+						type="number"
+						min="0"
 					/>
 
-					<label for="state"><b>State</b></label>
+					<label for="signup-state"><b>State</b></label>
 					<input
-						id="state"
+						id="signup-state"
 						v-model="state"
 						placeholder="Enter State"
 						required
 						type="text"
 					/>
 
-					<label for="email"><b>Email</b></label>
+					<label for="signup-email"><b>Email</b></label>
 					<input
-						id="email"
+						id="signup-email"
 						v-model="email"
 						placeholder="Enter Email"
 						required
-						type="text"
+						type="email"
 					/>
 
-					<label for="psw2"><b>Password</b></label>
+					<label for="signup-password"><b>Password</b></label>
 					<input
-						id="psw2"
+						id="signup-password"
 						v-model="password"
 						placeholder="Enter Password"
 						required
 						type="password"
 					/>
 
-					<label for="psw-repeat"><b>Repeat Password</b></label>
+					<label for="signup-password-repeat"><b>Repeat Password</b></label>
 					<input
-						id="psw-repeat"
+						id="signup-password-repeat"
 						v-model="passwordRepeat"
 						placeholder="Repeat Password"
 						required
@@ -189,7 +186,7 @@
 					</p>
 					<label>
 						<input
-							checked="checked"
+							checked
 							name="remember"
 							style="margin-bottom: 15px"
 							type="checkbox"
@@ -206,22 +203,21 @@
 						<button
 							class="cancelbtn"
 							type="button"
-							v-on:click="changeSignupView(false)"
+							@click="changeSignupView(false)"
 						>
 							Cancel
 						</button>
 						<p v-if="errorSignup" class="error">{{ errorSignup }}</p>
-						<span class="account"
-							>Already have an account?
-							<a
-								href="#"
-								v-on:click="
-									changeSignupView(false);
-									changeLoginView(true);
-								"
-								>Login</a
-							></span
-						>
+						<span class="account">
+              Already have an account?
+              <button
+								type="button"
+								@click="toggleLoginModal"
+								class="link-button"
+							>
+                Login
+              </button>
+            </span>
 					</div>
 				</div>
 			</form>
@@ -231,169 +227,262 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, computed } from "vue";
+import { useStore } from "vuex";
 import axios from "axios";
 
-export default {
-	name: "tutorManagement",
-	data() {
-		return {
-			name: "",
-			email: "",
-			age: "",
-			state: "",
-			password: "",
-			passwordRepeat: "",
-			editTutors: false,
-			saveEdit: "Edit",
-			error: "",
-			errorSignup: "",
-			errorLogin: "",
-			loginEmail: "",
-			loginPassword: "",
-			accountType: ""
-		};
-	},
-	computed: {
-		passwordMatch() {
-			return this.password === this.passwordRepeat;
-		}
-	},
-	async created() {
-		await this.getCurrentAccount();
-	},
-	methods: {
-		async addAccount() {
-			if (
-				!this.name ||
-				!this.age ||
-				!this.state ||
-				!this.email ||
-				!this.password ||
-				!this.passwordRepeat
-			)
-				return;
+export default defineComponent({
+	name: "TutorManagement",
+	setup() {
+		const store = useStore();
 
-			try {
-				await axios.post("/api/accounts", {
-					email: this.email
-				});
-			} catch (error) {
-				this.errorSignup = "Error: " + error.response.data.message;
+		// Local data properties
+		const name = ref<string>("");
+		const email = ref<string>("");
+		const age = ref<number | null>(null);
+		const stateField = ref<string>("");
+		const password = ref<string>("");
+		const passwordRepeat = ref<string>("");
+		const editTutors = ref<boolean>(false);
+		const saveEdit = ref<string>("Edit");
+		const error = ref<string>("");
+		const errorSignup = ref<string>("");
+		const errorLogin = ref<string>("");
+		const loginEmail = ref<string>("");
+		const loginPassword = ref<string>("");
+		const accountType = ref<string>("");
+
+		// Computed properties
+		const passwordMatch = computed(() => password.value === passwordRepeat.value);
+
+		// Accessing global state from Vuex
+		const loginBlock = computed(() => store.state.loginBlock);
+		const signupBlock = computed(() => store.state.signupBlock);
+		const currentTutor = computed(() => store.state.currentTutor);
+
+		// Toggle Signup Modal
+		const toggleSignupModal = () => {
+			store.dispatch("changeSignupView", true);
+			store.dispatch("changeLoginView", false);
+		};
+
+		// Toggle Login Modal
+		const toggleLoginModal = () => {
+			store.dispatch("changeLoginView", true);
+			store.dispatch("changeSignupView", false);
+		};
+
+		// Methods
+		const addAccount = async () => {
+			// Ensure all required fields are filled
+			if (
+				!name.value ||
+				age.value === null ||
+				!stateField.value ||
+				!email.value ||
+				!password.value ||
+				!passwordRepeat.value
+			) {
+				errorSignup.value = "Please fill in all required fields.";
+				return;
 			}
 
-			if (this.accountType === "tutor") {
+			// Ensure account type is selected
+			if (!accountType.value) {
+				errorSignup.value = "Please select an account type.";
+				return;
+			}
+
+			// Ensure passwords match
+			if (!passwordMatch.value) {
+				errorSignup.value = "Passwords do not match.";
+				return;
+			}
+
+			try {
+				// Check if email already exists
+				await axios.post("/api/accounts", {
+					email: email.value,
+				});
+			} catch (err: any) {
+				// Handle error response gracefully
+				errorSignup.value = err.response?.data?.message || "An error occurred during signup.";
+				return;
+			}
+
+			// Create account based on account type
+			if (accountType.value === "tutor") {
 				try {
-					let response = await axios.post("/api/tutors", {
-						name: this.name,
-						email: this.email,
-						age: this.age,
-						state: this.state,
-						password: this.password,
+					const response = await axios.post("/api/tutors", {
+						name: name.value,
+						email: email.value,
+						age: age.value,
+						state: stateField.value,
+						password: password.value,
 						usersOfTutorLength: 0,
 						editTutors: false,
-						saveEdit: "Edit"
+						saveEdit: "Edit",
 					});
-					this.$root.$data.currentTutor = response.data.currentTutor;
-				} catch (error) {
-					this.$root.$data.currentTutor = null;
+					store.commit("setCurrentTutor", response.data.currentTutor);
+				} catch (err: any) {
+					store.commit("setCurrentTutor", null);
+					errorSignup.value = err.response?.data?.message || "Failed to create tutor account.";
 				}
-			} else if (this.accountType === "user") {
+			} else if (accountType.value === "user") {
 				try {
-					let response = await axios.post("/api/users", {
-						name: this.name,
-						age: this.age,
-						state: this.state,
-						email: this.email,
-						password: this.password,
+					const response = await axios.post("/api/users", {
+						name: name.value,
+						age: age.value,
+						state: stateField.value,
+						email: email.value,
+						password: password.value,
 						editUsers: false,
-						saveEdit: "Edit"
+						saveEdit: "Edit",
 					});
-					this.$root.$data.currentUser = response.data.currentUser;
-				} catch (error) {
-					this.$root.$data.currentUser = null;
+					store.commit("setCurrentUser", response.data.currentUser);
+				} catch (err: any) {
+					store.commit("setCurrentUser", null);
+					errorSignup.value = err.response?.data?.message || "Failed to create user account.";
 				}
 			} else {
-				this.errorSignup = "Please select an account type";
+				errorSignup.value = "Invalid account type selected.";
+				return;
 			}
 
-			this.changeSignupView(false);
-			await this.getTutors();
-			this.resetData();
-		},
-		async getTutors() {
+			// Close signup modal and refresh tutors list
+			store.dispatch("changeSignupView", false);
+			await getTutors();
+			resetData();
+		};
+
+		const getTutors = async () => {
 			try {
 				const response = await axios.get("/api/tutors");
-				this.$root.$data.tutors = response.data;
-			} catch (error) {
-				this.error = "Error: " + error.response.data.message;
+				store.commit("setTutors", response.data);
+			} catch (err: any) {
+				error.value = err.response?.data?.message || "Failed to fetch tutors.";
 			}
-		},
-		async login() {
-			this.errorLogin = "";
-			if (!this.loginEmail || !this.loginPassword) return;
-			try {
-				let response = await axios.post("/api/accounts/login", {
-					email: this.loginEmail,
-					password: this.loginPassword
-				});
-				if (response.data.currentTutor != null)
-					this.$root.$data.currentTutor = response.data.currentTutor;
-				if (response.data.currentAdmin != null)
-					this.$root.$data.currentAdmin = response.data.currentAdmin;
-				if (response.data.currentUser != null)
-					this.$root.$data.currentUser = response.data.currentUser;
-				// May want to add checking that there isn't more than one type at a time...
+		};
 
-				this.resetData();
-				this.changeLoginView(false);
-			} catch (error) {
-				this.errorLogin = "Error: " + error.response.data.message;
-				this.$root.$data.user = null;
-			}
-		},
-		async getCurrentAccount() {
-			try {
-				let response = await axios.get("/api/tutors/loggedin");
-				this.$root.$data.currentTutor = response.data.currentTutor;
-			} catch (error) {
-				this.$root.$data.currentTutor = null;
+		const login = async () => {
+			errorLogin.value = "";
+			if (!loginEmail.value || !loginPassword.value) {
+				errorLogin.value = "Please enter both email and password.";
+				return;
 			}
 			try {
-				let response = await axios.get("/api/users/loggedin");
-				this.$root.$data.currentUser = response.data.currentUser;
-			} catch (error) {
-				this.$root.$data.currentUser = null;
+				const response = await axios.post("/api/accounts/login", {
+					email: loginEmail.value,
+					password: loginPassword.value,
+				});
+				if (response.data.currentTutor) {
+					store.commit("setCurrentTutor", response.data.currentTutor);
+				}
+				if (response.data.currentAdmin) {
+					store.commit("setCurrentAdmin", response.data.currentAdmin);
+				}
+				if (response.data.currentUser) {
+					store.commit("setCurrentUser", response.data.currentUser);
+				}
+
+				// Optionally, ensure only one type of account is active at a time
+
+				resetData();
+				store.dispatch("changeLoginView", false);
+			} catch (err: any) {
+				errorLogin.value = err.response?.data?.message || "Login failed. Please try again.";
+				store.commit("setCurrentUser", null);
 			}
+		};
+
+		const getCurrentAccount = async () => {
 			try {
-				let response = await axios.get("/api/admins/loggedin");
-				this.$root.$data.currentAdmin = response.data.currentAdmin;
-			} catch (error) {
-				this.$root.$data.currentAdmin = null;
+				const tutorResponse = await axios.get("/api/tutors/loggedin");
+				store.commit("setCurrentTutor", tutorResponse.data.currentTutor);
+			} catch (err: any) {
+				store.commit("setCurrentTutor", null);
 			}
-		},
-		resetData() {
-			this.name = "";
-			this.email = "";
-			this.age = "";
-			this.state = "";
-			this.password = "";
-			this.passwordRepeat = "";
-			this.editTutors = false;
-			this.editUsers = false;
-			this.error = "";
-			this.errorSignup = "";
-			this.errorLogin = "";
-			this.loginEmail = "";
-			this.loginPassword = "";
-		},
-		changeSignupView(showHide) {
-			this.$root.$data.signupBlock = showHide;
-		},
-		changeLoginView(showHide) {
-			this.$root.$data.loginBlock = showHide;
-		}
-	}
-};
+
+			try {
+				const userResponse = await axios.get("/api/users/loggedin");
+				store.commit("setCurrentUser", userResponse.data.currentUser);
+			} catch (err: any) {
+				store.commit("setCurrentUser", null);
+			}
+
+			try {
+				const adminResponse = await axios.get("/api/admins/loggedin");
+				store.commit("setCurrentAdmin", adminResponse.data.currentAdmin);
+			} catch (err: any) {
+				store.commit("setCurrentAdmin", null);
+			}
+		};
+
+		const resetData = () => {
+			name.value = "";
+			email.value = "";
+			age.value = null;
+			stateField.value = "";
+			password.value = "";
+			passwordRepeat.value = "";
+			editTutors.value = false;
+			saveEdit.value = "Edit";
+			error.value = "";
+			errorSignup.value = "";
+			errorLogin.value = "";
+			loginEmail.value = "";
+			loginPassword.value = "";
+			accountType.value = "";
+		};
+
+		const changeSignupView = (showHide: boolean) => {
+			store.dispatch("changeSignupView", showHide);
+		};
+
+		const changeLoginView = (showHide: boolean) => {
+			store.dispatch("changeLoginView", showHide);
+		};
+
+		// Initialize current account information on component creation
+		getCurrentAccount();
+
+		return {
+			// Local data
+			name,
+			email,
+			age,
+			state: stateField,
+			password,
+			passwordRepeat,
+			editTutors,
+			saveEdit,
+			error,
+			errorSignup,
+			errorLogin,
+			loginEmail,
+			loginPassword,
+			accountType,
+
+			// Computed properties
+			passwordMatch,
+
+			// Global state from Vuex
+			loginBlock,
+			signupBlock,
+			currentTutor,
+
+			// Methods
+			addAccount,
+			getTutors,
+			login,
+			resetData,
+			changeSignupView,
+			changeLoginView,
+			toggleSignupModal,
+			toggleLoginModal,
+		};
+	},
+});
 </script>
 
 <style scoped>
@@ -420,56 +509,73 @@ export default {
 	background-color: #fefefe;
 	border: 1px solid #888;
 	width: 80%; /* Could be more or less, depending on screen size */
-	margin: auto; /* 15% from the top and centered was login */
-	/* margin: auto; 5% auto 15% auto; 5% from the top, 15% from the bottom and centered signup*/
+	margin: auto; /* Centered */
 }
 
+/* Show Signup Modal */
 .showSignup {
 	display: block !important;
 }
 
+/* Show Login Modal */
 .showLogin {
 	display: block !important;
 }
 
-div.loginForm span, div.signupForm span /* eslint-disable-line */ {
-	font-family: Optima, sans-serif;
-}
-
-div.radio {
-	margin: 0 15%;
-}
-
-.radioInput {
-	margin-right: 2%;
-}
-
-.radioLabel {
-	font-size: 25px;
-	margin-left: 25%;
-	margin-right: 5px;
-}
-
-/* The Close Button (x) */
-.close {
-	/* Position it in the top right corner outside of the modal */
+/* Common styles for close buttons */
+.modal .close {
 	position: absolute;
 	right: 3%;
 	top: 3%;
 	color: #dc3545;
 	font-size: 35px;
 	font-weight: bold;
-}
-
-/* Close button on hover */
-.close:hover,
-.close:focus {
-	color: #f44336; /* was red */
 	cursor: pointer;
 }
 
-/* Set a style for login and signup buttons */
-.button {
+.modal .close:hover,
+.modal .close:focus {
+	color: #f44336; /* Darker red */
+}
+
+/* Avatar image */
+.imgcontainer img.avatar {
+	width: 25% !important;
+	border-radius: 50%;
+}
+
+/* Full-width input fields */
+.container input[type="email"],
+.container input[type="password"],
+.container input[type="text"],
+.container input[type="number"] {
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+
+.container input[type="email"]:focus,
+.container input[type="password"]:focus,
+.container input[type="text"]:focus,
+.container input[type="number"]:focus {
+	background-color: #ddd;
+	outline: none;
+}
+
+/* Add a hover effect for buttons */
+.button:hover,
+.cancelbtn:hover,
+.signup.button:hover,
+.link-button:hover {
+	opacity: 0.8;
+}
+
+/* Style the signup and login buttons */
+.button,
+.signup.button {
 	background-color: #4caf50;
 	color: white;
 	padding: 14px 20px;
@@ -477,12 +583,6 @@ div.radio {
 	border: none;
 	cursor: pointer;
 	width: 100%;
-	/*opacity: 0.9;*/ /*Optional, was on the signup button*/
-}
-
-/* Add padding to containers */
-.container {
-	padding: 16px;
 }
 
 /* Extra style for the cancel button (red) */
@@ -496,15 +596,6 @@ div.radio {
 .animate {
 	-webkit-animation: animatezoom 0.6s;
 	animation: animatezoom 0.6s;
-}
-
-.passwordMatchError {
-	color: red;
-	font-weight: bold;
-}
-
-p.loginError {
-	margin-left: 24%;
 }
 
 @-webkit-keyframes animatezoom {
@@ -525,120 +616,90 @@ p.loginError {
 	}
 }
 
-/*****************
-*   Login Form   *
-*****************/
-
-/* Bordered form */
-div.loginForm form {
-	border: 3px solid #f1f1f1;
+/* Password match error styling */
+.passwordMatchError {
+	color: red;
+	font-weight: bold;
+	margin-top: -10px;
 }
 
-/* Full-width inputs */
-div.loginForm input[type="text"],
-div.loginForm input[type="password"] {
-	width: 100%;
-	padding: 12px 20px;
-	margin: 8px 0;
-	display: inline-block;
-	border: 1px solid #ccc;
-	box-sizing: border-box;
+/* Login error styling */
+.loginError {
+	color: red;
+	margin-left: 24%;
 }
 
-/* Add a hover effect for buttons */
-div.loginForm button:hover {
-	opacity: 0.8;
+/* Signup error styling */
+.errorSignup {
+	color: red;
+	margin-top: 10px;
 }
 
-/* Center the avatar image inside this container */
-div.loginForm .imgcontainer {
+/* General error styling */
+.error {
+	color: red;
 	text-align: center;
-	margin: 24px 0 12px 0;
+	margin-top: 10px;
 }
 
-/* Avatar image */
-div.loginForm img.avatar {
-	width: 25% !important;
-	border-radius: 50%;
+/* Radio button container */
+.radio {
+	margin: 0 15%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-/* The "Forgot password" text */
-div.loginForm span.psw {
+.radioLabel {
+	font-size: 18px;
+	margin: 0 10px;
+}
+
+.radioInput {
+	margin-right: 5px;
+}
+
+/* Disclaimer styling */
+.disclamer {
+	font-size: 12px;
+	color: #555;
+	text-align: center;
+}
+
+/* Account link styling */
+.account {
 	float: right;
-	padding-top: 16px;
+	margin-top: 10px;
 }
 
-div.loginForm span.signup {
-	float: right;
-	margin-right: 2px;
-}
-
-/* Change styles for span and cancel button on extra small screens */
-@media screen and (max-width: 300px) {
-	div.loginForm span.psw,
-	div.loginForm span.signup {
-		display: block;
-		float: none;
-	}
-
-	div.loginForm .cancelbtn {
-		width: 100%;
-	}
-}
-
-/******************
-*   Signup Form   *
-******************/
-
-/* Full-width input fields */
-div.signupForm input[type="text"],
-div.signupForm input[type="password"] {
-	width: 100%;
-	padding: 15px;
-	margin: 5px 0 22px 0;
-	display: inline-block;
+/* Link button styling to mimic anchor links */
+.link-button {
+	background: none;
 	border: none;
-	background: #f1f1f1;
+	color: dodgerblue;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+	font: inherit;
 }
 
-div.signupForm input[type="text"]:focus,
-div.signupForm input[type="password"]:focus {
-	background-color: #ddd;
-	outline: none;
-}
-
-div.signupForm hr {
-	border: 1px solid #f1f1f1;
-	margin-bottom: 25px;
-}
-
-div.signupForm button:hover {
-	opacity: 1;
-}
-
-/* Clear floats */
-div.signupForm .clearfix::after {
-	content: "";
-	clear: both;
-	display: table;
-}
-
-div.signupForm p.disclamer {
-	display: inline-block;
-	float: right;
-}
-
-/* The "All ready have an account" text */
-div.signupForm span.account {
-	float: right;
-	padding-top: 16px;
-}
-
-/* Change styles for cancel button and signup button on extra small screens */
+/* Responsive Design */
 @media screen and (max-width: 300px) {
-	div.signupForm .cancelbtn,
-	div.signupForm {
+	.modal-content {
+		width: 95%;
+	}
+
+	.loginForm .cancelbtn,
+	.signupForm .cancelbtn {
 		width: 100%;
+	}
+
+	.radio {
+		flex-direction: column;
+	}
+
+	.radioLabel {
+		margin: 5px 0;
 	}
 }
 </style>

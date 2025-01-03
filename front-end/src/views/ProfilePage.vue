@@ -10,34 +10,34 @@
 </template>
 
 <script lang="ts">
-import AdminProfile from "@/components/AdminProfile";
-import TutorProfile from "@/components/TutorProfile";
-import UserProfile from "@/components/UserProfile";
+import { defineComponent, computed } from "vue";
+import { useStore } from "vuex";
+import AdminProfile from "@/components/AdminProfile.vue";
+import TutorProfile from "@/components/TutorProfile.vue";
+import UserProfile from "@/components/UserProfile.vue";
 
-export default {
+export default defineComponent({
 	name: "ProfilePage",
 	components: {
 		AdminProfile,
 		TutorProfile,
 		UserProfile
 	},
-	data() {
-		return {};
-	},
-	computed: {
-		admin() {
-			return this.$root.$data.currentAdmin;
-		},
-		tutor() {
-			return this.$root.$data.currentTutor;
-		},
-		user() {
-			return this.$root.$data.currentUser;
-		}
-	},
-	created() {},
-	methods: {}
-};
+	setup() {
+		const store = useStore();
+
+		// If these are stored in Vuex:
+		const admin = computed(() => store.state.currentAdmin);
+		const tutor = computed(() => store.state.currentTutor);
+		const user = computed(() => store.state.currentUser);
+
+		return {
+			admin,
+			tutor,
+			user
+		};
+	}
+});
 </script>
 
 <style scoped>

@@ -134,21 +134,21 @@
 
 			<div class="parter">
 				<br />
-				<h2>Project Partner</h2>
+				<h2></h2>
 				<br />
 				<nav class="footer_nav">
 					<ul class="semantic_list">
 						<li>
 							<a
-								href="https://nathanielcs260.com"
+								href=""
 								style="text-decoration: none; color: inherit"
 								target="_blank"
-								>Nathaniel Judd</a
+								></a
 							>
 						</li>
 					</ul>
 					<br />
-					<p>Time Spent: 4 hours</p>
+					<p></p>
 				</nav>
 			</div>
 
@@ -191,186 +191,5 @@ export default defineComponent({
 </script>
 
 <style>
-/**************
-*   Default   *
-**************/
 
-/*noinspection CssOverwrittenProperties*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video /* eslint-disable-line */ {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	/*font-size: 100%;*/
-	/*font: inherit;*/
-	vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section /* eslint-disable-line */ {
-	display: block;
-}
-
-body {
-	line-height: 1;
-}
-
-ol, ul /* eslint-disable-line */ {
-	list-style: none;
-}
-
-blockquote, q /* eslint-disable-line */ {
-	quotes: none;
-}
-
-/*noinspection CssOverwrittenProperties*/
-blockquote:before, blockquote:after,
-q:before, q:after /* eslint-disable-line */ {
-	content: "";
-	content: none;
-}
-
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-/**************
-*   General   *
-**************/
-
-* {
-	box-sizing: border-box;
-	font-family: Helvetica, Arial, sans-serif;
-}
-
-body {
-	background-color: rgb(255, 255, 255);
-	/*--common_area_background_color: white;*/
-
-	--size_adjustment: 1.5;
-	--text_scalar: 1;
-}
-
-h1, h2, h3, h4 /* eslint-disable-line */ {
-	font-family: Didot, Calibri, Candara, sans-serif;
-}
-
-nav {
-	font-family: Verdana, Calibri, Candara, sans-serif;
-}
-
-.error {
-	margin-top: 10px;
-	display: inline;
-	padding: 5px 20px;
-	border-radius: 30px;
-	font-size: 10px;
-	background-color: #d9534f;
-	color: #fff;
-}
-
-@media only screen and (min-width: 1px) and (max-width: 960px) {
-	body {
-		--text_scalar: 0.8;
-	}
-}
-
-/**************
-*   Section   *
-**************/
-
-section {
-	margin: 4% 10%;
-}
-
-section h1 {
-	font-size: 50px;
-	font-weight: bold;
-}
-
-section h2 {
-	font-size: 35px;
-}
-
-section p,
-select,
-label {
-	font-size: 18px;
-	text-align: justify;
-	font-family: Optima, sans-serif;
-}
-
-img {
-	width: 50%;
-}
-
-#githubIcon {
-	width: 10%;
-}
-
-/*#audiotIcon {
-  width: 1.6%;
-}
-
-#audiotLogo {
-  width: 9%;
-  transform: translateY(1px);
-}*/
-
-/*************
-*   Footer   *
-*************/
-
-footer {
-	display: flex;
-	color: grey;
-	flex-flow: row wrap;
-	padding: 10px;
-	width: 100%;
-	background-color: rgb(247, 247, 247);
-}
-
-footer div {
-	width: calc(100% / 3);
-}
-
-footer h2 {
-	text-transform: uppercase;
-	font-size: calc(19px * var(--text_scalar));
-	letter-spacing: 2px;
-	font-family: Optima, Tahoma, Trebuchet, Arial, sans-serif;
-}
-
-footer li {
-	font-size: 12px;
-	font-family: Arial, "Courier New", sans-serif, serif;
-	height: 100%;
-}
-
-/********************
-*   Media Screens   *
-********************/
-
-@media only screen and (min-width: 1px) and (max-width: 960px) {
-	section p {
-		font-size: 15px;
-	}
-
-	img {
-		width: 80%;
-	}
-}
 </style>

@@ -31,13 +31,15 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	name: "HomePage",
 	data() {
 		return {
-			quotePresent: false,
-			quoteText: "",
-			quoteAuthor: ""
+			quotePresent: false as boolean,
+			quoteText: "" as string,
+			quoteAuthor: "" as string
 		};
 	},
 	created() {
@@ -50,13 +52,13 @@ export default {
 		updateQuote().then(data => {
 			let random = Math.floor(Math.random() * 99);
 			let quote = data.data[random];
+			// Now TS sees these props
 			this.quoteText = quote.quoteText;
 			this.quoteAuthor = quote.quoteAuthor;
 			this.quotePresent = true;
 		});
-	},
-	methods: {}
-};
+	}
+});
 </script>
 
 <style scoped>
@@ -76,7 +78,7 @@ q {
 	font-style: italic;
 }
 
-@media only screen and (min-width: 1px) and (max-width: 960px) {
+@media only screen and (max-width: 960px) {
 	.quote {
 		width: 80%;
 	}
