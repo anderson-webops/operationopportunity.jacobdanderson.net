@@ -44,18 +44,18 @@ export default defineComponent({
 	},
 	created() {
 		const updateQuote = async () => {
-			const url =
-				"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-			let response = await fetch(url);
-			return await response.json();
+			// const url =
+			// 	"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
+			// let response = await fetch(url);
+			// return await response.json();
 		};
 		updateQuote().then(data => {
-			let random = Math.floor(Math.random() * 99);
-			let quote = data.data[random];
-			// Now TS sees these props
-			this.quoteText = quote.quoteText;
-			this.quoteAuthor = quote.quoteAuthor;
-			this.quotePresent = true;
+			// let random = Math.floor(Math.random() * 99);
+			// let quote = data.data[random];
+			// // Now TS sees these props
+			// this.quoteText = quote.quoteText;
+			// this.quoteAuthor = quote.quoteAuthor;
+			// this.quotePresent = true;
 		});
 	}
 });

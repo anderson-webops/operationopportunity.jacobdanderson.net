@@ -109,6 +109,7 @@ footer li {
 	font-size: 12px;
 	font-family: Arial, "Courier New", sans-serif, serif;
 	height: 100%;
+	list-style-type: none;
 }
 
 /********************
