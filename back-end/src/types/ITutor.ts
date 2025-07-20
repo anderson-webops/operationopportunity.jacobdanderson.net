@@ -7,9 +7,9 @@ export interface ITutor extends Document {
 	age: string;
 	state: string;
 	password: string;
-	usersOfTutorLength: number;
-	editTutors: boolean;
-	saveEdit: string;
+	usersOfTutorLength?: number;
+	editTutors?: boolean;
+	saveEdit?: string;
 	role: string;
 	comparePassword(password: string): Promise<boolean>;
 }

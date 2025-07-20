@@ -1,5 +1,5 @@
 // src/middleware/auth.ts
-import { Request, Response, NextFunction } from "express";
+import { RequestHandler } from "express";
 import { User } from "../models/User";
 import { Tutor } from "../models/Tutor";
 import { Admin } from "../models/Admin";
@@ -17,18 +17,20 @@ export interface UserRequest extends Request {
 }
 
 // Middleware to validate User
-export const validUser = async (
-	req: UserRequest,
-	res: Response,
-	next: NextFunction
+export const validUser: RequestHandler = async (
+	req,
+	res,
+	next
 ) => {
 	if (!req.session?.userID) {
-		return res.status(403).json({ message: "Not logged in or session expired" });
+		res.status(403).json({ message: "Not logged in or session expired" });
+		return;
 	}
 	try {
 		const user = await User.findById(req.session.userID);
 		if (!user) {
-			return res.status(403).json({ message: "User account not found" });
+			res.status(403).json({ message: "User account not found" });
+			return;
 		}
 		req.currentUser = user;
 		next();
@@ -39,18 +41,20 @@ export const validUser = async (
 };
 
 // Middleware to validate Tutor
-export const validTutor = async (
-	req: UserRequest,
-	res: Response,
-	next: NextFunction
+export const validTutor: RequestHandler = async (
+	req,
+	res,
+	next
 ) => {
 	if (!req.session?.tutorID) {
-		return res.status(403).json({ message: "Not logged in or session expired" });
+		res.status(403).json({ message: "Not logged in or session expired" });
+		return;
 	}
 	try {
 		const tutor = await Tutor.findById(req.session.tutorID);
 		if (!tutor) {
-			return res.status(403).json({ message: "Tutor account not found" });
+			res.status(403).json({ message: "Tutor account not found" });
+			return;
 		}
 		req.currentTutor = tutor;
 		next();
@@ -61,18 +65,20 @@ export const validTutor = async (
 };
 
 // Middleware to validate Admin
-export const validAdmin = async (
-	req: UserRequest,
-	res: Response,
-	next: NextFunction
+export const validAdmin: RequestHandler = async (
+	req,
+	res,
+	next
 ) => {
 	if (!req.session?.adminID) {
-		return res.status(403).json({ message: "Not logged in or session expired" });
+		res.status(403).json({ message: "Not logged in or session expired" });
+		return;
 	}
 	try {
 		const admin = await Admin.findById(req.session.adminID);
 		if (!admin) {
-			return res.status(403).json({ message: "Admin account not found" });
+			res.status(403).json({ message: "Admin account not found" });
+			return;
 		}
 		req.currentAdmin = admin;
 		next();

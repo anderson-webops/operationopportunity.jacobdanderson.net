@@ -1,21 +1,21 @@
 // src/controllers/tutorController.ts
 
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { Tutor } from "../models/Tutor";
 import { ITutor } from "../types/ITutor";
 import { User } from "../models/User";
-import { IUser } from "../types/IUser";
-import { UserRequest } from "../middleware/auth";
+import { Types } from "mongoose";
 
 /**
  * Create a new tutor.
  */
-export const createTutor = async (req: UserRequest, res: Response) => {
+export const createTutor: RequestHandler = async (req, res) => {
 	const { name, email, age, state, password, editTutors, saveEdit } = req.body;
 
 	// Validate required fields
 	if (!name || !email || !age || !state || !password) {
-		return res.status(400).send({ message: "All fields (name, email, age, state, password) are required." });
+		res.status(400).json({ message: "All fields (name, email, age, state, password) are required." });
+		return;
 	}
 
 	try {
@@ -26,7 +26,8 @@ export const createTutor = async (req: UserRequest, res: Response) => {
 		// const existingAdmin = await Admin.findOne({ email });
 
 		if (existingTutor || existingUser /* || existingAdmin */) {
-			return res.status(403).send({ message: "Email already exists." });
+			res.status(403).json({ message: "Email already exists." });
+			return;
 		}
 
 		// Create new tutor
@@ -44,39 +45,44 @@ export const createTutor = async (req: UserRequest, res: Response) => {
 		await tutor.save();
 
 		// Set tutor session
-		req.session.tutorID = tutor._id.toString();
+		req.session.tutorID = (tutor._id as Types.ObjectId).toString();
 
-		return res.status(201).send({ currentTutor: tutor });
+		res.status(201).json({ currentTutor: tutor });
+		return;
 	} catch (error) {
 		console.error("Error creating tutor:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Retrieve all tutors.
  */
-export const getAllTutors = async (_req: Request, res: Response) => {
+export const getAllTutors: RequestHandler = async (_req, res) => {
 	try {
 		const tutors = await Tutor.find();
-		return res.status(200).send(tutors);
+		res.status(200).json(tutors);
+		return;
 	} catch (error) {
 		console.error("Error fetching tutors:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Update an existing tutor's information.
  */
-export const updateTutor = async (req: UserRequest, res: Response) => {
+export const updateTutor: RequestHandler = async (req, res) => {
 	const { tutorID } = req.params;
 	const { name, email, age, state, editTutors, saveEdit, password } = req.body;
 
 	try {
 		const tutor: ITutor | null = await Tutor.findById(tutorID);
 		if (!tutor) {
-			return res.status(404).send({ message: "Tutor not found." });
+			res.status(404).json({ message: "Tutor not found." });
+			return;
 		}
 
 		// Update fields if provided
@@ -90,29 +96,34 @@ export const updateTutor = async (req: UserRequest, res: Response) => {
 
 		await tutor.save();
 
-		return res.status(200).send({ message: "Tutor updated successfully." });
+		res.status(200).json({ message: "Tutor updated successfully." });
+		return;
 	} catch (error) {
 		console.error("Error updating tutor:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Delete a tutor.
  */
-export const deleteTutor = async (req: UserRequest, res: Response) => {
+export const deleteTutor: RequestHandler = async (req, res) => {
 	const { tutorID } = req.params;
 
 	try {
 		const result = await Tutor.deleteOne({ _id: tutorID });
 
 		if (result.deletedCount === 0) {
-			return res.status(404).send({ message: "Tutor not found." });
+			res.status(404).json({ message: "Tutor not found." });
+			return;
 		}
 
-		return res.status(200).send({ message: "Tutor deleted successfully." });
+		res.status(200).json({ message: "Tutor deleted successfully." });
+		return;
 	} catch (error) {
 		console.error("Error deleting tutor:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };

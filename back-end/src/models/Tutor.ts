@@ -1,40 +1,69 @@
-// src/models/Tutor.ts
-import mongoose, { Schema } from "mongoose";
-import { ITutor } from "../types/ITutor";
-import argon2 from "argon2";
-import { hashPasswordIfModified } from "../utils/hashPasswordHelper";
+// models/Tutor.ts
 
-const tutorSchema: Schema<ITutor> = new Schema({
-	name: { type: String, required: true },
-	email: { type: String, required: true, unique: true }, // Ensure unique emails
-	age: { type: String, required: true },
-	state: { type: String, required: true },
-	password: { type: String, required: true },
-	usersOfTutorLength: { type: Number, required: true, default: 0 },
-	editTutors: { type: Boolean, required: true, default: false },
-	saveEdit: { type: String, required: true, default: "Edit" },
-	role: { type: String, default: "tutor" },
+import mongoose, { Document, Schema, Model } from "mongoose";
+import argon2 from "argon2";
+
+// 1. Define an interface for the Tutor document
+export interface ITutor extends Document {
+	name: string;
+	email: string;
+	age: string;
+	state: string;
+	password: string;
+	usersOfTutorLength?: number;
+	editTutors?: boolean;
+	saveEdit?: string;
+	role: string;
+	comparePassword(password: string): Promise<boolean>;
+	toJSON(): Record<string, unknown>;
+}
+
+// 2. Create Mongoose Schema for Tutor
+const tutorSchema: Schema<ITutor> = new Schema(
+	{
+		name: { type: String, required: true },
+		email: { type: String, required: true, unique: true },
+		age: { type: String },
+		state: { type: String },
+		password: { type: String, required: true },
+		usersOfTutorLength: { type: Number, default: 0 },
+		editTutors: { type: Boolean, default: false },
+		saveEdit: { type: String, default: "Edit" },
+		role: { type: String, default: "tutor" },
+	},
+	{ timestamps: true }
+);
+
+// 3. Pre-save hook to hash the password if modified
+tutorSchema.pre<ITutor>("save", async function (next) {
+	if (!this.isModified("password")) return next();
+	try {
+		this.password = await argon2.hash(this.password);
+		next();
+	} catch (error) {
+		console.error(`Error: ${error}`);
+		// next(error);
+	}
 });
 
-// Apply pre-save hook
-tutorSchema.pre<ITutor>("save", hashPasswordIfModified);
-
-// Compare password method
+// 4. Method to compare password
 tutorSchema.methods.comparePassword = async function (
-	candidatePassword: string
+	password: string
 ): Promise<boolean> {
 	try {
-		return await argon2.verify(this.password, candidatePassword);
-	} catch {
+		return await argon2.verify(this.password, password);
+	} catch (error) {
+		console.error(`Error: ${error}`);
 		return false;
 	}
 };
 
-// Remove password from JSON
+// 5. Method to remove password from JSON responses
 tutorSchema.methods.toJSON = function () {
 	const obj = this.toObject();
 	delete obj.password;
 	return obj;
 };
 
-export const Tutor = mongoose.model<ITutor>("Tutor", tutorSchema);
+// 6. Create and export Tutor model
+export const Tutor: Model<ITutor> = mongoose.model<ITutor>("Tutor", tutorSchema);

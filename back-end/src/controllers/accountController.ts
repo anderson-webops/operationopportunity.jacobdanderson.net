@@ -1,6 +1,6 @@
 // src/controllers/accountController.ts
 
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { User } from "../models/User";
 import { Tutor } from "../models/Tutor";
 import { Admin } from "../models/Admin";
@@ -8,46 +8,52 @@ import { IUser } from "../types/IUser";
 import { ITutor } from "../types/ITutor";
 import { IAdmin } from "../types/IAdmin";
 import { CustomSession } from "../types/CustomSession";
+import { Types } from "mongoose";
 
 /**
  * Check if an email is already registered in any collection (User, Tutor, Admin).
  * Useful for account creation validation.
  */
-export const checkEmail = async (req: Request, res: Response) => {
+export const checkEmail: RequestHandler = async (req, res) => {
 	const { email } = req.body;
 
 	// Validate email presence
 	if (!email) {
-		return res.status(400).send({ message: "Email field is required." });
+		res.status(400).json({ message: "Email field is required." });
+		return;
 	}
 
 	try {
-		const existingUser = await User.findOne({ email });
-		const existingTutor = await Tutor.findOne({ email });
-		const existingAdmin = await Admin.findOne({ email });
+		const [existingUser, existingTutor, existingAdmin] = await Promise.all([
+			User.findOne({ email }),
+			Tutor.findOne({ email }),
+			Admin.findOne({ email })
+		]);
 
 		if (existingUser || existingTutor || existingAdmin) {
-			return res.status(403).send({ message: "Email already exists." });
+			res.status(403).json({ message: "Email already exists." });
+			return;
 		}
 
 		// Email is available
-		return res.status(200).send({ message: "Email is available." });
+		res.status(200).json({ message: "Email is available." });
 	} catch (error) {
 		console.error("Error checking email:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
 	}
 };
 
 /**
  * Change the email of a user, tutor, or admin.
  */
-export const changeEmail = async (req: Request, res: Response) => {
+export const changeEmail: RequestHandler = async (req, res) => {
 	const { ID } = req.params;
 	const { email: newEmail } = req.body;
 
 	// Validate email presence
 	if (!newEmail) {
-		return res.status(400).send({ message: "New email is required." });
+		res.status(400).json({ message: "New email is required." });
+		return;
 	}
 
 	try {
@@ -59,7 +65,8 @@ export const changeEmail = async (req: Request, res: Response) => {
 		const entity = user || tutor || admin;
 
 		if (!entity) {
-			return res.status(404).send({ message: "Entity not found." });
+			res.status(404).json({ message: "Entity not found." });
+			return;
 		}
 
 		// Check if the new email is already taken
@@ -68,30 +75,34 @@ export const changeEmail = async (req: Request, res: Response) => {
 		const existingAdmin = await Admin.findOne({ email: newEmail });
 
 		if (existingUser || existingTutor || existingAdmin) {
-			return res.status(403).send({ message: "Email already exists." });
+			res.status(403).json({ message: "Email already exists." });
+			return;
 		}
 
 		// Update the email
 		entity.email = newEmail;
 		await entity.save();
 
-		return res.status(200).send({ message: "Email updated successfully." });
+		res.status(200).json({ message: "Email updated successfully." });
+		return;
 	} catch (error) {
 		console.error("Error changing email:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Handle user, tutor, or admin login.
  */
-export const login = async (req: Request, res: Response) => {
+export const login: RequestHandler = async (req, res) => {
 	const { email, password } = req.body;
 	const session: CustomSession = req.session;
 
 	// Validate presence of email and password
 	if (!email || !password) {
-		return res.status(400).send({ message: "Email and password are required." });
+		res.status(400).json({ message: "Email and password are required." });
+		return;
 	}
 
 	try {
@@ -101,37 +112,46 @@ export const login = async (req: Request, res: Response) => {
 		const admin = await Admin.findOne({ email });
 
 		if (!user && !tutor && !admin) {
-			return res.status(403).send({ message: "Email or password is incorrect." });
+			res.status(403).json({ message: "Email or password is incorrect." });
+			return;
 		}
 
 		// Verify password for the found entity
 		if (user && !(await user.comparePassword(password))) {
-			return res.status(403).send({ message: "Email or password is incorrect." });
+			res.status(403).json({ message: "Email or password is incorrect." });
+			return;
 		}
 
 		if (tutor && !(await tutor.comparePassword(password))) {
-			return res.status(403).send({ message: "Email or password is incorrect." });
+			res.status(403).json({ message: "Email or password is incorrect." });
+			return;
 		}
 
 		if (admin && !(await admin.comparePassword(password))) {
-			return res.status(403).send({ message: "Email or password is incorrect." });
+			res.status(403).json({ message: "Email or password is incorrect." });
+			return;
 		}
 
 		// Set session based on the entity type
 		if (admin) {
 			session.adminID = admin._id.toString();
-			return res.status(200).send({ currentAdmin: admin });
+			res.status(200).json({ currentAdmin: admin });
+			return;
 		} else if (tutor) {
-			session.tutorID = tutor._id.toString();
-			return res.status(200).send({ currentTutor: tutor });
+			session.tutorID = (tutor._id as Types.ObjectId).toString();
+			res.status(200).json({ currentTutor: tutor });
+			return;
 		} else if (user) {
 			session.userID = user._id.toString();
-			return res.status(200).send({ currentUser: user });
+			res.status(200).json({ currentUser: user });
+			return;
 		} else {
-			return res.status(403).send({ message: "Authentication failed." });
+			res.status(403).json({ message: "Authentication failed." });
+			return;
 		}
 	} catch (error) {
 		console.error("Error during login:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };

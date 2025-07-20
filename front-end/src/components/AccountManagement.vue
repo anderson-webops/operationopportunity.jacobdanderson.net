@@ -4,192 +4,154 @@
 		-   Login Form   -
 		----------------->
 
-		<!-- The Login Modal -->
+		<!-- The Modal -->
 		<div
+			v-bind:class="{ showLogin: $root.$data.loginBlock }"
 			class="modal loginForm"
-			v-show="loginBlock && !currentTutor"
 		>
 			<!-- Modal Content -->
-			<form class="modal-content animate" @submit.prevent="login">
+			<form class="modal-content animate" v-on:submit.prevent="addTutor">
         <span
+					v-on:click="changeLoginView(false)"
 					class="close"
 					title="Close Modal"
-					@click="changeLoginView(false)"
-				>&times;</span>
+				>&times;</span
+				>
 
 				<div class="imgcontainer">
 					<img
+						src="https://www.w3schools.com/howto/img_avatar2.png"
 						alt="Avatar"
 						class="avatar"
-						src="https://www.w3schools.com/howto/img_avatar2.png"
 					/>
 				</div>
 
 				<div class="container">
-					<label for="login-email"><b>Email</b></label>
-					<input
-						id="login-email"
-						v-model="loginEmail"
-						placeholder="Enter Email"
-						required
-						type="email"
-					/>
+					<label for="uname"><b>Username</b></label>
+					<input type="text" placeholder="Enter Username" id="uname" required />
+					<!--                      v-model="loginEmail"-->
 
-					<label for="login-password"><b>Password</b></label>
-					<input
-						id="login-password"
-						v-model="loginPassword"
-						placeholder="Enter Password"
-						required
-						type="password"
-					/>
+					<label for="psw1"><b>Password</b></label>
+					<input type="password" placeholder="Enter Password" id="psw1" />
+					<!--          required-->
+					<!--            v-model="loginPassword"-->
 
-					<button class="button" type="submit">Login</button>
+					<button type="submit" class="button">Login</button>
 					<label>
-						<input
-							checked
-							name="remember"
-							type="checkbox"
-						/> Remember me
+						<input type="checkbox" checked="checked" name="remember" /> Remember
+						me
 					</label>
-					<span class="signup">
-            Don't have an account?
-            <button
-							type="button"
-							@click="toggleSignupModal"
-							class="link-button"
-						>
-              Sign Up
-            </button>
-          </span>
+					<span class="signup"
+					>Don't have an account?
+            <a
+							href="#"
+							v-on:click="
+                changeLoginView(false);
+                changeSignupView(true);
+              "
+						>Sign Up</a
+						></span
+					>
 				</div>
 
 				<div class="container" style="background-color: #f1f1f1">
 					<button
-						class="cancelbtn"
 						type="button"
-						@click="changeLoginView(false)"
+						v-on:click="changeLoginView(false)"
+						class="cancelbtn"
 					>
 						Cancel
 					</button>
-					<p v-if="errorLogin" class="error loginError">{{ errorLogin }}</p>
 					<span class="psw">Forgot <a href="#">password?</a></span>
 				</div>
 			</form>
 		</div>
 
-		<!-----------------
-		-   Signup Form   -
-		------------------>
-
-		<!-- The Signup Modal -->
+		<!-- The Modal (contains the Sign Up form) -->
 		<div
+			v-bind:class="{ showSignup: $root.$data.signupBlock }"
 			class="modal signupForm"
-			v-show="signupBlock && !currentTutor"
 		>
 			<!-- Modal Content -->
-			<form class="modal-content animate" @submit.prevent="addAccount">
+			<form class="modal-content animate" v-on:submit.prevent="addTutor">
         <span
+					v-on:click="changeSignupView(false)"
 					class="close"
 					title="Close Modal"
-					@click="changeSignupView(false)"
-				>&times;</span>
+				>&times;</span
+				>
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
 					<p>
 						Please fill in this form to create an account and become a tutor.
 					</p>
-
 					<hr />
 
-					<div class="radio">
-						<label class="radioLabel" for="tutorChoice">Tutor</label>
-						<input
-							id="tutorChoice"
-							v-model="accountType"
-							class="radioInput"
-							type="radio"
-							value="tutor"
-						/>
-
-						<label class="radioLabel" for="userChoice">User</label>
-						<input
-							id="userChoice"
-							v-model="accountType"
-							class="radioInput"
-							type="radio"
-							value="user"
-						/>
-					</div>
-
-					<hr />
-
-					<label for="signup-name"><b>Name</b></label>
+					<label for="name"><b>Name</b></label>
 					<input
-						id="signup-name"
-						v-model="name"
+						type="text"
 						placeholder="Enter Name"
+						id="name"
+						v-model="name"
 						required
-						type="text"
 					/>
 
-					<label for="signup-age"><b>Age</b></label>
+					<label for="age"><b>Age</b></label>
 					<input
-						id="signup-age"
-						v-model.number="age"
+						type="text"
 						placeholder="Enter Age"
+						id="age"
+						v-model="age"
 						required
-						type="number"
-						min="0"
 					/>
 
-					<label for="signup-state"><b>State</b></label>
+					<label for="state"><b>State</b></label>
 					<input
-						id="signup-state"
-						v-model="state"
-						placeholder="Enter State"
-						required
 						type="text"
+						placeholder="Enter State"
+						id="state"
+						v-model="state"
+						required
 					/>
 
-					<label for="signup-email"><b>Email</b></label>
+					<label for="email"><b>Email</b></label>
 					<input
-						id="signup-email"
-						v-model="email"
+						type="text"
 						placeholder="Enter Email"
+						id="email"
+						v-model="email"
 						required
-						type="email"
 					/>
 
-					<label for="signup-password"><b>Password</b></label>
+					<label for="psw2"><b>Password</b></label>
 					<input
-						id="signup-password"
-						v-model="password"
+						type="password"
 						placeholder="Enter Password"
-						required
-						type="password"
+						id="psw2"
+						v-model="password"
 					/>
+					<!--            required-->
 
-					<label for="signup-password-repeat"><b>Repeat Password</b></label>
+					<label for="psw-repeat"><b>Repeat Password</b></label>
 					<input
-						id="signup-password-repeat"
-						v-model="passwordRepeat"
-						placeholder="Repeat Password"
-						required
 						type="password"
+						placeholder="Repeat Password"
+						id="psw-repeat"
+						v-model="passwordRepeat"
 					/>
+					<!--            required-->
 
-					<button class="signup button" type="submit">Sign Up</button>
+					<button type="submit" class="signup button">Sign Up</button>
 					<p v-if="!passwordMatch" class="passwordMatchError">
 						Passwords do not match
 					</p>
 					<label>
 						<input
-							checked
+							type="checkbox"
+							checked="checked"
 							name="remember"
 							style="margin-bottom: 15px"
-							type="checkbox"
 						/>
 						Remember me
 					</label>
@@ -201,23 +163,23 @@
 
 					<div class="container clearfix" style="background-color: #f1f1f1">
 						<button
-							class="cancelbtn"
 							type="button"
-							@click="changeSignupView(false)"
+							v-on:click="changeSignupView(false)"
+							class="cancelbtn"
 						>
 							Cancel
 						</button>
-						<p v-if="errorSignup" class="error">{{ errorSignup }}</p>
-						<span class="account">
-              Already have an account?
-              <button
-								type="button"
-								@click="toggleLoginModal"
-								class="link-button"
-							>
-                Login
-              </button>
-            </span>
+						<span class="account"
+						>Already have an account?
+              <a
+								href="#"
+								v-on:click="
+                  changeSignupView(false);
+                  changeLoginView(true);
+                "
+							>Login</a
+							></span
+						>
 					</div>
 				</div>
 			</form>
@@ -226,263 +188,75 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed } from "vue";
-import { useStore } from "vuex";
+<script>
 import axios from "axios";
 
-export default defineComponent({
-	name: "TutorManagement",
-	setup() {
-		const store = useStore();
-
-		// Local data properties
-		const name = ref<string>("");
-		const email = ref<string>("");
-		const age = ref<number | null>(null);
-		const stateField = ref<string>("");
-		const password = ref<string>("");
-		const passwordRepeat = ref<string>("");
-		const editTutors = ref<boolean>(false);
-		const saveEdit = ref<string>("Edit");
-		const error = ref<string>("");
-		const errorSignup = ref<string>("");
-		const errorLogin = ref<string>("");
-		const loginEmail = ref<string>("");
-		const loginPassword = ref<string>("");
-		const accountType = ref<string>("");
-
-		// Computed properties
-		const passwordMatch = computed(() => password.value === passwordRepeat.value);
-
-		// Accessing global state from Vuex
-		const loginBlock = computed(() => store.state.loginBlock);
-		const signupBlock = computed(() => store.state.signupBlock);
-		const currentTutor = computed(() => store.state.currentTutor);
-
-		// Toggle Signup Modal
-		const toggleSignupModal = () => {
-			store.dispatch("changeSignupView", true);
-			store.dispatch("changeLoginView", false);
-		};
-
-		// Toggle Login Modal
-		const toggleLoginModal = () => {
-			store.dispatch("changeLoginView", true);
-			store.dispatch("changeSignupView", false);
-		};
-
-		// Methods
-		const addAccount = async () => {
-			// Ensure all required fields are filled
-			if (
-				!name.value ||
-				age.value === null ||
-				!stateField.value ||
-				!email.value ||
-				!password.value ||
-				!passwordRepeat.value
-			) {
-				errorSignup.value = "Please fill in all required fields.";
-				return;
-			}
-
-			// Ensure account type is selected
-			if (!accountType.value) {
-				errorSignup.value = "Please select an account type.";
-				return;
-			}
-
-			// Ensure passwords match
-			if (!passwordMatch.value) {
-				errorSignup.value = "Passwords do not match.";
-				return;
-			}
-
-			try {
-				// Check if email already exists
-				await axios.post("/api/accounts", {
-					email: email.value,
-				});
-			} catch (err: any) {
-				// Handle error response gracefully
-				errorSignup.value = err.response?.data?.message || "An error occurred during signup.";
-				return;
-			}
-
-			// Create account based on account type
-			if (accountType.value === "tutor") {
-				try {
-					const response = await axios.post("/api/tutors", {
-						name: name.value,
-						email: email.value,
-						age: age.value,
-						state: stateField.value,
-						password: password.value,
-						usersOfTutorLength: 0,
-						editTutors: false,
-						saveEdit: "Edit",
-					});
-					store.commit("setCurrentTutor", response.data.currentTutor);
-				} catch (err: any) {
-					store.commit("setCurrentTutor", null);
-					errorSignup.value = err.response?.data?.message || "Failed to create tutor account.";
-				}
-			} else if (accountType.value === "user") {
-				try {
-					const response = await axios.post("/api/users", {
-						name: name.value,
-						age: age.value,
-						state: stateField.value,
-						email: email.value,
-						password: password.value,
-						editUsers: false,
-						saveEdit: "Edit",
-					});
-					store.commit("setCurrentUser", response.data.currentUser);
-				} catch (err: any) {
-					store.commit("setCurrentUser", null);
-					errorSignup.value = err.response?.data?.message || "Failed to create user account.";
-				}
-			} else {
-				errorSignup.value = "Invalid account type selected.";
-				return;
-			}
-
-			// Close signup modal and refresh tutors list
-			store.dispatch("changeSignupView", false);
-			await getTutors();
-			resetData();
-		};
-
-		const getTutors = async () => {
-			try {
-				const response = await axios.get("/api/tutors");
-				store.commit("setTutors", response.data);
-			} catch (err: any) {
-				error.value = err.response?.data?.message || "Failed to fetch tutors.";
-			}
-		};
-
-		const login = async () => {
-			errorLogin.value = "";
-			if (!loginEmail.value || !loginPassword.value) {
-				errorLogin.value = "Please enter both email and password.";
-				return;
-			}
-			try {
-				const response = await axios.post("/api/accounts/login", {
-					email: loginEmail.value,
-					password: loginPassword.value,
-				});
-				if (response.data.currentTutor) {
-					store.commit("setCurrentTutor", response.data.currentTutor);
-				}
-				if (response.data.currentAdmin) {
-					store.commit("setCurrentAdmin", response.data.currentAdmin);
-				}
-				if (response.data.currentUser) {
-					store.commit("setCurrentUser", response.data.currentUser);
-				}
-
-				// Optionally, ensure only one type of account is active at a time
-
-				resetData();
-				store.dispatch("changeLoginView", false);
-			} catch (err: any) {
-				errorLogin.value = err.response?.data?.message || "Login failed. Please try again.";
-				store.commit("setCurrentUser", null);
-			}
-		};
-
-		const getCurrentAccount = async () => {
-			try {
-				const tutorResponse = await axios.get("/api/tutors/loggedin");
-				store.commit("setCurrentTutor", tutorResponse.data.currentTutor);
-			} catch (err: any) {
-				store.commit("setCurrentTutor", null);
-			}
-
-			try {
-				const userResponse = await axios.get("/api/users/loggedin");
-				store.commit("setCurrentUser", userResponse.data.currentUser);
-			} catch (err: any) {
-				store.commit("setCurrentUser", null);
-			}
-
-			try {
-				const adminResponse = await axios.get("/api/admins/loggedin");
-				store.commit("setCurrentAdmin", adminResponse.data.currentAdmin);
-			} catch (err: any) {
-				store.commit("setCurrentAdmin", null);
-			}
-		};
-
-		const resetData = () => {
-			name.value = "";
-			email.value = "";
-			age.value = null;
-			stateField.value = "";
-			password.value = "";
-			passwordRepeat.value = "";
-			editTutors.value = false;
-			saveEdit.value = "Edit";
-			error.value = "";
-			errorSignup.value = "";
-			errorLogin.value = "";
-			loginEmail.value = "";
-			loginPassword.value = "";
-			accountType.value = "";
-		};
-
-		const changeSignupView = (showHide: boolean) => {
-			store.dispatch("changeSignupView", showHide);
-		};
-
-		const changeLoginView = (showHide: boolean) => {
-			store.dispatch("changeLoginView", showHide);
-		};
-
-		// Initialize current account information on component creation
-		getCurrentAccount();
-
+export default {
+	name: "tutorManagement",
+	data() {
 		return {
-			// Local data
-			name,
-			email,
-			age,
-			state: stateField,
-			password,
-			passwordRepeat,
-			editTutors,
-			saveEdit,
-			error,
-			errorSignup,
-			errorLogin,
-			loginEmail,
-			loginPassword,
-			accountType,
-
-			// Computed properties
-			passwordMatch,
-
-			// Global state from Vuex
-			loginBlock,
-			signupBlock,
-			currentTutor,
-
-			// Methods
-			addAccount,
-			getTutors,
-			login,
-			resetData,
-			changeSignupView,
-			changeLoginView,
-			toggleSignupModal,
-			toggleLoginModal,
+			name: "",
+			email: "",
+			age: "",
+			state: "",
+			password: "",
+			passwordRepeat: "",
+			editTutors: false,
+			saveEdit: "Edit",
+			error: "",
 		};
 	},
-});
+	computed: {
+		passwordMatch() {
+			return this.password === this.passwordRepeat;
+		},
+	},
+	created() {},
+	methods: {
+		async addTutor() {
+			try {
+				await axios.post("/api/tutors", {
+					name: this.name,
+					email: this.email,
+					age: this.age,
+					state: this.state,
+					password: this.password,
+					passwordRepeat: this.passwordRepeat,
+					usersOfTutorLength: 0,
+					editTutors: false,
+					saveEdit: "Edit",
+				});
+				this.resetData();
+				await this.getTutors();
+			} catch (error) {
+				this.error = "Error: " + error.response.data.message;
+			}
+		},
+		async getTutors() {
+			try {
+				const response = await axios.get("/api/tutors");
+				this.$root.$data.tutors = response.data;
+			} catch (error) {
+				this.error = "Error: " + error.response.data.message;
+			}
+		},
+		resetData() {
+			this.name = "";
+			this.email = "";
+			this.age = "";
+			this.state = "";
+			this.password = "";
+			this.passwordRepeat = "";
+			this.editTutors = false;
+		},
+		changeSignupView(showHide) {
+			this.$root.$data.signupBlock = showHide;
+		},
+		changeLoginView(showHide) {
+			this.$root.$data.loginBlock = showHide;
+		},
+	},
+};
 </script>
 
 <style scoped>
@@ -509,73 +283,42 @@ export default defineComponent({
 	background-color: #fefefe;
 	border: 1px solid #888;
 	width: 80%; /* Could be more or less, depending on screen size */
-	margin: auto; /* Centered */
+	margin: auto; /* 15% from the top and centered was login */
+	/* margin: auto; 5% auto 15% auto; 5% from the top, 15% from the bottom and centered signup*/
 }
 
-/* Show Signup Modal */
 .showSignup {
 	display: block !important;
 }
 
-/* Show Login Modal */
 .showLogin {
 	display: block !important;
 }
 
-/* Common styles for close buttons */
-.modal .close {
+div.loginForm span, div.signupForm span /* eslint-disable-line */ {
+	font-family: Optima, sans-serif;
+}
+
+/* The Close Button (x) */
+.close {
+	/* Position it in the top right corner outside of the modal */
 	position: absolute;
 	right: 3%;
 	top: 3%;
 	color: #dc3545;
 	font-size: 35px;
 	font-weight: bold;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+	color: #f44336; /* was red */
 	cursor: pointer;
 }
 
-.modal .close:hover,
-.modal .close:focus {
-	color: #f44336; /* Darker red */
-}
-
-/* Avatar image */
-.imgcontainer img.avatar {
-	width: 25% !important;
-	border-radius: 50%;
-}
-
-/* Full-width input fields */
-.container input[type="email"],
-.container input[type="password"],
-.container input[type="text"],
-.container input[type="number"] {
-	width: 100%;
-	padding: 12px 20px;
-	margin: 8px 0;
-	display: inline-block;
-	border: 1px solid #ccc;
-	box-sizing: border-box;
-}
-
-.container input[type="email"]:focus,
-.container input[type="password"]:focus,
-.container input[type="text"]:focus,
-.container input[type="number"]:focus {
-	background-color: #ddd;
-	outline: none;
-}
-
-/* Add a hover effect for buttons */
-.button:hover,
-.cancelbtn:hover,
-.signup.button:hover,
-.link-button:hover {
-	opacity: 0.8;
-}
-
-/* Style the signup and login buttons */
-.button,
-.signup.button {
+/* Set a style for login and signup buttons */
+.button {
 	background-color: #4caf50;
 	color: white;
 	padding: 14px 20px;
@@ -583,6 +326,12 @@ export default defineComponent({
 	border: none;
 	cursor: pointer;
 	width: 100%;
+	/*opacity: 0.9;*/ /*Optional, was on the signup button*/
+}
+
+/* Add padding to containers */
+.container {
+	padding: 16px;
 }
 
 /* Extra style for the cancel button (red) */
@@ -596,6 +345,11 @@ export default defineComponent({
 .animate {
 	-webkit-animation: animatezoom 0.6s;
 	animation: animatezoom 0.6s;
+}
+
+.passwordMatchError {
+	color: red;
+	font-weight: bold;
 }
 
 @-webkit-keyframes animatezoom {
@@ -616,90 +370,119 @@ export default defineComponent({
 	}
 }
 
-/* Password match error styling */
-.passwordMatchError {
-	color: red;
-	font-weight: bold;
-	margin-top: -10px;
+/*****************
+*   Login Form   *
+*****************/
+
+/* Bordered form */
+div.loginForm form {
+	border: 3px solid #f1f1f1;
 }
 
-/* Login error styling */
-.loginError {
-	color: red;
-	margin-left: 24%;
+/* Full-width inputs */
+div.loginForm input[type="text"],
+div.loginForm input[type="password"] {
+	width: 100%;
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
 }
 
-/* Signup error styling */
-.errorSignup {
-	color: red;
-	margin-top: 10px;
+/* Add a hover effect for buttons */
+div.loginForm button:hover {
+	opacity: 0.8;
 }
 
-/* General error styling */
-.error {
-	color: red;
+/* Center the avatar image inside this container */
+div.loginForm .imgcontainer {
 	text-align: center;
-	margin-top: 10px;
+	margin: 24px 0 12px 0;
 }
 
-/* Radio button container */
-.radio {
-	margin: 0 15%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+/* Avatar image */
+div.loginForm img.avatar {
+	width: 25% !important;
+	border-radius: 50%;
 }
 
-.radioLabel {
-	font-size: 18px;
-	margin: 0 10px;
-}
-
-.radioInput {
-	margin-right: 5px;
-}
-
-/* Disclaimer styling */
-.disclamer {
-	font-size: 12px;
-	color: #555;
-	text-align: center;
-}
-
-/* Account link styling */
-.account {
+/* The "Forgot password" text */
+div.loginForm span.psw {
 	float: right;
-	margin-top: 10px;
+	padding-top: 16px;
 }
 
-/* Link button styling to mimic anchor links */
-.link-button {
-	background: none;
-	border: none;
-	color: dodgerblue;
-	text-decoration: underline;
-	cursor: pointer;
-	padding: 0;
-	font: inherit;
+div.loginForm span.signup {
+	float: right;
+	margin-right: 2px;
 }
 
-/* Responsive Design */
+/* Change styles for span and cancel button on extra small screens */
 @media screen and (max-width: 300px) {
-	.modal-content {
-		width: 95%;
+	div.loginForm span.psw,
+	div.loginForm span.signup {
+		display: block;
+		float: none;
 	}
-
-	.loginForm .cancelbtn,
-	.signupForm .cancelbtn {
+	div.loginForm .cancelbtn {
 		width: 100%;
 	}
+}
 
-	.radio {
-		flex-direction: column;
-	}
+/******************
+*   Signup Form   *
+******************/
 
-	.radioLabel {
-		margin: 5px 0;
+/* Full-width input fields */
+div.signupForm input[type="text"],
+div.signupForm input[type="password"] {
+	width: 100%;
+	padding: 15px;
+	margin: 5px 0 22px 0;
+	display: inline-block;
+	border: none;
+	background: #f1f1f1;
+}
+
+div.signupForm input[type="text"]:focus,
+div.signupForm input[type="password"]:focus {
+	background-color: #ddd;
+	outline: none;
+}
+
+div.signupForm hr {
+	border: 1px solid #f1f1f1;
+	margin-bottom: 25px;
+}
+
+div.signupForm button:hover {
+	opacity: 1;
+}
+
+/* Clear floats */
+div.signupForm .clearfix::after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
+div.signupForm p.disclamer {
+	display: inline-block;
+	float: right;
+}
+
+/* The "All ready have an account" text */
+div.signupForm span.account {
+	float: right;
+	padding-top: 16px;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+	div.signupForm .cancelbtn,
+	div.signupForm {
+		width: 100%;
 	}
 }
 </style>

@@ -1,17 +1,18 @@
 // src/controllers/userController.ts
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { User } from "../models/User";
 import { IUser } from "../types/IUser";
 import { ITutor } from "../types/ITutor";
 import { Tutor } from "../models/Tutor";
-import { UserRequest } from "../middleware/auth";
+import { Types } from "mongoose";
 
 // Create a user
-export const createUser = async (req: UserRequest, res: Response) => {
+export const createUser: RequestHandler = async (req, res) => {
 	const { name, age, state, email, password, editUsers, saveEdit } = req.body;
 
 	if (!name || !age || !state || !email || !password) {
-		return res.status(400).send({ message: "All fields required" });
+		res.status(400).json({ message: "All fields required" });
+		return;
 	}
 
 	try {
@@ -20,7 +21,8 @@ export const createUser = async (req: UserRequest, res: Response) => {
 		// Add similar checks if Admin can also have user accounts
 
 		if (existingUser || existingTutor) {
-			return res.status(403).send({ message: "Email already exists" });
+			res.status(403).json({ message: "Email already exists" });
+			return;
 		}
 
 		const user: IUser = new User({
@@ -35,50 +37,58 @@ export const createUser = async (req: UserRequest, res: Response) => {
 
 		await user.save();
 		req.session.userID = user._id.toString();
-		return res.send({ currentUser: user });
+		res.json({ currentUser: user });
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Get users belonging to a given tutor
-export const getUsersOfTutor = async (req: Request, res: Response) => {
+export const getUsersOfTutor: RequestHandler = async (req, res) => {
 	const { tutorID } = req.params;
 
 	try {
 		const tutor: ITutor | null = await Tutor.findById(tutorID);
 		if (!tutor) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const users = await User.find({ tutor: tutor._id });
-		return res.send(users);
+		res.json(users);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Get all users
-export const getAllUsers = async (_req: Request, res: Response) => {
+export const getAllUsers: RequestHandler = async (_req, res) => {
 	try {
 		const users = await User.find();
-		return res.send(users);
+		res.json(users);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Update user info by the user themselves
-export const updateUserSelf = async (req: UserRequest, res: Response) => {
+export const updateUserSelf: RequestHandler = async (req, res) => {
 	const { userID } = req.params;
 
 	try {
 		const user: IUser | null = await User.findById(userID);
 		if (!user) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const { name, email, age, state, editUsers, saveEdit, password } = req.body;
@@ -92,21 +102,24 @@ export const updateUserSelf = async (req: UserRequest, res: Response) => {
 		if (password) user.password = password; // This will trigger the pre-save hook for hashing
 
 		await user.save();
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Update user info by the tutor
-export const updateUserByTutor = async (req: UserRequest, res: Response) => {
+export const updateUserByTutor: RequestHandler = async (req, res) => {
 	const { userID } = req.params;
 
 	try {
 		const user: IUser | null = await User.findById(userID);
 		if (!user) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const { name, email, age, state, editUsers, saveEdit, password } = req.body;
@@ -120,124 +133,145 @@ export const updateUserByTutor = async (req: UserRequest, res: Response) => {
 		if (password) user.password = password; // This will trigger the pre-save hook for hashing
 
 		await user.save();
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Assign tutor to user
-export const assignTutorToUser = async (req: UserRequest, res: Response) => {
+export const assignTutorToUser: RequestHandler = async (req, res) => {
 	const { userID, tutorID } = req.params;
 
 	try {
 		const user: IUser | null = await User.findById(userID);
 		if (!user) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const tutor: ITutor | null = await Tutor.findById(tutorID);
 		if (!tutor) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
-		user.tutor = tutor._id;
+		user.tutor = tutor._id as Types.ObjectId;
 		await user.save();
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Delete user by the user themselves
-export const deleteUserSelf = async (req: Request, res: Response) => {
+export const deleteUserSelf: RequestHandler = async (req, res) => {
 	const { userID } = req.params;
 
 	try {
 		const result = await User.deleteOne({ _id: userID });
 		if (result.deletedCount === 0) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Delete user by the tutor
-export const deleteUserByTutor = async (req: Request, res: Response) => {
+export const deleteUserByTutor: RequestHandler = async (req, res) => {
 	const { userID } = req.params;
 
 	try {
 		const result = await User.deleteOne({ _id: userID });
 		if (result.deletedCount === 0) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return ;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Delete users under a tutor
-export const deleteUsersUnderTutor = async (req: Request, res: Response) => {
+export const deleteUsersUnderTutor: RequestHandler = async (req, res) => {
 	const { tutorID } = req.params;
 
 	try {
 		const tutor = await Tutor.findById(tutorID);
 		if (!tutor) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const users = await User.find({ tutor: tutor._id });
 		if (!users || users.length === 0) {
-			return res.sendStatus(404);
+			res.sendStatus(404);
+			return;
 		}
 
 		const deletionPromises = users.map(user => User.deleteOne({ _id: user._id }));
 		await Promise.all(deletionPromises);
 
-		return res.sendStatus(200);
+		res.sendStatus(200);
+		return;
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Get logged-in user
-export const getLoggedInUser = async (req: UserRequest, res: Response) => {
+export const getLoggedInUser: RequestHandler = async (req, res) => {
 	try {
 		if (req.currentUser) {
-			res.send({ currentUser: req.currentUser });
+			res.json({ currentUser: req.currentUser });
 		} else {
 			res.sendStatus(404);
 		}
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };
 
 // Logout
-export const logoutUser = async (req: Request, res: Response) => {
+export const logoutUser: RequestHandler = async (req, res) => {
 	try {
 		if (req.session) {
 			req.session.destroy(err => {
 				if (err) {
 					console.error(err);
-					return res.sendStatus(500);
+					res.sendStatus(500);
+					return;
 				}
-				return res.sendStatus(200);
+				res.sendStatus(200);
+				return;
 			});
 		} else {
-			return res.sendStatus(200);
+			res.sendStatus(200);
+			return;
 		}
 	} catch (error) {
 		console.error(error);
-		return res.sendStatus(500);
+		res.sendStatus(500);
+		return;
 	}
 };

@@ -1,31 +1,34 @@
 // src/controllers/adminController.ts
 
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
 import { Admin } from "../models/Admin";
-import { IAdmin } from "../types/IAdmin";
 import { User } from "../models/User";
 import { Tutor } from "../models/Tutor";
-import { UserRequest } from "../middleware/auth";
+import { IAdmin } from "../types/IAdmin";
 
 /**
  * Create a new admin.
  */
-export const createAdmin = async (req: UserRequest, res: Response) => {
+export const createAdmin: RequestHandler = async (req, res) => {
 	const { name, email, password, editAdmins, saveEdit } = req.body;
 
 	// Validate required fields
 	if (!name || !email || !password) {
-		return res.status(400).send({ message: "All fields (name, email, password) are required." });
+		res.status(400).json({ message: "All fields (name, email, password) are required." });
+		return;
 	}
 
 	try {
 		// Check if email already exists in Admin, User, or Tutor collections
-		const existingAdmin = await Admin.findOne({ email });
-		const existingUser = await User.findOne({ email });
-		const existingTutor = await Tutor.findOne({ email });
+		const [existingAdmin, existingUser, existingTutor] = await Promise.all([
+			Admin.findOne({ email }),
+			User.findOne({ email }),
+			Tutor.findOne({ email }),
+		]);
 
 		if (existingAdmin || existingUser || existingTutor) {
-			return res.status(403).send({ message: "Email already exists." });
+			res.status(403).json({ message: "Email already exists." });
+			return;
 		}
 
 		// Create new admin
@@ -43,37 +46,42 @@ export const createAdmin = async (req: UserRequest, res: Response) => {
 		// Set admin session
 		req.session.adminID = admin._id.toString();
 
-		return res.status(201).send({ currentAdmin: admin });
+		res.status(201).json({ currentAdmin: admin });
+		return;
 	} catch (error) {
 		console.error("Error creating admin:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Retrieve all admins.
  */
-export const getAllAdmins = async (_req: Request, res: Response) => {
+export const getAllAdmins: RequestHandler = async (_req, res) => {
 	try {
-		const admins = await Admin.find();
-		return res.status(200).send(admins);
+		const admins: IAdmin[] = await Admin.find();
+		res.status(200).json(admins);
+		return;
 	} catch (error) {
 		console.error("Error fetching admins:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Update an existing admin's information.
  */
-export const updateAdmin = async (req: UserRequest, res: Response) => {
+export const updateAdmin: RequestHandler = async (req, res) => {
 	const { adminID } = req.params;
 	const { name, email, editAdmins, saveEdit, password } = req.body;
 
 	try {
 		const admin: IAdmin | null = await Admin.findById(adminID);
 		if (!admin) {
-			return res.status(404).send({ message: "Admin not found." });
+			res.status(404).json({ message: "Admin not found." });
+			return;
 		}
 
 		// Update fields if provided
@@ -85,45 +93,53 @@ export const updateAdmin = async (req: UserRequest, res: Response) => {
 
 		await admin.save();
 
-		return res.status(200).send({ message: "Admin updated successfully." });
+		res.status(200).json({ message: "Admin updated successfully." });
+		return;
 	} catch (error) {
 		console.error("Error updating admin:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Delete an admin.
  */
-export const deleteAdmin = async (req: UserRequest, res: Response) => {
+export const deleteAdmin: RequestHandler = async (req, res) => {
 	const { adminID } = req.params;
 
 	try {
 		const result = await Admin.deleteOne({ _id: adminID });
 
 		if (result.deletedCount === 0) {
-			return res.status(404).send({ message: "Admin not found." });
+			res.status(404).json({ message: "Admin not found." });
+			return;
 		}
 
-		return res.status(200).send({ message: "Admin deleted successfully." });
+		res.status(200).json({ message: "Admin deleted successfully." });
+		return;
 	} catch (error) {
 		console.error("Error deleting admin:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
 
 /**
  * Retrieve the currently logged-in admin.
  */
-export const getLoggedInAdmin = async (req: UserRequest, res: Response) => {
+export const getLoggedInAdmin: RequestHandler = async (req, res) => {
 	try {
 		if (req.currentAdmin) {
-			return res.status(200).send({ currentAdmin: req.currentAdmin });
+			res.status(200).json({ currentAdmin: req.currentAdmin });
+			return;
 		} else {
-			return res.status(404).send({ message: "No admin is currently logged in." });
+			res.status(404).json({ message: "No admin is currently logged in." });
+			return;
 		}
 	} catch (error) {
 		console.error("Error fetching logged-in admin:", error);
-		return res.status(500).send({ message: "Internal server error." });
+		res.status(500).json({ message: "Internal server error." });
+		return;
 	}
 };
