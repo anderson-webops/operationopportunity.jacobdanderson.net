@@ -1,3 +1,4 @@
+<!-- src/components/AccountManagement.vue -->
 <template>
 	<div>
 		<!----------------
@@ -7,8 +8,8 @@
 		<!-- The Modal -->
 		<div :class="{ showLogin: loginBlock }" class="modal loginForm">
 			<!-- Modal Content -->
-				<form class="modal-content animate" @submit.prevent="addTutor">
-					<span class="close" title="Close Modal" @click="changeLoginView(false)">&times;</span>
+			<form class="modal-content animate" @submit.prevent="loginTutor">
+				<span class="close" title="Close Modal" @click="changeLoginView(false)">&times;</span>
 
 				<div class="imgcontainer">
 					<img
@@ -19,14 +20,23 @@
 				</div>
 
 				<div class="container">
-					<label for="uname"><b>Username</b></label>
-					<input type="text" placeholder="Enter Username" id="uname" required />
-					<!--                      v-model="loginEmail"-->
+					<label for="uname"><b>Email</b></label>
+					<input
+						type="text"
+						placeholder="Enter Email"
+						id="uname"
+						v-model="loginEmail"
+						required
+					/>
 
 					<label for="psw1"><b>Password</b></label>
-					<input type="password" placeholder="Enter Password" id="psw1" />
-					<!--          required-->
-					<!--            v-model="loginPassword"-->
+					<input
+						type="password"
+						placeholder="Enter Password"
+						id="psw1"
+						v-model="loginPassword"
+						required
+					/>
 
 					<button type="submit" class="button">Login</button>
 					<label>
@@ -37,7 +47,7 @@
 					>Don't have an account?
             <a
 							href="#"
-							v-on:click="
+							@click="
                 changeLoginView(false);
                 changeSignupView(true);
               "
@@ -49,11 +59,12 @@
 				<div class="container" style="background-color: #f1f1f1">
 					<button
 						type="button"
-						v-on:click="changeLoginView(false)"
 						class="cancelbtn"
+						@click="changeLoginView(false)"
 					>
 						Cancel
 					</button>
+					<p v-if="errorLogin" class="error loginError">{{ errorLogin }}</p>
 					<span class="psw">Forgot <a href="#">password?</a></span>
 				</div>
 			</form>
@@ -115,6 +126,7 @@
 						placeholder="Enter Password"
 						id="psw2"
 						v-model="password"
+						required
 					/>
 					<!--            required-->
 
@@ -124,6 +136,7 @@
 						placeholder="Repeat Password"
 						id="psw-repeat"
 						v-model="passwordRepeat"
+						required
 					/>
 					<!--            required-->
 
@@ -149,8 +162,8 @@
 					<div class="container clearfix" style="background-color: #f1f1f1">
 						<button
 							type="button"
-							v-on:click="changeSignupView(false)"
 							class="cancelbtn"
+							@click="changeSignupView(false)"
 						>
 							Cancel
 						</button>
@@ -158,7 +171,7 @@
 						>Already have an account?
               <a
 								href="#"
-								v-on:click="
+								@click="
                   changeSignupView(false);
                   changeLoginView(true);
                 "
@@ -174,59 +187,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from 'vue'
-import axios from 'axios'
+import {
+	ref,
+	computed,
+	inject,
+	onMounted,
+	type Ref
+} from "vue";
+import axios from "axios";
 
 /* ------------------------------------------
    injected global state from App.vue
+   (with safe fall-backs)
 ------------------------------------------ */
-const loginBlock  = inject('loginBlock')  as { value: boolean }
-const signupBlock = inject('signupBlock') as { value: boolean }
-const tutors      = inject('tutors')      as { value: any[] }   // reactive array
+const loginBlock  = inject<Ref<boolean>>("loginBlock",  ref(false));
+const signupBlock = inject<Ref<boolean>>("signupBlock", ref(false));
+const tutors      = inject<Ref<any[]>>("tutors",       ref([]));
 
 /* ------------------------------------------
    local reactive state
 ------------------------------------------ */
-const name           = ref('')
-const email          = ref('')
-const age            = ref('')
-const state     		 = ref('')
-const password       = ref('')
-const passwordRepeat = ref('')
-const error          = ref<string>('')
+const name           = ref("");
+const email          = ref("");
+const age            = ref("");
+const state          = ref("");
+const password       = ref("");
+const passwordRepeat = ref("");
+const error          = ref<string>("");
+
+const loginEmail     = ref("");
+const loginPassword  = ref("");
+const errorLogin     = ref<string>("");
 
 /* ------------------------------------------
    derived/computed
 ------------------------------------------ */
-const passwordMatch = computed(() => password.value === passwordRepeat.value)
+const passwordMatch = computed(() => password.value === passwordRepeat.value);
 
 /* ------------------------------------------
    helpers
 ------------------------------------------ */
-function changeLoginView(show: boolean)  { loginBlock.value  = show }
-function changeSignupView(show: boolean) { signupBlock.value = show }
+function changeLoginView(show: boolean)  { loginBlock.value  = show; }
+function changeSignupView(show: boolean) { signupBlock.value = show; }
 
-function resetData () {
-	name.value = ''
-	email.value = ''
-	age.value = ''
-	state.value = ''
-	password.value = ''
-	passwordRepeat.value = ''
+function resetData() {
+	name.value           = "";
+	email.value          = "";
+	age.value            = "";
+	state.value          = "";
+	password.value       = "";
+	passwordRepeat.value = "";
+	loginEmail.value     = "";
+	loginPassword.value  = "";
 }
 
-async function getTutors () {
+async function getTutors() {
 	try {
-		const { data } = await axios.get('/api/tutors')
-		tutors.value = data                       // update injected ref
+		const { data } = await axios.get("/api/tutors");
+		tutors.value = data;
 	} catch (err: any) {
-		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
+		error.value = "Error: " + (err.response?.data?.message ?? err.message);
 	}
 }
 
-async function addTutor () {
+async function addTutor() {
 	try {
-		await axios.post('/api/tutors', {
+		await axios.post("/api/tutors", {
 			name: name.value,
 			email: email.value,
 			age: age.value,
@@ -235,17 +261,41 @@ async function addTutor () {
 			passwordRepeat: passwordRepeat.value,
 			usersOfTutorLength: 0,
 			editTutors: false,
-			saveEdit: 'Edit'
-		})
-		resetData()
-		await getTutors()
+			saveEdit: "Edit"
+		});
+		resetData();
+		await getTutors();
 	} catch (err: any) {
-		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
+		error.value = "Error: " + (err.response?.data?.message ?? err.message);
+	}
+}
+
+async function loginTutor() {
+	errorLogin.value = "";
+	if (!loginEmail.value || !loginPassword.value) return;
+
+	try {
+		const { data } = await axios.post("/api/accounts/login", {
+			email:    loginEmail.value,
+			password: loginPassword.value
+		});
+
+		/* update global state here if you inject currentTutor / currentUser */
+
+		resetData();
+		changeLoginView(false);
+	} catch (err: any) {
+		errorLogin.value = "Login failed: " + (err.response?.data?.message ?? err.message);
 	}
 }
 
 /* ------------------------------------------
-   expose to template
+   life-cycle
+------------------------------------------ */
+onMounted(getTutors);
+
+/* ------------------------------------------
+   expose to template (for Options API users)
 ------------------------------------------ */
 defineExpose({
 	name,
@@ -257,9 +307,13 @@ defineExpose({
 	error,
 	passwordMatch,
 	addTutor,
+	loginTutor,
+	loginEmail,
+	loginPassword,
+	errorLogin,
 	changeLoginView,
 	changeSignupView
-})
+});
 </script>
 
 <style scoped>
@@ -269,15 +323,15 @@ defineExpose({
 
 /* The Modal (background) */
 .modal {
-	display: none; /* Hidden by default */
-	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
+	display: none;
+	position: fixed;
+	z-index: 1;
 	left: 0;
 	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
-	background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
 	padding-top: 50px;
 }
 
@@ -285,20 +339,17 @@ defineExpose({
 .modal-content {
 	background-color: #fefefe;
 	border: 1px solid #888;
-	width: 80%; /* Could be more or less, depending on screen size */
-	margin: auto; /* 15% from the top and centered was login */
-	/* margin: auto; 5% auto 15% auto; 5% from the top, 15% from the bottom and centered signup*/
+	width: 80%;
+	margin: auto;
 }
 
-.showSignup {
-	display: block !important;
-}
-
+.showSignup,
 .showLogin {
 	display: block !important;
 }
 
-div.loginForm span, div.signupForm span /* eslint-disable-line */ {
+div.loginForm span,
+div.signupForm span {
 	font-family: Optima, sans-serif;
 }
 
@@ -316,7 +367,7 @@ div.loginForm span, div.signupForm span /* eslint-disable-line */ {
 /* Close button on hover */
 .close:hover,
 .close:focus {
-	color: #f44336; /* was red */
+	color: #f44336;
 	cursor: pointer;
 }
 
@@ -353,6 +404,10 @@ div.loginForm span, div.signupForm span /* eslint-disable-line */ {
 .passwordMatchError {
 	color: red;
 	font-weight: bold;
+}
+
+p.loginError {
+	margin-left: 24%;
 }
 
 @-webkit-keyframes animatezoom {
@@ -428,6 +483,7 @@ div.loginForm span.signup {
 		display: block;
 		float: none;
 	}
+
 	div.loginForm .cancelbtn {
 		width: 100%;
 	}

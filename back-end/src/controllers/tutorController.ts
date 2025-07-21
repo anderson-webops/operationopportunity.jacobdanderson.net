@@ -10,7 +10,6 @@ import { Types } from "mongoose";
  * Create a new tutor.
  */
 export const createTutor: RequestHandler = async (req, res) => {
-	console.log("📥 createTutor body:", req.body);
 	const { name, email, age, state, password, editTutors, saveEdit } = req.body;
 
 	// Validate required fields
