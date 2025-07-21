@@ -25,16 +25,9 @@
 	</section>
 </template>
 
-<script lang="ts">
-export default {
-	name: "AboutPage",
-	components: {},
-	data() {
-		return {};
-	},
-	created() {},
-	computed: {}
-};
+<script setup lang="ts">
+/* DevTools / warning-friendly name */
+defineOptions({ name: "AboutPage" });
 </script>
 
 <style scoped>

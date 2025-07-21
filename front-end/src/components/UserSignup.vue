@@ -2,371 +2,233 @@
 	<div>
 		<h2 class="mt-5">Sign Up</h2>
 
+		<!-- ------------------------------------------------ Form -->
 		<div id="signup">
 			<form id="signupForm" @submit.prevent="addUser">
 				<select
-					v-if="tutors.length > 0"
+					v-if="tutors.length"
 					id="tutorSelect"
-					v-model="tutor"
+					v-model="selectedTutor"
 					required
 				>
-					<option
-						v-for="tutorIt in tutors"
-						:key="tutorIt._id"
-						:value="tutorIt"
-					>
-						{{ tutorIt.name }}
-					</option>
+					<option v-for="t in tutors" :key="t._id" :value="t">{{ t.name }}</option>
 				</select>
 				<p v-else class="notutors">No Tutors are available</p>
-				<br />
 
+				<br />
 				<button id="infoSubmit" class="mt-3" type="submit">Submit</button>
 			</form>
 
+			<!-- ------------------------------------------------ Toggle -->
 			<button
-				v-show="tutors.length > 0"
-				:string="showHideTutors"
+				v-if="tutors.length"
 				@click="showTutors = !showTutors"
 			>
-				{{ showHide }} tutors
+				{{ showTutors ? 'Hide' : 'Show' }} tutors
 			</button>
 
-			<hr v-show="showTutors && tutors.length > 0" />
+			<hr v-if="showTutors && tutors.length" />
 
-			<!-- List Tutors -->
-			<h3 v-show="tutors.length > 0">
-				Total Tutors: {{ tutors.length }}
-			</h3>
-			<h3 v-show="tutors.length > 0">
-				Total Users: {{ numberOfUsers }}
-			</h3>
+			<!-- ------------------------------------------------ Stats -->
+			<template v-if="tutors.length">
+				<h3>Total Tutors: {{ tutors.length }}</h3>
+				<h3>Total Users : {{ numberOfUsers }}</h3>
+			</template>
 
+			<!-- ------------------------------------------------ Tutor cards -->
 			<div
-				v-for="tutorIt in tutors"
-				v-show="showTutors && tutors.length > 0"
-				:key="tutorIt._id"
+				v-for="t in tutors"
+				v-show="showTutors"
+				:key="t._id"
 				class="tutorList mt-2"
 			>
 				<br />
 				<ul>
-					<!-- Display -->
-					<li v-show="!tutorIt.editTutors">
-						<label class="hidden">Name:</label>&emsp;<p>{{ tutorIt.name }}</p>
-					</li>
-					<li v-show="!tutorIt.editTutors">
-						<label class="hidden">Email:</label>&emsp;<p>{{ tutorIt.email }}</p>
-					</li>
-					<li v-show="!tutorIt.editTutors">
-						<label class="hidden">Age:</label>&emsp;<p>{{ tutorIt.age }}</p>
-					</li>
-					<li v-show="!tutorIt.editTutors">
-						<label class="hidden">State:</label>&emsp;<p>{{ tutorIt.state }}</p>
-					</li>
-					<li v-show="!tutorIt.editTutors">
-						<label class="hidden">Users:</label>&emsp;<p>{{ tutorIt.usersOfTutorLength }}</p>
-					</li>
+					<template v-if="!t.editTutors">
+						<li><label class="hidden">Name:</label>&emsp;<p>{{ t.name }}</p></li>
+						<li><label class="hidden">Email:</label>&emsp;<p>{{ t.email }}</p></li>
+						<li><label class="hidden">Age:</label>&emsp;<p>{{ t.age }}</p></li>
+						<li><label class="hidden">State:</label>&emsp;<p>{{ t.state }}</p></li>
+						<li><label class="hidden">Users:</label>&emsp;<p>{{ t.usersOfTutorLength }}</p></li>
+					</template>
 
-					<!-- Edit -->
-					<li v-show="tutorIt.editTutors">
-						<label>
-							Name:&emsp;
-							<input v-model="tutorIt.name" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li v-show="tutorIt.editTutors">
-						<label>
-							Email:&emsp;
-							<input v-model="tutorIt.email" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li v-show="tutorIt.editTutors">
-						<label>
-							Age:&emsp;
-							<input v-model="tutorIt.age" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li v-show="tutorIt.editTutors">
-						<label>
-							State:&emsp;
-							<input v-model="tutorIt.state" class="editTutor" type="text" />
-						</label>
-					</li>
+					<template v-else>
+						<li><label>Name:&emsp;<input v-model="t.name"  class="editTutor" type="text" /></label></li>
+						<li><label>Email:&emsp;<input v-model="t.email" class="editTutor" type="text" /></label></li>
+						<li><label>Age:&emsp;<input  v-model="t.age"   class="editTutor" type="text" /></label></li>
+						<li><label>State:&emsp;<input v-model="t.state" class="editTutor" type="text" /></label></li>
+					</template>
 				</ul>
 				<br />
+
+				<!-- Admin / owner controls -->
 				<button
-					v-show="admin || currentTutor === tutorIt"
-					@click="deleteTutor(tutorIt)"
-				>
-					Remove
-				</button>
+					v-if="admin || currentTutor?. _id === t._id"
+					@click="deleteTutor(t)"
+				>Remove</button>
+
 				<button
-					v-show="admin || currentTutor === tutorIt"
-					:string="tutorIt.saveEdit"
-					@click="editTutor(tutorIt)"
-				>
-					{{ tutorIt.saveEdit }}
-				</button>
+					v-if="admin || currentTutor?. _id === t._id"
+					@click="editTutor(t)"
+				>{{ t.saveEdit }}</button>
+
+				<!-- user “select” -->
 				<button
-					v-show="currentUser"
-					:class="{ colorSelect: currentUser?.tutor?._id === tutorIt._id }"
-					@click="selectTutor(tutorIt)"
-				>
-					Select
-				</button>
+					v-if="currentUser"
+					:class="{ colorSelect : currentUser.tutor?._id === t._id }"
+					@click="selectTutor(t)"
+				>Select</button>
 			</div>
 		</div>
+
 		<p v-if="error" class="error">{{ error }}</p>
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "vue";
+<script setup lang="ts">
+/* ------------------------------------------------------------------ */
+/*  Types                                                             */
+/* ------------------------------------------------------------------ */
+interface Tutor {
+	_id: string;
+	name: string;
+	email: string;
+	age: string;
+	state: string;
+	usersOfTutorLength: number;
+	editTutors: boolean;
+	saveEdit: string;
+}
+
+interface User {
+	_id: string;
+	tutor?: { _id: string };
+}
+
+/* ------------------------------------------------------------------ */
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import axios from "axios";
 
-export default defineComponent({
-	name: "userSignup",
-	setup() {
-		const store = useStore();
-		const error = ref<string>("");
-		const name = ref<string>("");
-		const email = ref<string>("");
-		const age = ref<string>("");
-		const stateField = ref<string>("");
-		const tutor = ref<any>(null);
-		const showTutors = ref<boolean>(false);
-		const showHide = ref<string>("Show");
-		const editTutors = ref<boolean>(false);
-		const editUsers = ref<boolean>(false);
-		const saveEdit = ref<string>("Edit");
-		const numberOfUsers = ref<number>(0);
+const store           = useStore();
+const error           = ref<string>("");
 
-		// Computed from store
-		const tutors = computed(() => store.state.tutors);
-		const currentUser = computed(() => store.state.currentUser);
-		const currentTutor = computed(() => store.state.currentTutor);
-		const admin = computed(() => store.state.currentAdmin);
+const selectedTutor   = ref<Tutor | null>(null);
+const showTutors      = ref(false);
+const numberOfUsers   = ref(0);
 
-		// We manually update showHide in a watcher or computed:
-		const showHideTutors = computed(() => {
-			return (showHide.value = showTutors.value ? "Hide" : "Show");
+/* -------------------------------------------------- Vuex shortcuts */
+const tutors        = computed<Tutor[]>(() => store.state.tutors);
+const currentUser   = computed<User  | null>(() => store.state.currentUser);
+const currentTutor  = computed<Tutor | null>(() => store.state.currentTutor);
+const admin         = computed(()    => store.state.currentAdmin);
+
+/* ------------------------------------------------------------------ */
+/*  API helpers                                                       */
+/* ------------------------------------------------------------------ */
+const getTutors = async () => {
+	const { data } = await axios.get<Tutor[]>("/api/tutors");
+	store.commit("setTutors", data);
+	if (data.length && !selectedTutor.value) selectedTutor.value = data[0];
+};
+
+const getUsers = async (t: Tutor | null) => {
+	await getNumberOfUsers();
+	if (!t) return;
+
+	if (numberOfUsers.value) {
+		const { data } = await axios.get(`/api/users/oftutor/${t._id}`);
+		store.commit("setUsers", data);
+		await syncTutorUserCount(t, data.length);
+	}
+};
+
+const getNumberOfUsers = async () => {
+	const { data } = await axios.get("/api/users/all");
+	numberOfUsers.value = data.length;
+};
+
+const syncTutorUserCount = async (t: Tutor, count: number) => {
+	await axios.put(`/api/tutors/${t._id}`, {
+		...t,
+		usersOfTutorLength: count
+	});
+};
+
+/* ------------------------------------------------------------------ */
+/*  Form actions                                                      */
+/* ------------------------------------------------------------------ */
+const addUser = async () => {
+	if (!selectedTutor.value || !selectedTutor.value._id) {
+		error.value = "No tutor selected.";
+		return;
+	}
+
+	try {
+		await axios.post(
+			`/api/users/${selectedTutor.value._id}`,
+			{ currentUser: store.state.currentUser }
+		);
+		await getUsers(selectedTutor.value);
+	} catch (e: any) {
+		error.value = "Error: " + e.response?.data?.message;
+	}
+};
+
+const selectTutor = async (t: Tutor) => {
+	if (!currentUser.value) return;
+	try {
+		await axios.put(`/api/users/selectTutor/${currentUser.value._id}/${t._id}`);
+		const { data }  = await axios.get("/api/users/loggedin");
+		store.commit("setCurrentUser", data.currentUser);
+	} catch (e: any) { error.value = "Error: " + e.response?.data?.message; }
+};
+
+/* -------------------- Tutor CRUD (admin / owner only) ------------- */
+const editTutor = async (t: Tutor) => {
+	if (!admin.value && currentTutor.value?._id !== t._id) return;
+	try {
+		await axios.put(`/api/tutors/${t._id}`, {
+			...t,
+			editTutors: !t.editTutors,
+			saveEdit  : t.editTutors ? "Edit" : "Save"
 		});
+		await getTutors();
+	} catch (e: any) { error.value = "Error: " + e.response?.data?.message; }
+};
 
-		onMounted(async () => {
-			try {
-				await getTutors();
-				await getUsers(tutor.value);
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		});
+const deleteTutor = async (t: Tutor) => {
+	if (!admin.value && currentTutor.value?._id !== t._id) return;
+	try {
+		await getUsers(t);                                 // load users once
+		await axios.delete(`/api/users/under/${t._id}`);   // cascade delete
+		await axios.delete(`/api/tutors/remove/${t._id}`);
+		await getTutors();
+		await getUsers(null);
+	} catch (e: any) { error.value = "Error: " + e.response?.data?.message; }
+};
 
-		// Methods
-		const addUser = async () => {
-			if (!tutor.value) return;
-			try {
-				await axios.post(`/api/users/${tutor.value._id}`, {
-					currentUser: store.state.currentUser,
-				});
-				await getUsers(tutor.value);
-				await getNumberOfUsers();
-				resetData();
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const getUsers = async (selectedTutor: any) => {
-			try {
-				await getNumberOfUsers();
-				if (!selectedTutor) return;
-				if (numberOfUsers.value !== 0) {
-					const response = await axios.get(
-						`/api/users/oftutor/${selectedTutor._id}`
-					);
-					store.commit("setUsers", response.data);
-					await numberOfUsersTaughtByTutor(selectedTutor, response.data.length);
-				}
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const getTutors = async () => {
-			try {
-				const response = await axios.get("/api/tutors");
-				store.commit("setTutors", response.data);
-				// default the current tutor to the first tutor
-				if (response.data && response.data.length > 0) {
-					tutor.value = response.data[0];
-				}
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const editTutor = async (aTutor: any) => {
-			if ((!admin.value && currentTutor.value !== aTutor) || !aTutor) return;
-			try {
-				await axios.put(`/api/tutors/${aTutor._id}`, {
-					name: aTutor.name,
-					email: aTutor.email,
-					age: aTutor.age,
-					state: aTutor.state,
-					editTutors: !aTutor.editTutors,
-					saveEdit: aTutor.editTutors ? "Edit" : "Save",
-				});
-				await getTutors();
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const numberOfUsersTaughtByTutor = async (
-			aTutor: any,
-			userCount: number
-		) => {
-			if (!aTutor) return;
-			try {
-				await axios.put(`/api/tutors/${aTutor._id}`, {
-					name: aTutor.name,
-					email: aTutor.email,
-					age: aTutor.age,
-					state: aTutor.state,
-					usersOfTutorLength: userCount,
-					editTutors: aTutor.editTutors,
-					saveEdit: aTutor.saveEdit,
-				});
-				await getTutors();
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const deleteTutor = async (aTutor: any) => {
-			if ((!admin.value && currentTutor.value !== aTutor) || !aTutor) return;
-			try {
-				// Refresh current list of users
-				await getUsers(aTutor);
-
-				// Delete any users under that tutor
-				await axios.delete(`/api/users/under/${aTutor._id}`);
-				// Then delete the tutor
-				await axios.delete(`/api/tutors/remove/${aTutor._id}`);
-				// Finally refresh tutors
-				await getTutors();
-				// And refresh any user listing if needed
-				await getUsers(null);
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const getNumberOfUsers = async () => {
-			try {
-				const response = await axios.get("/api/users/all");
-				numberOfUsers.value = response.data.length;
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-				numberOfUsers.value = 0;
-			}
-		};
-
-		const selectTutor = async (aTutor: any) => {
-			if (!store.state.currentUser) return;
-			try {
-				// Link the user to this tutor
-				await axios.put(
-					`/api/users/selectTutor/${store.state.currentUser._id}/${aTutor._id}`
-				);
-				// Refresh current user
-				const response = await axios.get("/api/users/loggedin");
-				store.commit("setCurrentUser", response.data.currentUser);
-			} catch (err: any) {
-				error.value = "Error: " + err.response?.data?.message;
-			}
-		};
-
-		const resetData = () => {
-			name.value = "";
-			email.value = "";
-			age.value = "";
-			stateField.value = "";
-			tutor.value = null;
-			editTutors.value = false;
-			editUsers.value = false;
-		};
-
-		return {
-			error,
-			name,
-			email,
-			age,
-			state: stateField,
-			tutor,
-			showTutors,
-			showHide,
-			editTutors,
-			editUsers,
-			saveEdit,
-			numberOfUsers,
-			// computed
-			tutors,
-			currentUser,
-			currentTutor,
-			admin,
-			showHideTutors,
-			// methods
-			addUser,
-			getUsers,
-			getTutors,
-			editTutor,
-			numberOfUsersTaughtByTutor,
-			deleteTutor,
-			getNumberOfUsers,
-			selectTutor,
-			resetData,
-		};
-	},
+/* ------------------------------------------------------------------ */
+/*  Lifecycle                                                         */
+/* ------------------------------------------------------------------ */
+onMounted(() => {
+	getTutors()
+		.then(() => getUsers(selectedTutor.value))
+		.catch(() => {});
 });
 </script>
 
 <style scoped>
-ul {
-	display: flex;
-	flex-flow: column;
-}
-ul p {
-	display: inline;
-}
+ul              { display:flex; flex-flow:column; }
+ul p            { display:inline; }
 div.tutorList,
-li {
-	align-self: center;
+li              { align-self:center; }
+.hidden         { display:none; }
+.colorSelect    { color:blue; background:lightblue; }
+div.tutorList   { outline:black solid 1px; padding-bottom:1%; width:35%; margin:auto; }
+.notutors       { text-align:center; }
+@media (max-width:960px){
+	div.tutorList { width:50%; }
 }
-.hidden {
-	display: none;
-}
-.colorSelect {
-	color: blue;
-	background: lightblue;
-}
-div.tutorList {
-	outline: black solid 1px;
-	padding-bottom: 1%;
-	width: 35%;
-	margin: auto;
-}
-.notutors {
-	text-align: center;
-}
-@media only screen and (min-width: 1px) and (max-width: 960px) {
-	div.tutorList {
-		width: 50%;
-	}
-}
-.error {
-	color: red;
-	margin-top: 10px;
-}
+.error          { color:red; margin-top:10px; }
 </style>

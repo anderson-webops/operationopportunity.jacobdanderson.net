@@ -59,7 +59,7 @@
 					<button
 						v-else
 						class="btn btn-outline-success"
-						@click="showLoginModal"
+						@click="$emit('login-click')"
 					>
 						Login
 					</button>
@@ -67,7 +67,7 @@
 					<button
 						v-if="!loggedIn"
 						class="btn btn-outline-primary"
-						@click="showSignupModal"
+						@click="$emit('signup-click')"
 					>
 						Signup
 					</button>

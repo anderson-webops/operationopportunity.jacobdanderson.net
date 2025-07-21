@@ -21,17 +21,10 @@
 	</section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import UserSignup from "@/components/UserSignup.vue";
 
-export default {
-	name: "SignupPage",
-	data() {
-		return {};
-	},
-
-	components: { UserSignup }
-};
+defineOptions({ name: "SignupPage" });
 </script>
 
 <style scoped></style>

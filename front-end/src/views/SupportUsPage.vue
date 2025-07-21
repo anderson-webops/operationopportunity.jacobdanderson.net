@@ -23,16 +23,8 @@
 	</section>
 </template>
 
-<script lang="ts">
-export default {
-	name: "SupportUsPage",
-	components: {},
-	data() {
-		return {};
-	},
-	created() {},
-	computed: {}
-};
+<script setup lang="ts">
+defineOptions({ name: "SupportUsPage" });
 </script>
 
 <style scoped></style>

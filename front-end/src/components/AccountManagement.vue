@@ -5,18 +5,10 @@
 		----------------->
 
 		<!-- The Modal -->
-		<div
-			v-bind:class="{ showLogin: $root.$data.loginBlock }"
-			class="modal loginForm"
-		>
+		<div :class="{ showLogin: loginBlock }" class="modal loginForm">
 			<!-- Modal Content -->
-			<form class="modal-content animate" v-on:submit.prevent="addTutor">
-        <span
-					v-on:click="changeLoginView(false)"
-					class="close"
-					title="Close Modal"
-				>&times;</span
-				>
+				<form class="modal-content animate" @submit.prevent="addTutor">
+					<span class="close" title="Close Modal" @click="changeLoginView(false)">&times;</span>
 
 				<div class="imgcontainer">
 					<img
@@ -68,18 +60,11 @@
 		</div>
 
 		<!-- The Modal (contains the Sign Up form) -->
-		<div
-			v-bind:class="{ showSignup: $root.$data.signupBlock }"
-			class="modal signupForm"
-		>
+		<div :class="{ showSignup: signupBlock }" class="modal signupForm">
+
 			<!-- Modal Content -->
-			<form class="modal-content animate" v-on:submit.prevent="addTutor">
-        <span
-					v-on:click="changeSignupView(false)"
-					class="close"
-					title="Close Modal"
-				>&times;</span
-				>
+			<form class="modal-content animate" @submit.prevent="addTutor">
+				<span class="close" @click="changeSignupView(false)">&times;</span>
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
@@ -188,75 +173,93 @@
 	</div>
 </template>
 
-<script>
-import axios from "axios";
+<script setup lang="ts">
+import { ref, computed, inject } from 'vue'
+import axios from 'axios'
 
-export default {
-	name: "tutorManagement",
-	data() {
-		return {
-			name: "",
-			email: "",
-			age: "",
-			state: "",
-			password: "",
-			passwordRepeat: "",
+/* ------------------------------------------
+   injected global state from App.vue
+------------------------------------------ */
+const loginBlock  = inject('loginBlock')  as { value: boolean }
+const signupBlock = inject('signupBlock') as { value: boolean }
+const tutors      = inject('tutors')      as { value: any[] }   // reactive array
+
+/* ------------------------------------------
+   local reactive state
+------------------------------------------ */
+const name           = ref('')
+const email          = ref('')
+const age            = ref('')
+const state     		 = ref('')
+const password       = ref('')
+const passwordRepeat = ref('')
+const error          = ref<string>('')
+
+/* ------------------------------------------
+   derived/computed
+------------------------------------------ */
+const passwordMatch = computed(() => password.value === passwordRepeat.value)
+
+/* ------------------------------------------
+   helpers
+------------------------------------------ */
+function changeLoginView(show: boolean)  { loginBlock.value  = show }
+function changeSignupView(show: boolean) { signupBlock.value = show }
+
+function resetData () {
+	name.value = ''
+	email.value = ''
+	age.value = ''
+	state.value = ''
+	password.value = ''
+	passwordRepeat.value = ''
+}
+
+async function getTutors () {
+	try {
+		const { data } = await axios.get('/api/tutors')
+		tutors.value = data                       // update injected ref
+	} catch (err: any) {
+		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
+	}
+}
+
+async function addTutor () {
+	try {
+		await axios.post('/api/tutors', {
+			name: name.value,
+			email: email.value,
+			age: age.value,
+			state: state.value,
+			password: password.value,
+			passwordRepeat: passwordRepeat.value,
+			usersOfTutorLength: 0,
 			editTutors: false,
-			saveEdit: "Edit",
-			error: "",
-		};
-	},
-	computed: {
-		passwordMatch() {
-			return this.password === this.passwordRepeat;
-		},
-	},
-	created() {},
-	methods: {
-		async addTutor() {
-			try {
-				await axios.post("/api/tutors", {
-					name: this.name,
-					email: this.email,
-					age: this.age,
-					state: this.state,
-					password: this.password,
-					passwordRepeat: this.passwordRepeat,
-					usersOfTutorLength: 0,
-					editTutors: false,
-					saveEdit: "Edit",
-				});
-				this.resetData();
-				await this.getTutors();
-			} catch (error) {
-				this.error = "Error: " + error.response.data.message;
-			}
-		},
-		async getTutors() {
-			try {
-				const response = await axios.get("/api/tutors");
-				this.$root.$data.tutors = response.data;
-			} catch (error) {
-				this.error = "Error: " + error.response.data.message;
-			}
-		},
-		resetData() {
-			this.name = "";
-			this.email = "";
-			this.age = "";
-			this.state = "";
-			this.password = "";
-			this.passwordRepeat = "";
-			this.editTutors = false;
-		},
-		changeSignupView(showHide) {
-			this.$root.$data.signupBlock = showHide;
-		},
-		changeLoginView(showHide) {
-			this.$root.$data.loginBlock = showHide;
-		},
-	},
-};
+			saveEdit: 'Edit'
+		})
+		resetData()
+		await getTutors()
+	} catch (err: any) {
+		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
+	}
+}
+
+/* ------------------------------------------
+   expose to template
+------------------------------------------ */
+defineExpose({
+	name,
+	email,
+	age,
+	state,
+	password,
+	passwordRepeat,
+	error,
+	passwordMatch,
+	addTutor,
+	changeLoginView,
+	changeSignupView
+})
 </script>
 
 <style scoped>

@@ -87,3 +87,25 @@ export const validAdmin: RequestHandler = async (
 		res.status(500).json({ message: "Server error while validating admin" });
 	}
 };
+
+/**
+ * Allow update/delete if:
+ *  • adminID is in session, OR
+ *  • tutorID in session matches the :tutorID param
+ */
+export const validTutorOrAdmin: RequestHandler = (req, res, next) => {
+	const sess = req.session as any;
+	const { tutorID } = req.params;
+
+	// if admin, always OK
+	if (sess.adminID) {
+		return next();
+	}
+
+	// if tutor and it's their own ID
+	if (sess.tutorID === tutorID) {
+		return next();
+	}
+
+	res.status(403).json({ message: "Not authorized to perform this action." });
+};

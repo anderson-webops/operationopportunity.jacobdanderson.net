@@ -4,13 +4,14 @@
     -   Navigation   -
     ----------------->
 
-		<TheHeader />
+		<TheHeader @login-click="showLoginModal"
+							 @signup-click="showSignupModal" />
 
 		<!----------------------------
     -   Login and Signup Forms   -
     ----------------------------->
 
-		<TutorManagement />
+		<AccountManagement />
 
 		<!-----------------
     -   Router View   -
@@ -26,37 +27,21 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, computed } from "vue";
-import { useStore } from "vuex";
-import TheHeader from "@/components/TheHeader.vue";
-import TheFooter from "@/components/TheFooter.vue";
+<script setup lang="ts">
+import { ref, provide } from 'vue'
+import TheHeader            from '@/components/TheHeader.vue'
+import AccountManagement    from '@/components/AccountManagement.vue'
+import TheFooter            from '@/components/TheFooter.vue'
 
-export default defineComponent({
-	name: "App",
-	components: { TheHeader, TheFooter },
- // Replace with your component name
-	setup() {
-		const store = useStore();
+const loginBlock  = ref(false)
+const signupBlock = ref(false)
 
-		const loggedIn = computed(() => store.state.loggedIn);
+// make them available to any child via inject()
+provide('loginBlock',  loginBlock)
+provide('signupBlock', signupBlock)
 
-		const logoutUser = () => {
-			store.dispatch("logout");
-			// Additional logout logic here if needed
-		};
-
-		const showLoginModal = () => {
-			// Logic to show login modal
-		};
-
-		const showSignupModal = () => {
-			// Logic to show signup modal
-		};
-
-		return { loggedIn, logoutUser, showLoginModal, showSignupModal };
-	}
-});
+function showLoginModal()  { loginBlock.value  = true }
+function showSignupModal() { signupBlock.value = true }
 </script>
 
 <style>

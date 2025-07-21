@@ -7,7 +7,7 @@ import {
 	updateTutor,
 	deleteTutor
 } from "../controllers/tutorController";
-import { validAdmin } from "../middleware/auth";
+import { validTutorOrAdmin } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -17,11 +17,11 @@ router.post("/", createTutor);
 // Route to get all tutors
 router.get("/", getAllTutors);
 
-// Route to update a tutor's information (protected - only admins can update tutors)
-router.put("/:tutorID", validAdmin, updateTutor);
+// Route to update a tutor's information (protected - admin OR that tutor)
+router.put("/:tutorID", validTutorOrAdmin, updateTutor);
 
-// Route to delete a tutor (protected - only admins can delete tutors)
-router.delete("/remove/:tutorID", validAdmin, deleteTutor);
+// Route to delete a tutor (protected - admin OR that tutor)
+router.delete("/remove/:tutorID", validTutorOrAdmin, deleteTutor);
 
 // Export the router
 export const tutorRoutes = router;

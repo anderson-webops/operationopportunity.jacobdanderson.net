@@ -30,34 +30,37 @@
 	</section>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 
-export default defineComponent({
-	name: "HomePage",
-	data() {
-		return {
-			quotePresent: false as boolean,
-			quoteText: "" as string,
-			quoteAuthor: "" as string
-		};
-	},
-	created() {
-		const updateQuote = async () => {
-			// const url =
-			// 	"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-			// let response = await fetch(url);
-			// return await response.json();
-		};
-		updateQuote().then(data => {
-			// let random = Math.floor(Math.random() * 99);
-			// let quote = data.data[random];
-			// // Now TS sees these props
-			// this.quoteText = quote.quoteText;
-			// this.quoteAuthor = quote.quoteAuthor;
-			// this.quotePresent = true;
-		});
-	}
+defineOptions({ name: "HomePage" });
+
+/* ------------------------------------------------------------------ */
+/*  Reactive state                                                    */
+/* ------------------------------------------------------------------ */
+const quotePresent = ref(false);
+const quoteText    = ref("");
+const quoteAuthor  = ref("");
+
+/* ------------------------------------------------------------------ */
+/*  Fetch a random quote (kept commented—you can restore when ready)  */
+/* ------------------------------------------------------------------ */
+const updateQuote = async () => {
+	/* Example:
+	const url = "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
+	const res = await fetch(url);
+	const data = await res.json();
+	const random = Math.floor(Math.random() * data.data.length);
+	const quote  = data.data[random];
+
+	quoteText.value    = quote.quoteText;
+	quoteAuthor.value  = quote.quoteAuthor;
+	quotePresent.value = true;
+	*/
+};
+
+onMounted(() => {
+	updateQuote().catch(() => {/* silent fail */});
 });
 </script>
 
