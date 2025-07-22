@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { useAppStore }  from '@/stores/app'
 
+const app        = useAppStore()
+const { isLoggedIn } = storeToRefs(app)
+
+function logoutUser() {
+	app.logout()
+}
 </script>
 
 <template>
@@ -49,7 +57,7 @@
 					</ul>
 					<!-- Logout Button -->
 					<button
-						v-if="loggedIn"
+						v-if="isLoggedIn"
 						class="btn btn-outline-danger"
 						@click="logoutUser"
 					>
@@ -65,7 +73,7 @@
 					</button>
 					<!-- Signup Button -->
 					<button
-						v-if="!loggedIn"
+						v-if="!isLoggedIn"
 						class="btn btn-outline-primary"
 						@click="$emit('signup-click')"
 					>

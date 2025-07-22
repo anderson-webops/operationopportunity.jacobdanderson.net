@@ -10,22 +10,34 @@
 
 				<!-- Editable fields -->
 				<li v-if="currentAdmin.editAdmins">
-					<label>Name:&emsp;
-						<input v-model="currentAdmin.name" class="editTutor" type="text" />
+					<label>
+						Name:&emsp;
+						<input
+							v-model="currentAdmin.name"
+							class="editTutor"
+							type="text"
+						/>
 					</label>
 				</li>
 				<li v-if="currentAdmin.editAdmins">
-					<label>Email:&emsp;
-						<input v-model="currentAdmin.email" class="editTutor" type="text" />
+					<label>
+						Email:&emsp;
+						<input
+							v-model="currentAdmin.email"
+							class="editTutor"
+							type="text"
+						/>
 					</label>
 				</li>
 
 				<!-- Display fields -->
 				<li v-else>
-					<label class="hidden">Name:</label>&emsp;<p>{{ currentAdmin.name }}</p>
+					<label class="hidden">Name:</label>&emsp;
+					<p>{{ currentAdmin.name }}</p>
 				</li>
 				<li v-else>
-					<label class="hidden">Email:</label>&emsp;<p>{{ currentAdmin.email }}</p>
+					<label class="hidden">Email:</label>&emsp;
+					<p>{{ currentAdmin.email }}</p>
 				</li>
 			</ul>
 			<br />
@@ -39,31 +51,63 @@
 		<!-- ------------------  Tutors  ------------------ -->
 		<h2>Tutors</h2>
 
-		<div v-for="tutor in tutors" :key="tutor._id" class="tutorList mt-2">
+		<div v-for="t in tutors" :key="t._id" class="tutorList mt-2">
 			<br />
 			<ul>
 				<li><h4>Tutor</h4></li>
 
 				<!-- Editable -->
-				<template v-if="tutor.editTutors">
-					<li><label>Name:&emsp;<input v-model="tutor.name"  class="editTutor" type="text" /></label></li>
-					<li><label>Email:&emsp;<input v-model="tutor.email" class="editTutor" type="text" /></label></li>
-					<li><label>Age:&emsp;<input v-model="tutor.age"   class="editTutor" type="text" /></label></li>
-					<li><label>State:&emsp;<input v-model="tutor.state" class="editTutor" type="text" /></label></li>
+				<template v-if="t.editTutors">
+					<li>
+						<label>
+							Name:&emsp;
+							<input v-model="t.name" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Email:&emsp;
+							<input v-model="t.email" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Age:&emsp;
+							<input v-model="t.age" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							State:&emsp;
+							<input v-model="t.state" class="editTutor" type="text" />
+						</label>
+					</li>
 				</template>
 
 				<!-- Display -->
 				<template v-else>
-					<li><label class="hidden">Name:</label>&emsp;<p>{{ tutor.name }}</p></li>
-					<li><label class="hidden">Email:</label>&emsp;<p>{{ tutor.email }}</p></li>
-					<li><label class="hidden">Age:</label>&emsp;<p>{{ tutor.age }}</p></li>
-					<li><label class="hidden">State:</label>&emsp;<p>{{ tutor.state }}</p></li>
+					<li>
+						<label class="hidden">Name:</label>&emsp;
+						<p>{{ t.name }}</p>
+					</li>
+					<li>
+						<label class="hidden">Email:</label>&emsp;
+						<p>{{ t.email }}</p>
+					</li>
+					<li>
+						<label class="hidden">Age:</label>&emsp;
+						<p>{{ t.age }}</p>
+					</li>
+					<li>
+						<label class="hidden">State:</label>&emsp;
+						<p>{{ t.state }}</p>
+					</li>
 				</template>
 			</ul>
 			<br />
 
-			<button @click="deleteTutor(tutor)">Delete</button>
-			<button @click="editTutor(tutor)">{{ tutor.saveEdit }}</button>
+			<button @click="deleteTutor(t)">Delete</button>
+			<button @click="editTutor(t)">{{ t.saveEdit }}</button>
 		</div>
 
 		<hr />
@@ -71,29 +115,61 @@
 		<!-- ------------------  Users  ------------------ -->
 		<h2>Users</h2>
 
-		<div v-for="user in users" :key="user._id" class="tutorList mt-2">
+		<div v-for="u in users" :key="u._id" class="tutorList mt-2">
 			<br />
 			<ul>
 				<!-- Editable -->
-				<template v-if="user.editUsers">
-					<li><label>Name:&emsp;<input v-model="user.name"  class="editTutor" type="text" /></label></li>
-					<li><label>Email:&emsp;<input v-model="user.email" class="editTutor" type="text" /></label></li>
-					<li><label>Age:&emsp;<input v-model="user.age"   class="editTutor" type="text" /></label></li>
-					<li><label>State:&emsp;<input v-model="user.state" class="editTutor" type="text" /></label></li>
+				<template v-if="u.editUsers">
+					<li>
+						<label>
+							Name:&emsp;
+							<input v-model="u.name" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Email:&emsp;
+							<input v-model="u.email" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Age:&emsp;
+							<input v-model="u.age" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							State:&emsp;
+							<input v-model="u.state" class="editTutor" type="text" />
+						</label>
+					</li>
 				</template>
 
 				<!-- Display -->
 				<template v-else>
-					<li><label class="hidden">Name:</label>&emsp;<p>{{ user.name }}</p></li>
-					<li><label class="hidden">Email:</label>&emsp;<p>{{ user.email }}</p></li>
-					<li><label class="hidden">Age:</label>&emsp;<p>{{ user.age }}</p></li>
-					<li><label class="hidden">State:</label>&emsp;<p>{{ user.state }}</p></li>
+					<li>
+						<label class="hidden">Name:</label>&emsp;
+						<p>{{ u.name }}</p>
+					</li>
+					<li>
+						<label class="hidden">Email:</label>&emsp;
+						<p>{{ u.email }}</p>
+					</li>
+					<li>
+						<label class="hidden">Age:</label>&emsp;
+						<p>{{ u.age }}</p>
+					</li>
+					<li>
+						<label class="hidden">State:</label>&emsp;
+						<p>{{ u.state }}</p>
+					</li>
 				</template>
 			</ul>
 			<br />
 
-			<button @click="deleteUser(user)">Delete</button>
-			<button @click="editUser(user)">{{ user.saveEdit }}</button>
+			<button @click="deleteUser(u)">Delete</button>
+			<button @click="editUser(u)">{{ u.saveEdit }}</button>
 		</div>
 
 		<p v-if="error" class="error">{{ error }}</p>
@@ -101,165 +177,112 @@
 </template>
 
 <script setup lang="ts">
-/* ------------------------------------------------------------------ */
-/*  Types                                                             */
-/* ------------------------------------------------------------------ */
-interface User {
-	_id: string;
-	name: string;
-	email: string;
-	age: string;
-	state: string;
-	editUsers: boolean;
-	saveEdit: string;
-}
-
-interface Tutor {
-	_id: string;
-	name: string;
-	email: string;
-	age: string;
-	state: string;
-	editTutors: boolean;
-	saveEdit: string;
-}
-
-interface Admin {
-	_id: string;
-	name: string;
-	email: string;
-	editAdmins: boolean;
-	saveEdit: string;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Imports                                                           */
-/* ------------------------------------------------------------------ */
-import { ref, onMounted, computed } from "vue";
-import { useStore } from "vuex";
+import { onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import axios from "axios";
+import { useAppStore, type Tutor, type User } from "@/stores/app";
+
+const app = useAppStore();
+const { currentAdmin, tutors, users, error } = storeToRefs(app);
 
 /* ------------------------------------------------------------------ */
-/*  Reactive state from Vuex                                          */
+/*  Data fetching / refresh                                           */
 /* ------------------------------------------------------------------ */
-const store  = useStore();
-
-const currentAdmin = computed<Admin | null>(() => store.state.currentAdmin);
-const tutors       = computed<Tutor[]>(() => store.state.tutors);
-const users        = computed<User[]>(() => store.state.users);
-
-/* ------------------------------------------------------------------ */
-/*  Local state                                                       */
-/* ------------------------------------------------------------------ */
-const error = ref<string>("");
-
-/* ------------------------------------------------------------------ */
-/*  API helpers                                                       */
-/* ------------------------------------------------------------------ */
-const getTutors = async () => {
-	const { data } = await axios.get<Tutor[]>("/api/tutors");
-	store.commit("setTutors", data);
-};
-
-const getUsers = async () => {
-	const { data } = await axios.get<User[]>("/api/users/all");
-	store.commit("setUsers", data);
-};
+async function getTutors() {
+	await app.fetchTutors();
+}
+async function getUsers() {
+	await app.fetchUsers();
+}
+async function refreshAdmin() {
+	await app.refreshCurrentAdmin();
+}
 
 /* ------------------------------------------------------------------ */
 /*  CRUD actions                                                      */
 /* ------------------------------------------------------------------ */
-const editUser = async (user: User) => {
+async function editUser(u: User) {
 	try {
-		await axios.put(`/api/admins/user/${user._id}`, {
-			...user,
-			editUsers: !user.editUsers,
-			saveEdit : user.editUsers ? "Edit" : "Save"
+		await axios.put(`/api/admins/user/${u._id}`, {
+			...u,
+			editUsers: !u.editUsers,
+			saveEdit : u.editUsers ? "Edit" : "Save",
 		});
-		await Promise.all([getTutors(), getUsers()]);
+		await Promise.all([app.fetchTutors(), app.fetchUsers()]);
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
+}
 
-const deleteUser = async (user: User) => {
+async function deleteUser(u: User) {
 	try {
-		await axios.delete(`/api/admins/user/${user._id}`);
-		await getUsers();
+		await axios.delete(`/api/admins/user/${u._id}`);
+		await app.fetchUsers();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
+}
 
-const editTutor = async (tutor: Tutor) => {
+async function editTutor(t: Tutor) {
 	try {
-		await axios.put(`/api/admins/tutor/${tutor._id}`, {
-			...tutor,
-			editTutors: !tutor.editTutors,
-			saveEdit   : tutor.editTutors ? "Edit" : "Save"
+		await axios.put(`/api/admins/tutor/${t._id}`, {
+			...t,
+			editTutors: !t.editTutors,
+			saveEdit  : t.editTutors ? "Edit" : "Save",
 		});
-		await Promise.all([getTutors(), getUsers()]);
+		await Promise.all([app.fetchTutors(), app.fetchUsers()]);
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
+}
 
-const deleteTutor = async (tutor: Tutor) => {
+async function deleteTutor(t: Tutor) {
 	try {
-		await axios.delete(`/api/admins/tutor/${tutor._id}`);
-		await getUsers();
+		await axios.delete(`/api/admins/tutor/${t._id}`);
+		await app.fetchTutors();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
+}
 
-const editAdmin = async () => {
+async function editAdmin() {
 	if (!currentAdmin.value) return;
-
 	try {
-		// (1) change email if needed
-		await axios.post(`/api/accounts/changeEmail/${currentAdmin.value._id}`, {
-			email: currentAdmin.value.email
-		});
-
-		// (2) toggle edit mode
+		// 1) sync email
+		await axios.post(
+			`/api/accounts/changeEmail/${currentAdmin.value._id}`,
+			{ email: currentAdmin.value.email }
+		);
+		// 2) toggle edit mode
 		await axios.put(`/api/admins/${currentAdmin.value._id}`, {
-			name       : currentAdmin.value.name,
-			email      : currentAdmin.value.email,
-			editAdmins : !currentAdmin.value.editAdmins,
-			saveEdit   : currentAdmin.value.editAdmins ? "Edit" : "Save"
+			...currentAdmin.value,
+			editAdmins: !currentAdmin.value.editAdmins,
+			saveEdit  : currentAdmin.value.editAdmins ? "Edit" : "Save",
 		});
-
 		await refreshAdmin();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
+}
 
-const deleteAdmin = async () => {
+async function deleteAdmin() {
 	if (!currentAdmin.value) return;
 	try {
 		await axios.delete(`/api/admins/remove/${currentAdmin.value._id}`);
-		store.commit("setCurrentAdmin", null);
+		app.setCurrentAdmin(null);
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
-};
-
-const refreshAdmin = async () => {
-	const { data } = await axios.get<{ currentAdmin: Admin }>("/api/admins/loggedin");
-	store.commit("setCurrentAdmin", data.currentAdmin);
-};
+}
 
 /* ------------------------------------------------------------------ */
 /*  Lifecycle                                                         */
 /* ------------------------------------------------------------------ */
 onMounted(async () => {
 	try {
-		await Promise.all([getTutors(), getUsers()]);
-		await refreshAdmin();
+		await Promise.all([getTutors(), getUsers(), refreshAdmin()]);
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		app.setError("Error: " + (e.response?.data?.message ?? e.message));
 	}
 });
 </script>
@@ -267,7 +290,8 @@ onMounted(async () => {
 <style scoped>
 ul { display: flex; flex-flow: column; }
 ul p { display: inline; }
-div.tutorList, li { align-self: center; }
+div.tutorList,
+li { align-self: center; }
 .hidden { display: none; }
 div.tutorList {
 	outline: black solid 1px;
@@ -275,7 +299,7 @@ div.tutorList {
 	width: 35%;
 	margin: auto;
 }
-@media only screen and (min-width: 1px) and (max-width: 960px) {
+@media only screen and (max-width: 960px) {
 	div.tutorList { width: 50%; }
 }
 .error { color: red; margin-top: 10px; }

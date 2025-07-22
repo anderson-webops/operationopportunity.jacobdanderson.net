@@ -28,20 +28,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide } from 'vue'
-import TheHeader            from '@/components/TheHeader.vue'
-import AccountManagement    from '@/components/AccountManagement.vue'
-import TheFooter            from '@/components/TheFooter.vue'
+import { useAppStore } from '@/stores/app'
 
-const loginBlock  = ref(false)
-const signupBlock = ref(false)
+import TheHeader         from '@/components/TheHeader.vue'
+import AccountManagement from '@/components/AccountManagement.vue'
+import TheFooter         from '@/components/TheFooter.vue'
 
-// make them available to any child via inject()
-provide('loginBlock',  loginBlock)
-provide('signupBlock', signupBlock)
+const app = useAppStore()
 
-function showLoginModal()  { loginBlock.value  = true }
-function showSignupModal() { signupBlock.value = true }
+function showLoginModal()  { app.setLoginBlock(true) }
+function showSignupModal() { app.setSignupBlock(true) }
 </script>
 
 <style>

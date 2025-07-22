@@ -1,6 +1,5 @@
 <template>
 	<section class="Signup text-center">
-		<!-- ---------------- Tutor profile ---------------- -->
 		<h2>Profile</h2>
 
 		<div v-if="currentTutor" :key="currentTutor._id" class="tutorList mt-2">
@@ -11,22 +10,26 @@
 				<!-- Editable -->
 				<template v-if="currentTutor.editTutors">
 					<li>
-						<label>Name:&emsp;
-							<input v-model="currentTutor.name"  class="editTutor" type="text" />
+						<label>
+							Name:&emsp;
+							<input v-model="currentTutor.name" class="editTutor" type="text" />
 						</label>
 					</li>
 					<li>
-						<label>Email:&emsp;
+						<label>
+							Email:&emsp;
 							<input v-model="currentTutor.email" class="editTutor" type="text" />
 						</label>
 					</li>
 					<li>
-						<label>Age:&emsp;
-							<input v-model="currentTutor.age"   class="editTutor" type="text" />
+						<label>
+							Age:&emsp;
+							<input v-model="currentTutor.age" class="editTutor" type="text" />
 						</label>
 					</li>
 					<li>
-						<label>State:&emsp;
+						<label>
+							State:&emsp;
 							<input v-model="currentTutor.state" class="editTutor" type="text" />
 						</label>
 					</li>
@@ -34,10 +37,22 @@
 
 				<!-- Display -->
 				<template v-else>
-					<li><label class="hidden">Name:</label>&emsp;<p>{{ currentTutor.name }}</p></li>
-					<li><label class="hidden">Email:</label>&emsp;<p>{{ currentTutor.email }}</p></li>
-					<li><label class="hidden">Age:</label>&emsp;<p>{{ currentTutor.age }}</p></li>
-					<li><label class="hidden">State:</label>&emsp;<p>{{ currentTutor.state }}</p></li>
+					<li>
+						<label class="hidden">Name:</label>&emsp;
+						<p>{{ currentTutor.name }}</p>
+					</li>
+					<li>
+						<label class="hidden">Email:</label>&emsp;
+						<p>{{ currentTutor.email }}</p>
+					</li>
+					<li>
+						<label class="hidden">Age:</label>&emsp;
+						<p>{{ currentTutor.age }}</p>
+					</li>
+					<li>
+						<label class="hidden">State:</label>&emsp;
+						<p>{{ currentTutor.state }}</p>
+					</li>
 				</template>
 			</ul>
 			<br />
@@ -48,32 +63,63 @@
 
 		<hr />
 
-		<!-- ---------------- Users list ---------------- -->
 		<h2>Users</h2>
 
-		<div v-for="user in users" :key="user._id" class="tutorList mt-2">
+		<div v-for="u in users" :key="u._id" class="tutorList mt-2">
 			<br />
 			<ul>
 				<!-- Editable -->
-				<template v-if="user.editUsers">
-					<li><label>Name:&emsp;<input v-model="user.name"  class="editTutor" type="text" /></label></li>
-					<li><label>Email:&emsp;<input v-model="user.email" class="editTutor" type="text" /></label></li>
-					<li><label>Age:&emsp;<input v-model="user.age"   class="editTutor" type="text" /></label></li>
-					<li><label>State:&emsp;<input v-model="user.state" class="editTutor" type="text" /></label></li>
+				<template v-if="u.editUsers">
+					<li>
+						<label>
+							Name:&emsp;
+							<input v-model="u.name" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Email:&emsp;
+							<input v-model="u.email" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							Age:&emsp;
+							<input v-model="u.age" class="editTutor" type="text" />
+						</label>
+					</li>
+					<li>
+						<label>
+							State:&emsp;
+							<input v-model="u.state" class="editTutor" type="text" />
+						</label>
+					</li>
 				</template>
 
 				<!-- Display -->
 				<template v-else>
-					<li><label class="hidden">Name:</label>&emsp;<p>{{ user.name }}</p></li>
-					<li><label class="hidden">Email:</label>&emsp;<p>{{ user.email }}</p></li>
-					<li><label class="hidden">Age:</label>&emsp;<p>{{ user.age }}</p></li>
-					<li><label class="hidden">State:</label>&emsp;<p>{{ user.state }}</p></li>
+					<li>
+						<label class="hidden">Name:</label>&emsp;
+						<p>{{ u.name }}</p>
+					</li>
+					<li>
+						<label class="hidden">Email:</label>&emsp;
+						<p>{{ u.email }}</p>
+					</li>
+					<li>
+						<label class="hidden">Age:</label>&emsp;
+						<p>{{ u.age }}</p>
+					</li>
+					<li>
+						<label class="hidden">State:</label>&emsp;
+						<p>{{ u.state }}</p>
+					</li>
 				</template>
 			</ul>
 			<br />
 
-			<button @click="deleteUser(user)">Delete</button>
-			<button @click="editUser(user)">{{ user.saveEdit }}</button>
+			<button @click="deleteUser(u)">Delete</button>
+			<button @click="editUser(u)">{{ u.saveEdit }}</button>
 		</div>
 
 		<p v-if="error" class="error">{{ error }}</p>
@@ -81,121 +127,91 @@
 </template>
 
 <script setup lang="ts">
-/* ------------------------------------------------------------------ */
-/*  Types                                                             */
-/* ------------------------------------------------------------------ */
-interface User {
-	_id: string;
-	name: string;
-	email: string;
-	age: string;
-	state: string;
-	editUsers: boolean;
-	saveEdit: string;
-}
-
-interface Tutor {
-	_id: string;
-	name: string;
-	email: string;
-	age: string;
-	state: string;
-	editTutors: boolean;
-	saveEdit: string;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Imports / store refs                                              */
-/* ------------------------------------------------------------------ */
-import { ref, computed, onMounted } from "vue";
-import { useStore } from "vuex";
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import axios from "axios";
+import { useAppStore, type User } from "@/stores/app";
 
-const store          = useStore();
-const currentTutor   = computed<Tutor | null>(() => store.state.currentTutor);
-const users          = computed<User[]>(() => store.state.users);
-const error          = ref<string>("");
+// grab your Pinia store instance
+const app = useAppStore();
+const { currentTutor, users } = storeToRefs(app);
+const error = ref("");
 
-/* ------------------------------------------------------------------ */
-/*  API helpers                                                       */
-/* ------------------------------------------------------------------ */
-const getUsers = async () => {
+// load users for this tutor
+async function getUsers() {
 	if (!currentTutor.value) return;
-	const { data } = await axios.get<User[]>(`/api/users/oftutor/${currentTutor.value._id}`);
-	store.commit("setUsers", data);
-};
-
-const refreshTutor = async () => {
-	const { data } = await axios.get<{ currentTutor: Tutor }>("/api/tutors/loggedin");
-	store.commit("setCurrentTutor", data.currentTutor);
-};
-
-/* ------------------------------------------------------------------ */
-/*  CRUD actions                                                      */
-/* ------------------------------------------------------------------ */
-const editUser = async (user: User) => {
 	try {
-		await axios.put(`/api/users/tutor/${user._id}`, {
-			...user,
-			editUsers: !user.editUsers,
-			saveEdit : user.editUsers ? "Edit" : "Save"
+		const { data } = await axios.get<User[]>(
+			`/api/users/oftutor/${currentTutor.value._id}`
+		);
+		app.setUsers(data);
+	} catch (e: any) {
+		error.value = "Error: " + (e.response?.data?.message ?? e.message);
+	}
+}
+
+// refresh tutor from server (after edits)
+async function refreshTutor() {
+	await app.refreshCurrentTutor();
+}
+
+// CRUD
+async function editUser(u: User) {
+	try {
+		await axios.put(`/api/users/tutor/${u._id}`, {
+			...u,
+			editUsers: !u.editUsers,
+			saveEdit: u.editUsers ? "Edit" : "Save",
 		});
 		await getUsers();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		error.value = "Error: " + (e.response?.data?.message ?? e.message);
 	}
-};
+}
 
-const deleteUser = async (user: User) => {
+async function deleteUser(u: User) {
 	try {
-		await axios.delete(`/api/users/tutor/${user._id}`);
+		await axios.delete(`/api/users/tutor/${u._id}`);
 		await getUsers();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		error.value = "Error: " + (e.response?.data?.message ?? e.message);
 	}
-};
+}
 
-const editCurrentTutor = async () => {
+async function editCurrentTutor() {
 	if (!currentTutor.value) return;
 	try {
-		/** 1) sync email across account collection */
-		await axios.post(`/api/accounts/changeEmail/${currentTutor.value._id}`, {
-			email: currentTutor.value.email
-		});
-
-		/** 2) toggle tutor edit mode */
+		await axios.post(
+			`/api/accounts/changeEmail/${currentTutor.value._id}`,
+			{ email: currentTutor.value.email }
+		);
 		await axios.put(`/api/tutors/${currentTutor.value._id}`, {
 			...currentTutor.value,
 			editTutors: !currentTutor.value.editTutors,
-			saveEdit  : currentTutor.value.editTutors ? "Edit" : "Save"
+			saveEdit: currentTutor.value.editTutors ? "Edit" : "Save",
 		});
-
 		await refreshTutor();
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		error.value = "Error: " + (e.response?.data?.message ?? e.message);
 	}
-};
+}
 
-const deleteCurrentTutor = async () => {
+async function deleteCurrentTutor() {
 	if (!currentTutor.value) return;
 	try {
 		await axios.delete(`/api/tutors/remove/${currentTutor.value._id}`);
-		store.commit("setCurrentTutor", null);
+		app.setCurrentTutor(null);
 	} catch (e: any) {
-		error.value = "Error: " + e.response?.data?.message;
+		error.value = "Error: " + (e.response?.data?.message ?? e.message);
 	}
-};
+}
 
-/* ------------------------------------------------------------------ */
-/*  Lifecycle                                                         */
-/* ------------------------------------------------------------------ */
-onMounted(() => {
-	getUsers().catch(() => {/* handled above */});
-});
+// initial load
+onMounted(getUsers);
 </script>
 
 <style scoped>
-ul { display: flex; flex-flow: column; }
+ul { display: flex; flex-direction: column; }
 ul p { display: inline; }
 div.tutorList, li { align-self: center; }
 .hidden { display: none; }
@@ -205,7 +221,7 @@ div.tutorList {
 	width: 35%;
 	margin: auto;
 }
-@media only screen and (min-width: 1px) and (max-width: 960px) {
+@media (max-width: 960px) {
 	div.tutorList { width: 50%; }
 }
 .error { color: red; margin-top: 10px; }

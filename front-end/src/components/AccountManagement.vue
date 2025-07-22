@@ -187,72 +187,53 @@
 </template>
 
 <script setup lang="ts">
-import {
-	ref,
-	computed,
-	inject,
-	onMounted,
-	type Ref
-} from "vue";
-import axios from "axios";
+import { ref, computed, onMounted } from 'vue'
+import { storeToRefs }         from 'pinia'
+import { useAppStore }         from '@/stores/app'
+import axios                   from 'axios'
 
-/* ------------------------------------------
-   injected global state from App.vue
-   (with safe fall-backs)
------------------------------------------- */
-const loginBlock  = inject<Ref<boolean>>("loginBlock",  ref(false));
-const signupBlock = inject<Ref<boolean>>("signupBlock", ref(false));
-const tutors      = inject<Ref<any[]>>("tutors",       ref([]));
+const app = useAppStore()
+const { loginBlock, signupBlock } = storeToRefs(app)
 
-/* ------------------------------------------
-   local reactive state
------------------------------------------- */
-const name           = ref("");
-const email          = ref("");
-const age            = ref("");
-const state          = ref("");
-const password       = ref("");
-const passwordRepeat = ref("");
-const error          = ref<string>("");
+/* --- local form state --- */
+const name           = ref('')
+const email          = ref('')
+const age            = ref('')
+const state          = ref('')
+const password       = ref('')
+const passwordRepeat = ref('')
+const error          = ref<string>('')
 
-const loginEmail     = ref("");
-const loginPassword  = ref("");
-const errorLogin     = ref<string>("");
+const loginEmail    = ref('')
+const loginPassword = ref('')
+const errorLogin    = ref<string>('')
 
-/* ------------------------------------------
-   derived/computed
------------------------------------------- */
-const passwordMatch = computed(() => password.value === passwordRepeat.value);
+const passwordMatch = computed(() => password.value === passwordRepeat.value)
 
-/* ------------------------------------------
-   helpers
------------------------------------------- */
-function changeLoginView(show: boolean)  { loginBlock.value  = show; }
-function changeSignupView(show: boolean) { signupBlock.value = show; }
+/* --- UI helpers --- */
+function changeLoginView(show: boolean)  { app.setLoginBlock(show) }
+function changeSignupView(show: boolean) { app.setSignupBlock(show) }
 
 function resetData() {
-	name.value           = "";
-	email.value          = "";
-	age.value            = "";
-	state.value          = "";
-	password.value       = "";
-	passwordRepeat.value = "";
-	loginEmail.value     = "";
-	loginPassword.value  = "";
+	name.value = ''
+	email.value = ''
+	age.value = ''
+	state.value = ''
+	password.value = ''
+	passwordRepeat.value = ''
+	loginEmail.value = ''
+	loginPassword.value = ''
 }
 
+/* --- data load --- */
 async function getTutors() {
-	try {
-		const { data } = await axios.get("/api/tutors");
-		tutors.value = data;
-	} catch (err: any) {
-		error.value = "Error: " + (err.response?.data?.message ?? err.message);
-	}
+	await app.fetchTutors()
 }
 
+/* --- sign-up --- */
 async function addTutor() {
 	try {
-		await axios.post("/api/tutors", {
+		await axios.post('/api/tutors', {
 			name: name.value,
 			email: email.value,
 			age: age.value,
@@ -261,59 +242,38 @@ async function addTutor() {
 			passwordRepeat: passwordRepeat.value,
 			usersOfTutorLength: 0,
 			editTutors: false,
-			saveEdit: "Edit"
-		});
-		resetData();
-		await getTutors();
+			saveEdit: 'Edit'
+		})
+		resetData()
+		await getTutors()
 	} catch (err: any) {
-		error.value = "Error: " + (err.response?.data?.message ?? err.message);
+		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
 	}
 }
 
+/* --- login --- */
 async function loginTutor() {
-	errorLogin.value = "";
-	if (!loginEmail.value || !loginPassword.value) return;
+	errorLogin.value = ''
+	if (!loginEmail.value || !loginPassword.value) return
 
 	try {
-		const { data } = await axios.post("/api/accounts/login", {
-			email:    loginEmail.value,
+		const { data } = await axios.post('/api/accounts/login', {
+			email: loginEmail.value,
 			password: loginPassword.value
-		});
+		})
 
-		/* update global state here if you inject currentTutor / currentUser */
+		if (data.currentTutor)  app.setCurrentTutor(data.currentTutor)
+		if (data.currentUser)   app.setCurrentUser(data.currentUser)
+		if (data.currentAdmin)  app.setCurrentAdmin(data.currentAdmin)
 
-		resetData();
-		changeLoginView(false);
+		resetData()
+		changeLoginView(false)
 	} catch (err: any) {
-		errorLogin.value = "Login failed: " + (err.response?.data?.message ?? err.message);
+		errorLogin.value = 'Login failed: ' + (err.response?.data?.message ?? err.message)
 	}
 }
 
-/* ------------------------------------------
-   life-cycle
------------------------------------------- */
-onMounted(getTutors);
-
-/* ------------------------------------------
-   expose to template (for Options API users)
------------------------------------------- */
-defineExpose({
-	name,
-	email,
-	age,
-	state,
-	password,
-	passwordRepeat,
-	error,
-	passwordMatch,
-	addTutor,
-	loginTutor,
-	loginEmail,
-	loginPassword,
-	errorLogin,
-	changeLoginView,
-	changeSignupView
-});
+onMounted(getTutors)
 </script>
 
 <style scoped>
