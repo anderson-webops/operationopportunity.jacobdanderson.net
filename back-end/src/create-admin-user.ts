@@ -16,7 +16,7 @@ mongoose
 const name: string = readlineSync.question("Name: ");
 const email: string = readlineSync.question("Email: ");
 const password: string = readlineSync.question("Password: ", {
-	hideEchoBack: true,
+	hideEchoBack: true
 });
 
 if (!name || !email || !password) {
@@ -38,7 +38,7 @@ if (!name || !email || !password) {
 			password,
 			editAdmins: false,
 			saveEdit: "Edit",
-			role: "admin",
+			role: "admin"
 		});
 
 		await admin.save();

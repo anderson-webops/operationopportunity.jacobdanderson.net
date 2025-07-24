@@ -10,6 +10,8 @@ export interface IAdmin extends Document {
 	editAdmins: boolean; // Non-optional because it has a default
 	saveEdit: string;    // Non-optional because it has a default
 	role: string;
+
 	comparePassword(password: string): Promise<boolean>;
+
 	toJSON(): Record<string, unknown>;
 }

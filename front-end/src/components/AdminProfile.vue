@@ -176,14 +176,16 @@
 	</section>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import axios from "axios";
-import { useAppStore, type Tutor, type User } from "@/stores/app";
+import { type Tutor, useAppStore, type User } from "@/stores/app";
 
 const app = useAppStore();
 const { currentAdmin, tutors, users, error } = storeToRefs(app);
+
+let originalAdminEmail = "";
 
 /* ------------------------------------------------------------------ */
 /*  Data fetching / refresh                                           */
@@ -191,9 +193,11 @@ const { currentAdmin, tutors, users, error } = storeToRefs(app);
 async function getTutors() {
 	await app.fetchTutors();
 }
+
 async function getUsers() {
 	await app.fetchUsers();
 }
+
 async function refreshAdmin() {
 	await app.refreshCurrentAdmin();
 }
@@ -206,7 +210,7 @@ async function editUser(u: User) {
 		await axios.put(`/api/admins/user/${u._id}`, {
 			...u,
 			editUsers: !u.editUsers,
-			saveEdit : u.editUsers ? "Edit" : "Save",
+			saveEdit: u.editUsers ? "Edit" : "Save"
 		});
 		await Promise.all([app.fetchTutors(), app.fetchUsers()]);
 	} catch (e: any) {
@@ -228,7 +232,7 @@ async function editTutor(t: Tutor) {
 		await axios.put(`/api/admins/tutor/${t._id}`, {
 			...t,
 			editTutors: !t.editTutors,
-			saveEdit  : t.editTutors ? "Edit" : "Save",
+			saveEdit: t.editTutors ? "Edit" : "Save"
 		});
 		await Promise.all([app.fetchTutors(), app.fetchUsers()]);
 	} catch (e: any) {
@@ -247,18 +251,24 @@ async function deleteTutor(t: Tutor) {
 
 async function editAdmin() {
 	if (!currentAdmin.value) return;
+
 	try {
-		// 1) sync email
-		await axios.post(
-			`/api/accounts/changeEmail/${currentAdmin.value._id}`,
-			{ email: currentAdmin.value.email }
-		);
-		// 2) toggle edit mode
+		if (!originalAdminEmail) originalAdminEmail = currentAdmin.value.email;
+
+		if (currentAdmin.value.email !== originalAdminEmail) {
+			await axios.post(
+				`/api/accounts/changeEmail/${currentAdmin.value._id}`,
+				{ email: currentAdmin.value.email }
+			);
+			originalAdminEmail = currentAdmin.value.email;
+		}
+
 		await axios.put(`/api/admins/${currentAdmin.value._id}`, {
 			...currentAdmin.value,
 			editAdmins: !currentAdmin.value.editAdmins,
-			saveEdit  : currentAdmin.value.editAdmins ? "Edit" : "Save",
+			saveEdit: currentAdmin.value.editAdmins ? "Edit" : "Save"
 		});
+
 		await refreshAdmin();
 	} catch (e: any) {
 		app.setError("Error: " + (e.response?.data?.message ?? e.message));
@@ -288,19 +298,39 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-ul { display: flex; flex-flow: column; }
-ul p { display: inline; }
+ul {
+	display: flex;
+	flex-flow: column;
+}
+
+ul p {
+	display: inline;
+}
+
 div.tutorList,
-li { align-self: center; }
-.hidden { display: none; }
+li {
+	align-self: center;
+}
+
+.hidden {
+	display: none;
+}
+
 div.tutorList {
 	outline: black solid 1px;
 	padding-bottom: 1%;
 	width: 35%;
 	margin: auto;
 }
+
 @media only screen and (max-width: 960px) {
-	div.tutorList { width: 50%; }
+	div.tutorList {
+		width: 50%;
+	}
 }
-.error { color: red; margin-top: 10px; }
+
+.error {
+	color: red;
+	margin-top: 10px;
+}
 </style>

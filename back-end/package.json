@@ -5,19 +5,21 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
+    "server": "tsx watch -r dotenv/config src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.json",
     "watch": "tsc -w",
-    "dev": "nodemon --exec ts-node src/server.ts",
-    "lint": "eslint --config package.json src/**/*.ts",
-    "lint-fix": "eslint --config package.json src/**/*.ts --fix",
+    "dev": "tsx watch -r dotenv/config src/server.ts",
+    "lint": "eslint \"src/**/*.{js,ts}\"",
+    "lint-fix": "eslint \"src/**/*.{js,ts}\" --fix",
     "create-admin": "ts-node src/create-admin-user.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@eslint/js": "^9.31.0",
     "argon2": "^0.43.1",
     "axios": "^1.10.0",
     "body-parser": "^2.2.0",
@@ -33,7 +35,8 @@
     "moment": "^2.30.1",
     "mongoose": "^8.16.4",
     "multer": "^2.0.2",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "typescript-eslint": "^8.38.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.6",
@@ -41,64 +44,18 @@
     "@types/cookie-session": "^2.0.49",
     "@types/express": "^5.0.3",
     "@types/express-session": "^1.18.2",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.1.0",
     "@types/readline-sync": "^1.4.8",
-    "@typescript-eslint/eslint-plugin": "^8.37.0",
-    "@typescript-eslint/parser": "^8.37.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.3.0",
+    "globals": "^16.3.0",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
-  },
-  "eslintConfig": {
-    "env": {
-      "es2021": true,
-      "node": true
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "overrides": [
-      {
-        "env": {
-          "node": true
-        },
-        "files": [
-          ".eslintrc.{js,cjs}"
-        ],
-        "parserOptions": {
-          "sourceType": "script"
-        }
-      }
-    ],
-    "parserOptions": {
-      "ecmaVersion": "latest",
-      "parser": "@typescript-eslint/parser",
-      "sourceType": "module"
-    },
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "rules": {
-      "indent": [
-        "error",
-        "tab"
-      ],
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "double"
-      ],
-      "semi": [
-        "error",
-        "always"
-      ]
-    }
   }
 }

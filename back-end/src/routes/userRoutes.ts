@@ -1,19 +1,19 @@
 // src/routes/userRoutes.ts
 import express from "express";
 import {
-	createUser,
-	getUsersOfTutor,
-	getAllUsers,
-	updateUserSelf,
-	updateUserByTutor,
 	assignTutorToUser,
-	deleteUserSelf,
+	createUser,
 	deleteUserByTutor,
+	deleteUserSelf,
 	deleteUsersUnderTutor,
+	getAllUsers,
 	getLoggedInUser,
-	logoutUser
+	getUsersOfTutor,
+	logoutUser,
+	updateUserByTutor,
+	updateUserSelf
 } from "../controllers/userController";
-import { validUser, validTutor } from "../middleware/auth";
+import { validTutor, validUser } from "../middleware/auth";
 
 const router = express.Router();
 

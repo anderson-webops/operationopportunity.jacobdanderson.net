@@ -1,12 +1,7 @@
 // src/routes/tutorRoutes.ts
 
 import express from "express";
-import {
-	createTutor,
-	getAllTutors,
-	updateTutor,
-	deleteTutor
-} from "../controllers/tutorController";
+import { createTutor, deleteTutor, getAllTutors, updateTutor } from "../controllers/tutorController";
 import { validTutorOrAdmin } from "../middleware/auth";
 
 const router = express.Router();

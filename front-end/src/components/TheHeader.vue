@@ -1,12 +1,12 @@
-<script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useAppStore }  from '@/stores/app'
+<script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { useAppStore } from "@/stores/app";
 
-const app        = useAppStore()
-const { isLoggedIn } = storeToRefs(app)
+const app = useAppStore();
+const { isLoggedIn } = storeToRefs(app);
 
 function logoutUser() {
-	app.logout()
+	app.logout();
 }
 </script>
 

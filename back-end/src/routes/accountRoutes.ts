@@ -1,7 +1,7 @@
 // src/routes/accountRoutes.ts
 
 import express from "express";
-import { checkEmail, changeEmail, login } from "../controllers/accountController";
+import { changeEmail, checkEmail, login } from "../controllers/accountController";
 
 const router = express.Router();
 

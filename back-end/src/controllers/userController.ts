@@ -32,7 +32,7 @@ export const createUser: RequestHandler = async (req, res) => {
 			state,
 			password,
 			editUsers,
-			saveEdit,
+			saveEdit
 		});
 
 		await user.save();
@@ -200,7 +200,7 @@ export const deleteUserByTutor: RequestHandler = async (req, res) => {
 			return;
 		}
 		res.sendStatus(200);
-		return ;
+		return;
 	} catch (error) {
 		console.error(error);
 		res.sendStatus(500);

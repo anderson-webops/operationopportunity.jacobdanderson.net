@@ -15,31 +15,33 @@ import { Types } from "mongoose";
  * Useful for account creation validation.
  */
 export const checkEmail: RequestHandler = async (req, res) => {
-	const { email } = req.body;
-
-	// Validate email presence
-	if (!email) {
-		res.status(400).json({ message: "Email field is required." });
-		return;
-	}
-
 	try {
-		const [existingUser, existingTutor, existingAdmin] = await Promise.all([
-			User.findOne({ email }),
-			Tutor.findOne({ email }),
-			Admin.findOne({ email })
-		]);
+		// 1) pull `id` (lowercase) out of the body and rename it to ID
+		//    (make sure your front-end is actually sending `id`)
+		const { id: ID, email } = req.body as { id?: string; email?: string };
 
-		if (existingUser || existingTutor || existingAdmin) {
-			res.status(403).json({ message: "Email already exists." });
-			return;
+		if (!email) {
+			return res.status(400).json({ message: "Email field is required." });
 		}
 
-		// Email is available
-		res.status(200).json({ message: "Email is available." });
+		// 2) use `.exec()` so TS knows these return real Promises of your doc types
+		const existingUser = await User.findOne({ email }).exec() as IUser | null;
+		const existingTutor = await Tutor.findOne({ email }).exec() as ITutor | null;
+		const existingAdmin = await Admin.findOne({ email }).exec() as IAdmin | null;
+
+		// 3) if any of them exists *and* isn’t *you* (i.e. _id ≠ ID), it’s a conflict
+		if (
+			(existingUser && existingUser._id.toString() !== ID) ||
+			(existingTutor && existingTutor._id.toString() !== ID) ||
+			(existingAdmin && existingAdmin._id.toString() !== ID)
+		) {
+			return res.status(403).json({ message: "Email already exists." });
+		}
+
+		return res.status(200).json({ message: "Email is available." });
 	} catch (error) {
 		console.error("Error checking email:", error);
-		res.status(500).json({ message: "Internal server error." });
+		return res.status(500).json({ message: "Internal server error." });
 	}
 };
 

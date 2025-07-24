@@ -1,6 +1,6 @@
 // models/Admin.ts
 
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import argon2 from "argon2";
 import { IAdmin } from "../types/IAdmin";
 
@@ -14,7 +14,7 @@ const adminSchema: Schema<IAdmin> = new Schema(
 		password: { type: String, required: true },
 		editAdmins: { type: Boolean, default: false, required: true }, // Added required: true
 		saveEdit: { type: String, default: "Edit", required: true },    // Added required: true
-		role: { type: String, default: "admin" },
+		role: { type: String, default: "admin" }
 	},
 	{ timestamps: true }
 );
@@ -22,7 +22,7 @@ const adminSchema: Schema<IAdmin> = new Schema(
 /**
  * 3. Pre-save hook to hash the password if modified
  */
-adminSchema.pre<IAdmin>("save", async function (next) {
+adminSchema.pre<IAdmin>("save", async function(next) {
 	if (!this.isModified("password")) return next();
 	try {
 		this.password = await argon2.hash(this.password);
@@ -36,7 +36,7 @@ adminSchema.pre<IAdmin>("save", async function (next) {
 /**
  * 4. Method to compare password
  */
-adminSchema.methods.comparePassword = async function (
+adminSchema.methods.comparePassword = async function(
 	password: string
 ): Promise<boolean> {
 	try {
@@ -50,7 +50,7 @@ adminSchema.methods.comparePassword = async function (
 /**
  * 5. Method to remove password from JSON responses
  */
-adminSchema.methods.toJSON = function () {
+adminSchema.methods.toJSON = function() {
 	const obj = this.toObject();
 	delete obj.password;
 	return obj;

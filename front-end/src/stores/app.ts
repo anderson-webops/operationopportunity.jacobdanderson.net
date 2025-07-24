@@ -27,11 +27,11 @@ export interface User {
 }
 
 export interface Admin {
-	_id:        string;
-	name:       string;
-	email:      string;
+	_id: string;
+	name: string;
+	email: string;
 	editAdmins: boolean;
-	saveEdit:   string;
+	saveEdit: string;
 }
 
 /* ---------------------------------------------
@@ -40,52 +40,76 @@ export interface Admin {
 export const useAppStore = defineStore("app", {
 	state: () => ({
 		/* mirrors your Vuex `state` */
-		users:          [] as User[],
-		tutors:         [] as Tutor[],
-		admins:         [] as Admin[],
+		users: [] as User[],
+		tutors: [] as Tutor[],
+		admins: [] as Admin[],
 
-		currentUser:    null as User   | null,
-		currentTutor:   null as Tutor  | null,
-		currentAdmin:   null as Admin  | null,
+		currentUser: null as User | null,
+		currentTutor: null as Tutor | null,
+		currentAdmin: null as Admin | null,
 
-		loginBlock:     false,
-		signupBlock:    false,
-		showUsers:      false,
+		loginBlock: false,
+		signupBlock: false,
+		showUsers: false,
 
-		error:          null as string | null,
+		error: null as string | null
 	}),
 
 	getters: {
 		/* mirrors your Vuex `getters` */
 		isLoggedIn: (state) =>
-			!!state.currentUser || !!state.currentTutor || !!state.currentAdmin,
+			!!state.currentUser || !!state.currentTutor || !!state.currentAdmin
 	},
 
 	actions: {
 		/* mirrors your Vuex `mutations` */
-		setUsers(u: User[]      ) { this.users        = u; },
-		setTutors(t: Tutor[]    ) { this.tutors       = t; },
-		setAdmins(a: Admin[]    ) { this.admins       = a; },
-		setCurrentUser(u: User | null)  { this.currentUser  = u; },
-		setCurrentTutor(t: Tutor| null) { this.currentTutor = t; },
-		setCurrentAdmin(a: Admin| null) { this.currentAdmin = a; },
-		setLoginBlock(v: boolean)       { this.loginBlock   = v; },
-		setSignupBlock(v: boolean)      { this.signupBlock  = v; },
-		setShowUsers(v: boolean)        { this.showUsers    = v; },
-		setError(e: string | null)      { this.error        = e; },
+		setUsers(u: User[]) {
+			this.users = u;
+		},
+		setTutors(t: Tutor[]) {
+			this.tutors = t;
+		},
+		setAdmins(a: Admin[]) {
+			this.admins = a;
+		},
+		setCurrentUser(u: User | null) {
+			this.currentUser = u;
+		},
+		setCurrentTutor(t: Tutor | null) {
+			this.currentTutor = t;
+		},
+		setCurrentAdmin(a: Admin | null) {
+			this.currentAdmin = a;
+		},
+		setLoginBlock(v: boolean) {
+			this.loginBlock = v;
+		},
+		setSignupBlock(v: boolean) {
+			this.signupBlock = v;
+		},
+		setShowUsers(v: boolean) {
+			this.showUsers = v;
+		},
+		setError(e: string | null) {
+			this.error = e;
+		},
 
 		/* mirrors your Vuex `actions` */
 		async fetchUsers() {
 			try {
 				const { data } = await axios.get<User[]>("/api/users");
 				this.setUsers(data);
-			} catch (e) { console.error(e); }
+			} catch (e) {
+				console.error(e);
+			}
 		},
 		async fetchTutors() {
 			try {
 				const { data } = await axios.get<Tutor[]>("/api/tutors");
 				this.setTutors(data);
-			} catch (e) { console.error(e); }
+			} catch (e) {
+				console.error(e);
+			}
 		},
 
 		async getUsersOfTutor() {
@@ -95,14 +119,16 @@ export const useAppStore = defineStore("app", {
 					`/api/users/oftutor/${this.currentTutor._id}`
 				);
 				this.setUsers(data);
-			} catch (e) { console.error(e); }
+			} catch (e) {
+				console.error(e);
+			}
 		},
 
 		async logout() {
 			try {
-				if (this.currentTutor)  await axios.delete("/api/tutors/logout");
-				if (this.currentUser)   await axios.delete("/api/users/logout");
-				if (this.currentAdmin)  await axios.delete("/api/admins/logout");
+				if (this.currentTutor) await axios.delete("/api/tutors/logout");
+				if (this.currentUser) await axios.delete("/api/users/logout");
+				if (this.currentAdmin) await axios.delete("/api/admins/logout");
 				this.setCurrentTutor(null);
 				this.setCurrentUser(null);
 				this.setCurrentAdmin(null);
@@ -142,6 +168,6 @@ export const useAppStore = defineStore("app", {
 			} catch {
 				this.setCurrentAdmin(null);
 			}
-		},
-	},
+		}
+	}
 });

@@ -14,7 +14,8 @@
 						v-for="t in tutors"
 						:key="t._id"
 						:value="t"
-					>{{ t.name }}</option>
+					>{{ t.name }}
+					</option>
 				</select>
 				<p v-else class="notutors">No Tutors are available</p>
 
@@ -23,7 +24,7 @@
 			</form>
 
 			<button v-if="tutors.length" @click="showTutors = !showTutors">
-				{{ showTutors ? 'Hide' : 'Show' }} tutors
+				{{ showTutors ? "Hide" : "Show" }} tutors
 			</button>
 
 			<hr v-if="showTutors && tutors.length" />
@@ -102,7 +103,8 @@
 					v-if="currentUser"
 					:class="{ colorSelect: currentUser?._id === t._id }"
 					@click="selectTutor(t)"
-				>Select</button>
+				>Select
+				</button>
 			</div>
 		</div>
 
@@ -110,11 +112,11 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import axios from "axios";
-import { useAppStore, type Tutor, type User } from "@/stores/app";
+import { type Tutor, useAppStore, type User } from "@/stores/app";
 
 const app = useAppStore();
 const { tutors, currentUser, currentTutor, currentAdmin: admin } = storeToRefs(app);
@@ -147,7 +149,7 @@ async function getUsers(t: Tutor | null) {
 	app.setUsers(data);
 	await axios.put(`/api/tutors/${t._id}`, {
 		...t,
-		usersOfTutorLength: data.length,
+		usersOfTutorLength: data.length
 	});
 }
 
@@ -158,10 +160,13 @@ async function addUser() {
 		return;
 	}
 	try {
-		await axios.post(
-			`/api/users/${selectedTutor.value._id}`,
+		const { data } = await axios.post(`/api/users/${selectedTutor.value._id}`,
 			{ currentUser: currentUser.value }
 		);
+		if (data.currentUser) {
+			app.setCurrentUser(data.currentUser)
+		}
+		app.setSignupBlock(false)
 		await getUsers(selectedTutor.value);
 	} catch (e: any) {
 		error.value = "Error: " + (e.response?.data?.message ?? e.message);
@@ -186,7 +191,7 @@ async function editTutor(t: Tutor) {
 		await axios.put(`/api/tutors/${t._id}`, {
 			...t,
 			editTutors: !t.editTutors,
-			saveEdit: t.editTutors ? "Edit" : "Save",
+			saveEdit: t.editTutors ? "Edit" : "Save"
 		});
 		await getTutors();
 	} catch (e: any) {
@@ -210,25 +215,53 @@ async function deleteTutor(t: Tutor) {
 onMounted(() => {
 	getTutors()
 		.then(() => getUsers(selectedTutor.value))
-		.catch(() => {});
+		.catch(() => {
+		});
 });
 </script>
 
 <style scoped>
-ul { display:flex; flex-direction:column; }
-ul p { display:inline; }
-div.tutorList, li { align-self:center; }
-.hidden { display:none; }
-.colorSelect { color:blue; background:lightblue; }
-.notutors { text-align:center; }
+ul {
+	display: flex;
+	flex-direction: column;
+}
+
+ul p {
+	display: inline;
+}
+
+div.tutorList, li {
+	align-self: center;
+}
+
+.hidden {
+	display: none;
+}
+
+.colorSelect {
+	color: blue;
+	background: lightblue;
+}
+
+.notutors {
+	text-align: center;
+}
+
 div.tutorList {
-	outline:black solid 1px;
-	padding-bottom:1%;
-	width:35%;
-	margin:auto;
+	outline: black solid 1px;
+	padding-bottom: 1%;
+	width: 35%;
+	margin: auto;
 }
-@media(max-width:960px){
-	div.tutorList { width:50%; }
+
+@media (max-width: 960px) {
+	div.tutorList {
+		width: 50%;
+	}
 }
-.error { color:red; margin-top:10px; }
+
+.error {
+	color: red;
+	margin-top: 10px;
+}
 </style>

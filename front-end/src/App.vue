@@ -27,17 +27,22 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-import { useAppStore } from '@/stores/app'
+<script lang="ts" setup>
+import { useAppStore } from "@/stores/app";
 
-import TheHeader         from '@/components/TheHeader.vue'
-import AccountManagement from '@/components/AccountManagement.vue'
-import TheFooter         from '@/components/TheFooter.vue'
+import TheHeader from "@/components/TheHeader.vue";
+import AccountManagement from "@/components/AccountManagement.vue";
+import TheFooter from "@/components/TheFooter.vue";
 
-const app = useAppStore()
+const app = useAppStore();
 
-function showLoginModal()  { app.setLoginBlock(true) }
-function showSignupModal() { app.setSignupBlock(true) }
+function showLoginModal() {
+	app.setLoginBlock(true);
+}
+
+function showSignupModal() {
+	app.setSignupBlock(true);
+}
 </script>
 
 <style>

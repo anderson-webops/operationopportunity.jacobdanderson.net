@@ -25,7 +25,7 @@
 	</section>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 /* DevTools / warning-friendly name */
 defineOptions({ name: "AboutPage" });
 </script>

@@ -65,7 +65,7 @@
 	</section>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import axios from "axios";
@@ -74,6 +74,8 @@ import { useAppStore } from "@/stores/app";
 const app = useAppStore();
 const { currentUser } = storeToRefs(app);
 const error = ref("");
+
+let originalEmail = "";
 
 // refresh on load and if someone clears the store
 async function refreshUser() {
@@ -86,17 +88,39 @@ async function refreshUser() {
 
 async function editUser() {
 	if (!currentUser.value) return;
+
 	try {
-		await axios.post(
-			`/api/accounts/changeEmail/${currentUser.value._id}`,
-			{ email: currentUser.value.email }
+		// keep baseline email
+		if (!originalEmail) originalEmail = currentUser.value.email;
+
+		// only hit changeEmail if needed
+		if (currentUser.value.email !== originalEmail) {
+			await axios.post(
+				`/api/accounts/changeEmail/${currentUser.value._id}`,
+				{ email: currentUser.value.email },
+				{ withCredentials: true }              // if you still need cookies for that
+			);
+			originalEmail = currentUser.value.email;
+		}
+
+		// save the rest of the profile
+		await axios.put(
+			`/api/users/user/${currentUser.value._id}`,
+			{
+				...currentUser.value,
+				editUsers: !currentUser.value.editUsers,
+				saveEdit : currentUser.value.editUsers ? "Edit" : "Save",
+			},
+			{ withCredentials: true }
 		);
-		await axios.put(`/api/users/user/${currentUser.value._id}`, {
+
+		// **instead** of re‐fetching from the server, update Pinia directly:**
+		app.setCurrentUser({
 			...currentUser.value,
 			editUsers: !currentUser.value.editUsers,
-			saveEdit: currentUser.value.editUsers ? "Edit" : "Save",
+			saveEdit : currentUser.value.editUsers ? "Edit" : "Save",
 		});
-		await refreshUser();
+
 	} catch (e: any) {
 		error.value = "Error: " + (e.response?.data?.message ?? e.message);
 	}
@@ -115,24 +139,46 @@ async function deleteUser() {
 // if store gets cleared (hard refresh), fetch again
 watch(
 	() => currentUser.value,
-	(val) => { if (!val) refreshUser(); },
+	(val) => {
+		if (!val) refreshUser();
+	},
 	{ immediate: true }
 );
 </script>
 
 <style scoped>
-ul { display:flex; flex-direction:column; }
-ul p { display:inline; }
-div.tutorList, li { align-self:center; }
-.hidden { display:none; }
+ul {
+	display: flex;
+	flex-direction: column;
+}
+
+ul p {
+	display: inline;
+}
+
+div.tutorList, li {
+	align-self: center;
+}
+
+.hidden {
+	display: none;
+}
+
 div.tutorList {
-	outline:black solid 1px;
-	padding-bottom:1%;
-	width:35%;
-	margin:auto;
+	outline: black solid 1px;
+	padding-bottom: 1%;
+	width: 35%;
+	margin: auto;
 }
-@media (max-width:960px){
-	div.tutorList { width:50%; }
+
+@media (max-width: 960px) {
+	div.tutorList {
+		width: 50%;
+	}
 }
-.error { color:red; margin-top:10px; }
+
+.error {
+	color: red;
+	margin-top: 10px;
+}
 </style>

@@ -14,5 +14,6 @@ export interface IUser extends Document {
 	role: string;
 	tutor?: Types.ObjectId; // Optional because of default
 	comparePassword(password: string): Promise<boolean>;
+
 	toJSON(): Record<string, unknown>;
 }

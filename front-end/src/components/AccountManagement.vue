@@ -13,34 +13,34 @@
 
 				<div class="imgcontainer">
 					<img
-						src="https://www.w3schools.com/howto/img_avatar2.png"
 						alt="Avatar"
 						class="avatar"
+						src="https://www.w3schools.com/howto/img_avatar2.png"
 					/>
 				</div>
 
 				<div class="container">
 					<label for="uname"><b>Email</b></label>
 					<input
-						type="text"
-						placeholder="Enter Email"
 						id="uname"
 						v-model="loginEmail"
+						placeholder="Enter Email"
 						required
+						type="text"
 					/>
 
 					<label for="psw1"><b>Password</b></label>
 					<input
-						type="password"
-						placeholder="Enter Password"
 						id="psw1"
 						v-model="loginPassword"
+						placeholder="Enter Password"
 						required
+						type="password"
 					/>
 
-					<button type="submit" class="button">Login</button>
+					<button class="button" type="submit">Login</button>
 					<label>
-						<input type="checkbox" checked="checked" name="remember" /> Remember
+						<input checked="checked" name="remember" type="checkbox" /> Remember
 						me
 					</label>
 					<span class="signup"
@@ -58,8 +58,8 @@
 
 				<div class="container" style="background-color: #f1f1f1">
 					<button
-						type="button"
 						class="cancelbtn"
+						type="button"
 						@click="changeLoginView(false)"
 					>
 						Cancel
@@ -86,70 +86,70 @@
 
 					<label for="name"><b>Name</b></label>
 					<input
-						type="text"
-						placeholder="Enter Name"
 						id="name"
 						v-model="name"
+						placeholder="Enter Name"
 						required
+						type="text"
 					/>
 
 					<label for="age"><b>Age</b></label>
 					<input
-						type="text"
-						placeholder="Enter Age"
 						id="age"
 						v-model="age"
+						placeholder="Enter Age"
 						required
+						type="text"
 					/>
 
 					<label for="state"><b>State</b></label>
 					<input
-						type="text"
-						placeholder="Enter State"
 						id="state"
 						v-model="state"
+						placeholder="Enter State"
 						required
+						type="text"
 					/>
 
 					<label for="email"><b>Email</b></label>
 					<input
-						type="text"
-						placeholder="Enter Email"
 						id="email"
 						v-model="email"
+						placeholder="Enter Email"
 						required
+						type="text"
 					/>
 
 					<label for="psw2"><b>Password</b></label>
 					<input
-						type="password"
-						placeholder="Enter Password"
 						id="psw2"
 						v-model="password"
+						placeholder="Enter Password"
 						required
+						type="password"
 					/>
 					<!--            required-->
 
 					<label for="psw-repeat"><b>Repeat Password</b></label>
 					<input
-						type="password"
-						placeholder="Repeat Password"
 						id="psw-repeat"
 						v-model="passwordRepeat"
+						placeholder="Repeat Password"
 						required
+						type="password"
 					/>
 					<!--            required-->
 
-					<button type="submit" class="signup button">Sign Up</button>
+					<button class="signup button" type="submit">Sign Up</button>
 					<p v-if="!passwordMatch" class="passwordMatchError">
 						Passwords do not match
 					</p>
 					<label>
 						<input
-							type="checkbox"
 							checked="checked"
 							name="remember"
 							style="margin-bottom: 15px"
+							type="checkbox"
 						/>
 						Remember me
 					</label>
@@ -161,8 +161,8 @@
 
 					<div class="container clearfix" style="background-color: #f1f1f1">
 						<button
-							type="button"
 							class="cancelbtn"
+							type="button"
 							@click="changeSignupView(false)"
 						>
 							Cancel
@@ -186,54 +186,60 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { storeToRefs }         from 'pinia'
-import { useAppStore }         from '@/stores/app'
-import axios                   from 'axios'
+<script lang="ts" setup>
+import { computed, onMounted, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useAppStore } from "@/stores/app";
+import axios from "axios";
 
-const app = useAppStore()
-const { loginBlock, signupBlock } = storeToRefs(app)
+const app = useAppStore();
+const { loginBlock, signupBlock } = storeToRefs(app);
 
 /* --- local form state --- */
-const name           = ref('')
-const email          = ref('')
-const age            = ref('')
-const state          = ref('')
-const password       = ref('')
-const passwordRepeat = ref('')
-const error          = ref<string>('')
+const name = ref("");
+const email = ref("");
+const age = ref("");
+const state = ref("");
+const password = ref("");
+const passwordRepeat = ref("");
+const error = ref<string>("");
 
-const loginEmail    = ref('')
-const loginPassword = ref('')
-const errorLogin    = ref<string>('')
+const loginEmail = ref("");
+const loginPassword = ref("");
+const errorLogin = ref<string>("");
 
-const passwordMatch = computed(() => password.value === passwordRepeat.value)
+const passwordMatch = computed(() => password.value === passwordRepeat.value);
 
 /* --- UI helpers --- */
-function changeLoginView(show: boolean)  { app.setLoginBlock(show) }
-function changeSignupView(show: boolean) { app.setSignupBlock(show) }
+function changeLoginView(show: boolean) {
+	app.setLoginBlock(show);
+}
+
+function changeSignupView(show: boolean) {
+	app.setSignupBlock(show);
+}
 
 function resetData() {
-	name.value = ''
-	email.value = ''
-	age.value = ''
-	state.value = ''
-	password.value = ''
-	passwordRepeat.value = ''
-	loginEmail.value = ''
-	loginPassword.value = ''
+	name.value = "";
+	email.value = "";
+	age.value = "";
+	state.value = "";
+	password.value = "";
+	passwordRepeat.value = "";
+	loginEmail.value = "";
+	loginPassword.value = "";
 }
 
 /* --- data load --- */
 async function getTutors() {
-	await app.fetchTutors()
+	await app.fetchTutors();
 }
 
 /* --- sign-up --- */
 async function addTutor() {
 	try {
-		await axios.post('/api/tutors', {
+		// 1) call the API and pull out the newly‐created tutor
+		const { data } = await axios.post("/api/tutors", {
 			name: name.value,
 			email: email.value,
 			age: age.value,
@@ -242,38 +248,46 @@ async function addTutor() {
 			passwordRepeat: passwordRepeat.value,
 			usersOfTutorLength: 0,
 			editTutors: false,
-			saveEdit: 'Edit'
-		})
-		resetData()
-		await getTutors()
+			saveEdit: "Edit"
+		});
+
+		// 2) if it came back, store them in Pinia and close the signup modal
+		if (data.currentTutor) {
+			app.setCurrentTutor(data.currentTutor);
+			changeSignupView(false);
+		}
+
+		// 3) clean up your form and reload your tutor list if you still need it
+		resetData();
+		await getTutors();
 	} catch (err: any) {
-		error.value = 'Error: ' + (err.response?.data?.message ?? err.message)
+		error.value = "Error: " + (err.response?.data?.message ?? err.message);
 	}
 }
 
 /* --- login --- */
 async function loginTutor() {
-	errorLogin.value = ''
-	if (!loginEmail.value || !loginPassword.value) return
+	errorLogin.value = "";
+	if (!loginEmail.value || !loginPassword.value) return;
 
 	try {
-		const { data } = await axios.post('/api/accounts/login', {
+		const { data } = await axios.post("/api/accounts/login", {
 			email: loginEmail.value,
 			password: loginPassword.value
-		})
+		});
 
-		if (data.currentTutor)  app.setCurrentTutor(data.currentTutor)
-		if (data.currentUser)   app.setCurrentUser(data.currentUser)
-		if (data.currentAdmin)  app.setCurrentAdmin(data.currentAdmin)
+		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
+		if (data.currentUser) app.setCurrentUser(data.currentUser);
+		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
 
-		resetData()
-		changeLoginView(false)
+		resetData();
+		changeLoginView(false);
 	} catch (err: any) {
-		errorLogin.value = 'Login failed: ' + (err.response?.data?.message ?? err.message)
+		errorLogin.value = "Login failed: " + (err.response?.data?.message ?? err.message);
 	}
 }
 
-onMounted(getTutors)
+onMounted(getTutors);
 </script>
 
 <style scoped>

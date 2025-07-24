@@ -126,8 +126,8 @@
 	</section>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import axios from "axios";
 import { useAppStore, type User } from "@/stores/app";
@@ -136,6 +136,8 @@ import { useAppStore, type User } from "@/stores/app";
 const app = useAppStore();
 const { currentTutor, users } = storeToRefs(app);
 const error = ref("");
+
+let originalTutorEmail = "";
 
 // load users for this tutor
 async function getUsers() {
@@ -161,7 +163,7 @@ async function editUser(u: User) {
 		await axios.put(`/api/users/tutor/${u._id}`, {
 			...u,
 			editUsers: !u.editUsers,
-			saveEdit: u.editUsers ? "Edit" : "Save",
+			saveEdit: u.editUsers ? "Edit" : "Save"
 		});
 		await getUsers();
 	} catch (e: any) {
@@ -180,16 +182,24 @@ async function deleteUser(u: User) {
 
 async function editCurrentTutor() {
 	if (!currentTutor.value) return;
+
 	try {
-		await axios.post(
-			`/api/accounts/changeEmail/${currentTutor.value._id}`,
-			{ email: currentTutor.value.email }
-		);
+		if (!originalTutorEmail) originalTutorEmail = currentTutor.value.email;
+
+		if (currentTutor.value.email !== originalTutorEmail) {
+			await axios.post(
+				`/api/accounts/changeEmail/${currentTutor.value._id}`,
+				{ email: currentTutor.value.email }
+			);
+			originalTutorEmail = currentTutor.value.email;
+		}
+
 		await axios.put(`/api/tutors/${currentTutor.value._id}`, {
 			...currentTutor.value,
 			editTutors: !currentTutor.value.editTutors,
-			saveEdit: currentTutor.value.editTutors ? "Edit" : "Save",
+			saveEdit: currentTutor.value.editTutors ? "Edit" : "Save"
 		});
+
 		await refreshTutor();
 	} catch (e: any) {
 		error.value = "Error: " + (e.response?.data?.message ?? e.message);
@@ -211,18 +221,38 @@ onMounted(getUsers);
 </script>
 
 <style scoped>
-ul { display: flex; flex-direction: column; }
-ul p { display: inline; }
-div.tutorList, li { align-self: center; }
-.hidden { display: none; }
+ul {
+	display: flex;
+	flex-direction: column;
+}
+
+ul p {
+	display: inline;
+}
+
+div.tutorList, li {
+	align-self: center;
+}
+
+.hidden {
+	display: none;
+}
+
 div.tutorList {
 	outline: black solid 1px;
 	padding-bottom: 1%;
 	width: 35%;
 	margin: auto;
 }
+
 @media (max-width: 960px) {
-	div.tutorList { width: 50%; }
+	div.tutorList {
+		width: 50%;
+	}
 }
-.error { color: red; margin-top: 10px; }
+
+.error {
+	color: red;
+	margin-top: 10px;
+}
 </style>

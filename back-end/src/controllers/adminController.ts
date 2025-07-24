@@ -23,7 +23,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
 		const [existingAdmin, existingUser, existingTutor] = await Promise.all([
 			Admin.findOne({ email }),
 			User.findOne({ email }),
-			Tutor.findOne({ email }),
+			Tutor.findOne({ email })
 		]);
 
 		if (existingAdmin || existingUser || existingTutor) {
@@ -38,7 +38,7 @@ export const createAdmin: RequestHandler = async (req, res) => {
 			password,
 			editAdmins: editAdmins ?? false,
 			saveEdit: saveEdit ?? "Edit",
-			role: "admin",
+			role: "admin"
 		});
 
 		await admin.save();

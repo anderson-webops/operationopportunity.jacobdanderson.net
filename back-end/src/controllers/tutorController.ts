@@ -39,7 +39,7 @@ export const createTutor: RequestHandler = async (req, res) => {
 			password,
 			editTutors: editTutors ?? false,
 			saveEdit: saveEdit ?? "Edit",
-			role: "tutor",
+			role: "tutor"
 		});
 
 		await tutor.save();

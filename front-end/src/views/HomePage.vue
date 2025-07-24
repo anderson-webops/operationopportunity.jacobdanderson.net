@@ -30,8 +30,8 @@
 	</section>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
 
 defineOptions({ name: "HomePage" });
 
@@ -39,8 +39,8 @@ defineOptions({ name: "HomePage" });
 /*  Reactive state                                                    */
 /* ------------------------------------------------------------------ */
 const quotePresent = ref(false);
-const quoteText    = ref("");
-const quoteAuthor  = ref("");
+const quoteText = ref("");
+const quoteAuthor = ref("");
 
 /* ------------------------------------------------------------------ */
 /*  Fetch a random quote (kept commented—you can restore when ready)  */
@@ -60,7 +60,8 @@ const updateQuote = async () => {
 };
 
 onMounted(() => {
-	updateQuote().catch(() => {/* silent fail */});
+	updateQuote().catch(() => {/* silent fail */
+	});
 });
 </script>
 

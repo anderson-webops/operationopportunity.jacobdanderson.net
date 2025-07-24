@@ -1,6 +1,6 @@
 // models/User.ts
 
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import argon2 from "argon2";
 import { IUser } from "../types/IUser";
 
@@ -16,7 +16,7 @@ const userSchema: Schema<IUser> = new Schema(
 		tutor: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Tutor",
-			default: null,
+			default: null
 		},
 		name: { type: String, required: true },
 		email: { type: String, required: true, unique: true },
@@ -25,7 +25,7 @@ const userSchema: Schema<IUser> = new Schema(
 		password: { type: String, required: true },
 		editUsers: { type: Boolean, default: false, required: true }, // Added required: true
 		saveEdit: { type: String, default: "Edit", required: true },    // Added required: true
-		role: { type: String, default: "user" },
+		role: { type: String, default: "user" }
 	},
 	{ timestamps: true }
 );
@@ -33,7 +33,7 @@ const userSchema: Schema<IUser> = new Schema(
 /**
  * 3. Pre-save hook to hash the password if modified
  */
-userSchema.pre<IUser>("save", async function (next) {
+userSchema.pre<IUser>("save", async function(next) {
 	if (!this.isModified("password")) return next();
 	try {
 		this.password = await argon2.hash(this.password);
@@ -47,7 +47,7 @@ userSchema.pre<IUser>("save", async function (next) {
 /**
  * 4. Method to compare password
  */
-userSchema.methods.comparePassword = async function (
+userSchema.methods.comparePassword = async function(
 	password: string
 ): Promise<boolean> {
 	try {
@@ -61,7 +61,7 @@ userSchema.methods.comparePassword = async function (
 /**
  * 5. Method to remove password from JSON responses
  */
-userSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function() {
 	const obj = this.toObject();
 	delete obj.password;
 	return obj;

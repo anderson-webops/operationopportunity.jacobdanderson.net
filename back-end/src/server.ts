@@ -1,4 +1,5 @@
 // src/server.ts
+import "dotenv/config";
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
@@ -12,17 +13,22 @@ import { accountRoutes } from "./routes/accountRoutes";
 
 const app = express();
 
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) {
+	throw new Error("Missing SESSION_SECRET in environment");
+}
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(
-	cookieSession({
-		name: "session",
-		keys: ["yourSecretKey"], // Replace with environment variable in production
-		maxAge: 24 * 60 * 60 * 1000, // 24 hours
-	})
-);
+app.use(cookieSession({
+	name: "session",
+	keys: [SESSION_SECRET],
+	maxAge: 24 * 60 * 60 * 1000, // 24 hours
+	sameSite: "lax",        // or 'none' if you’re on https
+	secure: process.env.NODE_ENV === "production"
+}));
 
 // Connect to MongoDB
 mongoose
