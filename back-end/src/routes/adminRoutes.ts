@@ -1,7 +1,13 @@
 // src/routes/adminRoutes.ts
 
 import express from "express";
-import { createAdmin, deleteAdmin, getAllAdmins, getLoggedInAdmin, updateAdmin } from "../controllers/adminController";
+import {
+	createAdmin,
+	deleteAdmin,
+	getAllAdmins,
+	getLoggedInAdmin,
+	updateAdmin
+} from "../controllers/users/adminController";
 import { validAdmin } from "../middleware/auth";
 
 const router = express.Router();

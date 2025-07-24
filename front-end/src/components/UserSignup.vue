@@ -164,9 +164,9 @@ async function addUser() {
 			{ currentUser: currentUser.value }
 		);
 		if (data.currentUser) {
-			app.setCurrentUser(data.currentUser)
+			app.setCurrentUser(data.currentUser);
 		}
-		app.setSignupBlock(false)
+		app.setSignupBlock(false);
 		await getUsers(selectedTutor.value);
 	} catch (e: any) {
 		error.value = "Error: " + (e.response?.data?.message ?? e.message);

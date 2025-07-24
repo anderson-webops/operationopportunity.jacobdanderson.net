@@ -26,7 +26,7 @@
 						v-model="loginEmail"
 						placeholder="Enter Email"
 						required
-						type="text"
+						type="email"
 					/>
 
 					<label for="psw1"><b>Password</b></label>
@@ -70,20 +70,36 @@
 			</form>
 		</div>
 
-		<!-- The Modal (contains the Sign Up form) -->
+		<!-- ─── The Sign-Up Modal ──────────────────────────────────────────────── -->
 		<div :class="{ showSignup: signupBlock }" class="modal signupForm">
-
-			<!-- Modal Content -->
-			<form class="modal-content animate" @submit.prevent="addTutor">
+			<form class="modal-content animate" @submit.prevent="addSignup">
 				<span class="close" @click="changeSignupView(false)">&times;</span>
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
-					<p>
-						Please fill in this form to create an account and become a tutor.
-					</p>
+					<p>Please fill in this form to create a new account.</p>
 					<hr />
 
+					<!-- ─── User Type Selector ────────────────────────────────────────── -->
+					<div class="mb-3">
+						<label>
+							<input
+								v-model="signupType"
+								type="radio"
+								value="tutor"
+							/> Tutor
+						</label>
+						&ensp;
+						<label>
+							<input
+								v-model="signupType"
+								type="radio"
+								value="user"
+							/> User
+						</label>
+					</div>
+
+					<!-- ─── Common Fields ─────────────────────────────────────────────── -->
 					<label for="name"><b>Name</b></label>
 					<input
 						id="name"
@@ -117,7 +133,7 @@
 						v-model="email"
 						placeholder="Enter Email"
 						required
-						type="text"
+						type="email"
 					/>
 
 					<label for="psw2"><b>Password</b></label>
@@ -128,7 +144,6 @@
 						required
 						type="password"
 					/>
-					<!--            required-->
 
 					<label for="psw-repeat"><b>Repeat Password</b></label>
 					<input
@@ -138,156 +153,125 @@
 						required
 						type="password"
 					/>
-					<!--            required-->
 
-					<button class="signup button" type="submit">Sign Up</button>
+					<button class="signup button" type="submit">
+						Sign Up as a {{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
+					</button>
+
 					<p v-if="!passwordMatch" class="passwordMatchError">
-						Passwords do not match
+						Passwords do not match.
 					</p>
-					<label>
-						<input
-							checked="checked"
-							name="remember"
-							style="margin-bottom: 15px"
-							type="checkbox"
-						/>
-						Remember me
-					</label>
-
-					<p class="disclamer" style="font-family: Optima, sans-serif">
-						By creating an account you agree to our
-						<a href="#" style="color: dodgerblue">Terms & Privacy</a>.
-					</p>
-
-					<div class="container clearfix" style="background-color: #f1f1f1">
-						<button
-							class="cancelbtn"
-							type="button"
-							@click="changeSignupView(false)"
-						>
-							Cancel
-						</button>
-						<span class="account"
-						>Already have an account?
-              <a
-								href="#"
-								@click="
-                  changeSignupView(false);
-                  changeLoginView(true);
-                "
-							>Login</a
-							></span
-						>
-					</div>
+					<p v-if="error" class="error">{{ error }}</p>
 				</div>
 			</form>
 		</div>
-		<p v-if="error" class="error">{{ error }}</p>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from "vue";
-import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
 import { useAppStore } from "@/stores/app";
 import axios from "axios";
+import { storeToRefs } from "pinia";
 
 const app = useAppStore();
-const { loginBlock, signupBlock } = storeToRefs(app);
 
-/* --- local form state --- */
-const name = ref("");
-const email = ref("");
-const age = ref("");
-const state = ref("");
-const password = ref("");
-const passwordRepeat = ref("");
-const error = ref<string>("");
+// ─── LOGIN STATE & METHODS ──────────────────────────────────────────
+const { loginBlock, signupBlock } = storeToRefs(app);
 
 const loginEmail = ref("");
 const loginPassword = ref("");
-const errorLogin = ref<string>("");
+const errorLogin = ref("");
 
-const passwordMatch = computed(() => password.value === passwordRepeat.value);
-
-/* --- UI helpers --- */
 function changeLoginView(show: boolean) {
 	app.setLoginBlock(show);
 }
 
-function changeSignupView(show: boolean) {
-	app.setSignupBlock(show);
-}
-
-function resetData() {
-	name.value = "";
-	email.value = "";
-	age.value = "";
-	state.value = "";
-	password.value = "";
-	passwordRepeat.value = "";
-	loginEmail.value = "";
-	loginPassword.value = "";
-}
-
-/* --- data load --- */
-async function getTutors() {
-	await app.fetchTutors();
-}
-
-/* --- sign-up --- */
-async function addTutor() {
-	try {
-		// 1) call the API and pull out the newly‐created tutor
-		const { data } = await axios.post("/api/tutors", {
-			name: name.value,
-			email: email.value,
-			age: age.value,
-			state: state.value,
-			password: password.value,
-			passwordRepeat: passwordRepeat.value,
-			usersOfTutorLength: 0,
-			editTutors: false,
-			saveEdit: "Edit"
-		});
-
-		// 2) if it came back, store them in Pinia and close the signup modal
-		if (data.currentTutor) {
-			app.setCurrentTutor(data.currentTutor);
-			changeSignupView(false);
-		}
-
-		// 3) clean up your form and reload your tutor list if you still need it
-		resetData();
-		await getTutors();
-	} catch (err: any) {
-		error.value = "Error: " + (err.response?.data?.message ?? err.message);
-	}
-}
-
-/* --- login --- */
 async function loginTutor() {
 	errorLogin.value = "";
 	if (!loginEmail.value || !loginPassword.value) return;
-
 	try {
 		const { data } = await axios.post("/api/accounts/login", {
 			email: loginEmail.value,
 			password: loginPassword.value
-		});
-
+		}, { withCredentials: true });
 		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
 		if (data.currentUser) app.setCurrentUser(data.currentUser);
 		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
-
-		resetData();
 		changeLoginView(false);
 	} catch (err: any) {
 		errorLogin.value = "Login failed: " + (err.response?.data?.message ?? err.message);
 	}
 }
 
-onMounted(getTutors);
+// form state
+const signupType = ref<"tutor" | "user">("tutor");
+const name = ref("");
+const age = ref("");
+const state = ref("");
+const email = ref("");
+const password = ref("");
+const passwordRepeat = ref("");
+const error = ref("");
+
+// simple password‐match guard
+const passwordMatch = computed(() => password.value === passwordRepeat.value);
+
+// close / open (comes from your store)
+function changeSignupView(show: boolean) {
+	app.setSignupBlock(show);
+}
+
+// reset inputs after submission
+function resetData() {
+	name.value = age.value = state.value = email.value = password.value = passwordRepeat.value = "";
+	error.value = "";
+}
+
+// on submit, dispatch to the right endpoint
+async function addSignup() {
+	if (!passwordMatch.value) return;
+
+	try {
+		// fire the right endpoint with credentials turned on
+		const res = signupType.value === "tutor"
+			? await axios.post(
+				"/api/tutors",
+				{
+					name: name.value,
+					age: age.value,
+					state: state.value,
+					email: email.value,
+					password: password.value
+				},
+				{ withCredentials: true }
+			)
+			: await axios.post(
+				"/api/users",
+				{
+					name: name.value,
+					age: age.value,
+					state: state.value,
+					email: email.value,
+					password: password.value
+				},
+				{ withCredentials: true }
+			);
+
+		// immediately stash the newly-created user/tutor into Pinia
+		if (res.data.currentTutor) {
+			app.setCurrentTutor(res.data.currentTutor);
+		} else if (res.data.currentUser) {
+			app.setCurrentUser(res.data.currentUser);
+		}
+
+
+		resetData();
+		changeSignupView(false);
+	} catch (err: any) {
+		error.value = "Error: " + (err.response?.data?.message ?? err.message);
+	}
+}
 </script>
 
 <style scoped>
@@ -412,7 +396,7 @@ div.loginForm form {
 }
 
 /* Full-width inputs */
-div.loginForm input[type="text"],
+div.loginForm input[type="email"],
 div.loginForm input[type="password"] {
 	width: 100%;
 	padding: 12px 20px;
@@ -469,6 +453,7 @@ div.loginForm span.signup {
 
 /* Full-width input fields */
 div.signupForm input[type="text"],
+div.signupForm input[type="email"],
 div.signupForm input[type="password"] {
 	width: 100%;
 	padding: 15px;
@@ -479,6 +464,7 @@ div.signupForm input[type="password"] {
 }
 
 div.signupForm input[type="text"]:focus,
+div.signupForm input[type="email"]:focus,
 div.signupForm input[type="password"]:focus {
 	background-color: #ddd;
 	outline: none;

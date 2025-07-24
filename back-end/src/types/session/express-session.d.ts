@@ -1,4 +1,5 @@
-// src/types/express-session.d.ts
+// src/types/session/express-session.d.ts
+// noinspection JSUnusedGlobalSymbols // THese are used/included by tsconfig.json
 
 import { IAdmin } from "./IAdmin";
 import { ITutor } from "./ITutor";

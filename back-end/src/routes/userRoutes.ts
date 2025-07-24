@@ -1,19 +1,15 @@
 // src/routes/userRoutes.ts
 import express from "express";
+import { validUser, validTutor } from "../middleware/auth";
 import {
-	assignTutorToUser,
 	createUser,
-	deleteUserByTutor,
-	deleteUserSelf,
-	deleteUsersUnderTutor,
 	getAllUsers,
-	getLoggedInUser,
-	getUsersOfTutor,
-	logoutUser,
-	updateUserByTutor,
-	updateUserSelf
-} from "../controllers/userController";
-import { validTutor, validUser } from "../middleware/auth";
+	updateUser,
+	deleteUser,
+	getLoggedInUser
+} from "../controllers/users/userController";
+import { assignTutorToUser, deleteUsersUnderTutor, getUsersOfTutor } from "../controllers/users/userExtraController";
+import { logout as logoutUser } from "../controllers/auth/authController";
 
 const router = express.Router();
 
@@ -27,19 +23,19 @@ router.get("/oftutor/:tutorID", getUsersOfTutor);
 router.get("/all", getAllUsers);
 
 // Update user info by the user themselves
-router.put("/user/:userID", validUser, updateUserSelf);
+router.put("/user/:userID", validUser, updateUser);
 
 // Update user info by the tutor
-router.put("/tutor/:userID", validTutor, updateUserByTutor);
+router.put("/tutor/:userID", validTutor, updateUser);
 
 // Assign a tutor to a user
 router.put("/tutor/:userID/:tutorID", assignTutorToUser);
 
 // Delete the user by the user themselves
-router.delete("/user/:userID", validUser, deleteUserSelf);
+router.delete("/user/:userID", validUser, deleteUser);
 
 // Delete the user by the tutor
-router.delete("/tutor/:userID", validTutor, deleteUserByTutor);
+router.delete("/tutor/:userID", validTutor, deleteUser);
 
 // Delete users under a tutor
 router.delete("/under/:tutorID", deleteUsersUnderTutor);

@@ -1,7 +1,7 @@
 // src/create-admin-user.ts
 import * as readlineSync from "readline-sync";
 import mongoose from "mongoose";
-import { Admin } from "./models/Admin";
+import { Admin } from "./models/schemas/Admin";
 
 // Connect to MongoDB
 mongoose

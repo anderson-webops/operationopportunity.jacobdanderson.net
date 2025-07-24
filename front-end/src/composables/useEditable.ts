@@ -1,36 +1,50 @@
-// src/composables/useEditable.ts
-import axios from 'axios'
-import { useAppStore } from '@/stores/app'
+import { ref } from "vue";
+import axios from "axios";
+import { useAppStore } from "@/stores/app";
 
-export function useEditable(type: 'user' | 'tutor' | 'admin') {
-	const app = useAppStore()
-	let originalEmail = ''
+type Kind = "user" | "tutor" | "admin"
 
-	async function save(entity: any) {
-		if (!originalEmail) originalEmail = entity.email
-		if (entity.email !== originalEmail) {
-			await axios.post(`/api/accounts/changeEmail/${entity._id}`, { email: entity.email })
-			originalEmail = entity.email
-		}
-		await axios.put(
-			type === 'user'
-				? `/api/users/user/${entity._id}`
-				: type === 'tutor'
-					? `/api/tutors/${entity._id}`
-					: `/api/admins/${entity._id}`,
-			{
-				...entity,
-				// flip the right “edit” flag:
-				[type === 'user' ? 'editUsers' : type === 'tutor' ? 'editTutors' : 'editAdmins']:
-					!entity[type === 'user' ? 'editUsers' : type === 'tutor' ? 'editTutors' : 'editAdmins'],
-				saveEdit: entity.saveEdit === 'Edit' ? 'Save' : 'Edit'
-			}
-		)
-		// update the store in place instead of re-fetching:
-		if (type === 'user')      app.setCurrentUser(entity)
-		else if (type === 'tutor') app.setCurrentTutor(entity)
-		else                      app.setCurrentAdmin(entity)
+export function useEditable(kind: Kind) {
+	const app = useAppStore();
+	const editing = ref(false);
+	let baseline = "";           // original e-mail so we know if it changed
+
+	/* ----------------------------------------- */
+	/*  toggle between view / edit               */
+
+	/* ----------------------------------------- */
+	function toggle() {
+		editing.value = !editing.value;
 	}
 
-	return { save }
+	/* ----------------------------------------- */
+	/*  save profile to the server               */
+
+	/* ----------------------------------------- */
+	async function save(entity: any) {
+		// 1) change-e-mail if needed
+		if (!baseline) baseline = entity.email;
+		if (entity.email !== baseline) {
+			await axios.post(`/api/accounts/changeEmail/${entity._id}`, { email: entity.email });
+			baseline = entity.email;
+		}
+
+		// 2) update the rest of the profile
+		const url =
+			kind === "user"
+				? `/api/users/user/${entity._id}`
+				: kind === "tutor"
+					? `/api/tutors/${entity._id}`
+					: `/api/admins/${entity._id}`;
+
+		await axios.put(url, entity);
+		editing.value = false;
+
+		// 3) update Pinia _in-place_ (no extra fetch)
+		if (kind === "user") app.setCurrentUser(entity);
+		else if (kind === "tutor") app.setCurrentTutor(entity);
+		else app.setCurrentAdmin(entity);
+	}
+
+	return { editing, toggle, save };
 }

@@ -1,20 +1,8 @@
 // src/middleware/auth.ts
 import { RequestHandler } from "express";
-import { User } from "../models/User";
-import { Tutor } from "../models/Tutor";
-import { Admin } from "../models/Admin";
-import { CustomSession } from "../types/CustomSession";
-import { IUser } from "../types/IUser";
-import { ITutor } from "../types/ITutor";
-import { IAdmin } from "../types/IAdmin";
-
-// Extend Request for User
-export interface UserRequest extends Request {
-	session: CustomSession;
-	currentUser?: IUser;
-	currentTutor?: ITutor;
-	currentAdmin?: IAdmin;
-}
+import { User } from "../models/schemas/User";
+import { Tutor } from "../models/schemas/Tutor";
+import { Admin } from "../models/schemas/Admin";
 
 // Middleware to validate User
 export const validUser: RequestHandler = async (

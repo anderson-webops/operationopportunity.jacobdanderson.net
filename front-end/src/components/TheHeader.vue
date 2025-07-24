@@ -51,7 +51,7 @@ function logoutUser() {
 						<li class="nav-item">
 							<router-link class="nav-link" to="/about">About</router-link>
 						</li>
-						<li class="nav-item">
+						<li v-if="isLoggedIn"  class="nav-item">
 							<router-link class="nav-link" to="/profile">Profile</router-link>
 						</li>
 					</ul>

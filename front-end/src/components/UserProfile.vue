@@ -2,148 +2,55 @@
 	<section class="Signup text-center">
 		<h2>Profile</h2>
 
-		<div v-if="currentUser" :key="currentUser._id" class="tutorList mt-2">
+		<div v-if="currentUser" class="tutorList mt-2">
 			<br />
 			<ul>
 				<li><h4>User</h4></li>
 
-				<!-- Editable -->
-				<template v-if="currentUser.editUsers">
-					<li>
-						<label>
-							Name:&emsp;
-							<input v-model="currentUser.name" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li>
-						<label>
-							Email:&emsp;
-							<input v-model="currentUser.email" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li>
-						<label>
-							Age:&emsp;
-							<input v-model="currentUser.age" class="editTutor" type="text" />
-						</label>
-					</li>
-					<li>
-						<label>
-							State:&emsp;
-							<input v-model="currentUser.state" class="editTutor" type="text" />
-						</label>
-					</li>
-				</template>
-
-				<!-- Read-only -->
-				<template v-else>
-					<li>
-						<label class="hidden">Name:</label>&emsp;
-						<p>{{ currentUser.name }}</p>
-					</li>
-					<li>
-						<label class="hidden">Email:</label>&emsp;
-						<p>{{ currentUser.email }}</p>
-					</li>
-					<li>
-						<label class="hidden">Age:</label>&emsp;
-						<p>{{ currentUser.age }}</p>
-					</li>
-					<li>
-						<label class="hidden">State:</label>&emsp;
-						<p>{{ currentUser.state }}</p>
-					</li>
-				</template>
+				<ProfileFields
+					:editing="editing"
+					:entity="currentUser"
+					:fields="fields"
+				/>
 			</ul>
 			<br />
 
-			<button @click="deleteUser">Delete</button>
-			<button @click="editUser">{{ currentUser.saveEdit }}</button>
+			<button class="btn btn-danger" @click="deleteMe(currentUser!._id)">Delete</button>
+			<button class="btn btn-primary" @click="editing ? save(currentUser) : toggle()">
+				{{ editing ? "Save" : "Edit" }}
+			</button>
 		</div>
-
-		<p v-if="error" class="error">{{ error }}</p>
 	</section>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { storeToRefs } from "pinia";
-import axios from "axios";
 import { useAppStore } from "@/stores/app";
+import { useEditable } from "@/composables/useEditable";
+import ProfileFields from "@/components/ProfileFields.vue";
 
+/* -------------------------------------------------- */
+/*  Pinia state                                       */
+/* -------------------------------------------------- */
 const app = useAppStore();
 const { currentUser } = storeToRefs(app);
-const error = ref("");
+const deleteMe = useDeleteAccount("user");
 
-let originalEmail = "";
+/* -------------------------------------------------- */
+/*  editable helper                                   */
+/* -------------------------------------------------- */
+const { editing, toggle, save } = useEditable("user");
 
-// refresh on load and if someone clears the store
-async function refreshUser() {
-	try {
-		await app.refreshCurrentUser();
-	} catch {
-		app.setCurrentUser(null);
-	}
-}
-
-async function editUser() {
-	if (!currentUser.value) return;
-
-	try {
-		// keep baseline email
-		if (!originalEmail) originalEmail = currentUser.value.email;
-
-		// only hit changeEmail if needed
-		if (currentUser.value.email !== originalEmail) {
-			await axios.post(
-				`/api/accounts/changeEmail/${currentUser.value._id}`,
-				{ email: currentUser.value.email },
-				{ withCredentials: true }              // if you still need cookies for that
-			);
-			originalEmail = currentUser.value.email;
-		}
-
-		// save the rest of the profile
-		await axios.put(
-			`/api/users/user/${currentUser.value._id}`,
-			{
-				...currentUser.value,
-				editUsers: !currentUser.value.editUsers,
-				saveEdit : currentUser.value.editUsers ? "Edit" : "Save",
-			},
-			{ withCredentials: true }
-		);
-
-		// **instead** of re‐fetching from the server, update Pinia directly:**
-		app.setCurrentUser({
-			...currentUser.value,
-			editUsers: !currentUser.value.editUsers,
-			saveEdit : currentUser.value.editUsers ? "Edit" : "Save",
-		});
-
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-async function deleteUser() {
-	if (!currentUser.value) return;
-	try {
-		await axios.delete(`/api/users/user/${currentUser.value._id}`);
-		app.setCurrentUser(null);
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-// if store gets cleared (hard refresh), fetch again
-watch(
-	() => currentUser.value,
-	(val) => {
-		if (!val) refreshUser();
-	},
-	{ immediate: true }
-);
+/* -------------------------------------------------- */
+/*  field list (only once)                            */
+/* -------------------------------------------------- */
+const fields = [
+	{ key: "name", label: "Name" },
+	{ key: "email", label: "Email" },
+	{ key: "age", label: "Age" },
+	{ key: "state", label: "State" }
+];
 </script>
 
 <style scoped>

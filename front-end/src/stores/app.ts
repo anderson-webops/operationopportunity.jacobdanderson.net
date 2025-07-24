@@ -2,9 +2,9 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 
-/* ---------------------------------------------
-   Re-use your existing TS interfaces here
---------------------------------------------- */
+/* ------------------------------------------------------------------ */
+/*  TypeScript interfaces                                              */
+/* ------------------------------------------------------------------ */
 export interface Tutor {
 	_id: string;
 	name: string;
@@ -34,12 +34,11 @@ export interface Admin {
 	saveEdit: string;
 }
 
-/* ---------------------------------------------
-   Pinia store definition
---------------------------------------------- */
+/* ------------------------------------------------------------------ */
+/*  Pinia store                                                        */
+/* ------------------------------------------------------------------ */
 export const useAppStore = defineStore("app", {
 	state: () => ({
-		/* mirrors your Vuex `state` */
 		users: [] as User[],
 		tutors: [] as Tutor[],
 		admins: [] as Admin[],
@@ -56,53 +55,33 @@ export const useAppStore = defineStore("app", {
 	}),
 
 	getters: {
-		/* mirrors your Vuex `getters` */
-		isLoggedIn: (state) =>
+		isLoggedIn: state =>
 			!!state.currentUser || !!state.currentTutor || !!state.currentAdmin
 	},
 
 	actions: {
-		/* mirrors your Vuex `mutations` */
-		setUsers(u: User[]) {
-			this.users = u;
-		},
-		setTutors(t: Tutor[]) {
-			this.tutors = t;
-		},
-		setAdmins(a: Admin[]) {
-			this.admins = a;
-		},
-		setCurrentUser(u: User | null) {
-			this.currentUser = u;
-		},
-		setCurrentTutor(t: Tutor | null) {
-			this.currentTutor = t;
-		},
-		setCurrentAdmin(a: Admin | null) {
-			this.currentAdmin = a;
-		},
-		setLoginBlock(v: boolean) {
-			this.loginBlock = v;
-		},
-		setSignupBlock(v: boolean) {
-			this.signupBlock = v;
-		},
-		setShowUsers(v: boolean) {
-			this.showUsers = v;
-		},
-		setError(e: string | null) {
-			this.error = e;
-		},
+		/* ---------- setters ---------- */
+		setUsers(u: User[])       { this.users = u },
+		setTutors(t: Tutor[])     { this.tutors = t },
+		setAdmins(a: Admin[])     { this.admins = a },
+		setCurrentUser(u: User | null)   { this.currentUser  = u },
+		setCurrentTutor(t: Tutor | null) { this.currentTutor = t },
+		setCurrentAdmin(a: Admin | null) { this.currentAdmin = a },
+		setLoginBlock(v: boolean)  { this.loginBlock  = v },
+		setSignupBlock(v: boolean) { this.signupBlock = v },
+		setShowUsers(v: boolean)   { this.showUsers   = v },
+		setError(e: string | null) { this.error = e },
 
-		/* mirrors your Vuex `actions` */
+		/* ---------- data fetchers ---------- */
 		async fetchUsers() {
 			try {
-				const { data } = await axios.get<User[]>("/api/users");
+				const { data } = await axios.get<User[]>("/api/users/all");
 				this.setUsers(data);
 			} catch (e) {
 				console.error(e);
 			}
 		},
+
 		async fetchTutors() {
 			try {
 				const { data } = await axios.get<Tutor[]>("/api/tutors");
@@ -124,11 +103,10 @@ export const useAppStore = defineStore("app", {
 			}
 		},
 
+		/* ---------- session helpers ---------- */
 		async logout() {
 			try {
-				if (this.currentTutor) await axios.delete("/api/tutors/logout");
-				if (this.currentUser) await axios.delete("/api/users/logout");
-				if (this.currentAdmin) await axios.delete("/api/admins/logout");
+				await axios.delete("/api/accounts/logout");   // one endpoint for all roles
 				this.setCurrentTutor(null);
 				this.setCurrentUser(null);
 				this.setCurrentAdmin(null);
@@ -138,7 +116,6 @@ export const useAppStore = defineStore("app", {
 			}
 		},
 
-		/* convenience methods to re-load "logged in" after refresh */
 		async refreshCurrentUser() {
 			try {
 				const { data } = await axios.get<{ currentUser: User }>(
@@ -149,6 +126,7 @@ export const useAppStore = defineStore("app", {
 				this.setCurrentUser(null);
 			}
 		},
+
 		async refreshCurrentTutor() {
 			try {
 				const { data } = await axios.get<{ currentTutor: Tutor }>(
@@ -159,6 +137,7 @@ export const useAppStore = defineStore("app", {
 				this.setCurrentTutor(null);
 			}
 		},
+
 		async refreshCurrentAdmin() {
 			try {
 				const { data } = await axios.get<{ currentAdmin: Admin }>(
