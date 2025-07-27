@@ -1,5 +1,5 @@
 .prose pre:not(.shiki) {
-    padding: 0;
+  padding: 0;
 }
 
 .prose .shiki {
@@ -9,17 +9,17 @@
 }
 
 .prose img {
-    width: 100%;
+  width: 100%;
 }
 
 .shiki,
 .shiki span {
-    color: var(--shiki-light);
-    background: var(--shiki-light-bg);
+  color: var(--shiki-light);
+  background: var(--shiki-light-bg);
 }
 
 html.dark .shiki,
 html.dark .shiki span {
-    color: var(--shiki-dark);
-    background: var(--shiki-dark-bg);
+  color: var(--shiki-dark);
+  background: var(--shiki-dark-bg);
 }
