@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const { modelValue } = defineModels<{
-  modelValue: string
+  modelValue: string;
 }>();
 </script>
 
@@ -16,5 +16,5 @@ const { modelValue } = defineModels<{
     type="text"
     v-bind="$attrs"
     w="250px"
-  >
+  />
 </template>

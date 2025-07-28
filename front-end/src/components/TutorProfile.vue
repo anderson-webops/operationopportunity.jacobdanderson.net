@@ -1,57 +1,11 @@
-<template>
-	<section class="Signup text-center">
-		<h2>Profile</h2>
-
-		<!-- ───── Tutor card ───── -->
-		<div v-if="currentTutor" class="tutorList mt-2">
-			<br />
-			<ul>
-				<li><h4>Tutor</h4></li>
-
-				<ProfileFields
-					:editing="tutorEdit"
-					:entity="currentTutor"
-					:fields="tutorFields"
-				/>
-			</ul>
-			<br />
-
-			<button class="btn btn-danger" @click="deleteMe(currentTutor!._id)">Delete</button>
-			<button class="btn btn-primary"
-							@click="tutorEdit ? saveTutor(currentTutor) : toggleTutor()">
-				{{ tutorEdit ? "Save" : "Edit" }}
-			</button>
-		</div>
-
-		<!-- ───── Users under this tutor (read-only) ───── -->
-		<hr />
-		<h2>Users</h2>
-
-		<div v-for="u in users" :key="u._id" class="tutorList mt-2">
-			<br />
-			<ul>
-				<!-- Fields: name / email / age / state -->
-				<!-- Editing = false: read-only list -->
-				<ProfileFields
-					:editing="false"
-					:entity="u"
-					:fields="tutorFields"
-				/>
-			</ul>
-		</div>
-
-		<p v-if="error" class="error">{{ error }}</p>
-	</section>
-</template>
-
 <script lang="ts" setup>
-import { useDeleteAccount } from "@/composables/useDeleteAccount";
-import { onMounted, ref } from "vue";
 import axios from "axios";
 import { storeToRefs } from "pinia";
-import { useAppStore } from "@/stores/app";
-import { useEditable } from "@/composables/useEditable";
+import { onMounted, ref } from "vue";
 import ProfileFields from "@/components/ProfileFields.vue";
+import { useDeleteAccount } from "@/composables/useDeleteAccount";
+import { useEditable } from "@/composables/useEditable";
+import { useAppStore } from "@/stores/app";
 
 /* -------------------------------------------------- */
 const app = useAppStore();
@@ -78,7 +32,9 @@ const tutorFields = [
 async function loadUsers() {
 	if (!currentTutor.value) return;
 	try {
-		const { data } = await axios.get(`/api/users/oftutor/${currentTutor.value._id}`);
+    const { data } = await axios.get(
+      `/api/users/oftutor/${currentTutor.value._id}`
+    );
 		app.setUsers(data);
 	} catch (e: any) {
 		error.value = e.message;
@@ -87,6 +43,54 @@ async function loadUsers() {
 
 onMounted(loadUsers);
 </script>
+
+<template>
+  <section class="Signup text-center">
+    <h2>Profile</h2>
+
+    <!-- ───── Tutor card ───── -->
+    <div v-if="currentTutor" class="tutorList mt-2">
+      <br />
+      <ul>
+        <li><h4>Tutor</h4></li>
+
+        <ProfileFields
+          :editing="tutorEdit"
+          :entity="currentTutor"
+          :fields="tutorFields"
+        />
+      </ul>
+      <br />
+
+      <button class="btn-danger btn" @click="deleteMe(currentTutor!._id)">
+        Delete
+      </button>
+      <button
+        class="btn-primary btn"
+        @click="tutorEdit ? saveTutor(currentTutor) : toggleTutor()"
+      >
+        {{ tutorEdit ? "Save" : "Edit" }}
+      </button>
+    </div>
+
+    <!-- ───── Users under this tutor (read-only) ───── -->
+    <hr />
+    <h2>Users</h2>
+
+    <div v-for="u in users" :key="u._id" class="tutorList mt-2">
+      <br />
+      <ul>
+        <!-- Fields: name / email / age / state -->
+        <!-- Editing = false: read-only list -->
+        <ProfileFields :editing="false" :entity="u" :fields="tutorFields" />
+      </ul>
+    </div>
+
+    <p v-if="error" class="error">
+      {{ error }}
+    </p>
+  </section>
+</template>
 
 <style scoped>
 ul {
@@ -98,7 +102,8 @@ ul p {
 	display: inline;
 }
 
-div.tutorList, li {
+div.tutorList,
+li {
 	align-self: center;
 }
 

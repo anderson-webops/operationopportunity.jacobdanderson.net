@@ -1,3 +1,44 @@
+<script lang="ts" setup>
+import { storeToRefs } from "pinia";
+import { onMounted, ref } from "vue";
+import ProfileFields from "@/components/ProfileFields.vue";
+import { useDeleteAccount } from "@/composables/useDeleteAccount";
+import { useEditable } from "@/composables/useEditable";
+import { useAppStore } from "@/stores/app";
+
+/* -------------------------------------------------- */
+const app = useAppStore();
+const { currentAdmin, tutors, users } = storeToRefs(app);
+const error = ref("");
+const deleteMe = useDeleteAccount("admin");
+
+/* editable helper for the admin card */
+const {
+  editing: adminEdit,
+  toggle: toggleAdmin,
+  save: saveAdmin
+} = useEditable("admin");
+
+/* field list (admin / tutor / user share the same set) */
+const fields = [
+  { key: "name", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "age", label: "Age" },
+  { key: "state", label: "State" }
+];
+
+/* fetch everything once */
+async function loadAll() {
+  await Promise.all([
+    app.fetchTutors(),
+    app.fetchUsers(),
+    app.refreshCurrentAdmin()
+  ]);
+}
+
+onMounted(loadAll);
+</script>
+
 <template>
 	<section class="Signup text-center">
 		<h2>Profile</h2>
@@ -16,9 +57,13 @@
 			</ul>
 			<br />
 
-			<button class="btn btn-danger" @click="deleteMe(currentAdmin!._id)">Delete</button>
-			<button class="btn btn-primary"
-							@click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()">
+      <button class="btn-danger btn" @click="deleteMe(currentAdmin!._id)">
+        Delete
+      </button>
+      <button
+        class="btn-primary btn"
+        @click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()"
+      >
 				{{ adminEdit ? "Save" : "Edit" }}
 			</button>
 		</div>
@@ -43,46 +88,11 @@
 			</ul>
 		</div>
 
-		<p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="error">
+      {{ error }}
+    </p>
 	</section>
 </template>
-
-<script lang="ts" setup>
-import { useDeleteAccount } from "@/composables/useDeleteAccount";
-import { onMounted, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { useAppStore } from "@/stores/app";
-import { useEditable } from "@/composables/useEditable";
-import ProfileFields from "@/components/ProfileFields.vue";
-
-/* -------------------------------------------------- */
-const app = useAppStore();
-const { currentAdmin, tutors, users } = storeToRefs(app);
-const error = ref("");
-const deleteMe = useDeleteAccount("admin");
-
-/* editable helper for the admin card */
-const {
-	editing: adminEdit,
-	toggle: toggleAdmin,
-	save: saveAdmin
-} = useEditable("admin");
-
-/* field list (admin / tutor / user share the same set) */
-const fields = [
-	{ key: "name", label: "Name" },
-	{ key: "email", label: "Email" },
-	{ key: "age", label: "Age" },
-	{ key: "state", label: "State" }
-];
-
-/* fetch everything once */
-async function loadAll() {
-	await Promise.all([app.fetchTutors(), app.fetchUsers(), app.refreshCurrentAdmin()]);
-}
-
-onMounted(loadAll);
-</script>
 
 <style scoped>
 ul {

@@ -1,34 +1,9 @@
-<template>
-	<section class="Signup text-center">
-		<h2>Profile</h2>
-
-		<div v-if="currentUser" class="tutorList mt-2">
-			<br />
-			<ul>
-				<li><h4>User</h4></li>
-
-				<ProfileFields
-					:editing="editing"
-					:entity="currentUser"
-					:fields="fields"
-				/>
-			</ul>
-			<br />
-
-			<button class="btn btn-danger" @click="deleteMe(currentUser!._id)">Delete</button>
-			<button class="btn btn-primary" @click="editing ? save(currentUser) : toggle()">
-				{{ editing ? "Save" : "Edit" }}
-			</button>
-		</div>
-	</section>
-</template>
-
 <script lang="ts" setup>
-import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { storeToRefs } from "pinia";
-import { useAppStore } from "@/stores/app";
-import { useEditable } from "@/composables/useEditable";
 import ProfileFields from "@/components/ProfileFields.vue";
+import { useDeleteAccount } from "@/composables/useDeleteAccount";
+import { useEditable } from "@/composables/useEditable";
+import { useAppStore } from "@/stores/app";
 
 /* -------------------------------------------------- */
 /*  Pinia state                                       */
@@ -53,6 +28,36 @@ const fields = [
 ];
 </script>
 
+<template>
+  <section class="Signup text-center">
+    <h2>Profile</h2>
+
+    <div v-if="currentUser" class="tutorList mt-2">
+      <br />
+      <ul>
+        <li><h4>User</h4></li>
+
+        <ProfileFields
+          :editing="editing"
+          :entity="currentUser"
+          :fields="fields"
+        />
+      </ul>
+      <br />
+
+      <button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
+        Delete
+      </button>
+      <button
+        class="btn-primary btn"
+        @click="editing ? save(currentUser) : toggle()"
+      >
+        {{ editing ? "Save" : "Edit" }}
+      </button>
+    </div>
+  </section>
+</template>
+
 <style scoped>
 ul {
 	display: flex;
@@ -63,7 +68,8 @@ ul p {
 	display: inline;
 }
 
-div.tutorList, li {
+div.tutorList,
+li {
 	align-self: center;
 }
 

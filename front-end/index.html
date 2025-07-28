@@ -1,23 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <link href="/pwa-192x192.png" rel="apple-touch-icon" />
-  <link color="#00aba9" href="/safari-pinned-tab.svg" rel="mask-icon" />
-  <meta content="#00aba9" name="msapplication-TileColor" />
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport" />
+  <title>
+    Operation Opportunity
+  </title>
+
+  <!-- Favicons -->
+  <link href="assets/Favicons/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+  <link href="assets/Favicons/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  <link href="assets/Favicons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  <link href="assets/site.webmanifest" rel="manifest">
+  <link color="#5bbad5" href="" rel="mask-icon">
+
+  <!--    <link href="https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+1+Saywa/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">-->
+  <!--    <link href="https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+1+Saywa/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">-->
+  <!--    <link href="https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+1+Saywa/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">-->
+  <!--    <link href="https://jacobdanderson.s3.amazonaws.com/Favicons/favicons+Logo+1+Saywa/site.webmanifest" rel="manifest">-->
+  <!--    <link color="#5bbad5" href="" rel="mask-icon">-->
+
+  <meta content="#da532c" name="msapplication-TileColor">
+  <meta content="#ffffff" name="theme-color">
+  <meta content="Operation Opportunity is dedicated to helping all students everywhere become ready and prepared for college.
+									  Starting early on, our priority is to help students develope study and critical thinking skills,
+									  aid them through the college application process, and make higher education more accesible to everyone."
+        name="description" />
+  <meta content="index,follow" name="robots" />
+
   <script>
     ;(function() {
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark =
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
       const setting = localStorage.getItem("vueuse-color-scheme") || "auto";
       if (setting === "dark" || (prefersDark && setting !== "light"))
         document.documentElement.classList.toggle("dark", true);
     })();
   </script>
 </head>
+
 <body class="font-sans">
 <div id="app"></div>
-<script src="/src/main.ts" type="module"></script>
-<noscript> This website requires JavaScript to function properly. Please enable JavaScript to continue.</noscript>
+<script src="./src/main.ts" type="module"></script>
+<noscript>
+  This website requires JavaScript to function properly. Please enable
+  JavaScript to continue.
+</noscript>
 </body>
 </html>

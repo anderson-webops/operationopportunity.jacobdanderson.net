@@ -1,4 +1,127 @@
 <!-- src/components/AccountManagement.vue -->
+<script lang="ts" setup>
+import type { AxiosError } from "axios";
+import axios from "axios";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+import { useAppStore } from "@/stores/app";
+
+const app = useAppStore();
+
+// ─── LOGIN STATE & METHODS ──────────────────────────────────────────
+const { loginBlock, signupBlock } = storeToRefs(app);
+
+const loginEmail = ref("");
+const loginPassword = ref("");
+const errorLogin = ref("");
+
+function changeLoginView(show: boolean) {
+  app.setLoginBlock(show);
+}
+
+async function loginTutor() {
+  errorLogin.value = "";
+  if (!loginEmail.value || !loginPassword.value) return;
+  try {
+    const { data } = await axios.post(
+      "/api/accounts/login",
+      {
+        email: loginEmail.value,
+        password: loginPassword.value
+      },
+      { withCredentials: true }
+    );
+    if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
+    if (data.currentUser) app.setCurrentUser(data.currentUser);
+    if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
+    changeLoginView(false);
+  } catch (err: unknown) {
+    const e = err as AxiosError<{ message?: string }>;
+    errorLogin.value = `Login failed: ${
+      e.response?.data?.message ?? e.message ?? "Unknown error"
+    }`;
+  }
+}
+
+// form state
+const signupType = ref<"tutor" | "user">("tutor");
+const name = ref("");
+const age = ref("");
+const state = ref("");
+const email = ref("");
+const password = ref("");
+const passwordRepeat = ref("");
+const error = ref("");
+
+// simple password‐match guard
+const passwordMatch = computed(() => password.value === passwordRepeat.value);
+
+// close / open (comes from your store)
+function changeSignupView(show: boolean) {
+  app.setSignupBlock(show);
+}
+
+// reset inputs after submission
+function resetData() {
+  name.value =
+    age.value =
+      state.value =
+        email.value =
+          password.value =
+            passwordRepeat.value =
+              "";
+  error.value = "";
+}
+
+// on submit, dispatch to the right endpoint
+async function addSignup() {
+  if (!passwordMatch.value) return;
+
+  try {
+    // fire the right endpoint with credentials turned on
+    const res =
+      signupType.value === "tutor"
+        ? await axios.post(
+          "/api/tutors",
+          {
+            name: name.value,
+            age: age.value,
+            state: state.value,
+            email: email.value,
+            password: password.value
+          },
+          { withCredentials: true }
+        )
+        : await axios.post(
+          "/api/users",
+          {
+            name: name.value,
+            age: age.value,
+            state: state.value,
+            email: email.value,
+            password: password.value
+          },
+          { withCredentials: true }
+        );
+
+    // immediately stash the newly-created user/tutor into Pinia
+    if (res.data.currentTutor) {
+      app.setCurrentTutor(res.data.currentTutor);
+    } else if (res.data.currentUser) {
+      app.setCurrentUser(res.data.currentUser);
+    }
+
+    resetData();
+    changeSignupView(false);
+  } catch (err: unknown) {
+    const e = err as AxiosError<{ message?: string }>;
+    errorLogin.value = `Error: ${
+      e.response?.data?.message ?? e.message ?? "Unknown error"
+    }`;
+  }
+}
+</script>
+
 <template>
 	<div>
 		<!----------------
@@ -6,10 +129,12 @@
 		----------------->
 
 		<!-- The Modal -->
-		<div :class="{ showLogin: loginBlock }" class="modal loginForm">
+    <div :class="{ showLogin: loginBlock }" class="loginForm modal">
 			<!-- Modal Content -->
-			<form class="modal-content animate" @submit.prevent="loginTutor">
-				<span class="close" title="Close Modal" @click="changeLoginView(false)">&times;</span>
+      <form class="animate modal-content" @submit.prevent="loginTutor">
+				<span class="close" title="Close Modal" @click="changeLoginView(false)"
+        >&times;</span
+        >
 
 				<div class="imgcontainer">
 					<img
@@ -44,14 +169,14 @@
 						me
 					</label>
 					<span class="signup"
-					>Don't have an account?
-            <a
+          >Don't have an account?
+						<a
 							href="#"
 							@click="
-                changeLoginView(false);
-                changeSignupView(true);
-              "
-						>Sign Up</a
+								changeLoginView(false);
+								changeSignupView(true);
+							"
+            >Sign Up</a
 						></span
 					>
 				</div>
@@ -64,7 +189,9 @@
 					>
 						Cancel
 					</button>
-					<p v-if="errorLogin" class="error loginError">{{ errorLogin }}</p>
+          <p v-if="errorLogin" class="error loginError">
+            {{ errorLogin }}
+          </p>
 					<span class="psw">Forgot <a href="#">password?</a></span>
 				</div>
 			</form>
@@ -83,19 +210,11 @@
 					<!-- ─── User Type Selector ────────────────────────────────────────── -->
 					<div class="mb-3">
 						<label>
-							<input
-								v-model="signupType"
-								type="radio"
-								value="tutor"
-							/> Tutor
+              <input v-model="signupType" type="radio" value="tutor" /> Tutor
 						</label>
 						&ensp;
 						<label>
-							<input
-								v-model="signupType"
-								type="radio"
-								value="user"
-							/> User
+              <input v-model="signupType" type="radio" value="user" /> User
 						</label>
 					</div>
 
@@ -155,124 +274,21 @@
 					/>
 
 					<button class="signup button" type="submit">
-						Sign Up as a {{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
+            Sign Up as a
+            {{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
 					</button>
 
 					<p v-if="!passwordMatch" class="passwordMatchError">
 						Passwords do not match.
 					</p>
-					<p v-if="error" class="error">{{ error }}</p>
+          <p v-if="error" class="error">
+            {{ error }}
+          </p>
 				</div>
 			</form>
 		</div>
 	</div>
 </template>
-
-<script lang="ts" setup>
-import { computed, ref } from "vue";
-import { useAppStore } from "@/stores/app";
-import axios from "axios";
-import { storeToRefs } from "pinia";
-
-const app = useAppStore();
-
-// ─── LOGIN STATE & METHODS ──────────────────────────────────────────
-const { loginBlock, signupBlock } = storeToRefs(app);
-
-const loginEmail = ref("");
-const loginPassword = ref("");
-const errorLogin = ref("");
-
-function changeLoginView(show: boolean) {
-	app.setLoginBlock(show);
-}
-
-async function loginTutor() {
-	errorLogin.value = "";
-	if (!loginEmail.value || !loginPassword.value) return;
-	try {
-		const { data } = await axios.post("/api/accounts/login", {
-			email: loginEmail.value,
-			password: loginPassword.value
-		}, { withCredentials: true });
-		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
-		if (data.currentUser) app.setCurrentUser(data.currentUser);
-		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
-		changeLoginView(false);
-	} catch (err: any) {
-		errorLogin.value = "Login failed: " + (err.response?.data?.message ?? err.message);
-	}
-}
-
-// form state
-const signupType = ref<"tutor" | "user">("tutor");
-const name = ref("");
-const age = ref("");
-const state = ref("");
-const email = ref("");
-const password = ref("");
-const passwordRepeat = ref("");
-const error = ref("");
-
-// simple password‐match guard
-const passwordMatch = computed(() => password.value === passwordRepeat.value);
-
-// close / open (comes from your store)
-function changeSignupView(show: boolean) {
-	app.setSignupBlock(show);
-}
-
-// reset inputs after submission
-function resetData() {
-	name.value = age.value = state.value = email.value = password.value = passwordRepeat.value = "";
-	error.value = "";
-}
-
-// on submit, dispatch to the right endpoint
-async function addSignup() {
-	if (!passwordMatch.value) return;
-
-	try {
-		// fire the right endpoint with credentials turned on
-		const res = signupType.value === "tutor"
-			? await axios.post(
-				"/api/tutors",
-				{
-					name: name.value,
-					age: age.value,
-					state: state.value,
-					email: email.value,
-					password: password.value
-				},
-				{ withCredentials: true }
-			)
-			: await axios.post(
-				"/api/users",
-				{
-					name: name.value,
-					age: age.value,
-					state: state.value,
-					email: email.value,
-					password: password.value
-				},
-				{ withCredentials: true }
-			);
-
-		// immediately stash the newly-created user/tutor into Pinia
-		if (res.data.currentTutor) {
-			app.setCurrentTutor(res.data.currentTutor);
-		} else if (res.data.currentUser) {
-			app.setCurrentUser(res.data.currentUser);
-		}
-
-
-		resetData();
-		changeSignupView(false);
-	} catch (err: any) {
-		error.value = "Error: " + (err.response?.data?.message ?? err.message);
-	}
-}
-</script>
 
 <style scoped>
 /*****************************

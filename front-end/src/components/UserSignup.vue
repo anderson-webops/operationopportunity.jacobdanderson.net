@@ -1,3 +1,117 @@
+<script lang="ts" setup>
+import type { Tutor, User } from "@/stores/app";
+import axios from "axios";
+import { storeToRefs } from "pinia";
+import { onMounted, ref } from "vue";
+import { useAppStore } from "@/stores/app";
+
+const app = useAppStore();
+const {
+  tutors,
+  currentUser,
+  currentTutor,
+  currentAdmin: admin
+} = storeToRefs(app);
+
+const selectedTutor = ref<Tutor | null>(null);
+const showTutors = ref(false);
+const numberOfUsers = ref(0);
+const error = ref("");
+
+// fetch tutors & init select
+async function getTutors() {
+  await app.fetchTutors();
+  if (tutors.value.length && !selectedTutor.value) {
+    selectedTutor.value = tutors.value[0];
+  }
+}
+
+// fetch total users
+async function getNumberOfUsers() {
+  const { data } = await axios.get<User[]>("/api/users/all");
+  numberOfUsers.value = data.length;
+}
+
+// fetch users for one tutor & sync count
+async function getUsers(t: Tutor | null) {
+  await getNumberOfUsers();
+  if (!t) return;
+
+  const { data } = await axios.get<User[]>(`/api/users/oftutor/${t._id}`);
+  app.setUsers(data);
+  await axios.put(`/api/tutors/${t._id}`, {
+    ...t,
+    usersOfTutorLength: data.length
+  });
+}
+
+// form submit
+async function addUser() {
+  if (!selectedTutor.value) {
+    error.value = "No tutor selected.";
+    return;
+  }
+  try {
+    const { data } = await axios.post(`/api/users/${selectedTutor.value._id}`, {
+      currentUser: currentUser.value
+    });
+    if (data.currentUser) {
+      app.setCurrentUser(data.currentUser);
+    }
+    app.setSignupBlock(false);
+    await getUsers(selectedTutor.value);
+  } catch (e: any) {
+    error.value = `Error: ${e.response?.data?.message ?? e.message}`;
+  }
+}
+
+// select tutor as current user
+async function selectTutor(t: Tutor) {
+  if (!currentUser.value) return;
+  try {
+    await axios.put(`/api/users/selectTutor/${currentUser.value._id}/${t._id}`);
+    await app.refreshCurrentUser();
+  } catch (e: any) {
+    error.value = `Error: ${e.response?.data?.message ?? e.message}`;
+  }
+}
+
+// admin/tutor edit & delete
+async function editTutor(t: Tutor) {
+  if (!admin.value && currentTutor.value?._id !== t._id) return;
+  try {
+    await axios.put(`/api/tutors/${t._id}`, {
+      ...t,
+      editTutors: !t.editTutors,
+      saveEdit: t.editTutors ? "Edit" : "Save"
+    });
+    await getTutors();
+  } catch (e: any) {
+    error.value = `Error: ${e.response?.data?.message ?? e.message}`;
+  }
+}
+
+async function deleteTutor(t: Tutor) {
+  if (!admin.value && currentTutor.value?._id !== t._id) return;
+  try {
+    await getUsers(t);
+    await axios.delete(`/api/users/under/${t._id}`);
+    await axios.delete(`/api/tutors/remove/${t._id}`);
+    await getTutors();
+    await getUsers(null);
+  } catch (e: any) {
+    error.value = `Error: ${e.response?.data?.message ?? e.message}`;
+  }
+}
+
+onMounted(() => {
+  getTutors()
+    .then(() => getUsers(selectedTutor.value))
+    .catch(() => {
+    });
+});
+</script>
+
 <template>
 	<div>
 		<h2 class="mt-5">Sign Up</h2>
@@ -10,11 +124,8 @@
 					v-model="selectedTutor"
 					required
 				>
-					<option
-						v-for="t in tutors"
-						:key="t._id"
-						:value="t"
-					>{{ t.name }}
+          <option v-for="t in tutors" :key="t._id" :value="t">
+            {{ t.name }}
 					</option>
 				</select>
 				<p v-else class="notutors">No Tutors are available</p>
@@ -67,22 +178,26 @@
 
 					<template v-else>
 						<li>
-							<label>Name:&emsp;
+              <label
+              >Name:&emsp;
 								<input v-model="t.name" class="editTutor" type="text" />
 							</label>
 						</li>
 						<li>
-							<label>Email:&emsp;
+              <label
+              >Email:&emsp;
 								<input v-model="t.email" class="editTutor" type="text" />
 							</label>
 						</li>
 						<li>
-							<label>Age:&emsp;
+              <label
+              >Age:&emsp;
 								<input v-model="t.age" class="editTutor" type="text" />
 							</label>
 						</li>
 						<li>
-							<label>State:&emsp;
+              <label
+              >State:&emsp;
 								<input v-model="t.state" class="editTutor" type="text" />
 							</label>
 						</li>
@@ -91,10 +206,16 @@
 				<br />
 
 				<!-- Admin or this tutor can remove/edit -->
-				<button v-if="admin || currentTutor?._id === t._id" @click="deleteTutor(t)">
+        <button
+          v-if="admin || currentTutor?._id === t._id"
+          @click="deleteTutor(t)"
+        >
 					Remove
 				</button>
-				<button v-if="admin || currentTutor?._id === t._id" @click="editTutor(t)">
+        <button
+          v-if="admin || currentTutor?._id === t._id"
+          @click="editTutor(t)"
+        >
 					{{ t.saveEdit }}
 				</button>
 
@@ -103,122 +224,17 @@
 					v-if="currentUser"
 					:class="{ colorSelect: currentUser?._id === t._id }"
 					@click="selectTutor(t)"
-				>Select
+        >
+          Select
 				</button>
 			</div>
 		</div>
 
-		<p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="error">
+      {{ error }}
+    </p>
 	</div>
 </template>
-
-<script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { storeToRefs } from "pinia";
-import axios from "axios";
-import { type Tutor, useAppStore, type User } from "@/stores/app";
-
-const app = useAppStore();
-const { tutors, currentUser, currentTutor, currentAdmin: admin } = storeToRefs(app);
-
-const selectedTutor = ref<Tutor | null>(null);
-const showTutors = ref(false);
-const numberOfUsers = ref(0);
-const error = ref("");
-
-// fetch tutors & init select
-async function getTutors() {
-	await app.fetchTutors();
-	if (tutors.value.length && !selectedTutor.value) {
-		selectedTutor.value = tutors.value[0];
-	}
-}
-
-// fetch total users
-async function getNumberOfUsers() {
-	const { data } = await axios.get<User[]>("/api/users/all");
-	numberOfUsers.value = data.length;
-}
-
-// fetch users for one tutor & sync count
-async function getUsers(t: Tutor | null) {
-	await getNumberOfUsers();
-	if (!t) return;
-
-	const { data } = await axios.get<User[]>(`/api/users/oftutor/${t._id}`);
-	app.setUsers(data);
-	await axios.put(`/api/tutors/${t._id}`, {
-		...t,
-		usersOfTutorLength: data.length
-	});
-}
-
-// form submit
-async function addUser() {
-	if (!selectedTutor.value) {
-		error.value = "No tutor selected.";
-		return;
-	}
-	try {
-		const { data } = await axios.post(`/api/users/${selectedTutor.value._id}`,
-			{ currentUser: currentUser.value }
-		);
-		if (data.currentUser) {
-			app.setCurrentUser(data.currentUser);
-		}
-		app.setSignupBlock(false);
-		await getUsers(selectedTutor.value);
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-// select tutor as current user
-async function selectTutor(t: Tutor) {
-	if (!currentUser.value) return;
-	try {
-		await axios.put(`/api/users/selectTutor/${currentUser.value._id}/${t._id}`);
-		await app.refreshCurrentUser();
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-// admin/tutor edit & delete
-async function editTutor(t: Tutor) {
-	if (!admin.value && currentTutor.value?._id !== t._id) return;
-	try {
-		await axios.put(`/api/tutors/${t._id}`, {
-			...t,
-			editTutors: !t.editTutors,
-			saveEdit: t.editTutors ? "Edit" : "Save"
-		});
-		await getTutors();
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-async function deleteTutor(t: Tutor) {
-	if (!admin.value && currentTutor.value?._id !== t._id) return;
-	try {
-		await getUsers(t);
-		await axios.delete(`/api/users/under/${t._id}`);
-		await axios.delete(`/api/tutors/remove/${t._id}`);
-		await getTutors();
-		await getUsers(null);
-	} catch (e: any) {
-		error.value = "Error: " + (e.response?.data?.message ?? e.message);
-	}
-}
-
-onMounted(() => {
-	getTutors()
-		.then(() => getUsers(selectedTutor.value))
-		.catch(() => {
-		});
-});
-</script>
 
 <style scoped>
 ul {
@@ -230,7 +246,8 @@ ul p {
 	display: inline;
 }
 
-div.tutorList, li {
+div.tutorList,
+li {
 	align-self: center;
 }
 

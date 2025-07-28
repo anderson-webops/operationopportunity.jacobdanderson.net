@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { useAppStore } from "@/stores/app";
-
-import TheHeader from "@/components/TheHeader.vue";
-import AccountManagement from "@/components/AccountManagement.vue";
-import TheFooter from "@/components/TheFooter.vue";
+import AccountManagement from "./components/AccountManagement.vue";
+import TheFooter from "./components/TheFooter.vue";
+import TheHeader from "./components/TheHeader.vue";
+import { useAppStore } from "./stores/app";
 
 const app = useAppStore();
 
@@ -27,14 +26,14 @@ useHead({
     },
     {
       name: "theme-color",
-      content: () => isDark.value ? "#00aba9" : "#ffffff"
+      content: () => (isDark.value ? "#00aba9" : "#ffffff")
     }
   ],
   link: [
     {
       rel: "icon",
       type: "image/svg+xml",
-      href: () => preferredDark.value ? "/favicon-dark.svg" : "/favicon.svg"
+      href: () => (preferredDark.value ? "/favicon-dark.svg" : "/favicon.svg")
     }
   ]
 });
@@ -46,8 +45,7 @@ useHead({
     -   Navigation   -
     ----------------->
 
-		<TheHeader @login-click="showLoginModal"
-							 @signup-click="showSignupModal" />
+    <TheHeader @login-click="showLoginModal" @signup-click="showSignupModal" />
 
 		<!----------------------------
     -   Login and Signup Forms   -
@@ -69,6 +67,4 @@ useHead({
 	</div>
 </template>
 
-<style>
-
-</style>
+<style></style>

@@ -1,3 +1,7 @@
+<script lang="ts" setup>
+defineOptions({ name: "SupportUsPage" });
+</script>
+
 <template>
 	<!-------------
   -   Section   -
@@ -22,9 +26,5 @@
 		</p>
 	</section>
 </template>
-
-<script lang="ts" setup>
-defineOptions({ name: "SupportUsPage" });
-</script>
 
 <style scoped></style>

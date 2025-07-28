@@ -119,6 +119,7 @@ declare global {
   const until: typeof import("@vueuse/core")["until"];
   const useActiveElement: typeof import("@vueuse/core")["useActiveElement"];
   const useAnimate: typeof import("@vueuse/core")["useAnimate"];
+  const useAppStore: typeof import("./stores/app")["useAppStore"];
   const useArrayDifference: typeof import("@vueuse/core")["useArrayDifference"];
   const useArrayEvery: typeof import("@vueuse/core")["useArrayEvery"];
   const useArrayFilter: typeof import("@vueuse/core")["useArrayFilter"];
@@ -158,6 +159,7 @@ declare global {
   const useDebounce: typeof import("@vueuse/core")["useDebounce"];
   const useDebounceFn: typeof import("@vueuse/core")["useDebounceFn"];
   const useDebouncedRefHistory: typeof import("@vueuse/core")["useDebouncedRefHistory"];
+  const useDeleteAccount: typeof import("./composables/useDeleteAccount")["useDeleteAccount"];
   const useDeviceMotion: typeof import("@vueuse/core")["useDeviceMotion"];
   const useDeviceOrientation: typeof import("@vueuse/core")["useDeviceOrientation"];
   const useDevicePixelRatio: typeof import("@vueuse/core")["useDevicePixelRatio"];
@@ -166,6 +168,7 @@ declare global {
   const useDocumentVisibility: typeof import("@vueuse/core")["useDocumentVisibility"];
   const useDraggable: typeof import("@vueuse/core")["useDraggable"];
   const useDropZone: typeof import("@vueuse/core")["useDropZone"];
+  const useEditable: typeof import("./composables/useEditable")["useEditable"];
   const useElementBounding: typeof import("@vueuse/core")["useElementBounding"];
   const useElementByPoint: typeof import("@vueuse/core")["useElementByPoint"];
   const useElementHover: typeof import("@vueuse/core")["useElementHover"];
@@ -314,6 +317,8 @@ declare global {
   // @ts-ignore
   export type {
     Component,
+    Slot,
+    Slots,
     ComponentPublicInstance,
     ComputedRef,
     DirectiveBinding,
@@ -329,6 +334,9 @@ declare global {
     WritableComputedRef
   } from "vue";
   import("vue");
+  // @ts-ignore
+  export type { Tutor, User, Admin } from "./stores/app";
+  import("./stores/app");
 }
 
 // for vue template auto import
@@ -337,7 +345,6 @@ import { UnwrapRef } from "vue";
 declare module "vue" {
   interface GlobalComponents {
   }
-
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import("vue")["EffectScope"]>;
     readonly asyncComputed: UnwrapRef<typeof import("@vueuse/core")["asyncComputed"]>;
@@ -449,6 +456,7 @@ declare module "vue" {
     readonly until: UnwrapRef<typeof import("@vueuse/core")["until"]>;
     readonly useActiveElement: UnwrapRef<typeof import("@vueuse/core")["useActiveElement"]>;
     readonly useAnimate: UnwrapRef<typeof import("@vueuse/core")["useAnimate"]>;
+    readonly useAppStore: UnwrapRef<typeof import("./stores/app")["useAppStore"]>;
     readonly useArrayDifference: UnwrapRef<typeof import("@vueuse/core")["useArrayDifference"]>;
     readonly useArrayEvery: UnwrapRef<typeof import("@vueuse/core")["useArrayEvery"]>;
     readonly useArrayFilter: UnwrapRef<typeof import("@vueuse/core")["useArrayFilter"]>;
@@ -488,6 +496,7 @@ declare module "vue" {
     readonly useDebounce: UnwrapRef<typeof import("@vueuse/core")["useDebounce"]>;
     readonly useDebounceFn: UnwrapRef<typeof import("@vueuse/core")["useDebounceFn"]>;
     readonly useDebouncedRefHistory: UnwrapRef<typeof import("@vueuse/core")["useDebouncedRefHistory"]>;
+    readonly useDeleteAccount: UnwrapRef<typeof import("./composables/useDeleteAccount")["useDeleteAccount"]>;
     readonly useDeviceMotion: UnwrapRef<typeof import("@vueuse/core")["useDeviceMotion"]>;
     readonly useDeviceOrientation: UnwrapRef<typeof import("@vueuse/core")["useDeviceOrientation"]>;
     readonly useDevicePixelRatio: UnwrapRef<typeof import("@vueuse/core")["useDevicePixelRatio"]>;
@@ -496,6 +505,7 @@ declare module "vue" {
     readonly useDocumentVisibility: UnwrapRef<typeof import("@vueuse/core")["useDocumentVisibility"]>;
     readonly useDraggable: UnwrapRef<typeof import("@vueuse/core")["useDraggable"]>;
     readonly useDropZone: UnwrapRef<typeof import("@vueuse/core")["useDropZone"]>;
+    readonly useEditable: UnwrapRef<typeof import("./composables/useEditable")["useEditable"]>;
     readonly useElementBounding: UnwrapRef<typeof import("@vueuse/core")["useElementBounding"]>;
     readonly useElementByPoint: UnwrapRef<typeof import("@vueuse/core")["useElementByPoint"]>;
     readonly useElementHover: UnwrapRef<typeof import("@vueuse/core")["useElementHover"]>;

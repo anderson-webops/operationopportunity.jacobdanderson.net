@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+/* DevTools / warning-friendly name */
+defineOptions({ name: "AboutPage" });
+</script>
+
 <template>
 	<!-------------
   -   Section   -
@@ -24,11 +29,6 @@
 		</p>
 	</section>
 </template>
-
-<script lang="ts" setup>
-/* DevTools / warning-friendly name */
-defineOptions({ name: "AboutPage" });
-</script>
 
 <style scoped>
 p {

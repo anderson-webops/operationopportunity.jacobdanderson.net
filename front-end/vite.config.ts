@@ -1,4 +1,4 @@
-import path from "node:path";
+import path, { resolve } from "node:path";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Shiki from "@shikijs/markdown-it";
 import { unheadVueComposablesImports } from "@unhead/vue";
@@ -14,30 +14,33 @@ import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import VueDevTools from "vite-plugin-vue-devtools";
-import Layouts from "vite-plugin-vue-layouts";
+import Layouts from "vite-plugin-vue-layouts-next";
+import WebfontDownload from "vite-plugin-webfont-dl";
 import generateSitemap from "vite-ssg-sitemap";
 import "vitest/config";
 
 export default defineConfig({
   resolve: {
     alias: {
-      "~/": `${path.resolve(__dirname, "src")}/`
+      "~": `${resolve(__dirname, "src")}/`,
+      "@": `${resolve(__dirname, "src")}/`   // 👈  NEW
     }
   },
 
   plugins: [
-    // https://github.com/posva/unplugin-vue-router
-    VueRouter({
-      extensions: [".vue", ".md"],
-      dts: "src/typed-router.d.ts"
-    }),
-
+    Vue(),
     VueMacros({
       plugins: {
         vue: Vue({
           include: [/\.vue$/, /\.md$/]
         })
       }
+    }),
+
+    // https://github.com/posva/unplugin-vue-router
+    VueRouter({
+      extensions: [".vue", ".md"],
+      dts: "src/typed-router.d.ts"
     }),
 
     // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
@@ -49,13 +52,14 @@ export default defineConfig({
       imports: [
         "vue",
         "vue-i18n",
+        "@vueuse/head",
         "@vueuse/core",
         unheadVueComposablesImports,
         VueRouterAutoImports,
         {
           // add any other imports you were relying on
           "vue-router/auto": ["useLink"]
-        }
+        },
       ],
       dts: "src/auto-imports.d.ts",
       dirs: [
@@ -89,16 +93,16 @@ export default defineConfig({
           attrs: {
             target: "_blank",
             rel: "noopener"
-          }
+          },
         });
         md.use(await Shiki({
           defaultColor: false,
           themes: {
             light: "vitesse-light",
             dark: "vitesse-dark"
-          }
+          },
         }));
-      }
+      },
     }),
 
     // https://github.com/antfu/vite-plugin-pwa
@@ -125,9 +129,9 @@ export default defineConfig({
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
-          }
-        ]
-      }
+          },
+        ],
+      },
     }),
 
     // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
@@ -137,6 +141,9 @@ export default defineConfig({
       fullInstall: true,
       include: [path.resolve(__dirname, "locales/**")]
     }),
+
+    // https://github.com/feat-agency/vite-plugin-webfont-dl
+    WebfontDownload(),
 
     // https://github.com/webfansplz/vite-plugin-vue-devtools
     VueDevTools()
@@ -157,11 +164,11 @@ export default defineConfig({
     },
     onFinished() {
       generateSitemap();
-    }
+    },
   },
 
   ssr: {
     // TODO: workaround until they support native ESM
     noExternal: ["workbox-window", /vue-i18n/]
-  }
+  },
 });

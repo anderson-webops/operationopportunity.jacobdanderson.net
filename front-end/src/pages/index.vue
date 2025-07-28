@@ -8,8 +8,7 @@ const name = ref(user.savedName);
 const router = useRouter();
 
 function go() {
-  if (name.value)
-    router.push(`/hi/${encodeURIComponent(name.value)}`);
+  if (name.value) router.push(`/hi/${encodeURIComponent(name.value)}`);
 }
 
 const { t } = useI18n();
@@ -24,7 +23,11 @@ useHead({
       <div i-carbon-campsite inline-block />
     </div>
     <p>
-      <a href="https://github.com/antfu/vitesse" rel="noreferrer" target="_blank">
+      <a
+        href="https://github.com/antfu/vitesse"
+        rel="noreferrer"
+        target="_blank"
+      >
         Vitesse
       </a>
     </p>
@@ -43,11 +46,7 @@ useHead({
     <label class="hidden" for="input">{{ t("intro.whats-your-name") }}</label>
 
     <div>
-      <button
-        :disabled="!name" btn m-3
-        text-sm
-        @click="go"
-      >
+      <button :disabled="!name" btn m-3 text-sm @click="go">
         {{ t("button.go") }}
       </button>
     </div>

@@ -1,3 +1,39 @@
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+
+defineOptions({ name: "HomePage" });
+
+/* ------------------------------------------------------------------ */
+/*  Reactive state                                                    */
+/* ------------------------------------------------------------------ */
+const quotePresent = ref(false);
+const quoteText = ref("");
+const quoteAuthor = ref("");
+
+/* ------------------------------------------------------------------ */
+/*  Fetch a random quote (kept commented—you can restore when ready)  */
+/* ------------------------------------------------------------------ */
+async function updateQuote() {
+  /* Example:
+  const url = "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
+  const res = await fetch(url);
+  const data = await res.json();
+  const random = Math.floor(Math.random() * data.data.length);
+  const quote  = data.data[random];
+
+  quoteText.value    = quote.quoteText;
+  quoteAuthor.value  = quote.quoteAuthor;
+  quotePresent.value = true;
+  */
+}
+
+onMounted(() => {
+  updateQuote().catch(() => {
+    /* silent fail */
+  });
+});
+</script>
+
 <template>
 	<!-------------
   -   Section   -
@@ -29,41 +65,6 @@
 		</p>
 	</section>
 </template>
-
-<script lang="ts" setup>
-import { onMounted, ref } from "vue";
-
-defineOptions({ name: "HomePage" });
-
-/* ------------------------------------------------------------------ */
-/*  Reactive state                                                    */
-/* ------------------------------------------------------------------ */
-const quotePresent = ref(false);
-const quoteText = ref("");
-const quoteAuthor = ref("");
-
-/* ------------------------------------------------------------------ */
-/*  Fetch a random quote (kept commented—you can restore when ready)  */
-/* ------------------------------------------------------------------ */
-const updateQuote = async () => {
-	/* Example:
-	const url = "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-	const res = await fetch(url);
-	const data = await res.json();
-	const random = Math.floor(Math.random() * data.data.length);
-	const quote  = data.data[random];
-
-	quoteText.value    = quote.quoteText;
-	quoteAuthor.value  = quote.quoteAuthor;
-	quotePresent.value = true;
-	*/
-};
-
-onMounted(() => {
-	updateQuote().catch(() => {/* silent fail */
-	});
-});
-</script>
 
 <style scoped>
 span {

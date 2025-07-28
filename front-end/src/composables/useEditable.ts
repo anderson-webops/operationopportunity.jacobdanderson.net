@@ -1,13 +1,13 @@
-import { ref } from "vue";
 import axios from "axios";
+import { ref } from "vue";
 import { useAppStore } from "@/stores/app";
 
-type Kind = "user" | "tutor" | "admin"
+type Kind = "user" | "tutor" | "admin";
 
 export function useEditable(kind: Kind) {
 	const app = useAppStore();
 	const editing = ref(false);
-	let baseline = "";           // original e-mail so we know if it changed
+  let baseline = ""; // original e-mail so we know if it changed
 
 	/* ----------------------------------------- */
 	/*  toggle between view / edit               */
@@ -25,7 +25,9 @@ export function useEditable(kind: Kind) {
 		// 1) change-e-mail if needed
 		if (!baseline) baseline = entity.email;
 		if (entity.email !== baseline) {
-			await axios.post(`/api/accounts/changeEmail/${entity._id}`, { email: entity.email });
+      await axios.post(`/api/accounts/changeEmail/${entity._id}`, {
+        email: entity.email
+      });
 			baseline = entity.email;
 		}
 

@@ -1,49 +1,61 @@
 {
   "compilerOptions": {
+    /* language & emit ------------------------------------------------------ */
     "target": "ESNext",
     "lib": [
       "ESNext",
       "DOM",
       "DOM.Iterable"
     ],
-    "jsx": "react-jsx",
-    "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    /* aliases -------------------------------------------------------------- */
     "paths": {
       "~/*": [
         "src/*"
+      ],
+      "@/*": [
+        "src/*"
       ]
+      // 👈  NEW  — matches Vite’s "@/…" imports
     },
-    "resolveJsonModule": true,
+    /* convenience ---------------------------------------------------------- */
     "allowJs": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    /* strictness & lint-friendly flags ------------------------------------- */
     "strict": true,
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "skipLibCheck": true,
-    "useDefineForClassFields": true,
-    "allowImportingTsExtensions": true,
+    /* noEmit because Vite handles bundling --------------------------------- */
     "noEmit": true
   },
+  /* tell Volar about the Vue-Macros plugins (unchanged) */
   "vueCompilerOptions": {
     "plugins": [
       "@vue-macros/volar/define-models",
       "@vue-macros/volar/define-slots"
     ]
   },
+  /* the generated .d.ts files live under src/, so no change needed */
+  "include": [
+    "src"
+  ],
   "exclude": [
     "dist",
     "node_modules",
     "cypress"
   ],
-  "include": [
-    "src"
-  ],
+  /* project reference for vite.config.ts type-checking (unchanged) */
   "references": [
     {
       "path": "./tsconfig.node.json"
