@@ -8,18 +8,18 @@ export {};
 /* prettier-ignore */
 declare module "vue" {
   export interface GlobalComponents {
-    AccountManagement: typeof import("./components/AccountManagement.vue")["default"];
-    AdminProfile: typeof import("./components/AdminProfile.vue")["default"];
-    ProfileFields: typeof import("./components/ProfileFields.vue")["default"];
-    README: typeof import("./components/README.md")["default"];
-    RouterLink: typeof import("vue-router")["RouterLink"];
-    RouterView: typeof import("vue-router")["RouterView"];
-    TheCounter: typeof import("./components/TheCounter.vue")["default"];
-    TheFooter: typeof import("./components/TheFooter.vue")["default"];
-    TheHeader: typeof import("./components/TheHeader.vue")["default"];
-    TheInput: typeof import("./components/TheInput.vue")["default"];
-    TutorProfile: typeof import("./components/TutorProfile.vue")["default"];
-    UserProfile: typeof import("./components/UserProfile.vue")["default"];
-    UserSignup: typeof import("./components/UserSignup.vue")["default"];
+	  AccountManagement: typeof import("./components/AccountManagement.vue")["default"];
+	  AdminProfile: typeof import("./components/AdminProfile.vue")["default"];
+	  ProfileFields: typeof import("./components/ProfileFields.vue")["default"];
+	  README: typeof import("./components/README.md")["default"];
+	  RouterLink: typeof import("vue-router")["RouterLink"];
+	  RouterView: typeof import("vue-router")["RouterView"];
+	  TheCounter: typeof import("./components/TheCounter.vue")["default"];
+	  TheFooter: typeof import("./components/TheFooter.vue")["default"];
+	  TheHeader: typeof import("./components/TheHeader.vue")["default"];
+	  TheInput: typeof import("./components/TheInput.vue")["default"];
+	  TutorProfile: typeof import("./components/TutorProfile.vue")["default"];
+	  UserProfile: typeof import("./components/UserProfile.vue")["default"];
+	  UserSignup: typeof import("./components/UserSignup.vue")["default"];
   }
 }
