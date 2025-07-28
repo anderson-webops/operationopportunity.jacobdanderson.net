@@ -13,6 +13,7 @@ import Shiki from "@shikijs/markdown-it";
 import LinkAttributes from "markdown-it-link-attributes";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 import { unheadVueComposablesImports } from "@unhead/vue";
+import Vue from "@vitejs/plugin-vue";
 import { VitePWA } from "vite-plugin-pwa";
 import VueDevTools from "vite-plugin-vue-devtools";
 import generateSitemap from "vite-ssg-sitemap";
@@ -36,7 +37,7 @@ export default defineConfig({
     /* 2️⃣  VueMacros – this already injects @vitejs/plugin-vue */
     VueMacros({
       plugins: {
-        vue: {}            // ← no extra Vue() call needed
+        vue: Vue({ include: [/\.vue$/, /\.md$/] })
       }
     }),
 

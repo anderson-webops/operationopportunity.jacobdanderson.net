@@ -28,7 +28,7 @@ async function toggleLocales() {
 							><img
 								id="githubIcon"
 								alt="github Icon"
-								src="../../public/Images/github-dark.09072337.svg"
+                src="../assets/Images/github-dark.09072337.svg"
 						/></a>
 					</li>
 				</ul>

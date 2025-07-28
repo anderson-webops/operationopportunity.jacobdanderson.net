@@ -13,7 +13,7 @@ useHead({
 		</div>
 		<RouterView />
 		<div>
-			<button btn m="3 t8" text-sm @click="router.back()">
+      <button btn m="3 t8" text-sm @click="router.back()">
 				{{ t("button.back") }}
 			</button>
 		</div>

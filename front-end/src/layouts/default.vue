@@ -1,32 +1,9 @@
-<script lang="ts" setup>
-import AccountManagement from "~/components/AccountManagement.vue";
-import TheHeader from "~/components/TheHeader.vue";
-import { useAppStore } from "../stores/app";
-
-const app = useAppStore();
-
-function showLoginModal() {
-	app.setLoginBlock(true);
-}
-
-function showSignupModal() {
-	app.setSignupBlock(true);
-}
-</script>
+<script lang="ts" setup></script>
 
 <template>
-	<main text="center gray-700 dark:gray-200">
-		<TheHeader @login-click="showLoginModal" @signup-click="showSignupModal" />
-
-		<!----------------------------
-    -   Login and Signup Forms   -
-    ----------------------------->
-
-		<AccountManagement />
-
-		<RouterView class="px-4 py-5" />
+  <main px-4 py-10 text="center gray-700 dark:gray-200">
+    <RouterView />
 		<TheFooter />
-		<!--    <div mx-auto mt-5 text-center text-sm opacity-50> [Default Layout]
-    </div> -->
+    <div mt-5 mx-auto opacity-50 text-center text-sm>[Default Layout]</div>
 	</main>
 </template>
