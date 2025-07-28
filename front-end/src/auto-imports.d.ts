@@ -345,6 +345,7 @@ import { UnwrapRef } from "vue";
 declare module "vue" {
   interface GlobalComponents {
   }
+
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import("vue")["EffectScope"]>;
     readonly asyncComputed: UnwrapRef<typeof import("@vueuse/core")["asyncComputed"]>;

@@ -14,7 +14,7 @@ const quoteAuthor = ref("");
 /*  Fetch a random quote (kept commented—you can restore when ready)  */
 /* ------------------------------------------------------------------ */
 async function updateQuote() {
-  /* Example:
+	/* Example:
   const url = "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
   const res = await fetch(url);
   const data = await res.json();
@@ -28,9 +28,9 @@ async function updateQuote() {
 }
 
 onMounted(() => {
-  updateQuote().catch(() => {
-    /* silent fail */
-  });
+	updateQuote().catch(() => {
+		/* silent fail */
+	});
 });
 </script>
 

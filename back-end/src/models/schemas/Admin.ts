@@ -2,7 +2,7 @@
 
 import mongoose, { Model, Schema } from "mongoose";
 import { IAdmin } from "../../types/entities/IAdmin";
-import { passwordPlugin } from '../plugins/password';
+import { passwordPlugin } from "../plugins/password";
 
 /**
  * Create Mongoose Schema for Admin

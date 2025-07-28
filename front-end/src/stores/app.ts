@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 
 /* ------------------------------------------------------------------ */
 /*  TypeScript interfaces                                              */
+
 /* ------------------------------------------------------------------ */
 export interface Tutor {
 	_id: string;
@@ -61,36 +62,36 @@ export const useAppStore = defineStore("app", {
 
 	actions: {
 		/* ---------- setters ---------- */
-    setUsers(u: User[]) {
-      this.users = u;
-    },
-    setTutors(t: Tutor[]) {
-      this.tutors = t;
-    },
-    setAdmins(a: Admin[]) {
-      this.admins = a;
-    },
-    setCurrentUser(u: User | null) {
-      this.currentUser = u;
-    },
-    setCurrentTutor(t: Tutor | null) {
-      this.currentTutor = t;
-    },
-    setCurrentAdmin(a: Admin | null) {
-      this.currentAdmin = a;
-    },
-    setLoginBlock(v: boolean) {
-      this.loginBlock = v;
-    },
-    setSignupBlock(v: boolean) {
-      this.signupBlock = v;
-    },
-    setShowUsers(v: boolean) {
-      this.showUsers = v;
-    },
-    setError(e: string | null) {
-      this.error = e;
-    },
+		setUsers(u: User[]) {
+			this.users = u;
+		},
+		setTutors(t: Tutor[]) {
+			this.tutors = t;
+		},
+		setAdmins(a: Admin[]) {
+			this.admins = a;
+		},
+		setCurrentUser(u: User | null) {
+			this.currentUser = u;
+		},
+		setCurrentTutor(t: Tutor | null) {
+			this.currentTutor = t;
+		},
+		setCurrentAdmin(a: Admin | null) {
+			this.currentAdmin = a;
+		},
+		setLoginBlock(v: boolean) {
+			this.loginBlock = v;
+		},
+		setSignupBlock(v: boolean) {
+			this.signupBlock = v;
+		},
+		setShowUsers(v: boolean) {
+			this.showUsers = v;
+		},
+		setError(e: string | null) {
+			this.error = e;
+		},
 
 		/* ---------- data fetchers ---------- */
 		async fetchUsers() {
@@ -126,7 +127,7 @@ export const useAppStore = defineStore("app", {
 		/* ---------- session helpers ---------- */
 		async logout() {
 			try {
-        await axios.delete("/api/accounts/logout"); // one endpoint for all roles
+				await axios.delete("/api/accounts/logout"); // one endpoint for all roles
 				this.setCurrentTutor(null);
 				this.setCurrentUser(null);
 				this.setCurrentAdmin(null);

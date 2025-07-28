@@ -4,12 +4,12 @@ import { availableLocales, loadLanguageAsync } from "~/modules/i18n";
 const { t, locale } = useI18n();
 
 async function toggleLocales() {
-  // change to some real logic
-  const locales = availableLocales;
-  const newLocale =
-    locales[(locales.indexOf(locale.value) + 1) % locales.length];
-  await loadLanguageAsync(newLocale);
-  locale.value = newLocale;
+	// change to some real logic
+	const locales = availableLocales;
+	const newLocale =
+		locales[(locales.indexOf(locale.value) + 1) % locales.length];
+	await loadLanguageAsync(newLocale);
+	locale.value = newLocale;
 }
 </script>
 
@@ -25,10 +25,10 @@ async function toggleLocales() {
 						<a
 							href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"
 							target="_blank"
-            ><img
-              id="githubIcon"
-              alt="github Icon"
-              src="../../public/Images/github-dark.09072337.svg"
+							><img
+								id="githubIcon"
+								alt="github Icon"
+								src="../../public/Images/github-dark.09072337.svg"
 						/></a>
 					</li>
 				</ul>
@@ -48,7 +48,7 @@ async function toggleLocales() {
 							href="https://jacobdanderson.net"
 							style="text-decoration: none; color: inherit"
 							target="_blank"
-            >AudioT</a
+							>AudioT</a
 						>. All rights reserved.
 					</li>
 				</ul>
@@ -57,7 +57,7 @@ async function toggleLocales() {
 
 		<div class="parter">
 			<br />
-      <h2 />
+			<h2 />
 			<br />
 			<nav class="footer_nav">
 				<ul class="semantic_list">
@@ -66,18 +66,18 @@ async function toggleLocales() {
 							href=""
 							style="text-decoration: none; color: inherit"
 							target="_blank"
-            />
+						/>
 					</li>
 				</ul>
 				<br />
-        <p />
+				<p />
 			</nav>
 		</div>
 
-    <!--			<p v-if="error" class="error">{{ error }}</p> -->
+		<!--			<p v-if="error" class="error">{{ error }}</p> -->
 
 		<div class="ip pb-1">
-      <p id="ip" />
+			<p id="ip" />
 		</div>
 	</footer>
 </template>

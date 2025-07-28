@@ -9,5 +9,6 @@ export interface IBaseUser extends Document {
 	saveEdit: string;               // the “Save” / “Edit” toggle text
 
 	comparePassword(password: string): Promise<boolean>;
+
 	toJSON(): Record<string, unknown>;
 }

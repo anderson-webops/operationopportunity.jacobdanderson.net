@@ -2,7 +2,7 @@
 
 import mongoose, { Model, Schema } from "mongoose";
 import { IUser } from "../../types/entities/IUser";
-import { passwordPlugin } from '../plugins/password';
+import { passwordPlugin } from "../plugins/password";
 
 /**
  * Create Mongoose Schema for User

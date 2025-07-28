@@ -5,9 +5,9 @@ import { useAppStore } from "@/stores/app";
 type Kind = "admin" | "tutor" | "user";
 
 const endpoint: Record<Kind, string> = {
-  admin: "/api/admins/remove",
-  tutor: "/api/tutors/remove",
-  user: "/api/users/user" // this already deletes “self”
+	admin: "/api/admins/remove",
+	tutor: "/api/tutors/remove",
+	user: "/api/users/user" // this already deletes “self”
 };
 
 export function useDeleteAccount(kind: Kind) {
@@ -16,6 +16,6 @@ export function useDeleteAccount(kind: Kind) {
 	/** delete on the server, then forget the session locally */
 	return async function deleteAccount(id: string) {
 		await axios.delete(`${endpoint[kind]}/${id}`, { withCredentials: true });
-    await app.logout(); // clears Pinia + session cookie
+		await app.logout(); // clears Pinia + session cookie
 	};
 }

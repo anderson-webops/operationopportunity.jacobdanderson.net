@@ -19,8 +19,8 @@ const { currentUser, currentAdmin } = storeToRefs(useAppStore());
 		/>
 		<h2>How does it work?</h2>
 		<p class="mt-3">
-      You can sign up under a tutor or consultant wherever you are! Simply
-      signup, select the tutor you want and your tutor will contact you shortly!
+			You can sign up under a tutor or consultant wherever you are! Simply
+			signup, select the tutor you want and your tutor will contact you shortly!
 		</p>
 
 		<UserSignup v-if="currentUser || currentAdmin" />

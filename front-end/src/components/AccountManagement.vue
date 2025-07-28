@@ -16,31 +16,31 @@ const loginPassword = ref("");
 const errorLogin = ref("");
 
 function changeLoginView(show: boolean) {
-  app.setLoginBlock(show);
+	app.setLoginBlock(show);
 }
 
 async function loginTutor() {
-  errorLogin.value = "";
-  if (!loginEmail.value || !loginPassword.value) return;
-  try {
-    const { data } = await axios.post(
-      "/api/accounts/login",
-      {
-        email: loginEmail.value,
-        password: loginPassword.value
-      },
-      { withCredentials: true }
-    );
-    if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
-    if (data.currentUser) app.setCurrentUser(data.currentUser);
-    if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
-    changeLoginView(false);
-  } catch (err: unknown) {
-    const e = err as AxiosError<{ message?: string }>;
-    errorLogin.value = `Login failed: ${
-      e.response?.data?.message ?? e.message ?? "Unknown error"
-    }`;
-  }
+	errorLogin.value = "";
+	if (!loginEmail.value || !loginPassword.value) return;
+	try {
+		const { data } = await axios.post(
+			"/api/accounts/login",
+			{
+				email: loginEmail.value,
+				password: loginPassword.value
+			},
+			{ withCredentials: true }
+		);
+		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
+		if (data.currentUser) app.setCurrentUser(data.currentUser);
+		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
+		changeLoginView(false);
+	} catch (err: unknown) {
+		const e = err as AxiosError<{ message?: string }>;
+		errorLogin.value = `Login failed: ${
+			e.response?.data?.message ?? e.message ?? "Unknown error"
+		}`;
+	}
 }
 
 // form state
@@ -58,83 +58,83 @@ const passwordMatch = computed(() => password.value === passwordRepeat.value);
 
 // close / open (comes from your store)
 function changeSignupView(show: boolean) {
-  app.setSignupBlock(show);
+	app.setSignupBlock(show);
 }
 
 // reset inputs after submission
 function resetData() {
-  name.value =
-    age.value =
-      state.value =
-        email.value =
-          password.value =
-            passwordRepeat.value =
-              "";
-  error.value = "";
+	name.value =
+		age.value =
+		state.value =
+		email.value =
+		password.value =
+		passwordRepeat.value =
+			"";
+	error.value = "";
 }
 
 // on submit, dispatch to the right endpoint
 async function addSignup() {
-  if (!passwordMatch.value) return;
+	if (!passwordMatch.value) return;
 
-  try {
-    // fire the right endpoint with credentials turned on
-    const res =
-      signupType.value === "tutor"
-        ? await axios.post(
-          "/api/tutors",
-          {
-            name: name.value,
-            age: age.value,
-            state: state.value,
-            email: email.value,
-            password: password.value
-          },
-          { withCredentials: true }
-        )
-        : await axios.post(
-          "/api/users",
-          {
-            name: name.value,
-            age: age.value,
-            state: state.value,
-            email: email.value,
-            password: password.value
-          },
-          { withCredentials: true }
-        );
+	try {
+		// fire the right endpoint with credentials turned on
+		const res =
+			signupType.value === "tutor"
+				? await axios.post(
+						"/api/tutors",
+						{
+							name: name.value,
+							age: age.value,
+							state: state.value,
+							email: email.value,
+							password: password.value
+						},
+						{ withCredentials: true }
+					)
+				: await axios.post(
+						"/api/users",
+						{
+							name: name.value,
+							age: age.value,
+							state: state.value,
+							email: email.value,
+							password: password.value
+						},
+						{ withCredentials: true }
+					);
 
-    // immediately stash the newly-created user/tutor into Pinia
-    if (res.data.currentTutor) {
-      app.setCurrentTutor(res.data.currentTutor);
-    } else if (res.data.currentUser) {
-      app.setCurrentUser(res.data.currentUser);
-    }
+		// immediately stash the newly-created user/tutor into Pinia
+		if (res.data.currentTutor) {
+			app.setCurrentTutor(res.data.currentTutor);
+		} else if (res.data.currentUser) {
+			app.setCurrentUser(res.data.currentUser);
+		}
 
-    resetData();
-    changeSignupView(false);
-  } catch (err: unknown) {
-    const e = err as AxiosError<{ message?: string }>;
-    errorLogin.value = `Error: ${
-      e.response?.data?.message ?? e.message ?? "Unknown error"
-    }`;
-  }
+		resetData();
+		changeSignupView(false);
+	} catch (err: unknown) {
+		const e = err as AxiosError<{ message?: string }>;
+		errorLogin.value = `Error: ${
+			e.response?.data?.message ?? e.message ?? "Unknown error"
+		}`;
+	}
 }
 </script>
 
 <template>
 	<div>
 		<!----------------
-		-   Login Form   -
-		----------------->
+    -   Login Form   -
+    ----------------->
 
 		<!-- The Modal -->
-    <div :class="{ showLogin: loginBlock }" class="loginForm modal">
+		<div :class="{ showLogin: loginBlock }" class="loginForm modal">
 			<!-- Modal Content -->
-      <form class="animate modal-content" @submit.prevent="loginTutor">
+			<form class="animate modal-content" @submit.prevent="loginTutor">
 				<span class="close" title="Close Modal" @click="changeLoginView(false)"
-        >&times;</span
-        >
+					>&times;</span
+				>
 
 				<div class="imgcontainer">
 					<img
@@ -169,14 +169,14 @@ async function addSignup() {
 						me
 					</label>
 					<span class="signup"
-          >Don't have an account?
+						>Don't have an account?
 						<a
 							href="#"
 							@click="
 								changeLoginView(false);
 								changeSignupView(true);
 							"
-            >Sign Up</a
+							>Sign Up</a
 						></span
 					>
 				</div>
@@ -189,9 +189,9 @@ async function addSignup() {
 					>
 						Cancel
 					</button>
-          <p v-if="errorLogin" class="error loginError">
-            {{ errorLogin }}
-          </p>
+					<p v-if="errorLogin" class="error loginError">
+						{{ errorLogin }}
+					</p>
 					<span class="psw">Forgot <a href="#">password?</a></span>
 				</div>
 			</form>
@@ -210,11 +210,11 @@ async function addSignup() {
 					<!-- ─── User Type Selector ────────────────────────────────────────── -->
 					<div class="mb-3">
 						<label>
-              <input v-model="signupType" type="radio" value="tutor" /> Tutor
+							<input v-model="signupType" type="radio" value="tutor" /> Tutor
 						</label>
 						&ensp;
 						<label>
-              <input v-model="signupType" type="radio" value="user" /> User
+							<input v-model="signupType" type="radio" value="user" /> User
 						</label>
 					</div>
 
@@ -274,16 +274,16 @@ async function addSignup() {
 					/>
 
 					<button class="signup button" type="submit">
-            Sign Up as a
-            {{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
+						Sign Up as a
+						{{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
 					</button>
 
 					<p v-if="!passwordMatch" class="passwordMatchError">
 						Passwords do not match.
 					</p>
-          <p v-if="error" class="error">
-            {{ error }}
-          </p>
+					<p v-if="error" class="error">
+						{{ error }}
+					</p>
 				</div>
 			</form>
 		</div>

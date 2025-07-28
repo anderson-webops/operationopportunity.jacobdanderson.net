@@ -1,11 +1,11 @@
 // eslint.config.js  – ESLint 9 flat config
-import antfu from "@antfu/eslint-config";            // factory ➜ composer   [oai_citation:7‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
-import eslintJs from "@eslint/js";                       // core-JS flat preset  [oai_citation:8‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
-import tseslint from "typescript-eslint";               // meta-pkg w/ flat presets  [oai_citation:9‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
-import vuePlugin from "eslint-plugin-vue";                // v10+ flat presets   [oai_citation:10‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
+import antfu from "@antfu/eslint-config"; // factory ➜ composer   [oai_citation:7‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
+import eslintJs from "@eslint/js"; // core-JS flat preset  [oai_citation:8‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
+import tseslint from "typescript-eslint"; // meta-pkg w/ flat presets  [oai_citation:9‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
+import vuePlugin from "eslint-plugin-vue"; // v10+ flat presets   [oai_citation:10‡GitHub](https://github.com/antfu/eslint-config?utm_source=chatgpt.com)
 import vueParser from "vue-eslint-parser";
 import prettierPlugin from "eslint-plugin-prettier";
-import eslintConfigPrettier from "eslint-config-prettier/flat";      // disables style clashes  [oai_citation:11‡GitHub](https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/325?timeline_page=1&utm_source=chatgpt.com)
+import eslintConfigPrettier from "eslint-config-prettier/flat"; // disables style clashes  [oai_citation:11‡GitHub](https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/325?timeline_page=1&utm_source=chatgpt.com)
 import globals from "globals";
 
 export default antfu({
@@ -90,4 +90,4 @@ export default antfu({
     }
   )
   // ── Prettier conflict resolver – must be last ─────────────────────
-  .append(eslintConfigPrettier)            // disables any remaining stylistic rules
+  .append(eslintConfigPrettier);            // disables any remaining stylistic rules

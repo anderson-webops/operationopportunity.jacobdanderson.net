@@ -1,13 +1,7 @@
 // src/routes/userRoutes.ts
 import express from "express";
-import { validUser, validTutor } from "../middleware/auth";
-import {
-	createUser,
-	getAllUsers,
-	updateUser,
-	deleteUser,
-	getLoggedInUser
-} from "../controllers/users/userController";
+import { validTutor, validUser } from "../middleware/auth";
+import { createUser, deleteUser, getAllUsers, getLoggedInUser, updateUser } from "../controllers/users/userController";
 import { assignTutorToUser, deleteUsersUnderTutor, getUsersOfTutor } from "../controllers/users/userExtraController";
 import { logout as logoutUser } from "../controllers/auth/authController";
 

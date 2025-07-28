@@ -14,26 +14,26 @@ const deleteMe = useDeleteAccount("admin");
 
 /* editable helper for the admin card */
 const {
-  editing: adminEdit,
-  toggle: toggleAdmin,
-  save: saveAdmin
+	editing: adminEdit,
+	toggle: toggleAdmin,
+	save: saveAdmin
 } = useEditable("admin");
 
 /* field list (admin / tutor / user share the same set) */
 const fields = [
-  { key: "name", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "age", label: "Age" },
-  { key: "state", label: "State" }
+	{ key: "name", label: "Name" },
+	{ key: "email", label: "Email" },
+	{ key: "age", label: "Age" },
+	{ key: "state", label: "State" }
 ];
 
 /* fetch everything once */
 async function loadAll() {
-  await Promise.all([
-    app.fetchTutors(),
-    app.fetchUsers(),
-    app.refreshCurrentAdmin()
-  ]);
+	await Promise.all([
+		app.fetchTutors(),
+		app.fetchUsers(),
+		app.refreshCurrentAdmin()
+	]);
 }
 
 onMounted(loadAll);
@@ -57,13 +57,13 @@ onMounted(loadAll);
 			</ul>
 			<br />
 
-      <button class="btn-danger btn" @click="deleteMe(currentAdmin!._id)">
-        Delete
-      </button>
-      <button
-        class="btn-primary btn"
-        @click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()"
-      >
+			<button class="btn-danger btn" @click="deleteMe(currentAdmin!._id)">
+				Delete
+			</button>
+			<button
+				class="btn-primary btn"
+				@click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()"
+			>
 				{{ adminEdit ? "Save" : "Edit" }}
 			</button>
 		</div>
@@ -88,9 +88,9 @@ onMounted(loadAll);
 			</ul>
 		</div>
 
-    <p v-if="error" class="error">
-      {{ error }}
-    </p>
+		<p v-if="error" class="error">
+			{{ error }}
+		</p>
 	</section>
 </template>
 

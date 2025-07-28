@@ -29,33 +29,33 @@ const fields = [
 </script>
 
 <template>
-  <section class="Signup text-center">
-    <h2>Profile</h2>
+	<section class="Signup text-center">
+		<h2>Profile</h2>
 
-    <div v-if="currentUser" class="tutorList mt-2">
-      <br />
-      <ul>
-        <li><h4>User</h4></li>
+		<div v-if="currentUser" class="tutorList mt-2">
+			<br />
+			<ul>
+				<li><h4>User</h4></li>
 
-        <ProfileFields
-          :editing="editing"
-          :entity="currentUser"
-          :fields="fields"
-        />
-      </ul>
-      <br />
+				<ProfileFields
+					:editing="editing"
+					:entity="currentUser"
+					:fields="fields"
+				/>
+			</ul>
+			<br />
 
-      <button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
-        Delete
-      </button>
-      <button
-        class="btn-primary btn"
-        @click="editing ? save(currentUser) : toggle()"
-      >
-        {{ editing ? "Save" : "Edit" }}
-      </button>
-    </div>
-  </section>
+			<button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
+				Delete
+			</button>
+			<button
+				class="btn-primary btn"
+				@click="editing ? save(currentUser) : toggle()"
+			>
+				{{ editing ? "Save" : "Edit" }}
+			</button>
+		</div>
+	</section>
 </template>
 
 <style scoped>

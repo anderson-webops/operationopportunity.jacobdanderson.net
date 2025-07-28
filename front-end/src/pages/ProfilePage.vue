@@ -12,14 +12,14 @@ const { currentAdmin, currentTutor, currentUser } = storeToRefs(useAppStore());
 </script>
 
 <template>
-  <div>
-    <AdminProfile v-if="currentAdmin" />
-    <TutorProfile v-else-if="currentTutor" />
-    <UserProfile v-else-if="currentUser" />
-    <div v-else class="loginSignup">
-      <h3>Please login or signup!</h3>
-    </div>
-  </div>
+	<div>
+		<AdminProfile v-if="currentAdmin" />
+		<TutorProfile v-else-if="currentTutor" />
+		<UserProfile v-else-if="currentUser" />
+		<div v-else class="loginSignup">
+			<h3>Please login or signup!</h3>
+		</div>
+	</div>
 </template>
 
 <style scoped>

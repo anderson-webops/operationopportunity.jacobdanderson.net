@@ -1,15 +1,15 @@
 // src/controllers/common/entityController.ts
 import { RequestHandler } from "express";
-import { Model, Document } from "mongoose";
+import { Document, Model } from "mongoose";
 
 export interface EntityOpts<T extends Document> {
 	model: Model<T>;
 	idParam: string;               // e.g. "adminID", "tutorID", "userID"
-	sessionKey: "adminID"|"tutorID"|"userID";
-	responseKey: "currentAdmin"|"currentTutor"|"currentUser";
+	sessionKey: "adminID" | "tutorID" | "userID";
+	responseKey: "currentAdmin" | "currentTutor" | "currentUser";
 }
 
-export function makeEntityController<T extends Document & { comparePassword?(pw:string):Promise<boolean> }>(
+export function makeEntityController<T extends Document & { comparePassword?(pw: string): Promise<boolean> }>(
 	{ model, idParam, sessionKey, responseKey }: EntityOpts<T>
 ) {
 	// Create

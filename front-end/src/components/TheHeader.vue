@@ -33,34 +33,34 @@ function logoutUser() {
 					data-bs-toggle="collapse"
 					type="button"
 				>
-          <span class="navbar-toggler-icon" />
+					<span class="navbar-toggler-icon" />
 				</button>
 				<div id="navbarSupportedContent" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav mb-lg-0 mb-2 me-auto">
+					<ul class="nav navbar-nav mb-lg-0 mb-2 me-auto">
 						<li class="nav-item">
-              <router-link class="nav-link" to="/"> Home</router-link>
+							<router-link class="nav-link" to="/"> Home</router-link>
 						</li>
 						<li class="nav-item">
-              <router-link class="nav-link" to="/signup"> Signup</router-link>
+							<router-link class="nav-link" to="/signup"> Signup</router-link>
 						</li>
 						<li class="nav-item">
-              <router-link class="nav-link" to="/supportus">
-                Support Us
+							<router-link class="nav-link" to="/supportus">
+								Support Us
 							</router-link>
 						</li>
 						<li class="nav-item">
-              <router-link class="nav-link" to="/about"> About</router-link>
+							<router-link class="nav-link" to="/about"> About</router-link>
 						</li>
-            <li v-if="isLoggedIn" class="nav-item">
-              <router-link class="nav-link" to="/profile">
-                Profile
-              </router-link>
+						<li v-if="isLoggedIn" class="nav-item">
+							<router-link class="nav-link" to="/profile">
+								Profile
+							</router-link>
 						</li>
 					</ul>
 					<!-- Logout Button -->
 					<button
 						v-if="isLoggedIn"
-            class="btn-outline-danger btn"
+						class="btn-outline-danger btn"
 						@click="logoutUser"
 					>
 						Logout
@@ -68,7 +68,7 @@ function logoutUser() {
 					<!-- Login Button -->
 					<button
 						v-else
-            class="btn-outline-success btn"
+						class="btn-outline-success btn"
 						@click="$emit('login-click')"
 					>
 						Login
@@ -76,7 +76,7 @@ function logoutUser() {
 					<!-- Signup Button -->
 					<button
 						v-if="!isLoggedIn"
-            class="btn-outline-primary btn"
+						class="btn-outline-primary btn"
 						@click="$emit('signup-click')"
 					>
 						Signup
