@@ -2,6 +2,11 @@
 import { storeToRefs } from "pinia";
 import { useAppStore } from "@/stores/app";
 
+const emit = defineEmits<{
+	(e: "loginClick"): void;
+	(e: "signupClick"): void;
+}>();
+
 const app = useAppStore();
 const { isLoggedIn } = storeToRefs(app);
 
@@ -65,19 +70,19 @@ function logoutUser() {
 					>
 						Logout
 					</button>
-					<!-- Login Button -->
+					<!-- Login button -->
 					<button
 						v-else
 						class="btn-outline-success btn"
-						@click="$emit('login-click')"
+						@click="emit('loginClick')"
 					>
 						Login
 					</button>
-					<!-- Signup Button -->
+					<!-- Signup button -->
 					<button
 						v-if="!isLoggedIn"
 						class="btn-outline-primary btn"
-						@click="$emit('signup-click')"
+						@click="emit('signupClick')"
 					>
 						Signup
 					</button>

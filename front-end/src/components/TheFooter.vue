@@ -1,17 +1,4 @@
-<script lang="ts" setup>
-import { availableLocales, loadLanguageAsync } from "~/modules/i18n";
-
-const { t, locale } = useI18n();
-
-async function toggleLocales() {
-	// change to some real logic
-	const locales = availableLocales;
-	const newLocale =
-		locales[(locales.indexOf(locale.value) + 1) % locales.length];
-	await loadLanguageAsync(newLocale);
-	locale.value = newLocale;
-}
-</script>
+<script lang="ts" setup></script>
 
 <template>
 	<footer class="text-center">
@@ -28,7 +15,7 @@ async function toggleLocales() {
 							><img
 								id="githubIcon"
 								alt="github Icon"
-                src="../assets/Images/github-dark.09072337.svg"
+								src="../assets/Images/github-dark.09072337.svg"
 						/></a>
 					</li>
 				</ul>
