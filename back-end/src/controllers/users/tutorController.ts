@@ -12,5 +12,5 @@ export const {
 	model: Tutor,
 	idParam: "tutorID",
 	sessionKey: "tutorID",
-	responseKey: "currentTutor"
+	responseKey: "currentTutor,
 });

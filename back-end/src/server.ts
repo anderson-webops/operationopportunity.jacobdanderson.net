@@ -22,19 +22,21 @@ if (!SESSION_SECRET) {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cookieSession({
-	name: "session",
-	keys: [SESSION_SECRET],
-	maxAge: 24 * 60 * 60 * 1000, // 24 hours
-	sameSite: "lax",        // or 'none' if you’re on https
-	secure: process.env.NODE_ENV === "production"
-}));
+app.use(
+	cookieSession({
+		name: "session",
+		keys: [SESSION_SECRET],
+		maxAge: 24 * 60 * 60 * 1000, // 24 hours
+		sameSite: "lax", // or 'none' if you’re on https
+		secure: process.env.NODE_ENV === "production",
+	}),
+);
 
 // Connect to MongoDB
 mongoose
 	.connect("mongodb://localhost:27017/operationopportunity")
 	.then(() => console.log("Connected to MongoDB"))
-	.catch(err => console.error("Could not connect to MongoDB", err));
+	.catch((err) => console.error("Could not connect to MongoDB", err));
 
 // Routes
 app.use("/api/tutors", tutorRoutes);

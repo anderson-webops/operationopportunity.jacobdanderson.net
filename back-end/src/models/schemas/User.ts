@@ -20,12 +20,15 @@ const userSchema: Schema<IUser> = new Schema(
 		state: { type: String },
 		password: { type: String, required: true },
 		editUsers: { type: Boolean, default: false, required: true }, // Added required: true
-		saveEdit: { type: String, default: "Edit", required: true },    // Added required: true
-		role: { type: String, default: "user" }
+		saveEdit: { type: String, default: "Edit", required: true }, // Added required: true
+		role: {
+			type: String, default: "user"
 	},
-	{ timestamps: true }
-);
-
+{
+	true;
+}
+,
+)
 
 /**
  * Create and handle password hashing, comparison, and removal from JSON responses

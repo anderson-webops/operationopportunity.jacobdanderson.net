@@ -15,7 +15,7 @@ export default [
 			ecmaVersion: "latest",
 			sourceType: "module",
 			globals: { ...globals.node }
-		}
+		},
 	},
 
 	// 2️⃣ TypeScript
@@ -26,12 +26,14 @@ export default [
 			parserOptions: {
 				project: "./tsconfig.json",
 				ecmaVersion: "latest",
-				sourceType: "module"
+				sourceType: "module,
 			},
 			globals: { ...globals.node }
 		},
 		plugins: { "@typescript-eslint": ts },
-		rules: { /* TS-specific rules */ }
+		rules: {
+			/* TS-specific rules */
+		}
 	},
 
 	// 3️⃣ Vue SFCs (now using an ES‐imported plugin)
@@ -40,11 +42,11 @@ export default [
 		plugins: { vue: vuePlugin },
 		rules: {
 			"vue/no-unused-vars": "off"
-		}
+		},
 	},
 
 	// 4️⃣ Ignore compiled output
 	{
 		ignores: ["dist/**"]
-	}
+	},
 ];

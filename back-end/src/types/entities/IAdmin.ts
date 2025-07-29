@@ -2,6 +2,6 @@
 import { IBaseUser } from "../abstractions/BaseUser";
 
 export interface IAdmin extends IBaseUser {
-	editAdmins: boolean;           // admin-specific toggle
-	role: string;                  // e.g. "admin"
+	editAdmins: boolean; // admin-specific toggle
+	role: string; // e.g. "admin"
 }

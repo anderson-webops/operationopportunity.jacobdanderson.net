@@ -19,7 +19,7 @@ const tutorSchema: Schema<ITutor> = new Schema(
 		saveEdit: { type: String, default: "Edit" },
 		role: { type: String, default: "tutor" }
 	},
-	{ timestamps: true }
+	{ timestamps: true
 );
 
 /**

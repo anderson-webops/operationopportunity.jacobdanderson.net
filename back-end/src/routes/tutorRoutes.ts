@@ -6,7 +6,7 @@ import {
 	deleteTutor,
 	getAllTutors,
 	getLoggedInTutor,
-	updateTutor
+	updateTutor,
 } from "../controllers/users/tutorController";
 import { validTutorOrAdmin } from "../middleware/auth";
 

@@ -26,7 +26,7 @@ export const login: RequestHandler = async (req, res) => {
 	const results = (await Promise.all([
 		User.findOne({ email }).exec(),
 		Tutor.findOne({ email }).exec(),
-		Admin.findOne({ email }).exec()
+		Admin.findOne({ email }).exec(),
 	])) as Array<IUser | ITutor | IAdmin | null>;
 
 	// pick the first non‐null
@@ -68,12 +68,10 @@ export const logout: RequestHandler = (req, res) => {
 export const checkEmail: RequestHandler = async (req, res) => {
 	const { id, email } = req.body as { id?: string; email?: string };
 	if (!email) return res.status(400).json({ message: "Email required" });
-	const [u, t, a] = await Promise.all([
-		User.findOne({ email }), Tutor.findOne({ email }), Admin.findOne({ email })
-	]);
-	const conflict = [u, t, a].some(x => x && x.id !== id);
+	const [u, t, a] = await Promise.all([User.findOne({ email }), Tutor.findOne({ email }), Admin.findOne({ email })]);
+	const conflict = [u, t, a].some((x) => x && x.id !== id);
 	res.status(conflict ? 403 : 200).json({
-		message: conflict ? "Already in use" : "Available"
+		message: conflict ? "Already in use" : "Available",
 	});
 };
 

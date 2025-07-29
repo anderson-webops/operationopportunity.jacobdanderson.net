@@ -5,11 +5,7 @@ import { Tutor } from "../models/schemas/Tutor";
 import { Admin } from "../models/schemas/Admin";
 
 // Middleware to validate User
-export const validUser: RequestHandler = async (
-	req,
-	res,
-	next
-) => {
+export const validUser: RequestHandler = async (req, res, next) => {
 	if (!req.session?.userID) {
 		res.status(403).json({ message: "Not logged in or session expired" });
 		return;
@@ -29,11 +25,7 @@ export const validUser: RequestHandler = async (
 };
 
 // Middleware to validate Tutor
-export const validTutor: RequestHandler = async (
-	req,
-	res,
-	next
-) => {
+export const validTutor: RequestHandler = async (req, res, next) => {
 	if (!req.session?.tutorID) {
 		res.status(403).json({ message: "Not logged in or session expired" });
 		return;
@@ -53,11 +45,7 @@ export const validTutor: RequestHandler = async (
 };
 
 // Middleware to validate Admin
-export const validAdmin: RequestHandler = async (
-	req,
-	res,
-	next
-) => {
+export const validAdmin: RequestHandler = async (req, res, next) => {
 	if (!req.session?.adminID) {
 		res.status(403).json({ message: "Not logged in or session expired" });
 		return;

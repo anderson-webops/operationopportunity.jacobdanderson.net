@@ -6,5 +6,5 @@ export interface ITutor extends IBaseUser {
 	state: string;
 	usersOfTutorLength?: number;
 	editTutors?: boolean;
-	role: string;                  // e.g. "tutor"
+	role: string; // e.g. "tutor"
 }

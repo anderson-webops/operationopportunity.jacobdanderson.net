@@ -1,96 +1,51 @@
-// eslint.config.js
-// ─────────────────────────────────────────────────────────────────────────────
-// Root ESLint configuration for both front-end (browser/Vue) and back-end (Node)
-// ─────────────────────────────────────────────────────────────────────────────
+// ./eslint.config.js (workspace root)
+// ───────────────────────────────────────────────────────────────
+// Keeps the monorepo/larger workspace tidy.  All project-specific
+// rules live in the per-package flat configs.
+// ───────────────────────────────────────────────────────────────
 
 module.exports = {
+	/** 🟢  stop ESLint from crawling above this folder */
 	root: true,
 
-	// ─── Environments ────────────────────────────────────────────────────────────
-	// Enables global vars for both Node and browser (Vue), plus modern ES2021
+	/** 🌍  globals that make sense everywhere            */
 	env: {
 		browser: true,
 		node: true,
 		es2021: true
 	},
 
-	// ─── Parser & Core Options ───────────────────────────────────────────────────
-	parser: "@typescript-eslint/parser",
+	/** 🗂  core parser options (plain modern JS)          */
 	parserOptions: {
-		ecmaVersion: "latest",        // allow modern ECMAScript features
-		sourceType: "module",        // enables ES modules
-		extraFileExtensions: [".vue"]      // so <script> blocks get picked up
+		ecmaVersion: "latest",
+		sourceType: "module"
 	},
 
-	// ─── Shared Plugins ─────────────────────────────────────────────────────────
-	// TS lint rules, Vue lint rules, and Prettier integration
-	plugins: [
-		"@typescript-eslint",
-		"vue",
-		"prettier"
-	],
-
-	// ─── Base “extends” ──────────────────────────────────────────────────────────
-	// 1. ESLint’s recommended JS + TS rules
-	// 2. Vue3 essentials
-	// 3. TypeScript & Prettier integrations
+	/** 🧩  very slim “extends” chain                     */
 	extends: [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/recommended",
-		"plugin:vue/vue3-essential",
-		"@vue/eslint-config-typescript",
-		"plugin:prettier/recommended",
-		"prettier"
+		"eslint:recommended",            // basic JS sanity
+		"plugin:prettier/recommended"   // ↳ shows Prettier issues as ESLint errors
 	],
 
-	// ─── Shared Rules ────────────────────────────────────────────────────────────
-	// Applied everywhere (JS/TS/Vue)
+	/** 📜  rules that truly apply repo-wide              */
 	rules: {
-		// console/debug only warn in production
+		// allow console/debug during dev, warn only in prod
 		"no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-		"no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-
-		// code style
-		indent: ["error", "tab"],
-		"linebreak-style": ["error", "unix"],
-		quotes: ["error", "double"],
-		semi: ["error", "always"],
-
-		// show Prettier issues as ESLint errors
-		"prettier/prettier": "error"
+		"no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off"
 	},
 
-	// ─── File-specific Overrides ─────────────────────────────────────────────────
-	overrides: [
+	/** 🚫  ignore patterns common to every sub-project   */
+	ignorePatterns: [
+		"node_modules/",
+		"dist/"
+	],
 
-		// 1️⃣ Node-config files (CommonJS scripts)
+	/** 🎯  overrides just for raw Node build / config files */
+	overrides: [
 		{
-			files: ["*.cjs", "*.config.js", ".eslintrc.{js,cjs}"],
+			files: ["*.cjs", "*.config.js"],
 			env: { node: true },
 			parserOptions: { sourceType: "script" }
-		},
-
-		// 2️⃣ Vue single-file components
-		{
-			files: ["*.vue"],
-			rules: {
-				// allow unused setup bindings (they may be template-only)
-				"vue/no-unused-vars": "off"
-			}
-		},
-
-		// 3️⃣ TypeScript-only tweaks
-		{
-			files: ["**/*.ts"],
-			// ensure type-aware linting, pick up your tsconfig.json
-			parserOptions: {
-				project: "./tsconfig.json"
-			},
-			rules: {
-				// (You could add TS-specific rules here…)
-			}
 		}
-
 	]
-
 };

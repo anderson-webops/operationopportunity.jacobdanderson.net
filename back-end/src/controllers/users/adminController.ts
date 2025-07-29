@@ -12,5 +12,5 @@ export const {
 	model: Admin,
 	idParam: "adminID",
 	sessionKey: "adminID",
-	responseKey: "currentAdmin"
+	responseKey: "currentAdmin,
 });

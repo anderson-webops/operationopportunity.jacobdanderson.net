@@ -13,10 +13,10 @@ const adminSchema: Schema<IAdmin> = new Schema(
 		email: { type: String, required: true, unique: true },
 		password: { type: String, required: true },
 		editAdmins: { type: Boolean, default: false, required: true }, // Added required: true
-		saveEdit: { type: String, default: "Edit", required: true },    // Added required: true
+		saveEdit: { type: String, default: "Edit", required: true }, // Added required: true
 		role: { type: String, default: "admin" }
 	},
-	{ timestamps: true }
+	{ timestamps: true
 );
 
 /**

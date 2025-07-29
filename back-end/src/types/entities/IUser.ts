@@ -7,5 +7,5 @@ export interface IUser extends IBaseUser {
 	state: string;
 	tutor?: Types.ObjectId;
 	editUsers: boolean;
-	role: string;                  // e.g. "user"
+	role: string; // e.g. "user"
 }
