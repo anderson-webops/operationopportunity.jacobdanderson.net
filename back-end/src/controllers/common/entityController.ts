@@ -1,6 +1,6 @@
 // src/controllers/common/entityController.ts
-import { RequestHandler } from "express";
-import { Document, Model } from "mongoose";
+import type { RequestHandler } from "express";
+import type { Document, Model } from "mongoose";
 
 export interface EntityOpts<T extends Document> {
 	model: Model<T>;
@@ -9,11 +9,11 @@ export interface EntityOpts<T extends Document> {
 	responseKey: "currentAdmin" | "currentTutor" | "currentUser";
 }
 
-export function makeEntityController<T extends Document & { comparePassword?(pw: string): Promise<boolean> }>({
+export function makeEntityController<T extends Document & { comparePassword?: (pw: string) => Promise<boolean> }>({
 	model,
 	idParam,
 	sessionKey,
-	responseKey,
+	responseKey
 }: EntityOpts<T>) {
 	// Create
 	const create: RequestHandler = async (req, res) => {
@@ -24,7 +24,8 @@ export function makeEntityController<T extends Document & { comparePassword?(pw:
 			// sign them in right away:
 			(req.session as any)[sessionKey] = (entity as any)._id.toString();
 			res.status(201).json({ [responseKey]: entity });
-		} catch (err: any) {
+		}
+		catch (err: any) {
 			console.error(err);
 			res.status(500).json({ message: err.message });
 		}
@@ -35,7 +36,8 @@ export function makeEntityController<T extends Document & { comparePassword?(pw:
 		try {
 			const list = await model.find();
 			res.json(list);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error(err);
 			res.sendStatus(500);
 		}
@@ -50,7 +52,8 @@ export function makeEntityController<T extends Document & { comparePassword?(pw:
 			Object.assign(doc, req.body);
 			await doc.save();
 			res.sendStatus(200);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error(err);
 			res.sendStatus(500);
 		}
@@ -63,7 +66,8 @@ export function makeEntityController<T extends Document & { comparePassword?(pw:
 			const result = await model.deleteOne({ _id: id });
 			if (result.deletedCount === 0) return res.sendStatus(404);
 			res.sendStatus(200);
-		} catch (err) {
+		}
+		catch (err) {
 			console.error(err);
 			res.sendStatus(500);
 		}
@@ -77,7 +81,8 @@ export function makeEntityController<T extends Document & { comparePassword?(pw:
 			const doc = await model.findById(id);
 			if (!doc) return res.sendStatus(404);
 			res.json({ [responseKey]: doc });
-		} catch (err) {
+		}
+		catch (err) {
 			console.error(err);
 			res.sendStatus(500);
 		}

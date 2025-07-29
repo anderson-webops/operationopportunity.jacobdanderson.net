@@ -1,13 +1,13 @@
 // src/controllers/auth/authController.ts
-import { RequestHandler } from "express";
-import { User } from "../../models/schemas/User";
-import { Tutor } from "../../models/schemas/Tutor";
-import { Admin } from "../../models/schemas/Admin";
+import type { RequestHandler } from "express";
+import type { IAdmin } from "../../types/entities/IAdmin";
+import type { ITutor } from "../../types/entities/ITutor";
+import type { IUser } from "../../types/entities/IUser";
 
-import { IUser } from "../../types/entities/IUser";
-import { ITutor } from "../../types/entities/ITutor";
-import { IAdmin } from "../../types/entities/IAdmin";
-import { CustomSession } from "../../types/session/CustomSession";
+import type { CustomSession } from "../../types/session/CustomSession";
+import { Admin } from "../../models/schemas/Admin";
+import { Tutor } from "../../models/schemas/Tutor";
+import { User } from "../../models/schemas/User";
 
 // union of the three document types
 type Entity = IUser | ITutor | IAdmin;
@@ -26,7 +26,7 @@ export const login: RequestHandler = async (req, res) => {
 	const results = (await Promise.all([
 		User.findOne({ email }).exec(),
 		Tutor.findOne({ email }).exec(),
-		Admin.findOne({ email }).exec(),
+		Admin.findOne({ email }).exec()
 	])) as Array<IUser | ITutor | IAdmin | null>;
 
 	// pick the first non‐null
@@ -43,10 +43,12 @@ export const login: RequestHandler = async (req, res) => {
 	if (entity instanceof Admin) {
 		sessionKey = "adminID";
 		responseKey = "currentAdmin";
-	} else if (entity instanceof Tutor) {
+	}
+	else if (entity instanceof Tutor) {
 		sessionKey = "tutorID";
 		responseKey = "currentTutor";
-	} else {
+	}
+	else {
 		sessionKey = "userID";
 		responseKey = "currentUser";
 	}
@@ -69,9 +71,9 @@ export const checkEmail: RequestHandler = async (req, res) => {
 	const { id, email } = req.body as { id?: string; email?: string };
 	if (!email) return res.status(400).json({ message: "Email required" });
 	const [u, t, a] = await Promise.all([User.findOne({ email }), Tutor.findOne({ email }), Admin.findOne({ email })]);
-	const conflict = [u, t, a].some((x) => x && x.id !== id);
+	const conflict = [u, t, a].some(x => x && x.id !== id);
 	res.status(conflict ? 403 : 200).json({
-		message: conflict ? "Already in use" : "Available",
+		message: conflict ? "Already in use" : "Available"
 	});
 };
 

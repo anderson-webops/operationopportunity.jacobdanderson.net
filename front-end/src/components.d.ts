@@ -8,18 +8,106 @@ export {};
 /* prettier-ignore */
 declare module "vue" {
   export interface GlobalComponents {
-    AccountManagement: (typeof import("./components/AccountManagement.vue"))["default"];
-    AdminProfile: (typeof import("./components/AdminProfile.vue"))["default"];
-    ProfileFields: (typeof import("./components/ProfileFields.vue"))["default"];
-    README: (typeof import("./components/README.md"))["default"];
-    RouterLink: (typeof import("vue-router"))["RouterLink"];
-    RouterView: (typeof import("vue-router"))["RouterView"];
-    TheCounter: (typeof import("./components/TheCounter.vue"))["default"];
-    TheFooter: (typeof import("./components/TheFooter.vue"))["default"];
-    TheHeader: (typeof import("./components/TheHeader.vue"))["default"];
-    TheInput: (typeof import("./components/TheInput.vue"))["default"];
-    TutorProfile: (typeof import("./components/TutorProfile.vue"))["default"];
-    UserProfile: (typeof import("./components/UserProfile.vue"))["default"];
-    UserSignup: (typeof import("./components/UserSignup.vue"))["default"];
+	  AccountManagement: (typeof import"./components/AccountManagement.vue"")"
+	  default;
+	  "t;"
+	  ];
+	  AdminProfile: (typeof imp
+	  "./components/AdminProfile.vue";
+	  vu;
+	  "default";
+	  a;
+	  ult;
+	  "];;;;;
+	  ProfileFields: (typeof
+	  "./components/ProfileFields.vue";
+	  ds;
+	  "default";
+	  d;
+	  efault;
+	  "];;;;;
+	  README: (type
+	  "./components/README.md";
+	  RE;
+	  "default"
+	  );
+	  ["default"];
+	  RouterLink: (t
+	  "";
+	  RouterLink;
+	  ");[";
+	  RouterLink;
+	  "];RouterView:";
+	  vue
+	  -
+	  router;
+	  ";;;;
+	  or;
+	  "RouterView";
+	  r;
+	  "))[";
+	  RouterView;
+	  "];TheCount;;;;
+	  "./components/TheCounter.vue";
+	  nt;
+	  "default";
+	  t;
+	  ervue
+	  .
+	  "))[";
+	  default;
+	  "];TheF;;;;
+	  "./components/TheFooter.vue";
+	  po;
+	  "default";
+	  F;
+	  ootervue
+	  .
+	  "))[";
+	  default;
+	  "];T;;;;
+	  "./components/TheHeader.vue";
+	  co;
+	  "default";
+	  T;
+	  heHeadervue
+	  .
+	  "))[";
+	  default;
+	  "];";
+	  ";;;;
+	  default;
+	  "n;ts/TheInput.vue";
+	  ["default"];
+	  "./components/TutorProfile.vue"
+	  ))
+	  ".";
+	  default;
+	  "t;s/TutorProfile.vue";
+	  ["default"];
+	  "./components/UserProfile.vue"
+	  ))
+	  or;
+	  "default";
+	  o;
+	  nentsUserProfilevue
+	  /
+	  "))["
+	  .
+	  defau;
+	  "./components/UserSignup.vue";
+	  i;
+	  "default";
+	  c;
+	  omponentsUserSignupvue
+	  /
+	  "))["
+	  .
+	  default;
+	  "];;;;;
+
+	  "vue-router"(
+
+	  "./components/TheInput.vue"(
   }
 }

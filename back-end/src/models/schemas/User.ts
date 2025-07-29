@@ -1,7 +1,8 @@
 // src/models/schemas/User.ts
 
-import mongoose, { Model, Schema } from "mongoose";
-import { IUser } from "../../types/entities/IUser";
+import type { Model } from "mongoose";
+import type { IUser } from "../../types/entities/IUser";
+import mongoose, { Schema } from "mongoose";
 import { passwordPlugin } from "../plugins/password";
 
 /**
@@ -21,14 +22,10 @@ const userSchema: Schema<IUser> = new Schema(
 		password: { type: String, required: true },
 		editUsers: { type: Boolean, default: false, required: true }, // Added required: true
 		saveEdit: { type: String, default: "Edit", required: true }, // Added required: true
-		role: {
-			type: String, default: "user"
+		role: { type: String, default: "user" }
 	},
-{
-	true;
-}
-,
-)
+	{ timestamps: true }
+);
 
 /**
  * Create and handle password hashing, comparison, and removal from JSON responses

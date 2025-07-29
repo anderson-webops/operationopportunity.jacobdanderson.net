@@ -1,5 +1,5 @@
 // src/types/entities/ITutor.ts
-import { IBaseUser } from "../abstractions/BaseUser";
+import type { IBaseUser } from "../abstractions/BaseUser";
 
 export interface ITutor extends IBaseUser {
 	age: string;

@@ -1,0 +1,36 @@
+{
+	"name": "opportunity-monorepo",
+	"private": true,
+	"packageManager": "npm@11.5.1",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "Monorepo for Opportunity project",
+	"author": "Jacob Anderson",
+	"license": "ISC",
+	"keywords": [],
+	"workspaces": [
+		"front-end",
+		"back-end"
+	],
+	"scripts": {
+		"build": "npm run -w front-end build && npm run -w back-end build",
+		"dev": "npm run -w front-end dev",
+		"server": "npm run -w back-end lint-fix && npm run -w back-end server",
+		"serve": "npm run -w front-end lint-fix && npm run -w front-end serve",
+		"lint": "npm run -w front-end lint && npm run -w back-end lint",
+		"lint-fix": "npm run -w front-end lint-fix && npm run -w back-end lint-fix",
+		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^5.0.0",
+		"@typescript-eslint/eslint-plugin": "^8.38.0",
+		"@typescript-eslint/parser": "^8.38.0",
+		"eslint": "^9.32.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.3",
+		"eslint-plugin-vue": "^10.3.0",
+		"globals": "^16.3.0",
+		"prettier": "^3.6.2",
+		"typescript": "^5.8.3"
+	}
+}

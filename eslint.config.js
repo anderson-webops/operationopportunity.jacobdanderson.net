@@ -1,51 +1,39 @@
-// ./eslint.config.js (workspace root)
-// ───────────────────────────────────────────────────────────────
-// Keeps the monorepo/larger workspace tidy.  All project-specific
-// rules live in the per-package flat configs.
-// ───────────────────────────────────────────────────────────────
+// ./eslint.config.js  ← monorepo root
+import antfu from "@antfu/eslint-config";
 
-module.exports = {
-	/** 🟢  stop ESLint from crawling above this folder */
-	root: true,
+export default antfu({
+	root: true, // the one and only “root”
+	env: { browser: true, node: true, es2021: true },
+	stylistic: { indent: "tab", quotes: "double", semi: true, linebreak: "unix" },
 
-	/** 🌍  globals that make sense everywhere            */
-	env: {
-		browser: true,
-		node: true,
-		es2021: true
-	},
-
-	/** 🗂  core parser options (plain modern JS)          */
-	parserOptions: {
-		ecmaVersion: "latest",
-		sourceType: "module"
-	},
-
-	/** 🧩  very slim “extends” chain                     */
-	extends: [
-		"eslint:recommended",            // basic JS sanity
-		"plugin:prettier/recommended"   // ↳ shows Prettier issues as ESLint errors
-	],
-
-	/** 📜  rules that truly apply repo-wide              */
-	rules: {
-		// allow console/debug during dev, warn only in prod
-		"no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-		"no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off"
-	},
-
-	/** 🚫  ignore patterns common to every sub-project   */
-	ignorePatterns: [
-		"node_modules/",
-		"dist/"
-	],
-
-	/** 🎯  overrides just for raw Node build / config files */
-	overrides: [
-		{
-			files: ["*.cjs", "*.config.js"],
-			env: { node: true },
-			parserOptions: { sourceType: "script" }
+	/* 👇 this section is passed straight to eslint-plugin-prettier */
+	formatters: {
+		prettier: {
+			tabWidth: 4, //  ← the bit you asked for
+			useTabs: true, //  ← make Prettier treat “\t” as 1 indent unit
+			trailingComma: "none",
+			printWidth: 120,
+			endOfLine: "lf"
 		}
-	]
-};
+	},
+
+	ignores: ["**/*.d.ts"], // ignore all generated declaration files
+	rules: {
+		"no-console": "off",
+		// disable Antfu’s “expect newline after if” check:
+		"antfu/if-newline": "off",
+		// "vue/comma-dangle": ["error", "never"],
+		// or simply turn it off:
+		"vue/comma-dangle": "off",
+		"vue/comma-spacing": "off",
+		"vue/comma-style": "off",
+		"style/comma-dangle": "off"
+		/* "vue/comma-dangle": ["error", "always-multiline"],
+		"vue/comma-spacing": ["error", {
+			after: true,
+			before: false
+		}],
+		"vue/comma-style": ["error", "last"], */
+	}
+	// …any repo-wide rules you genuinely want everywhere…
+});

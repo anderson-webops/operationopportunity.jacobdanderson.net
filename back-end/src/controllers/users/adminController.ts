@@ -1,6 +1,6 @@
 // src/controllers/users/adminController.ts
-import { makeEntityController } from "../common/entityController";
 import { Admin } from "../../models/schemas/Admin";
+import { makeEntityController } from "../common/entityController";
 
 export const {
 	create: createAdmin,
@@ -12,5 +12,5 @@ export const {
 	model: Admin,
 	idParam: "adminID",
 	sessionKey: "adminID",
-	responseKey: "currentAdmin,
+	responseKey: "currentAdmin"
 });

@@ -1,9 +1,9 @@
 // src/types/session/express-session.d.ts
 // noinspection JSUnusedGlobalSymbols // THese are used/included by tsconfig.json
 
-import { IAdmin } from "./IAdmin";
-import { ITutor } from "./ITutor";
-import { IUser } from "./IUser";
+import type { IAdmin } from "./IAdmin";
+import type { ITutor } from "./ITutor";
+import type { IUser } from "./IUser";
 
 /**
  * Extend express-session's SessionData interface

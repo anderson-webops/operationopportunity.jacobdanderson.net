@@ -1,7 +1,7 @@
 // src/controllers/users/userExtraController.ts
-import { RequestHandler } from "express";
-import { User } from "../../models/schemas/User";
+import type { RequestHandler } from "express";
 import { Types } from "mongoose";
+import { User } from "../../models/schemas/User";
 
 export const getUsersOfTutor: RequestHandler = async (req, res) => {
 	const users = await User.find({ tutor: new Types.ObjectId(req.params.tutorID) });

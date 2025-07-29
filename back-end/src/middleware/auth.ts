@@ -1,8 +1,8 @@
 // src/middleware/auth.ts
-import { RequestHandler } from "express";
-import { User } from "../models/schemas/User";
-import { Tutor } from "../models/schemas/Tutor";
+import type { RequestHandler } from "express";
 import { Admin } from "../models/schemas/Admin";
+import { Tutor } from "../models/schemas/Tutor";
+import { User } from "../models/schemas/User";
 
 // Middleware to validate User
 export const validUser: RequestHandler = async (req, res, next) => {
@@ -18,7 +18,8 @@ export const validUser: RequestHandler = async (req, res, next) => {
 		}
 		req.currentUser = user;
 		next();
-	} catch (error) {
+	}
+	catch (error) {
 		console.error("Error in validUser middleware:", error);
 		res.status(500).json({ message: "Server error while validating user" });
 	}
@@ -38,7 +39,8 @@ export const validTutor: RequestHandler = async (req, res, next) => {
 		}
 		req.currentTutor = tutor;
 		next();
-	} catch (error) {
+	}
+	catch (error) {
 		console.error("Error in validTutor middleware:", error);
 		res.status(500).json({ message: "Server error while validating tutor" });
 	}
@@ -58,7 +60,8 @@ export const validAdmin: RequestHandler = async (req, res, next) => {
 		}
 		req.currentAdmin = admin;
 		next();
-	} catch (error) {
+	}
+	catch (error) {
 		console.error("Error in validAdmin middleware:", error);
 		res.status(500).json({ message: "Server error while validating admin" });
 	}

@@ -1,7 +1,8 @@
 // src/models/schemas/Admin.ts
 
-import mongoose, { Model, Schema } from "mongoose";
-import { IAdmin } from "../../types/entities/IAdmin";
+import type { Model } from "mongoose";
+import type { IAdmin } from "../../types/entities/IAdmin";
+import mongoose, { Schema } from "mongoose";
 import { passwordPlugin } from "../plugins/password";
 
 /**
@@ -16,7 +17,7 @@ const adminSchema: Schema<IAdmin> = new Schema(
 		saveEdit: { type: String, default: "Edit", required: true }, // Added required: true
 		role: { type: String, default: "admin" }
 	},
-	{ timestamps: true
+	{ timestamps: true }
 );
 
 /**

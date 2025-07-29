@@ -1,19 +1,21 @@
-// src/server.ts
-import "dotenv/config";
-import express from "express";
+import { env } from "node:process";
 import bodyParser from "body-parser";
-import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
+import express from "express";
+import mongoose from "mongoose";
 
+import { accountRoutes } from "./routes/accountRoutes";
+import { adminRoutes } from "./routes/adminRoutes";
 import { tutorRoutes } from "./routes/tutorRoutes";
 import { userRoutes } from "./routes/userRoutes";
-import { adminRoutes } from "./routes/adminRoutes";
-import { accountRoutes } from "./routes/accountRoutes";
+
+// src/server.ts
+import "dotenv/config";
 
 const app = express();
 
-const SESSION_SECRET = process.env.SESSION_SECRET;
+const SESSION_SECRET = env.SESSION_SECRET;
 if (!SESSION_SECRET) {
 	throw new Error("Missing SESSION_SECRET in environment");
 }
@@ -28,15 +30,15 @@ app.use(
 		keys: [SESSION_SECRET],
 		maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		sameSite: "lax", // or 'none' if you’re on https
-		secure: process.env.NODE_ENV === "production",
-	}),
+		secure: env.NODE_ENV === "production"
+	})
 );
 
 // Connect to MongoDB
 mongoose
 	.connect("mongodb://localhost:27017/operationopportunity")
 	.then(() => console.log("Connected to MongoDB"))
-	.catch((err) => console.error("Could not connect to MongoDB", err));
+	.catch(err => console.error("Could not connect to MongoDB", err));
 
 // Routes
 app.use("/api/tutors", tutorRoutes);
@@ -45,5 +47,5 @@ app.use("/api/admins", adminRoutes);
 app.use("/api/accounts", accountRoutes);
 
 // Start Server
-const PORT: number | string = process.env.PORT || 3002;
+const PORT: number | string = env.PORT || 3002;
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));

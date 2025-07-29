@@ -1,7 +1,8 @@
 // src/models/schemas/Tutor.ts
 
-import mongoose, { Model, Schema } from "mongoose";
-import { ITutor } from "../../types/entities/ITutor";
+import type { Model } from "mongoose";
+import type { ITutor } from "../../types/entities/ITutor";
+import mongoose, { Schema } from "mongoose";
 import { passwordPlugin } from "../plugins/password";
 
 /**
@@ -19,7 +20,7 @@ const tutorSchema: Schema<ITutor> = new Schema(
 		saveEdit: { type: String, default: "Edit" },
 		role: { type: String, default: "tutor" }
 	},
-	{ timestamps: true
+	{ timestamps: true }
 );
 
 /**

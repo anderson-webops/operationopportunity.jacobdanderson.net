@@ -1,6 +1,6 @@
 // src/controllers/users/userController.ts
-import { makeEntityController } from "../common/entityController";
 import { User } from "../../models/schemas/User";
+import { makeEntityController } from "../common/entityController";
 
 export const {
 	create: createUser,
@@ -12,5 +12,5 @@ export const {
 	model: User,
 	idParam: "userID",
 	sessionKey: "userID",
-	responseKey: "currentUser,
+	responseKey: "currentUser"
 });

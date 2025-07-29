@@ -1,5 +1,5 @@
 // src/models/plugins/password.ts
-import { Document, Schema } from "mongoose";
+import type { Document, Schema } from "mongoose";
 import argon2 from "argon2";
 
 // Make sure T includes both password: string AND Document

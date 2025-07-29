@@ -21,77 +21,77 @@ const { editing, toggle, save } = useEditable("user");
 /*  field list (only once)                            */
 /* -------------------------------------------------- */
 const fields = [
-  { key: "name", label: "Name" },
-  { key: "email", label: "Email" },
-  { key: "age", label: "Age" },
-  { key: "state", label: "State" }
+	{ key: "name", label: "Name" },
+	{ key: "email", label: "Email" },
+	{ key: "age", label: "Age" },
+	{ key: "state", label: "State" }
 ];
 </script>
 
 <template>
-  <section class="Signup text-center">
-    <h2>Profile</h2>
+	<section class="Signup text-center">
+		<h2>Profile</h2>
 
-    <div v-if="currentUser" class="tutorList mt-2">
-      <br />
-      <ul>
-        <li><h4>User</h4></li>
+		<div v-if="currentUser" class="tutorList mt-2">
+			<br />
+			<ul>
+				<li><h4>User</h4></li>
 
-        <ProfileFields
-          :editing="editing"
-          :entity="currentUser"
-          :fields="fields"
-        />
-      </ul>
-      <br />
+				<ProfileFields
+					:editing="editing"
+					:entity="currentUser"
+					:fields="fields"
+				/>
+			</ul>
+			<br />
 
-      <button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
-        Delete
-      </button>
-      <button
-        class="btn-primary btn"
-        @click="editing ? save(currentUser) : toggle()"
-      >
-        {{ editing ? "Save" : "Edit" }}
-      </button>
-    </div>
-  </section>
+			<button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
+				Delete
+			</button>
+			<button
+				class="btn-primary btn"
+				@click="editing ? save(currentUser) : toggle()"
+			>
+				{{ editing ? "Save" : "Edit" }}
+			</button>
+		</div>
+	</section>
 </template>
 
 <style scoped>
 ul {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 ul p {
-  display: inline;
+	display: inline;
 }
 
 div.tutorList,
 li {
-  align-self: center;
+	align-self: center;
 }
 
 .hidden {
-  display: none;
+	display: none;
 }
 
 div.tutorList {
-  outline: black solid 1px;
-  padding-bottom: 1%;
-  width: 35%;
-  margin: auto;
+	outline: black solid 1px;
+	padding-bottom: 1%;
+	width: 35%;
+	margin: auto;
 }
 
 @media (max-width: 960px) {
-  div.tutorList {
-    width: 50%;
-  }
+	div.tutorList {
+		width: 50%;
+	}
 }
 
 .error {
-  color: red;
-  margin-top: 10px;
+	color: red;
+	margin-top: 10px;
 }
 </style>
