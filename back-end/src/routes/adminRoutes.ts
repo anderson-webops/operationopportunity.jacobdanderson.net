@@ -6,7 +6,7 @@ import {
 	deleteAdmin,
 	getAllAdmins,
 	getLoggedInAdmin,
-	updateAdmin,
+	updateAdmin
 } from "../controllers/users/adminController";
 import { validAdmin } from "../middleware/auth";
 

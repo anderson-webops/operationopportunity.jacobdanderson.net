@@ -32,15 +32,20 @@ async function updateQuote() {
 	}
 }
 
-updateQuote().then(data => {
-	const random = Math.floor(Math.random() * 99);
-	const quote = data.data[random];
-	let results = "";
-	results += quote.quoteText;
-	results += "<br>";
-	results += `&emsp;&emsp;&emsp;<span>-${quote.quoteAuthor}</span>`;
-	document.getElementById("quotation").innerHTML = results;
-});
+if (!import.meta.env.SSR) {
+	updateQuote().then(data => {
+		// guard: make sure data looks right
+		const quotes = Array.isArray(data?.data) ? data.data : [];
+		const random = Math.floor(Math.random() * quotes.length);
+		const quote = quotes[random] ?? {
+			quoteText: "—",
+			quoteAuthor: "Unknown"
+		};
+
+		document.getElementById("quotation")!.innerHTML =
+			`${quote.quoteText}<br>&emsp;&emsp;&emsp;<span>–${quote.quoteAuthor}</span>`;
+	});
+}
 
 // FontAwesome library setup
 library.add(faFacebook, faGithub, faInstagram);

@@ -19,7 +19,8 @@
 		"serve": "npm run -w front-end lint-fix && npm run -w front-end serve",
 		"lint": "npm run -w front-end lint && npm run -w back-end lint",
 		"lint-fix": "npm run -w front-end lint-fix && npm run -w back-end lint-fix",
-		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck"
+		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
+		"clean": "sudo rm -rf node_modules dist package-lock.json **/node_modules **/dist **/package-lock.json"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^5.0.0",
