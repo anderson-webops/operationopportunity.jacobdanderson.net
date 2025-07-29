@@ -3,11 +3,11 @@
 // you can use this to manipulate the document head in any components,
 // they will be rendered correctly in the html results with vite-ssg
 useHead({
-	title: "Vitesse",
+	title: "Operation Opportunity",
 	meta: [
 		{
-			name: "description",
-			content: "Opinionated Vite Starter Template"
+			name: "Operation Opportunity",
+			content: "Class project for CS 260, revamped with Vitesse"
 		},
 		{
 			name: "theme-color",
@@ -18,8 +18,11 @@ useHead({
 		{
 			rel: "icon",
 			type: "image/svg+xml",
+			// This is identical for both dark and light mode for now
 			href: () =>
-				preferredDark.value ? "/favicon-dark.svg" : "/favicon.svg"
+				preferredDark.value
+					? "/Favicons/favicon.ico"
+					: "/Favicons/favicon.ico"
 		}
 	]
 });

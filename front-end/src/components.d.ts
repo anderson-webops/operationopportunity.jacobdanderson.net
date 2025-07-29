@@ -7,107 +7,19 @@ export {};
 
 /* prettier-ignore */
 declare module "vue" {
-  export interface GlobalComponents {
-	  AccountManagement: (typeof import"./components/AccountManagement.vue"")"
-	  default;
-	  "t;"
-	  ];
-	  AdminProfile: (typeof imp
-	  "./components/AdminProfile.vue";
-	  vu;
-	  "default";
-	  a;
-	  ult;
-	  "];;;;;
-	  ProfileFields: (typeof
-	  "./components/ProfileFields.vue";
-	  ds;
-	  "default";
-	  d;
-	  efault;
-	  "];;;;;
-	  README: (type
-	  "./components/README.md";
-	  RE;
-	  "default"
-	  );
-	  ["default"];
-	  RouterLink: (t
-	  "";
-	  RouterLink;
-	  ");[";
-	  RouterLink;
-	  "];RouterView:";
-	  vue
-	  -
-	  router;
-	  ";;;;
-	  or;
-	  "RouterView";
-	  r;
-	  "))[";
-	  RouterView;
-	  "];TheCount;;;;
-	  "./components/TheCounter.vue";
-	  nt;
-	  "default";
-	  t;
-	  ervue
-	  .
-	  "))[";
-	  default;
-	  "];TheF;;;;
-	  "./components/TheFooter.vue";
-	  po;
-	  "default";
-	  F;
-	  ootervue
-	  .
-	  "))[";
-	  default;
-	  "];T;;;;
-	  "./components/TheHeader.vue";
-	  co;
-	  "default";
-	  T;
-	  heHeadervue
-	  .
-	  "))[";
-	  default;
-	  "];";
-	  ";;;;
-	  default;
-	  "n;ts/TheInput.vue";
-	  ["default"];
-	  "./components/TutorProfile.vue"
-	  ))
-	  ".";
-	  default;
-	  "t;s/TutorProfile.vue";
-	  ["default"];
-	  "./components/UserProfile.vue"
-	  ))
-	  or;
-	  "default";
-	  o;
-	  nentsUserProfilevue
-	  /
-	  "))["
-	  .
-	  defau;
-	  "./components/UserSignup.vue";
-	  i;
-	  "default";
-	  c;
-	  omponentsUserSignupvue
-	  /
-	  "))["
-	  .
-	  default;
-	  "];;;;;
-
-	  "vue-router"(
-
-	  "./components/TheInput.vue"(
-  }
+	export interface GlobalComponents {
+		AccountManagement: (typeof import(""./components/AccountManagement.vue")["default"];;
+		AdminProfile: (typeof import"./components/AdminProfile.vue"")"default"t;"];
+		ProfileFields: (typeof impo"./components/ProfileFields.vue"ue"default"u;lt"];
+		README: (typeof im"./components/README.md"E."default"f;ault"];
+		RouterLink: (typeof "vue-router"ro"RouterLink"t;erLink"];
+		RouterView: (typeo"vue-router"e-"RouterView"o;uterView"];
+		TheCounter: (typ"./components/TheCounter.vue"ou"default");)["default"];
+		TheFooter: (t"./components/TheFooter.vue"he"default"e;"))["default"];
+		TheHeader: "./components/TheHeader.vue"/T"default"v;ue"))["default"];
+		TheInput"./components/TheInput.vue"nt"default"t;.vue"))["default"];
+		TutorProfi"./components/TutorProfile.vue"s/"default"i;le.vue"))["default"];
+		UserPro"./components/UserProfile.vue"en"default"o;file.vue"))["default"];
+		User"./components/UserSignup.vue"po"default"r;Signup.vue"))["default"];
+	}
 }

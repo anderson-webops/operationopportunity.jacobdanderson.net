@@ -22,18 +22,7 @@ export default antfu({
 		"no-console": "off",
 		// disable Antfu’s “expect newline after if” check:
 		"antfu/if-newline": "off",
-		// "vue/comma-dangle": ["error", "never"],
-		// or simply turn it off:
-		"vue/comma-dangle": "off",
-		"vue/comma-spacing": "off",
-		"vue/comma-style": "off",
 		"style/comma-dangle": "off"
-		/* "vue/comma-dangle": ["error", "always-multiline"],
-		"vue/comma-spacing": ["error", {
-			after: true,
-			before: false
-		}],
-		"vue/comma-style": ["error", "last"], */
 	}
 	// …any repo-wide rules you genuinely want everywhere…
 });

@@ -8,20 +8,23 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { setupLayouts } from "virtual:generated-layouts";
 import { ViteSSG } from "vite-ssg";
-
 import { routes } from "vue-router/auto-routes";
+
 import App from "./App.vue";
+import "bootstrap/dist/css/bootstrap.min.css";
 // Assuming you have styles defined in these files
-import "@unocss/reset/tailwind.css";
+// import "@unocss/reset/tailwind.css";
 import "./styles/main.css";
-import "uno.css";
+
+// import "uno.css";
 
 async function updateQuote() {
-	const url = ""; // "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
+	const url: string =
+		"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
 	try {
 		const response = await fetch(url);
 		const json = await response.json();
-		console.log(json);
+		// console.log(json);
 		return json;
 	} catch (error) {
 		console.error(error);
