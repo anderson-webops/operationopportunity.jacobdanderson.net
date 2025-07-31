@@ -1,4 +1,4 @@
-import { env } from "node:process";
+import { env, exit } from "node:process";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
@@ -34,11 +34,20 @@ app.use(
 	})
 );
 
+const MONGODB_URI = env.MONGODB_URI;
+if (!MONGODB_URI) {
+	console.error("MONGODB_URI is required");
+	exit(1);
+}
+
 // Connect to MongoDB
 mongoose
-	.connect("mongodb://localhost:27017/operationopportunity")
+	.connect(MONGODB_URI)
 	.then(() => console.log("Connected to MongoDB"))
-	.catch(err => console.error("Could not connect to MongoDB", err));
+	.catch((err) => {
+		console.error("Error connecting to MongoDB:", err);
+		exit(1);
+	});
 
 // Routes
 app.use("/api/tutors", tutorRoutes);

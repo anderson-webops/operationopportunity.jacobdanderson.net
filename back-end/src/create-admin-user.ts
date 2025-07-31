@@ -1,13 +1,21 @@
-// Connect to MongoDB
-import { exit } from "node:process";
+// loads .env
+import { env, exit } from "node:process";
 import mongoose from "mongoose";
 // src/create-admin-user.ts
 import * as readlineSync from "readline-sync";
 
 import { Admin } from "./models/schemas/Admin";
+import "dotenv/config";
 
+const MONGODB_URI = env.MONGODB_URI;
+if (!MONGODB_URI) {
+	console.error("MONGODB_URI is required");
+	exit(1);
+}
+
+// Connect to MongoDB
 mongoose
-	.connect("mongodb://localhost:27017/operationopportunity")
+	.connect(MONGODB_URI)
 	.then(() => console.log("Connected to MongoDB"))
 	.catch((err) => {
 		console.error("Error connecting to MongoDB:", err);
