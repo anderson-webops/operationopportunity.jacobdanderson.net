@@ -1,6 +1,6 @@
-import { Tutor } from "../../models/schemas/Tutor";
+import { Tutor } from "../../models/schemas/Tutor.ts";
 // src/controllers/users/tutorController.ts
-import { makeEntityController } from "../common/entityController";
+import { makeEntityController } from "../common/entityController.ts";
 
 export const {
 	create: createTutor,

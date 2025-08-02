@@ -1,9 +1,9 @@
 // src/models/schemas/User.ts
 
 import type { Model } from "mongoose";
-import type { IUser } from "../../types/entities/IUser";
+import type { IUser } from "../../types/entities/IUser.ts";
 import mongoose, { Schema } from "mongoose";
-import { passwordPlugin } from "../plugins/password";
+import { passwordPlugin } from "../plugins/password.ts";
 
 /**
  * Create Mongoose Schema for User

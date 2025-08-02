@@ -1,6 +1,6 @@
+import { Admin } from "../../models/schemas/Admin.ts";
 // src/controllers/users/adminController.ts
-import { Admin } from "../../models/schemas/Admin";
-import { makeEntityController } from "../common/entityController";
+import { makeEntityController } from "../common/entityController.ts";
 
 export const {
 	create: createAdmin,

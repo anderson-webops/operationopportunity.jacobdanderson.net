@@ -1,8 +1,8 @@
 // src/middleware/auth.ts
 import type { RequestHandler } from "express";
-import { Admin } from "../models/schemas/Admin";
-import { Tutor } from "../models/schemas/Tutor";
-import { User } from "../models/schemas/User";
+import { Admin } from "../models/schemas/Admin.ts";
+import { Tutor } from "../models/schemas/Tutor.ts";
+import { User } from "../models/schemas/User.ts";
 
 // Middleware to validate User
 export const validUser: RequestHandler = async (req, res, next) => {

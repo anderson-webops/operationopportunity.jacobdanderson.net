@@ -1,6 +1,6 @@
 // src/controllers/users/userController.ts
-import { User } from "../../models/schemas/User";
-import { makeEntityController } from "../common/entityController";
+import { User } from "../../models/schemas/User.ts";
+import { makeEntityController } from "../common/entityController.ts";
 
 export const {
 	create: createUser,

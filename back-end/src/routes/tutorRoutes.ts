@@ -7,8 +7,8 @@ import {
 	getAllTutors,
 	getLoggedInTutor,
 	updateTutor
-} from "../controllers/users/tutorController";
-import { validTutorOrAdmin } from "../middleware/auth";
+} from "../controllers/users/tutorController.ts";
+import { validTutorOrAdmin } from "../middleware/auth.ts";
 
 const router = express.Router();
 

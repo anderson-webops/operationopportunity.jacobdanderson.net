@@ -1,6 +1,6 @@
 import type { Types } from "mongoose";
 // src/types/entities/IUser.ts
-import type { IBaseUser } from "../abstractions/BaseUser";
+import type { IBaseUser } from "../abstractions/BaseUser.ts";
 
 export interface IUser extends IBaseUser {
 	age: string;

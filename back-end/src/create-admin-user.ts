@@ -1,10 +1,9 @@
-// loads .env
+// src/create-admin-user.ts
 import { env, exit } from "node:process";
 import mongoose from "mongoose";
-// src/create-admin-user.ts
 import * as readlineSync from "readline-sync";
 
-import { Admin } from "./models/schemas/Admin";
+import { Admin } from "./models/schemas/Admin.ts";
 import "dotenv/config";
 
 const MONGODB_URI = env.MONGODB_URI;

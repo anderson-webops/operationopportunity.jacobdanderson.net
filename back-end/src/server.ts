@@ -5,10 +5,10 @@ import cookieSession from "cookie-session";
 import express from "express";
 import mongoose from "mongoose";
 
-import { accountRoutes } from "./routes/accountRoutes";
-import { adminRoutes } from "./routes/adminRoutes";
-import { tutorRoutes } from "./routes/tutorRoutes";
-import { userRoutes } from "./routes/userRoutes";
+import { accountRoutes } from "./routes/accountRoutes.ts";
+import { adminRoutes } from "./routes/adminRoutes.ts";
+import { tutorRoutes } from "./routes/tutorRoutes.ts";
+import { userRoutes } from "./routes/userRoutes.ts";
 
 // src/server.ts
 import "dotenv/config";

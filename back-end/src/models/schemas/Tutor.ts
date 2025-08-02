@@ -1,9 +1,9 @@
 // src/models/schemas/Tutor.ts
 
 import type { Model } from "mongoose";
-import type { ITutor } from "../../types/entities/ITutor";
+import type { ITutor } from "../../types/entities/ITutor.ts";
 import mongoose, { Schema } from "mongoose";
-import { passwordPlugin } from "../plugins/password";
+import { passwordPlugin } from "../plugins/password.ts";
 
 /**
  * Create Mongoose Schema for Tutor
