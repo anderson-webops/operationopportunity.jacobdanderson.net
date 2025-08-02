@@ -1,7 +1,7 @@
 // src/routes/accountRoutes.ts
 
 import { Router } from "express";
-import { changeEmail, checkEmail, login, logout } from "../controllers/auth/authController.ts";
+import { changeEmail, checkEmail, login, logout } from "../controllers/auth/authController.js";
 
 const router = Router();
 

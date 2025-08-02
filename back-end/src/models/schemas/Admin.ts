@@ -1,9 +1,9 @@
 // src/models/schemas/Admin.ts
 
 import type { Model } from "mongoose";
-import type { IAdmin } from "../../types/entities/IAdmin.ts";
+import type { IAdmin } from "../../types/entities/IAdmin.js";
 import mongoose, { Schema } from "mongoose";
-import { passwordPlugin } from "../plugins/password.ts";
+import { passwordPlugin } from "../plugins/password.js";
 
 /**
  * Create Mongoose Schema for Admin

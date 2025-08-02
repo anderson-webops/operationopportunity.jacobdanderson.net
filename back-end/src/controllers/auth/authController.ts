@@ -1,13 +1,13 @@
 // src/controllers/auth/authController.ts
 import type { RequestHandler } from "express";
-import type { IAdmin } from "../../types/entities/IAdmin.ts";
-import type { ITutor } from "../../types/entities/ITutor.ts";
-import type { IUser } from "../../types/entities/IUser.ts";
+import type { IAdmin } from "../../types/entities/IAdmin.js";
+import type { ITutor } from "../../types/entities/ITutor.js";
+import type { IUser } from "../../types/entities/IUser.js";
 
-import type { CustomSession } from "../../types/session/CustomSession.ts";
-import { Admin } from "../../models/schemas/Admin.ts";
-import { Tutor } from "../../models/schemas/Tutor.ts";
-import { User } from "../../models/schemas/User.ts";
+import type { CustomSession } from "../../types/session/CustomSession.js";
+import { Admin } from "../../models/schemas/Admin.js";
+import { Tutor } from "../../models/schemas/Tutor.js";
+import { User } from "../../models/schemas/User.js";
 
 // union of the three document types
 type Entity = IUser | ITutor | IAdmin;

@@ -3,7 +3,7 @@
 import type { Model } from "mongoose";
 import type { IUser } from "../../types/entities/IUser.ts";
 import mongoose, { Schema } from "mongoose";
-import { passwordPlugin } from "../plugins/password.ts";
+import { passwordPlugin } from "../plugins/password.js";
 
 /**
  * Create Mongoose Schema for User

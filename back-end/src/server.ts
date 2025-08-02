@@ -1,3 +1,4 @@
+// src/server.ts
 import { env, exit } from "node:process";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -5,12 +6,11 @@ import cookieSession from "cookie-session";
 import express from "express";
 import mongoose from "mongoose";
 
-import { accountRoutes } from "./routes/accountRoutes.ts";
-import { adminRoutes } from "./routes/adminRoutes.ts";
-import { tutorRoutes } from "./routes/tutorRoutes.ts";
-import { userRoutes } from "./routes/userRoutes.ts";
+import { accountRoutes } from "./routes/accountRoutes.js";
+import { adminRoutes } from "./routes/adminRoutes.js";
+import { tutorRoutes } from "./routes/tutorRoutes.js";
+import { userRoutes } from "./routes/userRoutes.js";
 
-// src/server.ts
 import "dotenv/config";
 
 const app = express();

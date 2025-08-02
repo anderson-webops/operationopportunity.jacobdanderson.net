@@ -3,7 +3,7 @@ import { env, exit } from "node:process";
 import mongoose from "mongoose";
 import * as readlineSync from "readline-sync";
 
-import { Admin } from "./models/schemas/Admin.ts";
+import { Admin } from "./models/schemas/Admin.js";
 import "dotenv/config";
 
 const MONGODB_URI = env.MONGODB_URI;

@@ -1,15 +1,15 @@
 // src/routes/userRoutes.ts
 import express from "express";
-import { logout as logoutUser } from "../controllers/auth/authController.ts";
+import { logout as logoutUser } from "../controllers/auth/authController.js";
 import {
 	createUser,
 	deleteUser,
 	getAllUsers,
 	getLoggedInUser,
 	updateUser
-} from "../controllers/users/userController.ts";
-import { assignTutorToUser, deleteUsersUnderTutor, getUsersOfTutor } from "../controllers/users/userExtraController.ts";
-import { validTutor, validUser } from "../middleware/auth.ts";
+} from "../controllers/users/userController.js";
+import { assignTutorToUser, deleteUsersUnderTutor, getUsersOfTutor } from "../controllers/users/userExtraController.js";
+import { validTutor, validUser } from "../middleware/auth.js";
 
 const router = express.Router();
 

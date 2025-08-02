@@ -7,8 +7,8 @@ import {
 	getAllAdmins,
 	getLoggedInAdmin,
 	updateAdmin
-} from "../controllers/users/adminController.ts";
-import { validAdmin } from "../middleware/auth.ts";
+} from "../controllers/users/adminController.js";
+import { validAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
