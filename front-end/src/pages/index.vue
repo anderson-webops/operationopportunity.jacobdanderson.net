@@ -3,35 +3,30 @@ import { onMounted, ref } from "vue";
 
 defineOptions({ name: "HomePage" });
 
-/* ------------------------------------------------------------------ */
-/*  Reactive state                                                    */
-/* ------------------------------------------------------------------ */
+/* ---------------- state ---------------- */
 const quotePresent = ref(false);
 const quoteText = ref("");
 const quoteAuthor = ref("");
 
-/* ------------------------------------------------------------------ */
-/*  Fetch a random quote (kept commented—you can restore when ready)  */
-/* ------------------------------------------------------------------ */
+/* -------------- fetcher ---------------- */
 async function updateQuote() {
-	/* Example:
-  const url = "https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-  const res = await fetch(url);
-  const data = await res.json();
-  const random = Math.floor(Math.random() * data.data.length);
-  const quote  = data.data[random];
+	try {
+		const res = await fetch("/api/quotes?tags=success&limit=100");
+		const data = await res.json(); // proxy returns an array
+		const q = data?.[0];
+		if (!q) return;
 
-  quoteText.value    = quote.quoteText;
-  quoteAuthor.value  = quote.quoteAuthor;
-  quotePresent.value = true;
-  */
+		quoteText.value = q.quoteText;
+		quoteAuthor.value = q.quoteAuthor;
+		quotePresent.value = true;
+	} catch (err) {
+		/* optional logging */
+		console.error("quote fetch failed:", err);
+	}
 }
 
-onMounted(() => {
-	updateQuote().catch(() => {
-		/* silent fail */
-	});
-});
+/* -------------- run once on client -------------- */
+onMounted(updateQuote);
 </script>
 
 <template>

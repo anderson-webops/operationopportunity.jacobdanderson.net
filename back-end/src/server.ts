@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
 import express from "express";
 import mongoose from "mongoose";
+import { quoteProxy } from "./controllers/common/quoteProxy.js";
 
 import { accountRoutes } from "./routes/accountRoutes.js";
 import { adminRoutes } from "./routes/adminRoutes.js";
@@ -21,6 +22,7 @@ if (!SESSION_SECRET) {
 }
 
 // Middleware
+app.set("trust proxy", 1);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -33,6 +35,7 @@ app.use(
 		secure: env.NODE_ENV === "production"
 	})
 );
+app.use("/api/quotes", quoteProxy);
 
 const MONGODB_URI = env.MONGODB_URI;
 if (!MONGODB_URI) {

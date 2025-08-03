@@ -6,46 +6,21 @@ import {
 	faInstagram
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import axios from "axios";
 import { setupLayouts } from "virtual:generated-layouts";
 import { ViteSSG } from "vite-ssg";
-import { routes } from "vue-router/auto-routes";
 
+import { routes } from "vue-router/auto-routes";
 import App from "./App.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 // Assuming you have styles defined in these files
+// import "uno.css";
 // import "@unocss/reset/tailwind.css";
 import "./styles/main.css";
 
-// import "uno.css";
-
-async function updateQuote() {
-	const url: string =
-		"https://quote-garden.herokuapp.com/api/v3/quotes?genre=success&limit=100";
-	try {
-		const response = await fetch(url);
-		const json = await response.json();
-		// console.log(json);
-		return json;
-	} catch (error) {
-		console.error(error);
-		return {}; // return an empty object or any default value
-	}
-}
-
-if (!import.meta.env.SSR) {
-	updateQuote().then(data => {
-		// guard: make sure data looks right
-		const quotes = Array.isArray(data?.data) ? data.data : [];
-		const random = Math.floor(Math.random() * quotes.length);
-		const quote = quotes[random] ?? {
-			quoteText: "—",
-			quoteAuthor: "Unknown"
-		};
-
-		document.getElementById("quotation")!.innerHTML =
-			`${quote.quoteText}<br>&emsp;&emsp;&emsp;<span>–${quote.quoteAuthor}</span>`;
-	});
-}
+// apply once globally
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "/api"; // optional, so you can do axios.get("/users/all") instead of "/api/users/all"
 
 // FontAwesome library setup
 library.add(faFacebook, faGithub, faInstagram);
