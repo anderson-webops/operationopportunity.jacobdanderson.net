@@ -35,7 +35,7 @@ app.use(
 		secure: env.NODE_ENV === "production"
 	})
 );
-app.use("/api/quotes", quoteProxy);
+app.use("/quotes", quoteProxy);
 
 const MONGODB_URI = env.MONGODB_URI;
 if (!MONGODB_URI) {
@@ -52,11 +52,11 @@ mongoose
 		exit(1);
 	});
 
-// Routes
-app.use("/api/tutors", tutorRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/admins", adminRoutes);
-app.use("/api/accounts", accountRoutes);
+// Routes // /api is the prefix for all routes as default because of the front-end axios baseURL in main.ts
+app.use("/tutors", tutorRoutes);
+app.use("/users", userRoutes);
+app.use("/admins", adminRoutes);
+app.use("/accounts", accountRoutes);
 
 // Start Server
 const PORT: number | string = env.PORT || 3002;
