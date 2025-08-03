@@ -1,5 +1,4 @@
-// in some route file, e.g. src/controllers/quoteProxy.ts
-// Express route
+// src/controllers/quoteProxy.ts
 import { Router } from "express";
 
 const router = Router();

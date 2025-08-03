@@ -35,7 +35,8 @@ app.use(
 		secure: env.NODE_ENV === "production"
 	})
 );
-app.use("/quotes", quoteProxy);
+// The front-end axios baseURL in main.ts (/api) does not affect this route, so /api must be specified
+app.use("/api/quotes", quoteProxy);
 
 const MONGODB_URI = env.MONGODB_URI;
 if (!MONGODB_URI) {
