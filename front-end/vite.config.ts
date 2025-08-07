@@ -1,3 +1,4 @@
+// vite.config.ts
 import path, { resolve } from "node:path";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 
@@ -107,35 +108,37 @@ export default defineConfig({
 				name: "Operation Opportunity",
 				short_name: "OperationOpportunity",
 				theme_color: "#ffffff",
+				background_color: "#ffffff",
+				display: "standalone",
 				icons: [
 					{
-						src: "/Favicons/android-chrome-192x192.png",
+						src: "/assets/Favicons/android-chrome-192x192.png",
 						sizes: "192x192",
 						type: "image/png"
 					},
 					{
-						src: "/Favicons/android-chrome-512x512.png",
+						src: "/assets/Favicons/android-chrome-512x512.png",
 						sizes: "512x512",
 						type: "image/png"
 					},
 					{
-						src: "/Favicons/apple-touch-icon.png",
+						src: "/assets/Favicons/apple-touch-icon.png",
 						sizes: "180x180",
 						type: "image/png",
 						purpose: "apple-touch-icon"
 					},
 					{
-						src: "/Favicons/favicon-32x32.png",
+						src: "/assets/Favicons/favicon-32x32.png",
 						sizes: "32x32",
 						type: "image/png"
 					},
 					{
-						src: "/Favicons/favicon-16x16.png",
+						src: "/assets/Favicons/favicon-16x16.png",
 						sizes: "16x16",
 						type: "image/png"
 					},
 					{
-						src: "/Favicons/favicon.ico",
+						src: "/assets/Favicons/favicon.ico",
 						sizes: "48x48",
 						type: "image/x-icon"
 					}
