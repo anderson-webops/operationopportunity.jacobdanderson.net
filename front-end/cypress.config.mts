@@ -2,6 +2,7 @@ import { defineConfig } from "cypress";
 import vitePreprocessor from "cypress-vite";
 
 export default defineConfig({
+	projectId: "d8k2m8",
 	e2e: {
 		baseUrl: "http://localhost:3333",
 		chromeWebSecurity: false,
@@ -9,6 +10,13 @@ export default defineConfig({
 		supportFile: false,
 		setupNodeEvents(on) {
 			on("file:preprocessor", vitePreprocessor());
+		}
+	},
+
+	component: {
+		devServer: {
+			framework: "vue",
+			bundler: "vite"
 		}
 	}
 });
