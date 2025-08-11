@@ -9,6 +9,7 @@ const quoteText = ref("");
 const quoteAuthor = ref("");
 
 /* ---------------- types ---------------- */
+// Set and given/managed by backend API (quoteProxy.ts)
 interface Quote {
 	_id: string;
 	content: string;

@@ -1,25 +1,30 @@
 import { Router } from "express";
 
-export const quoteProxy = Router().get("/", async (req, res) => {
-	const { tags = "success", limit = "1" } = req.query;
-
-	const url =
-		`https://api.quotable.io/quotes/random` +
-		`?tags=${encodeURIComponent(String(tags))}` +
-		`&limit=${encodeURIComponent(String(limit))}`;
-
+export const quoteProxy = Router().get("/", async (_req, res) => {
 	try {
-		const r = await fetch(url);
-
-		/* forward the real status code if quotable.io is unhappy */
+		const r = await fetch("https://favqs.com/api/qotd");
 		if (!r.ok) {
-			const msg = await r.text();
-			return res.status(r.status).json({ error: msg });
+			return res.status(r.status).json({ error: await r.text() });
 		}
 
-		res.json(await r.json()); // ← an *array* (even when limit=1)
+		// FavQs shape: { qotd_date, quote: { id, body, author, tags, … } }
+		const { quote } = await r.json();
+
+		/* Normalize so your Vue code can stay the same (expects an ARRAY) */
+		res.json([
+			{
+				_id: String(quote.id),
+				content: quote.body,
+				author: quote.author,
+				tags: quote.tags || [],
+				authorSlug: quote.author.replace(/\s+/g, "-").toLowerCase(),
+				length: quote.body.length,
+				dateAdded: new Date().toISOString(),
+				dateModified: new Date().toISOString()
+			}
+		]);
 	} catch (err) {
-		console.error("quotable proxy failed:", err);
+		console.error("favqs proxy failed:", err);
 		res.status(502).json({ error: "Unable to reach quotes service" });
 	}
 });

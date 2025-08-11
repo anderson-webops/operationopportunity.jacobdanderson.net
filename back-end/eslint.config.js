@@ -1,5 +1,5 @@
-import importFull from "eslint-plugin-import"; // full plugin
 // back-end/eslint.config.js
+import importFull from "eslint-plugin-import";
 import globals from "globals";
 import ts from "typescript-eslint";
 import base from "../eslint.config.js";
@@ -7,7 +7,7 @@ import base from "../eslint.config.js";
 export default base.append(
 	{
 		files: ["**/*.ts"],
-		plugins: { "import-ext": importFull }, // new key ✅
+		plugins: { "import-ext": importFull },
 		languageOptions: {
 			parser: ts.parser,
 			parserOptions: { project: "./tsconfig.json", sourceType: "module" },

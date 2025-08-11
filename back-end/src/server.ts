@@ -5,60 +5,67 @@ import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
 import express from "express";
 import mongoose from "mongoose";
-import { quoteProxy } from "./controllers/common/quoteProxy.js";
 
+import { quoteProxy } from "./controllers/common/quoteProxy.js";
 import { accountRoutes } from "./routes/accountRoutes.js";
 import { adminRoutes } from "./routes/adminRoutes.js";
 import { tutorRoutes } from "./routes/tutorRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
 
+import { readMongoSecret } from "./vaultClient.js";
+
 import "dotenv/config";
 
-const app = express();
+async function main() {
+	const app = express();
 
-const SESSION_SECRET = env.SESSION_SECRET;
-if (!SESSION_SECRET) {
-	throw new Error("Missing SESSION_SECRET in environment");
+	const SESSION_SECRET = env.SESSION_SECRET;
+	if (!SESSION_SECRET) throw new Error("Missing SESSION_SECRET");
+
+	app.set("trust proxy", 1);
+	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(bodyParser.json());
+	app.use(cookieParser());
+	app.use(
+		cookieSession({
+			name: "session",
+			keys: [SESSION_SECRET],
+			maxAge: 24 * 60 * 60 * 1000,
+			sameSite: "lax",
+			secure: env.NODE_ENV === "production"
+		})
+	);
+
+	app.use("/api/quotes", quoteProxy);
+
+	// --- Get Mongo URI from Vault (preferred), else env fallback ---
+	let mongoUri: string | undefined;
+	try {
+		const { uri } = await readMongoSecret(); // your Vault client should read from KV v2
+		mongoUri = uri;
+	} catch (e) {
+		console.warn("Vault unavailable, falling back to MONGODB_URI:", e);
+		mongoUri = env.MONGODB_URI;
+	}
+
+	if (!mongoUri) {
+		throw new Error("No MongoDB URI available (Vault and MONGODB_URI missing)");
+	}
+
+	await mongoose.connect(mongoUri); // standard Mongoose connect call.  [oai_citation:2‡mongoosejs.com](https://mongoosejs.com/docs/7.x/docs/api/mongoose.html?utm_source=chatgpt.com)
+	console.log("Connected to MongoDB");
+
+	// Your routes (note: you’ve commented an axios baseURL elsewhere; these are mounted as-is)
+	app.use("/tutors", tutorRoutes);
+	app.use("/users", userRoutes);
+	app.use("/admins", adminRoutes);
+	app.use("/accounts", accountRoutes);
+
+	const PORT = env.PORT || 3002;
+	app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
 }
 
-// Middleware
-app.set("trust proxy", 1);
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(
-	cookieSession({
-		name: "session",
-		keys: [SESSION_SECRET],
-		maxAge: 24 * 60 * 60 * 1000, // 24 hours
-		sameSite: "lax", // or 'none' if you’re on https
-		secure: env.NODE_ENV === "production"
-	})
-);
-// The front-end axios baseURL in main.ts (/api) does not affect this route, so /api must be specified
-app.use("/api/quotes", quoteProxy);
-
-const MONGODB_URI = env.MONGODB_URI;
-if (!MONGODB_URI) {
-	console.error("MONGODB_URI is required");
+main().catch(err => {
+	console.error(err);
 	exit(1);
-}
-
-// Connect to MongoDB
-mongoose
-	.connect(MONGODB_URI)
-	.then(() => console.log("Connected to MongoDB"))
-	.catch((err) => {
-		console.error("Error connecting to MongoDB:", err);
-		exit(1);
-	});
-
-// Routes // /api is the prefix for all routes as default because of the front-end axios baseURL in main.ts
-app.use("/tutors", tutorRoutes);
-app.use("/users", userRoutes);
-app.use("/admins", adminRoutes);
-app.use("/accounts", accountRoutes);
-
-// Start Server
-const PORT: number | string = env.PORT || 3002;
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
+});
