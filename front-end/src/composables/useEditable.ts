@@ -25,7 +25,7 @@ export function useEditable(kind: Kind) {
 		// 1) change-e-mail if needed
 		if (!baseline) baseline = entity.email;
 		if (entity.email !== baseline) {
-			await axios.post(`/api/accounts/changeEmail/${entity._id}`, {
+			await axios.post(`/accounts/changeEmail/${entity._id}`, {
 				email: entity.email
 			});
 			baseline = entity.email;
@@ -34,10 +34,10 @@ export function useEditable(kind: Kind) {
 		// 2) update the rest of the profile
 		const url =
 			kind === "user"
-				? `/api/users/user/${entity._id}`
+				? `/users/user/${entity._id}`
 				: kind === "tutor"
-					? `/api/tutors/${entity._id}`
-					: `/api/admins/${entity._id}`;
+					? `/tutors/${entity._id}`
+					: `/admins/${entity._id}`;
 
 		await axios.put(url, entity);
 		editing.value = false;

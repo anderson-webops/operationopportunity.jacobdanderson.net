@@ -33,7 +33,7 @@ async function loadUsers() {
 	if (!currentTutor.value) return;
 	try {
 		const { data } = await axios.get(
-			`/api/users/oftutor/${currentTutor.value._id}`
+			`/users/oftutor/${currentTutor.value._id}`
 		);
 		app.setUsers(data);
 	} catch (e: any) {

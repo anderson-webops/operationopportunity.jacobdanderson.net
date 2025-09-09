@@ -64,9 +64,9 @@ onMounted(updateQuote);
 		<div v-if="quotePresent" class="quote mt-3">
 			<q>{{ quoteText }}</q>
 			<br />
-			<q>
-				<span>- {{ quoteAuthor }}</span></q
-			>
+			<p>
+				<span id="quote-author">- {{ quoteAuthor }}</span>
+			</p>
 		</div>
 
 		<img
@@ -99,7 +99,8 @@ span {
 	background-color: whitesmoke;
 }
 
-q {
+q,
+#quote-author {
 	font-style: italic;
 }
 

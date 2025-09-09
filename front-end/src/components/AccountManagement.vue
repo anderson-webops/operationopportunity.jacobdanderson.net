@@ -24,7 +24,7 @@ async function loginTutor() {
 	if (!loginEmail.value || !loginPassword.value) return;
 	try {
 		const { data } = await axios.post(
-			"/api/accounts/login",
+			"/accounts/login",
 			{
 				email: loginEmail.value,
 				password: loginPassword.value
@@ -82,7 +82,7 @@ async function addSignup() {
 		const res =
 			signupType.value === "tutor"
 				? await axios.post(
-						"/api/tutors",
+						"/tutors",
 						{
 							name: name.value,
 							age: age.value,
@@ -93,7 +93,7 @@ async function addSignup() {
 						{ withCredentials: true }
 					)
 				: await axios.post(
-						"/api/users",
+						"/users",
 						{
 							name: name.value,
 							age: age.value,

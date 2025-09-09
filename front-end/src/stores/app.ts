@@ -96,7 +96,7 @@ export const useAppStore = defineStore("app", {
 		/* ---------- data fetchers ---------- */
 		async fetchUsers() {
 			try {
-				const { data } = await axios.get<User[]>("/api/users/all");
+				const { data } = await axios.get<User[]>("/users/all");
 				this.setUsers(data);
 			} catch (e) {
 				console.error(e);
@@ -105,7 +105,7 @@ export const useAppStore = defineStore("app", {
 
 		async fetchTutors() {
 			try {
-				const { data } = await axios.get<Tutor[]>("/api/tutors");
+				const { data } = await axios.get<Tutor[]>("/tutors");
 				this.setTutors(data);
 			} catch (e) {
 				console.error(e);
@@ -116,7 +116,7 @@ export const useAppStore = defineStore("app", {
 			if (!this.currentTutor) return;
 			try {
 				const { data } = await axios.get<User[]>(
-					`/api/users/oftutor/${this.currentTutor._id}`
+					`/users/oftutor/${this.currentTutor._id}`
 				);
 				this.setUsers(data);
 			} catch (e) {
@@ -127,7 +127,7 @@ export const useAppStore = defineStore("app", {
 		/* ---------- session helpers ---------- */
 		async logout() {
 			try {
-				await axios.delete("/api/accounts/logout"); // one endpoint for all roles
+				await axios.delete("/accounts/logout"); // one endpoint for all roles
 				this.setCurrentTutor(null);
 				this.setCurrentUser(null);
 				this.setCurrentAdmin(null);
@@ -140,7 +140,7 @@ export const useAppStore = defineStore("app", {
 		async refreshCurrentUser() {
 			try {
 				const { data } = await axios.get<{ currentUser: User }>(
-					"/api/users/loggedin"
+					"/users/loggedin"
 				);
 				this.setCurrentUser(data.currentUser);
 			} catch {
@@ -151,7 +151,7 @@ export const useAppStore = defineStore("app", {
 		async refreshCurrentTutor() {
 			try {
 				const { data } = await axios.get<{ currentTutor: Tutor }>(
-					"/api/tutors/loggedin"
+					"/tutors/loggedin"
 				);
 				this.setCurrentTutor(data.currentTutor);
 			} catch {
@@ -162,7 +162,7 @@ export const useAppStore = defineStore("app", {
 		async refreshCurrentAdmin() {
 			try {
 				const { data } = await axios.get<{ currentAdmin: Admin }>(
-					"/api/admins/loggedin"
+					"/admins/loggedin"
 				);
 				this.setCurrentAdmin(data.currentAdmin);
 			} catch {
