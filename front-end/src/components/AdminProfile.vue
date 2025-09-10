@@ -34,6 +34,7 @@ async function loadAll() {
 		app.fetchUsers(),
 		app.refreshCurrentAdmin()
 	]);
+	await api.get("/accounts/me");
 }
 
 onMounted(loadAll);

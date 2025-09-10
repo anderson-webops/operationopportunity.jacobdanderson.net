@@ -6,7 +6,6 @@ import {
 	faInstagram
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import axios from "axios";
 import { setupLayouts } from "virtual:generated-layouts";
 import { ViteSSG } from "vite-ssg";
 
@@ -17,10 +16,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import "uno.css";
 // import "@unocss/reset/tailwind.css";
 import "./styles/main.css";
-
-// apply once globally
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "/api"; // optional, so you can do axios.get("/users/all") instead of "/api/users/all"
 
 // FontAwesome library setup
 library.add(faFacebook, faGithub, faInstagram);

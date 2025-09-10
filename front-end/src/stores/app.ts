@@ -1,10 +1,9 @@
-import axios from "axios";
 // src/stores/app.ts
 import { defineStore } from "pinia";
+import { api } from "@/api";
 
 /* ------------------------------------------------------------------ */
-/*  TypeScript interfaces                                              */
-
+/*  TypeScript interfaces                                             */
 /* ------------------------------------------------------------------ */
 export interface Tutor {
 	_id: string;
@@ -36,7 +35,7 @@ export interface Admin {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Pinia store                                                        */
+/*  Pinia store                                                       */
 /* ------------------------------------------------------------------ */
 export const useAppStore = defineStore("app", {
 	state: () => ({
@@ -96,7 +95,7 @@ export const useAppStore = defineStore("app", {
 		/* ---------- data fetchers ---------- */
 		async fetchUsers() {
 			try {
-				const { data } = await axios.get<User[]>("/users/all");
+				const { data } = await api.get<User[]>("/users/all");
 				this.setUsers(data);
 			} catch (e) {
 				console.error(e);
@@ -105,7 +104,7 @@ export const useAppStore = defineStore("app", {
 
 		async fetchTutors() {
 			try {
-				const { data } = await axios.get<Tutor[]>("/tutors");
+				const { data } = await api.get<Tutor[]>("/tutors");
 				this.setTutors(data);
 			} catch (e) {
 				console.error(e);
@@ -115,7 +114,7 @@ export const useAppStore = defineStore("app", {
 		async getUsersOfTutor() {
 			if (!this.currentTutor) return;
 			try {
-				const { data } = await axios.get<User[]>(
+				const { data } = await api.get<User[]>(
 					`/users/oftutor/${this.currentTutor._id}`
 				);
 				this.setUsers(data);
@@ -127,7 +126,7 @@ export const useAppStore = defineStore("app", {
 		/* ---------- session helpers ---------- */
 		async logout() {
 			try {
-				await axios.delete("/accounts/logout"); // one endpoint for all roles
+				await api.delete("/accounts/logout"); // one endpoint for all roles
 				this.setCurrentTutor(null);
 				this.setCurrentUser(null);
 				this.setCurrentAdmin(null);
@@ -139,7 +138,7 @@ export const useAppStore = defineStore("app", {
 
 		async refreshCurrentUser() {
 			try {
-				const { data } = await axios.get<{ currentUser: User }>(
+				const { data } = await api.get<{ currentUser: User }>(
 					"/users/loggedin"
 				);
 				this.setCurrentUser(data.currentUser);
@@ -150,7 +149,7 @@ export const useAppStore = defineStore("app", {
 
 		async refreshCurrentTutor() {
 			try {
-				const { data } = await axios.get<{ currentTutor: Tutor }>(
+				const { data } = await api.get<{ currentTutor: Tutor }>(
 					"/tutors/loggedin"
 				);
 				this.setCurrentTutor(data.currentTutor);
@@ -161,7 +160,7 @@ export const useAppStore = defineStore("app", {
 
 		async refreshCurrentAdmin() {
 			try {
-				const { data } = await axios.get<{ currentAdmin: Admin }>(
+				const { data } = await api.get<{ currentAdmin: Admin }>(
 					"/admins/loggedin"
 				);
 				this.setCurrentAdmin(data.currentAdmin);

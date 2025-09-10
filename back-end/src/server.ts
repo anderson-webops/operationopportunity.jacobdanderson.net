@@ -61,6 +61,12 @@ async function main() {
 	app.use("/admins", adminRoutes);
 	app.use("/accounts", accountRoutes);
 
+	// after your session middleware in server.ts
+	app.get("/accounts/me", (req, res) => {
+		const s = req.session as any;
+		res.json({ adminID: s?.adminID ?? null, tutorID: s?.tutorID ?? null, userID: s?.userID ?? null });
+	});
+
 	const PORT = env.PORT || 3002;
 	app.listen(PORT, () => console.log(`Server listening on port ${PORT}!`));
 }
