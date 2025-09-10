@@ -28,7 +28,7 @@ async function updateQuote() {
 		// const res = await fetch("/api/quotes?tags=success&limit=1");
 		// const [q]  = await res.json();          // destructure first item
 
-		const res = await fetch("/api/quotes?tags=success&limit=100");
+		const res = await fetch("/quotes?tags=success&limit=100");
 		if (!res.ok) {
 			console.error("Backend error", await res.text());
 			return;

@@ -36,7 +36,7 @@ async function main() {
 		})
 	);
 
-	app.use("/api/quotes", quoteProxy);
+	app.use("/quotes", quoteProxy);
 
 	// --- Get Mongo URI from Vault (preferred), else env fallback ---
 	let mongoUri: string | undefined;
