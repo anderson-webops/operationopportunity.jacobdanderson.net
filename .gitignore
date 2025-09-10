@@ -3,6 +3,8 @@
 **/dist
 .run
 
+package-lock.json
+
 # local env files
 **/.env
 .env.local
