@@ -1,9 +1,9 @@
 <!-- src/components/AccountManagement.vue -->
 <script lang="ts" setup>
 import type { AxiosError } from "axios";
-import axios from "axios";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
+import { api } from "@/api";
 import { useAppStore } from "@/stores/app";
 
 const app = useAppStore();
@@ -23,7 +23,7 @@ async function loginTutor() {
 	errorLogin.value = "";
 	if (!loginEmail.value || !loginPassword.value) return;
 	try {
-		const { data } = await axios.post(
+		const { data } = await api.post(
 			"/accounts/login",
 			{
 				email: loginEmail.value,
@@ -81,7 +81,7 @@ async function addSignup() {
 		// fire the right endpoint with credentials turned on
 		const res =
 			signupType.value === "tutor"
-				? await axios.post(
+				? await api.post(
 						"/tutors",
 						{
 							name: name.value,
@@ -92,7 +92,7 @@ async function addSignup() {
 						},
 						{ withCredentials: true }
 					)
-				: await axios.post(
+				: await api.post(
 						"/users",
 						{
 							name: name.value,

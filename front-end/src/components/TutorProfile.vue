@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import axios from "axios";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
+import { api } from "@/api";
 import ProfileFields from "@/components/ProfileFields.vue";
 import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { useEditable } from "@/composables/useEditable";
@@ -32,7 +32,7 @@ const tutorFields = [
 async function loadUsers() {
 	if (!currentTutor.value) return;
 	try {
-		const { data } = await axios.get(
+		const { data } = await api.get(
 			`/users/oftutor/${currentTutor.value._id}`
 		);
 		app.setUsers(data);

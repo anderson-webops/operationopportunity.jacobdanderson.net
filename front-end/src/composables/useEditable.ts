@@ -1,5 +1,5 @@
-import axios from "axios";
 import { ref } from "vue";
+import { api } from "@/api";
 import { useAppStore } from "@/stores/app";
 
 type Kind = "user" | "tutor" | "admin";
@@ -25,7 +25,7 @@ export function useEditable(kind: Kind) {
 		// 1) change-e-mail if needed
 		if (!baseline) baseline = entity.email;
 		if (entity.email !== baseline) {
-			await axios.post(`/accounts/changeEmail/${entity._id}`, {
+			await api.post(`/accounts/changeEmail/${entity._id}`, {
 				email: entity.email
 			});
 			baseline = entity.email;
@@ -39,7 +39,7 @@ export function useEditable(kind: Kind) {
 					? `/tutors/${entity._id}`
 					: `/admins/${entity._id}`;
 
-		await axios.put(url, entity);
+		await api.put(url, entity);
 		editing.value = false;
 
 		// 3) update Pinia _in-place_ (no extra fetch)

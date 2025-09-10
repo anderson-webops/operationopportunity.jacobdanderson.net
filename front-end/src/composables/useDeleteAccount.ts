@@ -1,5 +1,5 @@
 // src/composables/useDeleteAccount.ts
-import axios from "axios";
+import { api } from "@/api";
 import { useAppStore } from "@/stores/app";
 
 type Kind = "admin" | "tutor" | "user";
@@ -15,7 +15,7 @@ export function useDeleteAccount(kind: Kind) {
 
 	/** delete on the server, then forget the session locally */
 	return async function deleteAccount(id: string) {
-		await axios.delete(`${endpoint[kind]}/${id}`, {
+		await api.delete(`${endpoint[kind]}/${id}`, {
 			withCredentials: true
 		});
 		await app.logout(); // clears Pinia + session cookie
