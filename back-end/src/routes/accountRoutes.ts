@@ -16,5 +16,15 @@ router.post("/login", login);
 
 router.delete("/logout", logout);
 
+// in accountRoutes.ts
+router.get("/me", (req, res) => {
+	const s = req.session as any;
+	res.json({
+		adminID: s?.adminID ?? null,
+		tutorID: s?.tutorID ?? null,
+		userID: s?.userID ?? null
+	});
+});
+
 // Export the router
 export const accountRoutes = router;
