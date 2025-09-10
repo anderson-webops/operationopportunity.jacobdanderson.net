@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
-import { api } from "@/api";
 import ProfileFields from "@/components/ProfileFields.vue";
 import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { useEditable } from "@/composables/useEditable";
@@ -35,7 +34,6 @@ async function loadAll() {
 		app.fetchUsers(),
 		app.refreshCurrentAdmin()
 	]);
-	await api.get("/accounts/me");
 }
 
 onMounted(loadAll);

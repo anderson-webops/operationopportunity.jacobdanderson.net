@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
+import { api } from "@/api.ts";
 
 defineOptions({ name: "HomePage" });
 
@@ -27,6 +28,7 @@ async function updateQuote() {
 		// Optionally, choose only one quote:
 		// const res = await fetch("/api/quotes?tags=success&limit=1");
 		// const [q]  = await res.json();          // destructure first item
+		await api.get("/accounts/me");
 
 		const res = await fetch("/api/quotes?tags=success&limit=100");
 		if (!res.ok) {
