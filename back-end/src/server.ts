@@ -44,7 +44,13 @@ async function main() {
 		const { uri } = await readMongoSecret(); // your Vault client should read from KV v2
 		mongoUri = uri;
 	} catch (e) {
-		console.warn("Vault unavailable, falling back to MONGODB_URI:", e);
+		// Fail silently if Vault is not available, then probably local test (Had to do this to avoid weird requirements
+		// console.log("Vault unavailable, falling back to MONGODB_URI:", e);
+		const m: string = e?.toString() || "";
+		if (!m.includes("Failed to fetch") && !m.includes("connect ECONNREFUSED")) {
+			console.log("");
+		}
+
 		mongoUri = env.MONGODB_URI;
 	}
 
@@ -52,7 +58,7 @@ async function main() {
 		throw new Error("No MongoDB URI available (Vault and MONGODB_URI missing)");
 	}
 
-	await mongoose.connect(mongoUri); // standard Mongoose connect call.  [oai_citation:2‡mongoosejs.com](https://mongoosejs.com/docs/7.x/docs/api/mongoose.html?utm_source=chatgpt.com)
+	await mongoose.connect(mongoUri);
 	console.log("Connected to MongoDB");
 
 	// Your routes (note: you’ve commented an axios baseURL elsewhere; these are mounted as-is)

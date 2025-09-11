@@ -41,7 +41,7 @@ async function getUsers(t: Tutor | null) {
 	app.setUsers(data);
 	await api.put(`/tutors/${t._id}`, {
 		...t,
-		usersOfTutorLength: data.lengt
+		usersOfTutorLength: data.length
 	});
 }
 
