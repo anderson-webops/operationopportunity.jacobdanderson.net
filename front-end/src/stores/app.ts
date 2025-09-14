@@ -60,6 +60,40 @@ export const useAppStore = defineStore("app", {
 	},
 
 	actions: {
+		/*		async bootstrapSession() {
+			await Promise.allSettled([
+				this.refreshCurrentAdmin(),
+				this.refreshCurrentTutor(),
+				this.refreshCurrentUser()
+			]);
+		}, */
+		async bootstrapSession() {
+			try {
+				const { data } = await api.get("/accounts/me");
+				if (data.adminID) {
+					await this.refreshCurrentAdmin();
+					this.setCurrentTutor(null);
+					this.setCurrentUser(null);
+				} else if (data.tutorID) {
+					await this.refreshCurrentTutor();
+					this.setCurrentAdmin(null);
+					this.setCurrentUser(null);
+				} else if (data.userID) {
+					await this.refreshCurrentUser();
+					this.setCurrentAdmin(null);
+					this.setCurrentTutor(null);
+				} else {
+					this.setCurrentAdmin(null);
+					this.setCurrentTutor(null);
+					this.setCurrentUser(null);
+				}
+			} catch {
+				this.setCurrentAdmin(null);
+				this.setCurrentTutor(null);
+				this.setCurrentUser(null);
+			}
+		},
+
 		/* ---------- setters ---------- */
 		setUsers(u: User[]) {
 			this.users = u;

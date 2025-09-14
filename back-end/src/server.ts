@@ -1,7 +1,6 @@
 // src/server.ts
 import { env, exit } from "node:process";
 import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
 import cookieSession from "cookie-session";
 import express from "express";
 import mongoose from "mongoose";
@@ -25,16 +24,41 @@ async function main() {
 	app.set("trust proxy", 1);
 	app.use(bodyParser.urlencoded({ extended: false }));
 	app.use(bodyParser.json());
-	app.use(cookieParser());
-	app.use(
-		cookieSession({
-			name: "session",
-			keys: [SESSION_SECRET],
-			maxAge: 24 * 60 * 60 * 1000,
-			sameSite: "lax",
-			secure: env.NODE_ENV === "production"
-		})
-	);
+
+	const isProd = env.NODE_ENV === "production";
+	const isCrossSite = !!env.CROSS_SITE;
+	// set CROSS_SITE=true in env if frontend and backend are on different domains
+
+	type CookieSessionOpts = Parameters<typeof cookieSession>[0];
+
+	const cookieOptions: CookieSessionOpts = {
+		name: "session",
+		keys: [SESSION_SECRET],
+		maxAge: 24 * 60 * 60 * 1000,
+		sameSite: "lax", // default, safe for dev & same-origin
+		secure: false // default in dev
+	};
+
+	// Adjust for production
+	if (isProd) {
+		if (isCrossSite) {
+			cookieOptions.sameSite = "none"; // required for cross-site
+			cookieOptions.secure = true; // required when SameSite=None
+			// cookieOptions.domain = ".example.com"; // optional if you want subdomain sharing
+		} else {
+			cookieOptions.sameSite = "lax"; // fine for same-origin
+			cookieOptions.secure = true; // enforce HTTPS cookies
+		}
+	}
+
+	app.use(cookieSession(cookieOptions));
+
+	app.use((req, res, next) => {
+		if (req.path.startsWith("/accounts") || req.path.endsWith("/loggedin")) {
+			res.setHeader("Cache-Control", "no-store");
+		}
+		next();
+	});
 
 	app.use("/quotes", quoteProxy);
 
