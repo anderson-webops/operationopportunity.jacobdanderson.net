@@ -18,6 +18,9 @@ import "dotenv/config";
 async function main() {
 	const app = express();
 
+	// --- ultra-light liveness (no dependencies) ---
+	app.get("/healthz", (_req, res) => res.json({ ok: true }));
+
 	const SESSION_SECRET = env.SESSION_SECRET;
 	if (!SESSION_SECRET) throw new Error("Missing SESSION_SECRET");
 
@@ -53,6 +56,14 @@ async function main() {
 
 	app.use(cookieSession(cookieOptions));
 
+	// --- optional readiness: succeeds only when Mongo is ready ---
+	app.get("/readyz", (_req, res) => {
+		const s = mongoose.connection.readyState; // 1=connected, 2=connecting
+		if (s === 1) return res.json({ ready: true });
+		return res.status(503).json({ ready: false, state: s });
+	});
+
+	// cache-control for auth endpoints
 	app.use((req, res, next) => {
 		if (req.path.startsWith("/accounts") || req.path.endsWith("/loggedin")) {
 			res.setHeader("Cache-Control", "no-store");
@@ -60,6 +71,7 @@ async function main() {
 		next();
 	});
 
+	// routes that don’t require DB
 	app.use("/quotes", quoteProxy);
 
 	// --- Get Mongo URI from Vault (preferred), else env fallback ---
