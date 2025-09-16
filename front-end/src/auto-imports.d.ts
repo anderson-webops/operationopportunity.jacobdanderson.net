@@ -39,6 +39,7 @@ declare global {
 	const getActiveHead: (typeof import("@unhead/vue"))["getActiveHead"];
 	const getCurrentInstance: (typeof import("vue"))["getCurrentInstance"];
 	const getCurrentScope: (typeof import("vue"))["getCurrentScope"];
+	const getCurrentWatcher: (typeof import("vue"))["getCurrentWatcher"];
 	const h: (typeof import("vue"))["h"];
 	const ignorableWatch: (typeof import("@vueuse/core"))["ignorableWatch"];
 	const inject: (typeof import("vue"))["inject"];
@@ -50,6 +51,7 @@ declare global {
 	const isReactive: (typeof import("vue"))["isReactive"];
 	const isReadonly: (typeof import("vue"))["isReadonly"];
 	const isRef: (typeof import("vue"))["isRef"];
+	const isShallow: (typeof import("vue"))["isShallow"];
 	const makeDestructurable: (typeof import("@vueuse/core"))["makeDestructurable"];
 	const markRaw: (typeof import("vue"))["markRaw"];
 	const nextTick: (typeof import("vue"))["nextTick"];
@@ -329,6 +331,7 @@ declare global {
 		InjectionKey,
 		PropType,
 		Ref,
+		ShallowRef,
 		MaybeRef,
 		MaybeRefOrGetter,
 		VNode,
@@ -426,6 +429,9 @@ declare module "vue" {
 		readonly getCurrentScope: UnwrapRef<
 			(typeof import("vue"))["getCurrentScope"]
 		>;
+		readonly getCurrentWatcher: UnwrapRef<
+			(typeof import("vue"))["getCurrentWatcher"]
+		>;
 		readonly h: UnwrapRef<(typeof import("vue"))["h"]>;
 		readonly ignorableWatch: UnwrapRef<
 			(typeof import("@vueuse/core"))["ignorableWatch"]
@@ -447,6 +453,7 @@ declare module "vue" {
 		readonly isReactive: UnwrapRef<(typeof import("vue"))["isReactive"]>;
 		readonly isReadonly: UnwrapRef<(typeof import("vue"))["isReadonly"]>;
 		readonly isRef: UnwrapRef<(typeof import("vue"))["isRef"]>;
+		readonly isShallow: UnwrapRef<(typeof import("vue"))["isShallow"]>;
 		readonly makeDestructurable: UnwrapRef<
 			(typeof import("@vueuse/core"))["makeDestructurable"]
 		>;

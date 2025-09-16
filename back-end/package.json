@@ -12,6 +12,7 @@
 		"build": "tsc -p tsconfig.json",
 		"watch": "tsc -w",
 		"dev": "tsx watch -r dotenv/config src/server.ts",
+		"up": "taze major -I",
 		"lint": "eslint \"src/**/*.{js,ts}\"",
 		"lint-fix": "eslint \"src/**/*.{js,ts}\" --fix",
 		"create-admin": "tsx -r dotenv/config src/create-admin-user.ts"
@@ -20,34 +21,32 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"argon2": "^0.43.1",
+		"argon2": "^0.44.0",
 		"body-parser": "^2.2.0",
 		"cookie-session": "^2.1.1",
-		"dotenv": "^17.2.0",
+		"dotenv": "^17.2.2",
 		"express": "^5.1.0",
-		"express-rate-limit": "^8.0.1",
+		"express-rate-limit": "^8.1.0",
 		"express-validator": "^7.2.1",
 		"helmet": "^8.1.0",
 		"moment": "^2.30.1",
-		"mongoose": "^8.16.4",
+		"mongoose": "^8.18.1",
 		"multer": "^2.0.2",
 		"readline-sync": "^1.4.10"
 	},
 	"devDependencies": {
-		"@eslint/compat": "^1.3.1",
+		"@eslint/compat": "^1.3.2",
 		"@types/body-parser": "^1.19.6",
 		"@types/cookie-session": "^2.0.49",
 		"@types/express": "^5.0.3",
 		"@types/express-session": "^1.18.2",
-		"@types/node": "^24.1.0",
+		"@types/node": "^24.5.1",
 		"@types/readline-sync": "^1.4.8",
-		"eslint": "^9.32.0",
 		"eslint-plugin-import": "^2.32.0",
-		"globals": "^16.3.0",
 		"nodemon": "^3.1.10",
 		"ts-node": "^10.9.2",
-		"tsx": "^4.20.3",
-		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.38.0"
+		"tsx": "^4.20.5",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.44.0"
 	}
 }
