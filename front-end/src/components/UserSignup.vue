@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { Tutor, User } from "@/stores/app";
-import { useAppStore } from "@/stores/app";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { api } from "@/api";
+import { useAppStore } from "@/stores/app";
 
 const app = useAppStore();
 const {

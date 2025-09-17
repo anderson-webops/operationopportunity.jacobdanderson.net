@@ -2,49 +2,59 @@ name: CI
 
 on:
     push:
-        branches:
-            - main
-
+        branches: [ main ]
     pull_request:
-        branches:
-            - main
+        branches: [ main ]
 
 jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
-            -   uses: pnpm/action-setup@v3
+
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: lts/*
-                    cache: pnpm
+                    node-version: 20.x
+                    cache: npm
 
-            -   name: Install
-                run: pnpm install
+            # Make runner's npm match packageManager in package.json
+            -   name: Pin npm version
+                run: |
+                    npm -v
+                    npm i -g npm@11.6.0
+                    npm -v
 
+            -   name: Install deps
+                run: npm ci
+
+            # Root "lint" runs front-end and back-end lint
             -   name: Lint
-                run: pnpm run lint
+                run: npm run lint
 
     typecheck:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
-            -   uses: pnpm/action-setup@v3
+
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: lts/*
-                    cache: pnpm
+                    node-version: 20.x
+                    cache: npm
 
-            -   name: Install
-                run: pnpm install
+            -   name: Pin npm version
+                run: |
+                    npm i -g npm@11.6.0
+                    npm -v
 
-            -   name: Typecheck
-                run: pnpm run typecheck
+            -   name: Install deps
+                run: npm ci
+
+            # Only the front-end defines typecheck; call it directly
+            -   name: Typecheck (front-end)
+                run: npm run -w front-end typecheck
 
     test:
         runs-on: ${{ matrix.os }}
-
         strategy:
             matrix:
                 node-version: [ 18.x, 20.x ]
@@ -53,44 +63,57 @@ jobs:
 
         steps:
             -   uses: actions/checkout@v4
-            -   uses: pnpm/action-setup@v3
-            -   name: Use Node.js ${{ matrix.node-version }}
-                uses: actions/setup-node@v4
-                with:
-                    node-version: ${{ matrix.node-version }}
-                    registry-url: https://registry.npmjs.org/
-                    cache: pnpm
 
-            -   run: pnpm install
-            -   run: pnpm run test:unit
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: ${{ matrix['node-version'] }}
+                    cache: npm
+                    registry-url: https://registry.npmjs.org/
+
+            -   name: Pin npm version
+                run: |
+                    npm i -g npm@11.6.0
+                    npm -v
+
+            -   name: Install deps
+                run: npm ci
+
+            # Run your unit tests (front-end has vitest)
+            -   name: Unit tests
+                run: npm run -w front-end test:unit
 
     test-e2e:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
+
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 20.x
+                    cache: npm
+                    registry-url: https://registry.npmjs.org/
+
+            -   name: Pin npm version
+                run: |
+                    npm i -g npm@11.6.0
+                    npm -v
+
+            -   name: Install deps
+                run: npm ci
+
+            # Cache Cypress binary
             -   uses: actions/cache@v4
                 with:
-                    path: |
-                        ~/.cache
-                    key: cypress-cache-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                    path: ~/.cache/Cypress
+                    key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-            -   uses: pnpm/action-setup@v3
-
-            -   name: Use Node.js
-                uses: actions/setup-node@v4
-                with:
-                    node-version: lts/*
-                    registry-url: https://registry.npmjs.org/
-                    cache: pnpm
-
-            -   run: pnpm install
-
-            -   name: Cypress PNPM Patch
-                run: cp pnpm-lock.yaml package-lock.json
+            # Build site and run preview server for Cypress to hit
+            -   name: Build (front-end)
+                run: npm run -w front-end build
 
             -   name: Cypress
                 uses: cypress-io/github-action@v6
                 with:
-                    install-command: echo
-                    build: pnpm run build
-                    start: npx vite preview --port 3333
+                    install: false            # we already ran npm ci
+                    start: npm run -w front-end preview -- --port 3333
+                    wait-on: "http://localhost:3333"

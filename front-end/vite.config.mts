@@ -1,5 +1,5 @@
 // vite.config.ts
-import path, { resolve } from "node:path";
+import path from "node:path";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 
 import Shiki from "@shikijs/markdown-it";
@@ -192,7 +192,7 @@ export default defineConfig({
 			"/api": {
 				target: "http://localhost:3002",
 				changeOrigin: true,
-				rewrite: p => p.replace(/^\/api/, "") // strip /api
+				rewrite: (p) => p.replace(/^\/api/, "") // strip /api
 			}
 		}
 	}

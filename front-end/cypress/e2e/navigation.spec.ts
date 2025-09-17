@@ -47,6 +47,6 @@ context("Navigation & page smoke-tests", () => {
 	it("shows a motivational quote on Home", () => {
 		cy.get(".quote")
 			.should("exist")
-			.and($q => expect($q.text().length).to.be.greaterThan(10)); // non-empty
+			.and(($q) => expect($q.text().length).to.be.greaterThan(10)); // non-empty
 	});
 });

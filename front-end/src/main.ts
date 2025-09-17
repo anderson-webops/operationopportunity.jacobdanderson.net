@@ -27,7 +27,7 @@ export const createApp = ViteSSG(
 		routes: setupLayouts(routes),
 		base: import.meta.env.BASE_URL
 	},
-	async ctx => {
+	async (ctx) => {
 		// ctx is the context where you can add global components or plugins
 		ctx.app.component("font-awesome-icon", FontAwesomeIcon);
 
@@ -36,7 +36,7 @@ export const createApp = ViteSSG(
 			import.meta.glob<{
 				install: UserModule;
 			}>("./modules/*.ts", { eager: true })
-		).forEach(i => i.install?.(ctx));
+		).forEach((i) => i.install?.(ctx));
 		// ctx.app.use(Previewer)
 
 		// Only run on client, after Pinia is ready

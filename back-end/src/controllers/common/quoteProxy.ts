@@ -23,7 +23,8 @@ export const quoteProxy = Router().get("/", async (_req, res) => {
 				dateModified: new Date().toISOString()
 			}
 		]);
-	} catch (err) {
+	}
+	catch (err) {
 		console.error("favqs proxy failed:", err);
 		res.status(502).json({ error: "Unable to reach quotes service" });
 	}
