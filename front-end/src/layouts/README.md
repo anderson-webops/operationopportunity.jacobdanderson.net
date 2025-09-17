@@ -11,6 +11,6 @@ page's SFCs like this:
 ```vue
 <route lang="yaml">
 meta:
-  layout: home
+    layout: home
 </route>
 ```

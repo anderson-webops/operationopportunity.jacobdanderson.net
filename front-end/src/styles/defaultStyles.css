@@ -15,8 +15,7 @@ table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
-time, mark, audio, video /* eslint-disable-line */
-{
+time, mark, audio, video /* eslint-disable-line */ {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -27,8 +26,7 @@ time, mark, audio, video /* eslint-disable-line */
 
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section /* eslint-disable-line */
-{
+footer, header, hgroup, menu, nav, section /* eslint-disable-line */ {
 	display: block;
 }
 
@@ -36,20 +34,17 @@ body {
 	line-height: 1;
 }
 
-ol, ul /* eslint-disable-line */
-{
+ol, ul /* eslint-disable-line */ {
 	list-style: none;
 }
 
-blockquote, q /* eslint-disable-line */
-{
+blockquote, q /* eslint-disable-line */ {
 	quotes: none;
 }
 
 /*noinspection CssOverwrittenProperties*/
 blockquote:before, blockquote:after,
-q:before, q:after /* eslint-disable-line */
-{
+q:before, q:after /* eslint-disable-line */ {
 	content: "";
 	content: none;
 }

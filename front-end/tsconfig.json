@@ -17,11 +17,7 @@
 		/* Language and Environment */
 		//"target": "ESNext",
 		/* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-		"lib": [
-			"ESNext",
-			"DOM",
-			"DOM.Iterable"
-		],
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		/* Specify a set of bundled library declaration files that describe the target runtime environment. */
 		"jsx": "react-jsx",
 		/* Specify what JSX code is generated. */
@@ -45,12 +41,8 @@
 		"baseUrl": "./",
 		/* Specify the base directory to resolve non-relative module names. */
 		"paths": {
-			"~/*": [
-				"src/*"
-			],
-			"@/*": [
-				"src/*"
-			]
+			"~/*": ["src/*"],
+			"@/*": ["src/*"]
 		},
 		/* Specify a set of entries that re-map imports to additional lookup locations. */
 		// "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
@@ -156,14 +148,8 @@
 		]
 	},
 	/* the generated .d.ts files live under src/, so no change needed */
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"dist",
-		"node_modules",
-		"cypress"
-	],
+	"include": ["src"],
+	"exclude": ["dist", "node_modules", "cypress"],
 	/* project reference for vite.config.ts type-checking (unchanged) */
 	"references": [
 		{

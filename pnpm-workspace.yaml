@@ -1,12 +1,11 @@
-packages: [ ]
+packages: []
 
 catalogs:
-
     build:
-        '@intlify/unplugin-vue-i18n': ^6.0.5
-        '@shikijs/markdown-it': ^3.2.1
-        '@unocss/eslint-config': ^66.1.0-beta.7
-        '@vitejs/plugin-vue': ^5.2.3
+        "@intlify/unplugin-vue-i18n": ^6.0.5
+        "@shikijs/markdown-it": ^3.2.1
+        "@unocss/eslint-config": ^66.1.0-beta.7
+        "@vitejs/plugin-vue": ^5.2.3
         beasties: ^0.2.0
         markdown-it-link-attributes: ^4.0.1
         rollup: ^4.37.0
@@ -28,10 +27,10 @@ catalogs:
         vite-ssg-sitemap: ^0.8.1
 
     dev:
-        '@antfu/eslint-config': ^4.11.0
-        '@iconify-json/carbon': ^1.2.8
-        '@vue-macros/volar': ^3.0.0-beta.7
-        '@vue/test-utils': ^2.4.6
+        "@antfu/eslint-config": ^4.11.0
+        "@iconify-json/carbon": ^1.2.8
+        "@vue-macros/volar": ^3.0.0-beta.7
+        "@vue/test-utils": ^2.4.6
         cypress: ^14.2.1
         cypress-vite: ^1.6.0
         eslint: ^9.23.0
@@ -46,9 +45,9 @@ catalogs:
         vue-tsc: ^2.2.8
 
     frontend:
-        '@unhead/vue': ^2.0.2
-        '@unocss/reset': ^66.1.0-beta.7
-        '@vueuse/core': ^13.0.0
+        "@unhead/vue": ^2.0.2
+        "@unocss/reset": ^66.1.0-beta.7
+        "@vueuse/core": ^13.0.0
         nprogress: ^0.2.0
         pinia: ^3.0.1
         vue: ^3.5.13
@@ -56,8 +55,8 @@ catalogs:
         vue-router: ^4.5.0
 
     types:
-        '@types/markdown-it-link-attributes': ^3.0.5
-        '@types/nprogress': ^0.2.3
+        "@types/markdown-it-link-attributes": ^3.0.5
+        "@types/nprogress": ^0.2.3
 
 onlyBuiltDependencies:
     - cypress

@@ -25,8 +25,7 @@ body {
 	--text_scalar: 1;
 }
 
-h1, h2, h3, h4 /* eslint-disable-line */
-{
+h1, h2, h3, h4 /* eslint-disable-line */ {
 	font-family: Didot, Calibri, Candara, sans-serif;
 }
 
