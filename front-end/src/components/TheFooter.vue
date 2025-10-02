@@ -10,7 +10,7 @@
 				<ul class="semantic_list">
 					<li>
 						<a
-							href="https://github.com/Jacoba1100254352/operationopportunity.audiot.info"
+							href="https://github.com/Jacoba1100254352/operationopportunity.jacobdanderson.net"
 							target="_blank"
 							><img
 								id="githubIcon"
