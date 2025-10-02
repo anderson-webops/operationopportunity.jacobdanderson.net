@@ -1,5 +1,6 @@
 // vite.config.ts
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import VueI18n from "@intlify/unplugin-vue-i18n/vite";
 
 import Shiki from "@shikijs/markdown-it";
@@ -20,11 +21,13 @@ import VueDevTools from "vite-plugin-vue-devtools";
 import Layouts from "vite-plugin-vue-layouts-next";
 import generateSitemap from "vite-ssg-sitemap";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default defineConfig({
 	resolve: {
 		alias: {
-			"~": `${resolve(__dirname, "src")}/`,
-			"@": `${resolve(__dirname, "src")}/`
+			"~": `${path.resolve(__dirname, "src")}/`,
+			"@": `${path.resolve(__dirname, "src")}/`
 		}
 	},
 
