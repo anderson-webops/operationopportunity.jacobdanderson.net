@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { setupLayouts } from "virtual:generated-layouts";
 import { ViteSSG } from "vite-ssg";
 
-import { routes } from "vue-router/auto-routes";
+import routes from "vue-router/auto-routes";
 import App from "./App.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 // Assuming you have styles defined in these files
@@ -21,6 +21,7 @@ import "./styles/main.css";
 library.add(faFacebook, faGithub, faInstagram);
 
 // https://github.com/antfu/vite-ssg
+// noinspection JSUnusedGlobalSymbols
 export const createApp = ViteSSG(
 	App,
 	{
@@ -41,6 +42,8 @@ export const createApp = ViteSSG(
 
 		// Only run on client, after Pinia is ready
 		if (!import.meta.env.SSR) {
+			// Load Bootstrap’s JavaScript (includes Popper via bundler)
+			await import("bootstrap");
 			const { useAppStore } = await import("./stores/app");
 			const appStore = useAppStore();
 			await appStore.bootstrapSession(); // <- rehydrate Pinia from cookies
