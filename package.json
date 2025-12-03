@@ -3,7 +3,7 @@
 	"type": "module",
 	"version": "1.0.0",
 	"private": true,
-	"packageManager": "npm@11.6.2",
+	"packageManager": "npm@11.6.4",
 	"description": "Monorepo for Opportunity project",
 	"author": "Jacob Anderson",
 	"license": "ISC",
@@ -26,16 +26,16 @@
 		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^6.0.0",
-		"@typescript-eslint/eslint-plugin": "^8.46.1",
-		"@typescript-eslint/parser": "^8.46.1",
-		"eslint": "^9.37.0",
+		"@antfu/eslint-config": "^6.3.0",
+		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@typescript-eslint/parser": "^8.48.1",
+		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.4",
-		"eslint-plugin-vue": "^10.5.1",
-		"globals": "^16.4.0",
-		"prettier": "^3.6.2",
-		"taze": "^19.7.0",
+		"eslint-plugin-vue": "^10.6.2",
+		"globals": "^16.5.0",
+		"prettier": "^3.7.4",
+		"taze": "^19.9.2",
 		"typescript": "^5.9.3"
 	}
 }
