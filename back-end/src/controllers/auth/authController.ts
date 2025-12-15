@@ -12,21 +12,42 @@ import { User } from "../../models/schemas/User.js";
 // union of the three document types
 type Entity = IUser | ITutor | IAdmin;
 
+const THIRTY_DAYS_MS: number = 30 * 24 * 60 * 60 * 1000;
+
 // type‐guard: filters out `null` and tells TS that `u` is an Entity
 function isEntity(u: any): u is Entity {
 	return u != null && typeof u.comparePassword === "function";
 }
 
+function getEntityId(entity: Entity) {
+	return entity._id.toString();
+}
+
+function canMutate(session: CustomSession, entity: Entity) {
+	if (session.adminID) return true;
+	const entityId: string = getEntityId(entity);
+	if (entity instanceof Admin) return session.adminID === entityId;
+	if (entity instanceof Tutor) return session.tutorID === entityId;
+	if (entity instanceof User) return session.userID === entityId;
+	return false;
+}
+
 // LOGIN
 export const login: RequestHandler = async (req, res) => {
-	const { email, password } = req.body as { email?: string; password?: string };
+	const { email, password, remember } = req.body as {
+		email?: string;
+		password?: string;
+		remember?: boolean;
+	};
 	if (!email || !password) return res.sendStatus(400);
+
+	const e = email.trim().toLowerCase();
 
 	// fetch all three, we’ll pick whichever isn’t null
 	const results = (await Promise.all([
-		User.findOne({ email }).exec(),
-		Tutor.findOne({ email }).exec(),
-		Admin.findOne({ email }).exec()
+		User.findOne({ email: e }).exec(),
+		Tutor.findOne({ email: e }).exec(),
+		Admin.findOne({ email: e }).exec()
 	])) as Array<IUser | ITutor | IAdmin | null>;
 
 	// pick the first non‐null
@@ -55,6 +76,9 @@ export const login: RequestHandler = async (req, res) => {
 
 	// sign‐in
 	session[sessionKey] = entity._id.toString();
+
+	const options = ((req as any).sessionOptions ??= {});
+	options.maxAge = remember ? THIRTY_DAYS_MS : undefined;
 	return res.json({ [responseKey]: entity });
 };
 
@@ -71,7 +95,7 @@ export const checkEmail: RequestHandler = async (req, res) => {
 	const { id, email } = req.body as { id?: string; email?: string };
 	if (!email) return res.status(400).json({ message: "Email required" });
 	const [u, t, a] = await Promise.all([User.findOne({ email }), Tutor.findOne({ email }), Admin.findOne({ email })]);
-	const conflict = [u, t, a].some(x => x && x.id !== id);
+	const conflict = [u, t, a].some(x => x && x._id.toString() !== id);
 	res.status(conflict ? 403 : 200).json({
 		message: conflict ? "Already in use" : "Available"
 	});
@@ -86,11 +110,19 @@ export const changeEmail: RequestHandler = async (req, res) => {
 
 	if (!newEmail) return res.status(400).json({ message: "New email is required." });
 
+	const session = req.session as CustomSession;
+	const conflictChecks = await Promise.all(
+		models.map(Model => Model.exists({ email: newEmail, _id: { $ne: ID } }))
+	);
+	if (conflictChecks.some(Boolean)) {
+		return res.status(403).json({ message: "Email already exists." });
+	}
+
 	for (const Model of models) {
 		const doc = await Model.findById(ID);
 		if (!doc) continue;
-		if (await Model.exists({ email: newEmail })) {
-			return res.status(403).json({ message: "Email already exists." });
+		if (!canMutate(session, doc as Entity)) {
+			return res.status(403).json({ message: "Not authorized to update this email." });
 		}
 		doc.email = newEmail;
 		await doc.save();
