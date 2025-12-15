@@ -11,7 +11,6 @@ import LinkAttributes from "markdown-it-link-attributes";
 import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
-import VueMacros from "unplugin-vue-macros/vite";
 import Markdown from "unplugin-vue-markdown/vite";
 import { VueRouterAutoImports } from "unplugin-vue-router";
 import VueRouter from "unplugin-vue-router/vite";
@@ -32,18 +31,14 @@ export default defineConfig({
 	},
 
 	plugins: [
-		/* 1️⃣  Router (must run before macros/layouts) */
+		/* 1️⃣  Router (must run before layouts) */
 		VueRouter({
 			extensions: [".vue", ".md"],
 			dts: "src/typed-router.d.ts"
 		}),
 
-		/* 2️⃣  VueMacros – this already injects @vitejs/plugin-vue */
-		VueMacros({
-			plugins: {
-				vue: Vue({ include: [/\.vue$/, /\.md$/] })
-			}
-		}),
+		/* 2️⃣  Vue */
+		Vue({ include: [/\.vue$/, /\.md$/] }),
 
 		/* 3️⃣  Layouts */
 		Layouts(),
