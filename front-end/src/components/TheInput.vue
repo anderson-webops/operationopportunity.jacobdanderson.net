@@ -1,20 +1,30 @@
 <script lang="ts" setup>
-const { modelValue } = defineModels<{
-	modelValue: string;
-}>();
+const modelValue = defineModel<string>({ default: "" });
 </script>
 
 <template>
 	<input
 		id="input"
 		v-model="modelValue"
-		bg="transparent"
-		border="~ rounded gray-200 dark:gray-700"
-		outline="none active:none"
-		p="x-4 y-2"
-		text="center"
+		class="input-field"
 		type="text"
 		v-bind="$attrs"
-		w="250px"
 	/>
 </template>
+
+<style scoped>
+.input-field {
+	background: transparent;
+	border: 1px solid #e5e7eb;
+	border-radius: 6px;
+	outline: none;
+	padding: 0.5rem 1rem;
+	text-align: center;
+	width: 250px;
+}
+
+.input-field:focus {
+	border-color: #9ca3af;
+	box-shadow: none;
+}
+</style>

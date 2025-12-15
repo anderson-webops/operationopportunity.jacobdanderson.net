@@ -1,24 +1,33 @@
 <script lang="ts" setup>
+import type { Admin, Tutor, User } from "@/stores/app";
+import { computed } from "vue";
+
+type Displayable = string | number | boolean | null | undefined;
+
 interface Field {
 	key: string;
 	label: string;
 }
 
-defineProps<{
+type Entity = Record<string, Displayable> | Admin | Tutor | User;
+
+const props = defineProps<{
 	fields: Field[];
-	entity: Record<string, Displayable>;
+	entity: Entity;
 	editing: boolean;
 }>();
+
 const emit = defineEmits<{
 	(e: "update", key: string, value: Displayable): void;
 }>();
 
+const entityValues = computed<Record<string, Displayable>>(
+	() => props.entity as Record<string, Displayable>
+);
+
 function onInput(key: string, value: Displayable) {
 	emit("update", key, value);
 }
-
-/* use a more precise value type instead of any */
-type Displayable = string | number | boolean | null | undefined;
 </script>
 
 <template>
@@ -27,7 +36,7 @@ type Displayable = string | number | boolean | null | undefined;
 			<label>
 				{{ f.label }}:&ensp;
 				<input
-					:value="entity[f.key]"
+					:value="entityValues[f.key]"
 					class="editTutor"
 					type="text"
 					@input="
@@ -45,7 +54,7 @@ type Displayable = string | number | boolean | null | undefined;
 			<!-- hidden label → keeps spacing -->
 			&ensp;
 			<p class="d-inline">
-				{{ entity[f.key] }}
+				{{ entityValues[f.key] }}
 			</p>
 		</li>
 	</template>
