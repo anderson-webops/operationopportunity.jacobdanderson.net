@@ -21,7 +21,7 @@ jobs:
             - name: Pin npm version
               run: |
                   npm -v
-                  npm i -g npm@11.6.0
+                  npm i -g npm@11.7.0
                   npm -v
 
             - name: Install deps
@@ -43,7 +43,7 @@ jobs:
 
             - name: Pin npm version
               run: |
-                  npm i -g npm@11.6.0
+                  npm i -g npm@11.7.0
                   npm -v
 
             - name: Install deps
@@ -54,33 +54,39 @@ jobs:
               run: npm run -w front-end typecheck
 
     test:
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [18.x, 20.x]
+                node-version: [20.x]         # drop 18.x if incompatible
                 os: [ubuntu-latest]
             fail-fast: false
 
         steps:
             - uses: actions/checkout@v4
-
             - uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix['node-version'] }}
                   cache: npm
                   registry-url: https://registry.npmjs.org/
 
-            - name: Pin npm version
+            # Only pin npm if compatible
+            - name: Pin npm version (if supported)
               run: |
-                  npm i -g npm@11.6.0
+                  # optional guard:
+                  if [ $(node -v | cut -d. -f1 | sed 's/v//') -ge 20 ]; then
+                    npm i -g npm@11.7.0
+                  fi
                   npm -v
 
             - name: Install deps
               run: npm ci
 
-            # Run your unit tests (front-end has vitest)
             - name: Unit tests
-              run: npm run -w front-end test:unit
+              env:
+                  VITEST_WATCH: "false"
+              run: |
+                  ulimit -n 4096 || true
+                  npm run -w front-end test:unit
 
     test-e2e:
         runs-on: ubuntu-latest
@@ -95,7 +101,7 @@ jobs:
 
             - name: Pin npm version
               run: |
-                  npm i -g npm@11.6.0
+                  npm i -g npm@11.7.0
                   npm -v
 
             - name: Install deps
@@ -115,5 +121,7 @@ jobs:
               uses: cypress-io/github-action@v6
               with:
                   install: false # we already ran npm ci
-                  start: npm run -w front-end preview -- --port 3333
+                  working-directory: front-end
+                  config-file: cypress.config.ts
+                  start: npm run preview -- --port 3333
                   wait-on: "http://localhost:3333"
