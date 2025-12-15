@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import { api } from "@/api.ts";
 
 defineOptions({ name: "HomePage" });
 
@@ -24,16 +23,16 @@ interface Quote {
 
 /* -------------- fetcher ---------------- */
 async function updateQuote() {
-	try {
-		// Optionally, choose only one quote:
-		// const res = await fetch("/api/quotes?tags=success&limit=1");
-		// const [q]  = await res.json();          // destructure first item
-		await api.get("/accounts/me");
+	const fallback = {
+		content:
+			"Success is the sum of small efforts, repeated day in and day out.",
+		author: "Robert Collier"
+	};
 
+	try {
 		const res = await fetch("/api/quotes?tags=success&limit=100");
 		if (!res.ok) {
-			console.error("Backend error", await res.text());
-			return;
+			throw new Error(await res.text());
 		}
 		const data = (await res.json()) as Quote[];
 
@@ -48,7 +47,10 @@ async function updateQuote() {
 			quotePresent.value = false;
 		}
 	} catch (err) {
-		console.error("Quote fetch failed:", err);
+		console.error("Quote fetch failed, using fallback:", err);
+		quoteText.value = fallback.content;
+		quoteAuthor.value = fallback.author;
+		quotePresent.value = true;
 	}
 }
 
