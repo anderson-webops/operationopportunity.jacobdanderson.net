@@ -76,6 +76,7 @@ onMounted(updateQuote);
 		<img
 			alt="Tutor helping college student"
 			class="m-5"
+			loading="lazy"
 			src="https://images.theconversation.com/files/268439/original/file-20190409-2921-1a4uike.jpg?ixlib=rb-1.1.0&q=30&auto=format&w=600&h=398&fit=crop&dpr=2"
 			width="30%"
 		/>

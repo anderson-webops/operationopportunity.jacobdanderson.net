@@ -143,6 +143,7 @@ async function addSignup() {
 					<img
 						alt="Avatar"
 						class="avatar"
+						loading="lazy"
 						src="https://www.w3schools.com/howto/img_avatar2.png"
 					/>
 				</div>

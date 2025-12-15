@@ -14,6 +14,7 @@ const { currentUser, currentAdmin } = storeToRefs(useAppStore());
 		<img
 			alt="Signing up"
 			class="m-5"
+			loading="lazy"
 			src="https://thumbs.dreamstime.com/b/closeup-person-signing-form-letter-intent-land-acquisition-closeup-person-signing-form-letter-intent-188466918.jpg"
 			width="30%"
 		/>

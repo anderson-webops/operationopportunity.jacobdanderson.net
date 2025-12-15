@@ -14,6 +14,7 @@ defineOptions({ name: "AboutPage" });
 		<img
 			alt="Smiling creepy college student"
 			class="m-5"
+			loading="lazy"
 			src="https://tenneyschool.com/wp-content/uploads/2016/11/Confident-Student.jpg"
 			width="40%"
 		/>

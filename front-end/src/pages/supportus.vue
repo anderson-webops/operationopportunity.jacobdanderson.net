@@ -12,6 +12,7 @@ defineOptions({ name: "SupportUsPage" });
 		<img
 			alt="Donations"
 			class="m-5"
+			loading="lazy"
 			src="https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fblogs-images.forbes.com%2Ftheyec%2Ffiles%2F2014%2F06%2Fforbes115.jpg"
 			width="30%"
 		/>

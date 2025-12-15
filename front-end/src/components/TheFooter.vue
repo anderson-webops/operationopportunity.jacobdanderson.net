@@ -15,6 +15,7 @@
 							><img
 								id="githubIcon"
 								alt="github Icon"
+								loading="lazy"
 								src="../assets/Images/github-dark.09072337.svg"
 						/></a>
 					</li>
