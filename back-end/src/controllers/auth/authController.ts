@@ -109,10 +109,13 @@ export const changeEmail: RequestHandler = async (req, res) => {
 	const { email: newEmail } = req.body;
 
 	if (!newEmail) return res.status(400).json({ message: "New email is required." });
+	if (typeof newEmail !== "string") {
+		return res.status(400).json({ message: "Invalid email." });
+	}
 
 	const session = req.session as CustomSession;
 	const conflictChecks = await Promise.all(
-		models.map(Model => Model.exists({ email: newEmail, _id: { $ne: ID } }))
+		models.map(Model => Model.exists({ email: { $eq: newEmail }, _id: { $ne: ID } }))
 	);
 	if (conflictChecks.some(Boolean)) {
 		return res.status(403).json({ message: "Email already exists." });
