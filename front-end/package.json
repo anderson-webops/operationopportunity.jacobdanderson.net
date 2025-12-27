@@ -82,7 +82,7 @@
 		"vite-ssg-sitemap": "^0.10.0",
 		"vitest": "^4.0.16",
 		"vue-eslint-parser": "^10.2.0",
-		"vue-tsc": "^3.1.8"
+		"vue-tsc": "^3.2.1"
 	},
 	"optionalDependencies": {
 		"@oxc-resolver/binding-linux-arm64-gnu": "11.16.0"
