@@ -33,7 +33,7 @@
 		"@unhead/vue": "^2.1.1",
 		"@unocss/reset": "^66.5.11",
 		"@vueuse/core": "^14.1.0",
-		"axios": "^1.13.2",
+		"axios": "^1.13.5",
 		"bootstrap": "^5.3.8",
 		"leaflet": "^1.9.4",
 		"nprogress": "^0.2.0",
