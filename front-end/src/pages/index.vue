@@ -35,17 +35,14 @@ async function updateQuote() {
 			throw new Error(await res.text());
 		}
 		const data = (await res.json()) as Quote[];
-
-		try {
-			if (data.length) {
-				quoteText.value = data[0].content;
-				quoteAuthor.value = data[0].author;
-				quotePresent.value = true;
-			}
-		} catch (e) {
-			console.warn("No quote retrieved:", data[0], e);
-			quotePresent.value = false;
+		const [firstQuote] = data;
+		if (!firstQuote?.content || !firstQuote.author) {
+			throw new Error("Quotes API returned no usable quote");
 		}
+
+		quoteText.value = firstQuote.content;
+		quoteAuthor.value = firstQuote.author;
+		quotePresent.value = true;
 	} catch (err) {
 		console.error("Quote fetch failed, using fallback:", err);
 		quoteText.value = fallback.content;

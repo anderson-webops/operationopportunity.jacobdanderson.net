@@ -173,6 +173,31 @@ And, enjoy :)
 
 ## Usage
 
+### Quotes Upstream
+
+The frontend should continue calling the app backend at `/quotes`. The backend proxy then prefers the self-hosted Quotes API over the local Unix socket when `QUOTES_UPSTREAM_SOCKET_PATH` is set, and falls back to `QUOTES_UPSTREAM_URL`.
+
+Same-machine production example:
+
+```bash
+QUOTES_UPSTREAM_SOCKET_PATH=/run/quotes/quotes.sock
+QUOTES_UPSTREAM_URL=https://jacobdanderson.net/quotes-api
+```
+
+Dev or non-local fallback:
+
+```bash
+QUOTES_UPSTREAM_URL=http://127.0.0.1:4000
+```
+
+Validation:
+
+```bash
+curl http://127.0.0.1:3002/quotes?tags=success\&limit=100
+```
+
+Do not rely on the public site path `/quotes` unless your reverse proxy explicitly maps it to the backend. The static frontend can catch that path and return HTML instead of the backend JSON route.
+
 ### Development
 
 Just run and visit http://localhost:3333
