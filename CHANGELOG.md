@@ -2,6 +2,12 @@
 
 All notable release tags for Operation Opportunity are recorded here.
 
+## v2.1.1
+
+- Removed the unsupported PWA build integration to eliminate the remaining frontend audit vulnerabilities.
+- Refreshed the root lockfile onto patched transitive dependency versions.
+- Added a standalone backend `package-lock.json` so server-side backend installs resolve reproducibly and audit cleanly.
+
 ## v2.1.0
 
 - Switched the backend quotes proxy to the self-hosted Quotes API.
