@@ -14,7 +14,7 @@ const copyrightYear = currentYear > startYear ? `${startYear}-${currentYear}` : 
 				<ul class="semantic_list">
 					<li>
 						<a
-							href="https://github.com/Jacoba1100254352/operationopportunity.jacobdanderson.net"
+							href="https://github.com/anderson-webops/operationopportunity.jacobdanderson.net"
 							target="_blank"
 							><img
 								id="githubIcon"
@@ -29,7 +29,7 @@ const copyrightYear = currentYear > startYear ? `${startYear}-${currentYear}` : 
 
 		<div class="Logo_and_rights">
 			<br />
-			<h2>AudioT.info</h2>
+			<h2>Operation Opportunity</h2>
 			<br />
 			<nav class="footer_nav">
 				<ul class="semantic_list">
@@ -37,10 +37,10 @@ const copyrightYear = currentYear > startYear ? `${startYear}-${currentYear}` : 
 					<li>
 						©{{ copyrightYear }}
 						<a
-							href="https://jacobdanderson.net"
+							href="https://operationopportunity.jacobdanderson.net"
 							style="text-decoration: none; color: inherit"
 							target="_blank"
-							>AudioT</a
+							>Operation Opportunity</a
 						>. All rights reserved.
 					</li>
 				</ul>
