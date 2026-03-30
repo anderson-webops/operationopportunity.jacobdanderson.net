@@ -1,7 +1,7 @@
 ## i18n
 
-This directory is to serve your locale translation files. YAML under this folder would be loaded automatically and
-register with their filenames as locale code.
+This directory stores the locale translation files. YAML files under this folder are loaded at runtime and registered
+with their filenames as locale codes.
 
 Check out [`vue-i18n`](https://github.com/intlify/vue-i18n-next) for more details.
 

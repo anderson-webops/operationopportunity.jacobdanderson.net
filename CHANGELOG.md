@@ -2,6 +2,12 @@
 
 All notable release tags for Operation Opportunity are recorded here.
 
+## v2.1.2
+
+- Removed the deprecated `@intlify/unplugin-vue-i18n` plugin path that was pulling in `vue-i18n@10.0.8`.
+- Switched locale loading to raw YAML imports parsed by the `yaml` package while preserving the existing locale files.
+- Refreshed the root lockfile so fresh `npm ci` installs no longer emit the `vue-i18n@10.0.8` deprecation warning.
+
 ## v2.1.1
 
 - Removed the unsupported PWA build integration to eliminate the remaining frontend audit vulnerabilities.
