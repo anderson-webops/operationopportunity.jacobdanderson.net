@@ -4,9 +4,11 @@ import type { UserModule } from "~/types";
 import { createI18n } from "vue-i18n";
 import { parse } from "yaml";
 
-type LocaleMessages = {
+interface LocaleMessages {
 	[key: string]: LocaleMessages | string;
-};
+}
+
+const LOCALE_FILE_REGEX = /([\w-]*)\.yml$/;
 
 const i18n = createI18n({
 	legacy: false,
@@ -21,7 +23,7 @@ const localeFiles = import.meta.glob("../../locales/*.yml", {
 
 const localesMap = Object.fromEntries(
 	Object.entries(localeFiles).map(([path, loadLocale]) => [
-		path.match(/([\w-]*)\.yml$/)?.[1],
+		path.match(LOCALE_FILE_REGEX)?.[1],
 		async () => parse(await loadLocale()) as LocaleMessages
 	])
 ) as Record<Locale, () => Promise<LocaleMessages>>;

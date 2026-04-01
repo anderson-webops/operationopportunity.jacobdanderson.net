@@ -74,7 +74,9 @@ onMounted(updateQuote);
 			</blockquote>
 			<p class="quote-meta">
 				<span aria-hidden="true" class="quote-divider" />
-				<cite id="quote-author" class="quote-author">{{ quoteAuthor }}</cite>
+				<cite id="quote-author" class="quote-author">
+					{{ quoteAuthor }}
+				</cite>
 			</p>
 		</div>
 
@@ -104,8 +106,11 @@ onMounted(updateQuote);
 	padding: 1.5rem 1.75rem;
 	border: 1px solid rgba(120, 159, 190, 0.24);
 	border-radius: 24px;
-	background:
-		linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(227, 242, 253, 0.92));
+	background: linear-gradient(
+		145deg,
+		rgba(255, 255, 255, 0.96),
+		rgba(227, 242, 253, 0.92)
+	);
 	box-shadow: 0 18px 36px rgba(41, 72, 104, 0.12);
 }
 
