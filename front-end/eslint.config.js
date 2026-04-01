@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 // front-end/eslint.config.js
 import base from "../eslint.config.js"; // shared root config
 import globals from "globals";
@@ -7,6 +8,8 @@ import ppFlat from "eslint-config-prettier/flat";
 import vuePlugin from "eslint-plugin-vue";
 import ts from "typescript-eslint";
 import vueParser from "vue-eslint-parser";
+
+const tsconfigRootDir = fileURLToPath(new URL(".", import.meta.url));
 
 export default base
 	/* project-specific additions */
@@ -28,8 +31,23 @@ export default base
 			files: ["**/*.ts"],
 			languageOptions: {
 				parser: ts.parser,
-				parserOptions: { project: "./tsconfig.json" },
+				parserOptions: {
+					project: "./tsconfig.json",
+					tsconfigRootDir
+				},
 				globals: { ...globals.node, ...auto.globals }
+			}
+		},
+
+		{
+			files: ["vite.config.{js,ts,mts}", "cypress.config.{ts,mts}", "uno.config.ts"],
+			languageOptions: {
+				parser: ts.parser,
+				parserOptions: {
+					project: "./tsconfig.node.json",
+					tsconfigRootDir
+				},
+				globals: { ...globals.node }
 			}
 		},
 
@@ -49,7 +67,7 @@ export default base
 
 		// build / config scripts
 		{
-			files: ["**/*.{js,cjs,mjs}", "*.config.js", "vite.config.{js,ts}"],
+			files: ["**/*.{js,cjs,mjs}", "*.config.js", "vite.config.{js,ts,mts}"],
 			languageOptions: { sourceType: "module" }
 		}
 	)
