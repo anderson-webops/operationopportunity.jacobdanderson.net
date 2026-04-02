@@ -1,6 +1,7 @@
+import type { Request } from "express";
 import { request } from "node:http";
 import { env } from "node:process";
-import { Router, type Request } from "express";
+import { Router } from "express";
 
 interface NormalizedQuote {
 	_id: string;
@@ -15,6 +16,10 @@ interface NormalizedQuote {
 
 const DEFAULT_QUOTES_UPSTREAM_URL = "https://jacobdanderson.net/quotes-api";
 const DEFAULT_QUOTES_REQUEST_PATH = "/quotes";
+const AUTHOR_WHITESPACE_PATTERN = /\s+/g;
+const TRAILING_SLASHES_PATTERN = /\/+$/;
+const LEADING_SLASHES_PATTERN = /^\/+/;
+const DUPLICATE_SLASHES_PATTERN = /\/{2,}/g;
 
 function normalizeTags(value: unknown): string[] {
 	if (Array.isArray(value)) {
@@ -32,7 +37,7 @@ function normalizeTags(value: unknown): string[] {
 }
 
 function slugifyAuthor(author: string): string {
-	return author.replace(/\s+/g, "-").toLowerCase();
+	return author.replace(AUTHOR_WHITESPACE_PATTERN, "-").toLowerCase();
 }
 
 function normalizeQuote(payload: unknown): NormalizedQuote | null {
@@ -129,8 +134,8 @@ export function buildQuotesRequestPath(req: Request): string {
 function joinUpstreamPath(basePathname: string, requestPathname: string): string {
 	const normalizedBasePath = basePathname === "/"
 		? ""
-		: basePathname.replace(/\/+$/, "");
-	const normalizedRequestPath = requestPathname.replace(/^\/+/, "");
+		: basePathname.replace(TRAILING_SLASHES_PATTERN, "");
+	const normalizedRequestPath = requestPathname.replace(LEADING_SLASHES_PATTERN, "");
 
 	if (!normalizedRequestPath) {
 		return normalizedBasePath || "/";
@@ -140,7 +145,7 @@ function joinUpstreamPath(basePathname: string, requestPathname: string): string
 		return normalizedBasePath || `/${normalizedRequestPath}`;
 	}
 
-	return `${normalizedBasePath}/${normalizedRequestPath}`.replace(/\/{2,}/g, "/");
+	return `${normalizedBasePath}/${normalizedRequestPath}`.replace(DUPLICATE_SLASHES_PATTERN, "/");
 }
 
 export function resolveQuotesUpstreamUrl(requestPath: string): URL {
@@ -161,7 +166,7 @@ function readResponseBody(stream: NodeJS.ReadableStream): Promise<string> {
 	return new Promise((resolve, reject) => {
 		let body = "";
 		stream.setEncoding("utf8");
-		stream.on("data", chunk => {
+		stream.on("data", (chunk) => {
 			body += chunk;
 		});
 		stream.on("end", () => resolve(body));
