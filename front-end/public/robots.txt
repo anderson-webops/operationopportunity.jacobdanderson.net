@@ -4,32 +4,47 @@ Disallow: /
 User-agent: ClaudeBot
 Disallow: /
 
+User-agent: Google-Extended
+Disallow: /
+
 User-agent: Googlebot
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 User-agent: Bingbot
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 User-agent: OAI-SearchBot
 Allow: /
 Disallow: /api
+Disallow: /profile
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api
+Disallow: /profile
 
 User-agent: PerplexityBot
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 User-agent: Perplexity-User
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 User-agent: Claude-User
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 User-agent: *
 Allow: /
 Disallow: /api
+Disallow: /profile
 
 Sitemap: https://operationopportunity.jacobdanderson.net/sitemap.xml
