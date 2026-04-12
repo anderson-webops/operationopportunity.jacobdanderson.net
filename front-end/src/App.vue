@@ -7,7 +7,7 @@ const siteDescription =
 	"Operation Opportunity explains the project mission, public resources, and ways to participate in its education and opportunity-focused work.";
 const route = useRoute();
 const robotsContent = computed(() =>
-	/^\/api(?:\/|$)/.test(route.path)
+	/^\/(?:api|profile)(?:\/|$)/.test(route.path)
 		? "noindex,nofollow"
 		: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
 );
