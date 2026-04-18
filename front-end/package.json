@@ -58,7 +58,7 @@
 		"cypress": "^15.13.0",
 		"eslint-plugin-format": "^2.0.1",
 		"lint-staged": "^16.4.0",
-		"rolldown": "^1.0.0-rc.15",
+		"rolldown": "^1.0.0-rc.16",
 		"rollup": "^4.60.1",
 		"simple-git-hooks": "^2.13.1",
 		"unocss": "^66.6.7",
