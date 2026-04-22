@@ -84,11 +84,22 @@ useHead(() => ({
 			href: canonicalUrl.value
 		}
 	],
-	script: structuredData.value.map((entry, index) => ({
-		innerHTML: JSON.stringify(entry),
-		key: `ld-json-${index}`,
-		type: "application/ld+json"
-	}))
+	script: [
+		...(import.meta.env.PROD
+			? [
+					{
+						defer: true,
+						src: "https://analytics.jacobdanderson.net/script.js",
+						"data-website-id": "bb94526b-ea35-4cf9-ab26-839ecba29361"
+					}
+				]
+			: []),
+		...structuredData.value.map((entry, index) => ({
+			innerHTML: JSON.stringify(entry),
+			key: `ld-json-${index}`,
+			type: "application/ld+json"
+		}))
+	]
 }) as any);
 </script>
 
