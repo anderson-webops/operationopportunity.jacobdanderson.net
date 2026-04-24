@@ -71,7 +71,9 @@
 		"vue-tsc": "^3.2.6"
 	},
 	"optionalDependencies": {
-		"@oxc-resolver/binding-linux-arm64-gnu": "11.16.2"
+		"@oxc-parser/binding-linux-arm64-gnu": "0.124.0",
+		"@oxc-resolver/binding-linux-arm64-gnu": "11.16.2",
+		"@rolldown/binding-linux-arm64-gnu": "1.0.0-rc.17"
 	},
 	"resolutions": {
 		"unplugin": "^3.0.0",
