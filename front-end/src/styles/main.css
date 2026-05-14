@@ -88,11 +88,17 @@ img {
 
 footer {
 	display: flex;
-	color: grey;
+	color: #4b5563;
 	flex-flow: row wrap;
 	padding: 10px;
 	width: 100%;
 	background-color: rgb(247, 247, 247);
+}
+
+footer a {
+	color: #1f2937 !important;
+	text-decoration: underline !important;
+	text-underline-offset: 0.14em;
 }
 
 footer div {
@@ -111,6 +117,30 @@ footer li {
 	font-family: Arial, "Courier New", sans-serif, serif;
 	height: 100%;
 	list-style-type: none;
+}
+
+.btn-outline-success {
+	color: #0f5132;
+	border-color: #0f5132;
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:focus-visible {
+	background-color: #0f5132;
+	border-color: #0f5132;
+	color: #fff;
+}
+
+.btn-outline-primary {
+	color: #084298;
+	border-color: #084298;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus-visible {
+	background-color: #084298;
+	border-color: #084298;
+	color: #fff;
 }
 
 /*html.dark {

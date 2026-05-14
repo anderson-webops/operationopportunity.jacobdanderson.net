@@ -48,25 +48,6 @@ const copyrightYear =
 			</nav>
 		</div>
 
-		<div class="parter">
-			<br />
-			<h2 />
-			<br />
-			<nav class="footer_nav">
-				<ul class="semantic_list">
-					<li>
-						<a
-							href=""
-							style="text-decoration: none; color: inherit"
-							target="_blank"
-						/>
-					</li>
-				</ul>
-				<br />
-				<p />
-			</nav>
-		</div>
-
 		<!--			<p v-if="error" class="error">{{ error }}</p> -->
 
 		<div class="ip pb-1">
