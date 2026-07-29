@@ -49,7 +49,7 @@
 		"@iconify-json/carbon": "^1.2.20",
 		"@types/bootstrap": "^5.2.10",
 		"@types/leaflet": "^1.9.21",
-		"@types/node": "^25.6.0",
+		"@types/node": "^24.13.3",
 		"@types/nprogress": "^0.2.3",
 		"@vitejs/plugin-vue": "^6.0.6",
 		"@vue/test-utils": "^2.4.6",
@@ -58,8 +58,8 @@
 		"cypress": "^15.19.0",
 		"eslint-plugin-format": "^2.0.1",
 		"lint-staged": "^16.4.0",
-		"rolldown": "^1.0.0-rc.17",
-		"rollup": "^4.60.2",
+		"rolldown": "^1.2.1",
+		"rollup": "^4.62.3",
 		"simple-git-hooks": "^2.13.1",
 		"unocss": "^66.6.7",
 		"unplugin-auto-import": "^21.0.0",
@@ -72,9 +72,8 @@
 		"vue-tsc": "^3.2.6"
 	},
 	"optionalDependencies": {
-		"@oxc-parser/binding-linux-arm64-gnu": "0.124.0",
-		"@oxc-resolver/binding-linux-arm64-gnu": "11.16.2",
-		"@rolldown/binding-linux-arm64-gnu": "1.0.0-rc.17",
+		"@oxc-parser/binding-linux-arm64-gnu": "0.140.0",
+		"@rolldown/binding-linux-arm64-gnu": "1.2.1",
 		"@rollup/rollup-linux-arm64-gnu": "^4.62.3"
 	},
 	"resolutions": {
