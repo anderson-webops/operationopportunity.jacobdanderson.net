@@ -32,16 +32,17 @@
 		"@typescript-eslint/eslint-plugin": "^8.59.0",
 		"@typescript-eslint/parser": "^8.59.0",
 		"@unocss/eslint-plugin": "^66.6.7",
+		"axe-core": "^4.11.4",
 		"eslint": "^10.2.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
 		"eslint-plugin-vue": "^10.9.0",
 		"globals": "^17.5.0",
+		"js-beautify": "2.0.3",
 		"prettier": "^3.8.3",
+		"puppeteer": "^24.43.1",
 		"taze": "^19.11.0",
-		"typescript": "^6.0.3",
-		"axe-core": "^4.11.4",
-		"puppeteer": "^24.43.1"
+		"typescript": "^6.0.3"
 	},
 	"overrides": {
 		"defu": "6.1.6",
@@ -51,6 +52,15 @@
 		"@cypress/request": {
 			"uuid": "14.0.0",
 			"qs": "6.15.2"
-		}
+		},
+		"brace-expansion": "5.0.8",
+		"fast-uri": "3.1.4",
+		"js-yaml": "4.3.0",
+		"postcss": "8.5.24",
+		"shell-quote": "1.10.0",
+		"svgo": "4.0.2",
+		"tar": "7.5.22",
+		"valibot": "1.4.2",
+		"js-beautify": "2.0.3"
 	}
 }
