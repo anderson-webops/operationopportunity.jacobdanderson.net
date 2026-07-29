@@ -33,6 +33,7 @@
 		"@vueuse/core": "^14.2.1",
 		"axios": "^1.15.2",
 		"bootstrap": "^5.3.8",
+		"follow-redirects": "^1.16.0",
 		"leaflet": "^1.9.4",
 		"nprogress": "^0.2.0",
 		"pinia": "^3.0.4",
@@ -42,8 +43,7 @@
 		"vue-demi": "^0.14.10",
 		"vue-i18n": "^11.3.0",
 		"vue-router": "^5.0.4",
-		"yaml": "^2.8.3",
-		"follow-redirects": "^1.16.0"
+		"yaml": "^2.8.3"
 	},
 	"devDependencies": {
 		"@iconify-json/carbon": "^1.2.20",
@@ -73,7 +73,8 @@
 	"optionalDependencies": {
 		"@oxc-parser/binding-linux-arm64-gnu": "0.124.0",
 		"@oxc-resolver/binding-linux-arm64-gnu": "11.16.2",
-		"@rolldown/binding-linux-arm64-gnu": "1.0.0-rc.17"
+		"@rolldown/binding-linux-arm64-gnu": "1.0.0-rc.17",
+		"@rollup/rollup-linux-arm64-gnu": "^4.62.3"
 	},
 	"resolutions": {
 		"unplugin": "^3.0.0",
