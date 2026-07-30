@@ -10,10 +10,12 @@ if (!targets.length) throw new Error("At least one build directory is required")
 for (const target of targets) {
 	const absolute = resolve(workspace, target);
 	const pathFromWorkspace = relative(workspace, absolute);
-	if (isAbsolute(pathFromWorkspace)
-		|| pathFromWorkspace.startsWith("..")
-		|| pathFromWorkspace === ""
-		|| !/(^|\/)(dist|dist-test)$/.test(pathFromWorkspace)) {
+	if (
+		isAbsolute(pathFromWorkspace) ||
+		pathFromWorkspace.startsWith("..") ||
+		pathFromWorkspace === "" ||
+		!/(^|\/)(dist|dist-test)$/.test(pathFromWorkspace)
+	) {
 		throw new Error(`Refusing to remove unsafe build path: ${target}`);
 	}
 	await rm(absolute, { recursive: true, force: true });

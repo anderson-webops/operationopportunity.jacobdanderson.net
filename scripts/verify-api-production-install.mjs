@@ -25,8 +25,7 @@ async function exists(path) {
 	try {
 		await access(path);
 		return true;
-	}
-	catch {
+	} catch {
 		return false;
 	}
 }
@@ -56,7 +55,7 @@ try {
 	const argon2 = requireFromInstall("argon2");
 	const verificationPhrase = "operation-opportunity-production-binding-check";
 	const hash = await argon2.hash(verificationPhrase);
-	if (!await argon2.verify(hash, verificationPhrase)) {
+	if (!(await argon2.verify(hash, verificationPhrase))) {
 		throw new Error("The production Argon2 native binding failed verification");
 	}
 
@@ -67,13 +66,14 @@ try {
 		}
 	}
 
-	console.log(JSON.stringify({
-		standaloneApiProductionInstall: "passed",
-		installed: installed.sort(),
-		nativePasswordBinding: "verified",
-		omitted
-	}));
-}
-finally {
+	console.log(
+		JSON.stringify({
+			standaloneApiProductionInstall: "passed",
+			installed: installed.sort(),
+			nativePasswordBinding: "verified",
+			omitted
+		})
+	);
+} finally {
 	await rm(tempDirectory, { recursive: true, force: true });
 }

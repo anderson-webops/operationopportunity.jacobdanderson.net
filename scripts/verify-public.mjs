@@ -6,9 +6,9 @@ const origin = new URL(process.argv[2] || "https://operationopportunity.jacobdan
 if (origin.protocol !== "https:") throw new Error("Public verification requires HTTPS");
 const expectedRelease = `v${rootPackage.version}`;
 const expectedCommit = (
-	process.argv[3]
-	|| process.env.EXPECTED_COMMIT
-	|| execFileSync("/usr/bin/git", ["rev-parse", "HEAD"], { encoding: "utf8" })
+	process.argv[3] ||
+	process.env.EXPECTED_COMMIT ||
+	execFileSync("/usr/bin/git", ["rev-parse", "HEAD"], { encoding: "utf8" })
 ).trim();
 
 function assert(condition, message) {
@@ -16,9 +16,11 @@ function assert(condition, message) {
 }
 
 function commitMatches(actual) {
-	return typeof actual === "string"
-		&& /^[0-9a-f]{7,64}$/i.test(actual)
-		&& (actual === expectedCommit || actual.startsWith(expectedCommit) || expectedCommit.startsWith(actual));
+	return (
+		typeof actual === "string" &&
+		/^[0-9a-f]{7,64}$/i.test(actual) &&
+		(actual === expectedCommit || actual.startsWith(expectedCommit) || expectedCommit.startsWith(actual))
+	);
 }
 
 async function get(path) {
@@ -73,7 +75,10 @@ const directory = await get("/api/tutors");
 assert(directory.response.ok && Array.isArray(directory.json), "public tutor directory must be available");
 for (const tutor of directory.json) {
 	const keys = Object.keys(tutor).sort();
-	assert(keys.every(key => ["_id", "name", "state"].includes(key)), "public tutor directory exposed a private field");
+	assert(
+		keys.every((key) => ["_id", "name", "state"].includes(key)),
+		"public tutor directory exposed a private field"
+	);
 }
 
 assert((await get("/api/users/all")).response.status === 401, "user directory must require authentication");
@@ -93,10 +98,12 @@ const rejectedAdmin = await fetch(new URL("/api/admins", origin), {
 });
 assert(rejectedAdmin.status === 403, "mutation without same-origin CSRF state must be rejected");
 
-console.log(JSON.stringify({
-	origin: origin.origin,
-	release: expectedRelease,
-	staticCommit: staticRelease.json.commit,
-	apiCommit: health.json.commit,
-	publicTutorCount: directory.json.length
-}));
+console.log(
+	JSON.stringify({
+		origin: origin.origin,
+		release: expectedRelease,
+		staticCommit: staticRelease.json.commit,
+		apiCommit: health.json.commit,
+		publicTutorCount: directory.json.length
+	})
+);

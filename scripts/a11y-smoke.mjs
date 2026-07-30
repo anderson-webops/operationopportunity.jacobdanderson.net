@@ -20,16 +20,10 @@ const frontendPort = Number(process.env.A11Y_FRONTEND_PORT || 3352);
 const apiPort = Number(process.env.A11Y_API_PORT || 3052);
 const baseUrl = `http://127.0.0.1:${frontendPort}`;
 const apiUrl = `http://127.0.0.1:${apiPort}/api`;
-const routes = [
-	"/",
-	"/about",
-	"/profile",
-	"/signup",
-	"/supportus"
-];
+const routes = ["/", "/about", "/profile", "/signup", "/supportus"];
 const colorSchemes = (process.env.A11Y_COLOR_SCHEMES || "light,dark")
 	.split(",")
-	.map(scheme => scheme.trim())
+	.map((scheme) => scheme.trim())
 	.filter(Boolean);
 
 const chromeCandidates = [
@@ -42,7 +36,7 @@ const chromeCandidates = [
 	"/usr/bin/chromium"
 ].filter(Boolean);
 
-const chromePath = chromeCandidates.find(candidate => existsSync(candidate));
+const chromePath = chromeCandidates.find((candidate) => existsSync(candidate));
 if (chromePath) process.env.PUPPETEER_EXECUTABLE_PATH = chromePath;
 
 function writeServerLine(prefix, data) {
@@ -75,7 +69,8 @@ function responseFor(url) {
 	const pathname = url.pathname.replace(/\/+/g, "/");
 	if (pathname.endsWith("/pageview")) return { pageview: 0, startAt: Date.now() };
 	if (pathname.includes("/session")) return { authenticated: false, user: null, admin: null };
-	if (pathname.includes("/auth") || pathname.includes("/login")) return { authenticated: false, user: null, token: "" };
+	if (pathname.includes("/auth") || pathname.includes("/login"))
+		return { authenticated: false, user: null, token: "" };
 	if (pathname.includes("/me") || pathname.includes("/account")) return { user: null, authenticated: false };
 	if (pathname.includes("/quotes")) return [];
 	if (pathname.includes("/availability")) {
@@ -87,14 +82,18 @@ function responseFor(url) {
 	if (pathname.includes("/topics")) return { topics: [], claims: [], ...emptyCollection() };
 	if (pathname.includes("/claims")) return { claims: [], ...emptyCollection() };
 	if (pathname.includes("/search")) return { query: url.searchParams.get("q") || "", ...emptyCollection() };
-	if (pathname.includes("/submissions") || pathname.includes("/board") || pathname.includes("/items")) return emptyCollection();
+	if (pathname.includes("/submissions") || pathname.includes("/board") || pathname.includes("/items"))
+		return emptyCollection();
 	if (pathname.includes("/service-directory")) return { services: [], categories: [], ...emptyCollection() };
 	if (pathname.includes("/elections")) return { elections: [], ...emptyCollection() };
-	if (pathname.includes("/jurisdictions") || pathname.includes("/locations") || pathname.includes("/districts")) return { jurisdictions: [], locations: [], districts: [], ...emptyCollection() };
-	if (pathname.includes("/representatives") || pathname.includes("/candidate")) return { representatives: [], candidates: [], ...emptyCollection() };
+	if (pathname.includes("/jurisdictions") || pathname.includes("/locations") || pathname.includes("/districts"))
+		return { jurisdictions: [], locations: [], districts: [], ...emptyCollection() };
+	if (pathname.includes("/representatives") || pathname.includes("/candidate"))
+		return { representatives: [], candidates: [], ...emptyCollection() };
 	if (pathname.includes("/sources")) return { sources: [], ...emptyCollection() };
 	if (pathname.includes("/products")) return [];
-	if (pathname.includes("/contact") || pathname.includes("/cart") || pathname.includes("/orders")) return { ok: true };
+	if (pathname.includes("/contact") || pathname.includes("/cart") || pathname.includes("/orders"))
+		return { ok: true };
 	return { ok: true, ...emptyCollection() };
 }
 
@@ -124,20 +123,32 @@ async function waitForHttp(url, timeoutMs = 45_000) {
 			const response = await fetch(url);
 			if (response.ok) return;
 			lastError = new Error(`${url} returned ${response.status}`);
-		}
-		catch (error) {
+		} catch (error) {
 			lastError = error;
 		}
-		await new Promise(resolveWait => setTimeout(resolveWait, 400));
+		await new Promise((resolveWait) => setTimeout(resolveWait, 400));
 	}
 	throw lastError || new Error(`Timed out waiting for ${url}`);
 }
 
 function startFrontend() {
-	const isNuxt = frontendKind === "nuxt" || Object.values(frontendPackage.scripts || {}).some(script => String(script).includes("nuxt"));
+	const isNuxt =
+		frontendKind === "nuxt" ||
+		Object.values(frontendPackage.scripts || {}).some((script) => String(script).includes("nuxt"));
 	const args = isNuxt
 		? ["exec", "-w", "front-end", "--", "nuxt", "dev", "--host", "127.0.0.1", "--port", String(frontendPort)]
-		: ["exec", "-w", "front-end", "--", "vite", "--host", "127.0.0.1", "--port", String(frontendPort), "--strictPort"];
+		: [
+				"exec",
+				"-w",
+				"front-end",
+				"--",
+				"vite",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				String(frontendPort),
+				"--strictPort"
+			];
 
 	const child = spawn("npm", args, {
 		cwd: projectRoot,
@@ -177,13 +188,13 @@ function startFrontend() {
 		detached: process.platform !== "win32",
 		stdio: ["ignore", "pipe", "pipe"]
 	});
-	child.stdout.on("data", data => writeServerLine(isNuxt ? "nuxt" : "vite", data));
-	child.stderr.on("data", data => writeServerLine(isNuxt ? "nuxt" : "vite", data));
+	child.stdout.on("data", (data) => writeServerLine(isNuxt ? "nuxt" : "vite", data));
+	child.stderr.on("data", (data) => writeServerLine(isNuxt ? "nuxt" : "vite", data));
 	return child;
 }
 
 function closeServer(server) {
-	return new Promise(resolveClose => server.close(resolveClose));
+	return new Promise((resolveClose) => server.close(resolveClose));
 }
 
 function processIsRunning(child) {
@@ -193,7 +204,7 @@ function processIsRunning(child) {
 function waitForProcessExit(child, timeoutMs) {
 	if (!processIsRunning(child)) return Promise.resolve(true);
 
-	return new Promise(resolveWait => {
+	return new Promise((resolveWait) => {
 		const onExit = () => {
 			clearTimeout(timeout);
 			resolveWait(true);
@@ -212,8 +223,7 @@ async function stopProcessTree(child) {
 	const target = process.platform === "win32" ? child.pid : -child.pid;
 	try {
 		process.kill(target, "SIGTERM");
-	}
-	catch (error) {
+	} catch (error) {
 		if (error?.code !== "ESRCH") console.warn(`Could not stop frontend process: ${error.message}`);
 		return;
 	}
@@ -222,8 +232,7 @@ async function stopProcessTree(child) {
 
 	try {
 		process.kill(target, "SIGKILL");
-	}
-	catch (error) {
+	} catch (error) {
 		if (error?.code !== "ESRCH") console.warn(`Could not force stop frontend process: ${error.message}`);
 	}
 	await waitForProcessExit(child, 2_000);
@@ -253,7 +262,7 @@ async function analyzePage(browser, route, scheme) {
 	return {
 		url,
 		scheme,
-		violations: result.violations.filter(violation => violation.id !== "frame-tested")
+		violations: result.violations.filter((violation) => violation.id !== "frame-tested")
 	};
 }
 
@@ -296,8 +305,7 @@ try {
 		}
 		process.exitCode = 1;
 	}
-}
-finally {
+} finally {
 	if (browser) await browser.close();
 	await stopProcessTree(frontendProcess);
 	await closeServer(apiServer);
