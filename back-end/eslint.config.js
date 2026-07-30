@@ -16,5 +16,11 @@ export default base.append(
 		}
 	},
 	{ files: ["**/*.{js,cjs,mjs}"], languageOptions: { globals: { ...globals.node } } },
-	{ ignores: ["dist/**"] }
+	{
+		files: ["src/test/**/*.ts"],
+		rules: {
+			"test/no-import-node-test": "off"
+		}
+	},
+	{ ignores: ["dist/**", "dist-test/**"] }
 );

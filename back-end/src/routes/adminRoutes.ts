@@ -1,6 +1,4 @@
-// src/routes/adminRoutes.ts
-
-import express from "express";
+import { Router } from "express";
 import {
 	createAdmin,
 	deleteAdmin,
@@ -8,24 +6,18 @@ import {
 	getLoggedInAdmin,
 	updateAdmin
 } from "../controllers/users/adminController.js";
-import { validAdmin } from "../middleware/auth.js";
+import { validAdmin, validAdminManager } from "../middleware/auth.js";
+import {
+	authenticatedMutationRateLimit,
+	credentialMutationRateLimit
+} from "../middleware/rateLimit.js";
 
-const router = express.Router();
+const router = Router();
 
-// Route to create an admin
-router.post("/", createAdmin);
+router.post("/", authenticatedMutationRateLimit, ...validAdminManager, createAdmin);
+router.get("/", ...validAdmin, getAllAdmins);
+router.get("/loggedin", ...validAdmin, getLoggedInAdmin);
+router.put("/:adminID", credentialMutationRateLimit, ...validAdmin, updateAdmin);
+router.delete("/remove/:adminID", authenticatedMutationRateLimit, ...validAdmin, deleteAdmin);
 
-// Route to get all admins (protected)
-router.get("/", validAdmin, getAllAdmins);
-
-// Route to update an admin's information (protected)
-router.put("/:adminID", validAdmin, updateAdmin);
-
-// Route to delete an admin (protected)
-router.delete("/remove/:adminID", validAdmin, deleteAdmin);
-
-// Route to get the currently logged-in admin (protected)
-router.get("/loggedin", validAdmin, getLoggedInAdmin);
-
-// Export the router
 export const adminRoutes = router;

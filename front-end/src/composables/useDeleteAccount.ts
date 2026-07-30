@@ -1,5 +1,6 @@
 // src/composables/useDeleteAccount.ts
-import { api } from "@/api";
+import { api, clearCsrfToken } from "@/api";
+import { confirmDestructiveAction } from "@/security/confirm";
 import { useAppStore } from "@/stores/app";
 
 type Kind = "admin" | "tutor" | "user";
@@ -15,9 +16,18 @@ export function useDeleteAccount(kind: Kind) {
 
 	/** delete on the server, then forget the session locally */
 	return async function deleteAccount(id: string) {
+		if (
+			!confirmDestructiveAction(
+				"Permanently delete this account? This cannot be undone."
+			)
+		) {
+			return false;
+		}
 		await api.delete(`${endpoint[kind]}/${id}`, {
 			withCredentials: true
 		});
-		await app.logout(); // clears Pinia + session cookie
+		clearCsrfToken();
+		app.clearSession();
+		return true;
 	};
 }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
+import ChangeCredentials from "@/components/ChangeCredentials.vue";
 import ProfileFields from "@/components/ProfileFields.vue";
 import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { useEditable } from "@/composables/useEditable";
@@ -22,7 +23,6 @@ const { editing, toggle, save } = useEditable("user");
 /* -------------------------------------------------- */
 const fields = [
 	{ key: "name", label: "Name" },
-	{ key: "email", label: "Email" },
 	{ key: "age", label: "Age" },
 	{ key: "state", label: "State" }
 ];
@@ -42,6 +42,7 @@ const fields = [
 					:entity="currentUser"
 					:fields="fields"
 				/>
+				<li><strong>Email:</strong> {{ currentUser.email }}</li>
 			</ul>
 			<br />
 
@@ -55,6 +56,11 @@ const fields = [
 				{{ editing ? "Save" : "Edit" }}
 			</button>
 		</div>
+		<ChangeCredentials
+			v-if="currentUser"
+			:account="currentUser"
+			kind="user"
+		/>
 	</section>
 </template>
 

@@ -1,169 +1,89 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v7
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8.0.28@sha256:5351bff2b5d1563e3fa603a74b9be85ef9323e10aeb0b45cea933a93876e77fd
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
-            - uses: actions/setup-node@v7
-              with:
-                  node-version: 24.18.0
-                  cache: npm
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.18.0
+          cache: npm
 
-            # Make runner's npm match packageManager in package.json
-            - name: Pin npm version
-              run: |
-                  npm -v
-                  npm i -g npm@11.16.0
-                  npm -v
+      - name: Verify toolchain
+        run: |
+          test "$(node --version)" = "v24.18.0"
+          test "$(npm --version)" = "11.16.0"
 
-            - name: Install deps
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            # Root "lint" runs front-end and back-end lint
-            - name: Lint
-              run: npm run lint
+      - name: Deployment verification
+        env:
+          TEST_MONGODB_URI: mongodb://127.0.0.1:27017/operation_security_test_ci
+        run: npm run verify:deploy
 
-    typecheck:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v7
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
-            - uses: actions/setup-node@v7
-              with:
-                  node-version: 24.18.0
-                  cache: npm
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.18.0
+          cache: npm
 
-            - name: Pin npm version
-              run: |
-                npm i -g npm@11.16.0
-                npm -v
+      - run: npm ci
+      - run: npm run a11y
 
-            - name: Install deps
-              run: npm ci
+  end-to-end:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
-            # Only the front-end defines typecheck; call it directly
-            - name: Typecheck (front-end)
-              run: npm run -w front-end typecheck
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.18.0
+          cache: npm
 
-    test:
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [24.18.0]
-                os: [ubuntu-latest]
-            fail-fast: false
+      - run: npm ci
+      - run: npm run -w front-end build
 
-        steps:
-            - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version: ${{ matrix['node-version'] }}
-                  cache: npm
-                  registry-url: https://registry.npmjs.org/
-
-            # Only pin npm if compatible
-            - name: Pin npm version (if supported)
-              run: |
-                  # optional guard:
-                  if [ $(node -v | cut -d. -f1 | sed 's/v//') -ge 20 ]; then
-                    npm i -g npm@11.16.0
-                  fi
-                  npm -v
-
-            - name: Install deps
-              run: npm ci
-
-            - name: Unit tests
-              env:
-                  VITEST_WATCH: "false"
-              run: |
-                  ulimit -n 4096 || true
-                  npm run -w front-end test:unit
-
-    test-e2e:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v7
-
-            - uses: actions/setup-node@v7
-              with:
-                  node-version: 24.18.0
-                  cache: npm
-                  registry-url: https://registry.npmjs.org/
-
-    accessibility:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v7
-
-        - uses: actions/setup-node@v7
-          with:
-            node-version: 24.18.0
-            cache: npm
-
-        - name: Pin npm version
-          run: |
-            npm i -g npm@11.16.0
-            npm -v
-
-        - name: Install deps
-          run: npm ci
-
-        - name: Axe accessibility smoke checks
-          run: npm run a11y
-
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v7
-
-            - uses: actions/setup-node@v7
-              with:
-                  node-version: 24.18.0
-                  cache: npm
-
-            - name: Pin npm version
-              run: |
-                npm i -g npm@11.16.0
-                npm -v
-
-            - name: Install deps
-              run: npm ci
-
-            - name: Build
-              run: npm run build
-
-            - name: Pin npm version
-              run: |
-                npm i -g npm@11.16.0
-                npm -v
-
-            - name: Install deps
-              run: npm ci
-
-            # Cache Cypress binary
-            - uses: actions/cache@v6
-              with:
-                  path: ~/.cache/Cypress
-                  key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-            # Build site and run preview server for Cypress to hit
-            - name: Build (front-end)
-              run: npm run -w front-end build
-
-            - name: Cypress
-              uses: cypress-io/github-action@v7.4.1
-              with:
-                  install: false # we already ran npm ci
-                  working-directory: front-end
-                  config-file: cypress.config.ts
-                  start: npm run preview -- --port 3333
-                  wait-on: "http://localhost:3333"
+      - uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
+        with:
+          install: false
+          working-directory: front-end
+          config-file: cypress.config.ts
+          start: npm run preview -- --port 3333
+          wait-on: http://127.0.0.1:3333

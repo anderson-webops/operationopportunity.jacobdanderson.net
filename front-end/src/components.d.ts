@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AccountManagement: typeof import('./components/AccountManagement.vue')['default']
     AdminProfile: typeof import('./components/AdminProfile.vue')['default']
+    ChangeCredentials: typeof import('./components/ChangeCredentials.vue')['default']
     ProfileFields: typeof import('./components/ProfileFields.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

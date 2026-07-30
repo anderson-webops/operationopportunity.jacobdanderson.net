@@ -10,7 +10,6 @@ import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Layouts from "vite-plugin-vue-layouts-next";
-import generateSitemap from "vite-ssg-sitemap";
 import { VueRouterAutoImports } from "vue-router/unplugin";
 import VueRouter from "vue-router/vite";
 
@@ -79,32 +78,13 @@ export default defineConfig(({ command }) => ({
 		environment: "jsdom"
 	},
 
-	/* vite-ssg */
-	// https://github.com/antfu/vite-ssg
-	ssgOptions: {
-		script: "async",
-		formatting: "minify",
-		beastiesOptions: {
-			reduceInlineStyles: false
-		},
-		onFinished() {
-			generateSitemap();
-		}
-	},
-
-	ssr: {
-		// TODO: workaround until they support native ESM
-		noExternal: ["workbox-window", /vue-i18n/]
-	},
-
 	server: {
 		proxy: {
 			"/api": {
-				target: "http://localhost:3002",
+				target: process.env.VITE_API_PROXY_TARGET || "http://localhost:3002",
 				changeOrigin: true,
 				rewrite: (p) => p.replace(/^\/api/, "") // strip /api
 			}
 		}
 	}
 }));
-

@@ -1,6 +1,6 @@
 // src/stores/app.ts
 import { defineStore } from "pinia";
-import { api } from "@/api";
+import { api, clearCsrfToken } from "@/api";
 
 /* ------------------------------------------------------------------ */
 /*  TypeScript interfaces                                             */
@@ -8,12 +8,10 @@ import { api } from "@/api";
 export interface Tutor {
 	_id: string;
 	name: string;
-	email: string;
-	age: number;
-	state: string;
-	usersOfTutorLength: number;
-	editTutors: boolean;
-	saveEdit: string;
+	email?: string;
+	age?: number;
+	state?: string;
+	status?: "pending" | "active" | "suspended";
 }
 
 export interface User {
@@ -22,8 +20,7 @@ export interface User {
 	email: string;
 	age: number;
 	state: string;
-	editUsers: boolean;
-	saveEdit: string;
+	tutor?: string | null;
 }
 
 export interface Admin {
@@ -31,7 +28,6 @@ export interface Admin {
 	name: string;
 	email: string;
 	editAdmins: boolean;
-	saveEdit: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -125,6 +121,12 @@ export const useAppStore = defineStore("app", {
 		setError(e: string | null) {
 			this.error = e;
 		},
+		clearSession() {
+			this.setCurrentTutor(null);
+			this.setCurrentUser(null);
+			this.setCurrentAdmin(null);
+			this.setError(null);
+		},
 
 		/* ---------- data fetchers ---------- */
 		async fetchUsers() {
@@ -145,6 +147,24 @@ export const useAppStore = defineStore("app", {
 			}
 		},
 
+		async fetchAllTutors() {
+			try {
+				const { data } = await api.get<Tutor[]>("/tutors/all");
+				this.setTutors(data);
+			} catch (e) {
+				console.error(e);
+			}
+		},
+
+		async fetchAdmins() {
+			try {
+				const { data } = await api.get<Admin[]>("/admins");
+				this.setAdmins(data);
+			} catch (e) {
+				console.error(e);
+			}
+		},
+
 		async getUsersOfTutor() {
 			if (!this.currentTutor) return;
 			try {
@@ -159,14 +179,23 @@ export const useAppStore = defineStore("app", {
 
 		/* ---------- session helpers ---------- */
 		async logout() {
+			this.setError(null);
 			try {
 				await api.delete("/accounts/logout"); // one endpoint for all roles
-				this.setCurrentTutor(null);
-				this.setCurrentUser(null);
-				this.setCurrentAdmin(null);
-				this.setError(null);
+				clearCsrfToken();
+				this.clearSession();
+				return true;
 			} catch (e: any) {
-				this.setError(e.message);
+				if (e.response?.status === 401) {
+					clearCsrfToken();
+					this.clearSession();
+					return true;
+				}
+				this.setError(
+					e.response?.data?.message ??
+						"Sign out could not be confirmed. Your session remains active; please try again."
+				);
+				return false;
 			}
 		},
 

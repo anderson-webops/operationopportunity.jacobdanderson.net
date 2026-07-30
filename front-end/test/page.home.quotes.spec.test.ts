@@ -29,7 +29,10 @@ describe("HomePage quote flow", () => {
 		const wrapper = mount(HomePage);
 		await flushPromises();
 
-		expect(fetchMock).toHaveBeenCalledWith("/api/quotes?tags=success&limit=100");
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/quotes?tags=success&limit=100",
+			expect.objectContaining({ signal: expect.any(AbortSignal) })
+		);
 		expect(wrapper.find(".quote").text()).toContain("Start where you are. Use what you have. Do what you can.");
 		expect(wrapper.find("#quote-author").text()).toContain("Arthur Ashe");
 	});

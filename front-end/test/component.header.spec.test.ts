@@ -46,7 +46,7 @@ describe("TheHeader", () => {
 
 		const logoutSpy = vi
 			.spyOn(app, "logout")
-			.mockResolvedValue(undefined);
+			.mockResolvedValue(true);
 
 		const wrapper = mount(TheHeader, {
 			global: {

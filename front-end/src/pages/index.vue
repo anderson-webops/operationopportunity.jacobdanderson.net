@@ -30,7 +30,9 @@ async function updateQuote() {
 	};
 
 	try {
-		const res = await fetch("/api/quotes?tags=success&limit=100");
+		const res = await fetch("/api/quotes?tags=success&limit=100", {
+			signal: AbortSignal.timeout(10_000)
+		});
 		if (!res.ok) {
 			throw new Error(await res.text());
 		}
@@ -80,13 +82,6 @@ onMounted(updateQuote);
 			</p>
 		</div>
 
-		<img
-			alt="Tutor helping college student"
-			class="m-5"
-			loading="lazy"
-			src="https://images.theconversation.com/files/268439/original/file-20190409-2921-1a4uike.jpg?ixlib=rb-1.1.0&q=30&auto=format&w=600&h=398&fit=crop&dpr=2"
-			width="30%"
-		/>
 		<h2>Welcome to Operation Opportunity!</h2>
 		<p class="mt-3">
 			Operation Opportunity is dedicated to helping all students

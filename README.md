@@ -1,26 +1,28 @@
-# operationopportunity.jacobdanderson.net
+# Operation Opportunity
 
-Site and supporting API for `operationopportunity.jacobdanderson.net`.
+Operation Opportunity is a Vite/Vue front end with a same-origin Express/MongoDB API.
 
-## Repo Layout
+## Security model
 
-- `front-end/` - Vite SSG application
-- `back-end/` - Express + MongoDB API
-- `HEALTHCHECKS.md` - monitor endpoints and expected `200`/`503` behavior
+- Users may create, update, delete, and assign a tutor only for themselves.
+- Tutors begin in `pending`; an admin manager must approve them before they appear publicly or can access assigned users.
+- Active tutors may read and update non-credential profile fields only for users assigned to them.
+- Admins may review users and tutors. Only admins with `editAdmins` may approve/suspend tutors, create peer admins, delegate/revoke admin-management privilege, or delete tutors.
+- Admin credentials are self-managed. Managers cannot overwrite another admin’s email or password.
+- The final admin and final admin manager cannot be removed or demoted.
+- Role fields are immutable; the API has no cross-role mass-assignment path.
 
-## Common Commands
+Authentication uses revocable Mongo-backed sessions, an HTTPS `__Host-` cookie in production, exact trusted proxies, and a session-bound CSRF token plus exact-origin validation for every mutation.
+
+## Commands
 
 ```bash
-npm install
+npm ci
+npm run verify:deploy
+npm run verify:api-production-install
 npm run dev
 npm run server
-npm run serve
-npm run build
-npm run up
+npm run verify:public -- https://operationopportunity.jacobdanderson.net
 ```
 
-## Operational Notes
-
-- The root `package-lock.json` is the authoritative lockfile for the repo. Keep it updated whenever dependencies change.
-- Use `npm run server` and `npm run serve` when you want the API and front-end started separately.
-- Use [`HEALTHCHECKS.md`](./HEALTHCHECKS.md) for deployment monitor targets instead of `/`.
+The root `package-lock.json` is authoritative; `back-end/package-lock.json` and `back-end/.npmrc` are kept synchronized for isolated API recovery and are verified through a clean production-only install. Production rollout and rollback are documented in [`deploy/systemd/README.md`](deploy/systemd/README.md).

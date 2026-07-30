@@ -14,23 +14,6 @@ const robotsContent = computed(() =>
 const canonicalUrl = computed(() =>
 	new URL(route.path || "/", `${siteUrl}/`).toString()
 );
-const structuredData = computed(() => [
-	{
-		"@context": "https://schema.org",
-		"@type": "Organization",
-		description: siteDescription,
-		name: "Operation Opportunity",
-		url: siteUrl
-	},
-	{
-		"@context": "https://schema.org",
-		"@type": "WebSite",
-		description: siteDescription,
-		name: "Operation Opportunity",
-		url: siteUrl
-	}
-]);
-
 useHead(
 	() =>
 		({
@@ -74,7 +57,7 @@ useHead(
 				},
 				{
 					name: "theme-color",
-					content: isDark.value ? "#00aba9" : "#ffffff"
+					content: "#ffffff"
 				}
 			],
 			link: [
@@ -98,12 +81,7 @@ useHead(
 									"bb94526b-ea35-4cf9-ab26-839ecba29361"
 							}
 						]
-					: []),
-				...structuredData.value.map((entry, index) => ({
-					innerHTML: JSON.stringify(entry),
-					key: `ld-json-${index}`,
-					type: "application/ld+json"
-				}))
+					: [])
 			]
 		}) as any
 );

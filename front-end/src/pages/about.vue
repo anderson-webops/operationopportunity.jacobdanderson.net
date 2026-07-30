@@ -11,13 +11,6 @@ defineOptions({ name: "AboutPage" });
 	<section class="About text-center">
 		<h1>About Us</h1>
 		<h2>Mission:</h2>
-		<img
-			alt="Smiling creepy college student"
-			class="m-5"
-			loading="lazy"
-			src="https://tenneyschool.com/wp-content/uploads/2016/11/Confident-Student.jpg"
-			width="40%"
-		/>
 		<p class="mt-3">
 			Here at Operation Opportunity, we have noticed a real need from the
 			students today for guidance when it comes to furthering their

@@ -1,16 +1,9 @@
-# Health Checks
+# Health checks
 
-Use these endpoints for monitoring. They do not require auth and do not redirect.
+Use only these endpoints for monitoring:
 
-## Back-end (Express API)
-- `GET /healthz`
-  - returns `200 {"ok":true}`
-- `GET /readyz`
-  - returns `200 {"ready":true,"components":{"db":{"ok":true,"state":1}}}` when Mongo is connected and pingable
-  - returns `503 {"ready":false,...}` when Mongo is unavailable
-- `GET /_dbinfo`
-  - internal diagnostics only
-  - returns non-secret database metadata when allowed
-  - returns `403 {"ok":false,"error":"forbidden"}` for public requests without internal access
+- `GET /api/healthz` is dependency-free liveness and returns `ok`, `release`, `commit`, and `deployedAt`.
+- `GET /api/readyz` returns `200` only when MongoDB is connected and pingable; it returns `503` without raw database errors otherwise.
+- `GET /release.json` identifies the static front-end artifact.
 
-Use `/healthz` and `/readyz` for monitors. Do not use `/`, login pages, or `/_dbinfo`.
+All health responses are `Cache-Control: no-store`. Production monitoring must require release `v2.2.0` and the expected commit on both the static and API surfaces. `/_dbinfo` is not a monitoring endpoint and is hidden unless diagnostics are explicitly enabled with a strong separate key.

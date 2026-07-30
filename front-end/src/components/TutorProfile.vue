@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { api } from "@/api";
+import ChangeCredentials from "@/components/ChangeCredentials.vue";
 import ProfileFields from "@/components/ProfileFields.vue";
 import { useDeleteAccount } from "@/composables/useDeleteAccount";
 import { useEditable } from "@/composables/useEditable";
@@ -23,6 +24,11 @@ const {
 /* field list */
 const tutorFields = [
 	{ key: "name", label: "Name" },
+	{ key: "age", label: "Age" },
+	{ key: "state", label: "State" }
+];
+const userFields = [
+	{ key: "name", label: "Name" },
 	{ key: "email", label: "Email" },
 	{ key: "age", label: "Age" },
 	{ key: "state", label: "State" }
@@ -30,7 +36,7 @@ const tutorFields = [
 
 /* load this tutor’s users once */
 async function loadUsers() {
-	if (!currentTutor.value) return;
+	if (!currentTutor.value || currentTutor.value.status !== "active") return;
 	try {
 		const { data } = await api.get(
 			`/users/oftutor/${currentTutor.value._id}`
@@ -53,12 +59,16 @@ onMounted(loadUsers);
 			<br />
 			<ul>
 				<li><h4>Tutor</h4></li>
+				<li v-if="currentTutor.status !== 'active'">
+					Account status: {{ currentTutor.status }}
+				</li>
 
 				<ProfileFields
 					:editing="tutorEdit"
 					:entity="currentTutor"
 					:fields="tutorFields"
 				/>
+				<li><strong>Email:</strong> {{ currentTutor.email }}</li>
 			</ul>
 			<br />
 
@@ -72,10 +82,15 @@ onMounted(loadUsers);
 				{{ tutorEdit ? "Save" : "Edit" }}
 			</button>
 		</div>
+		<ChangeCredentials
+			v-if="currentTutor"
+			:account="currentTutor"
+			kind="tutor"
+		/>
 
 		<!-- ───── Users under this tutor (read-only) ───── -->
-		<hr />
-		<h2>Users</h2>
+		<hr v-if="currentTutor?.status === 'active'" />
+		<h2 v-if="currentTutor?.status === 'active'">Users</h2>
 
 		<div v-for="u in users" :key="u._id" class="tutorList mt-2">
 			<br />
@@ -85,7 +100,7 @@ onMounted(loadUsers);
 				<ProfileFields
 					:editing="false"
 					:entity="u"
-					:fields="tutorFields"
+					:fields="userFields"
 				/>
 			</ul>
 		</div>

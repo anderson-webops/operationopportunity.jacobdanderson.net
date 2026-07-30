@@ -8,19 +8,23 @@ const emit = defineEmits<{
 }>();
 
 const app = useAppStore();
-const { isLoggedIn } = storeToRefs(app);
+const { error, isLoggedIn } = storeToRefs(app);
+const logoutPending = ref(false);
 
-function logoutUser() {
-	app.logout();
+async function logoutUser() {
+	if (logoutPending.value) return;
+	logoutPending.value = true;
+	try {
+		await app.logout();
+	} finally {
+		logoutPending.value = false;
+	}
 }
 </script>
 
 <template>
 	<header>
-		<nav
-			class="navbar navbar-expand-lg navbar-light"
-			style="background-color: #e3f2fd"
-		>
+		<nav class="site-navbar navbar navbar-expand-lg navbar-light">
 			<div class="container-fluid">
 				<router-link
 					aria-current="page"
@@ -74,14 +78,19 @@ function logoutUser() {
 					<!-- Logout Button -->
 					<button
 						v-if="isLoggedIn"
+						:disabled="logoutPending"
 						class="btn-outline-danger btn"
+						type="button"
 						@click="logoutUser"
 					>
-						Logout
+						{{ logoutPending ? "Signing out…" : "Logout" }}
 					</button>
+					<p v-if="error" class="logout-error" role="alert">
+						{{ error }}
+					</p>
 					<!-- Login button -->
 					<button
-						v-else
+						v-if="!isLoggedIn"
 						class="btn-outline-success btn"
 						@click="emit('loginClick')"
 					>
@@ -101,4 +110,13 @@ function logoutUser() {
 	</header>
 </template>
 
-<style scoped></style>
+<style scoped>
+.site-navbar {
+	background-color: #e3f2fd;
+}
+
+.logout-error {
+	margin: 0 0 0 0.75rem;
+	color: #842029;
+}
+</style>

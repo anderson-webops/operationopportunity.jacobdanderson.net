@@ -11,13 +11,14 @@ vi.mock("@/api", () => {
 		put: vi.fn(),
 		delete: vi.fn()
 	};
-	return { api: mock };
+	return { api: mock, clearCsrfToken: vi.fn() };
 });
 
 describe("useDeleteAccount()", () => {
 	beforeEach(() => {
 		setActivePinia(createPinia());
 		vi.clearAllMocks();
+		vi.spyOn(globalThis, "confirm").mockReturnValue(true);
 	});
 
 	const cases = [
@@ -30,9 +31,7 @@ describe("useDeleteAccount()", () => {
 		"calls delete %s endpoint then logs out",
 		async ({ kind, id, endpoint }) => {
 			const app = useAppStore();
-			const logoutSpy = vi
-				.spyOn(app, "logout")
-				.mockResolvedValue(undefined);
+			const clearSpy = vi.spyOn(app, "clearSession");
 			(apiMod.api.delete as any).mockResolvedValueOnce({ data: {} });
 
 			const del = useDeleteAccount(kind);
@@ -41,7 +40,16 @@ describe("useDeleteAccount()", () => {
 			expect(apiMod.api.delete).toHaveBeenCalledWith(endpoint, {
 				withCredentials: true
 			});
-			expect(logoutSpy).toHaveBeenCalledTimes(1);
+			expect(clearSpy).toHaveBeenCalledTimes(1);
+			expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
 		}
 	);
+
+	it("does nothing when deletion is not confirmed", async () => {
+		vi.mocked(globalThis.confirm).mockReturnValueOnce(false);
+		const del = useDeleteAccount("user");
+		expect(await del("u1")).toBe(false);
+		expect(apiMod.api.delete).not.toHaveBeenCalled();
+		expect(apiMod.clearCsrfToken).not.toHaveBeenCalled();
+	});
 });

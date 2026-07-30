@@ -15,7 +15,7 @@ vi.mock("@/api", () => {
 		delete: vi.fn(),
 		defaults: { baseURL: "/api", withCredentials: true }
 	};
-	return { api: mock };
+	return { api: mock, clearCsrfToken: vi.fn() };
 });
 
 describe("AccountManagement.vue login (happy path)", () => {
@@ -28,6 +28,12 @@ describe("AccountManagement.vue login (happy path)", () => {
 		const app = useAppStore();
 		// Open the login modal (component checks app.loginBlock)
 		app.setLoginBlock(true);
+		app.setCurrentAdmin({
+			_id: "stale-admin",
+			name: "Previous account",
+			email: "previous@example.com",
+			editAdmins: false
+		});
 
 		// Mock /accounts/login result with a user
 		(apiMod.api.post as any).mockResolvedValueOnce({
@@ -46,18 +52,20 @@ describe("AccountManagement.vue login (happy path)", () => {
 
 		// Fill form and submit
 		await wrapper.get("#uname").setValue("user@example.com");
-		await wrapper.get("#psw1").setValue("secret");
+		await wrapper.get("#psw1").setValue("long-password");
 		await wrapper.get("form").trigger("submit.prevent");
 
 		// Assert API call
 		expect(apiMod.api.post).toHaveBeenCalledWith(
 			"/accounts/login",
-			{ email: "user@example.com", password: "secret" },
+			{ email: "user@example.com", password: "long-password", remember: false },
 			{ withCredentials: true }
 		);
 
 		// Store updated with currentUser and modal closed
 		expect(app.currentUser?.email).toBe("user@example.com");
+		expect(app.currentAdmin).toBeNull();
+		expect(app.currentTutor).toBeNull();
 		expect(app.loginBlock).toBe(false);
 
 		// Buttons reflect logged-in state (Logout visible, Login/Signup hidden)

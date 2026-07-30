@@ -169,6 +169,7 @@ function startFrontend() {
 			NUXT_PUBLIC_PORTAL_URL: baseUrl,
 			VITE_API_BASE_URL: apiUrl,
 			VITE_API_URL: apiUrl,
+			VITE_API_PROXY_TARGET: `http://127.0.0.1:${apiPort}`,
 			VITE_SSG_API_BASE_URL: apiUrl,
 			VITE_PUBLIC_SITE_ORIGIN: baseUrl,
 			VITE_SHOW_AD_SLOTS: "false"

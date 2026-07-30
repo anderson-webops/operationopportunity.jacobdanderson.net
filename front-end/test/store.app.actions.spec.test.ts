@@ -10,7 +10,7 @@ vi.mock("@/api", () => {
 		put: vi.fn(),
 		delete: vi.fn()
 	};
-	return { api: mock };
+	return { api: mock, clearCsrfToken: vi.fn() };
 });
 
 describe("app store actions", () => {
@@ -33,7 +33,7 @@ describe("app store actions", () => {
 
 	it("fetchTutors populates tutors array", async () => {
 		(apiMod.api.get as any).mockResolvedValueOnce({
-			data: [{ _id: "t1", name: "Tutor", email: "t@e.com", age: 30, state: "NY", usersOfTutorLength: 0, editTutors: false, saveEdit: "Edit" }]
+			data: [{ _id: "t1", name: "Tutor", state: "NY", status: "active" }]
 		});
 		const app = useAppStore();
 		await app.fetchTutors();
@@ -54,9 +54,7 @@ describe("app store actions", () => {
 			email: "t@e.com",
 			age: 40,
 			state: "IL",
-			usersOfTutorLength: 2,
-			editTutors: false,
-			saveEdit: "Edit"
+			status: "active"
 		});
 
 		await app.getUsersOfTutor();
@@ -68,17 +66,54 @@ describe("app store actions", () => {
 	it("logout clears all session state", async () => {
 		(apiMod.api.delete as any).mockResolvedValueOnce({});
 		const app = useAppStore();
-		app.setCurrentAdmin({ _id: "a1", name: "A", email: "a@e.com", editAdmins: false, saveEdit: "Edit" });
-		app.setCurrentTutor({ _id: "t1", name: "T", email: "t@e.com", age: 40, state: "TX", usersOfTutorLength: 0, editTutors: false, saveEdit: "Edit" });
-		app.setCurrentUser({ _id: "u1", name: "U", email: "u@e.com", age: 21, state: "CA", editUsers: false, saveEdit: "Edit" });
+		app.setCurrentAdmin({ _id: "a1", name: "A", email: "a@e.com", editAdmins: false });
+		app.setCurrentTutor({ _id: "t1", name: "T", email: "t@e.com", age: 40, state: "TX", status: "active" });
+		app.setCurrentUser({ _id: "u1", name: "U", email: "u@e.com", age: 21, state: "CA" });
 		app.setError("boom");
 
 		await app.logout();
 
 		expect(apiMod.api.delete).toHaveBeenCalledWith("/accounts/logout");
+		expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
 		expect(app.currentAdmin).toBeNull();
 		expect(app.currentTutor).toBeNull();
 		expect(app.currentUser).toBeNull();
+		expect(app.error).toBeNull();
+	});
+
+	it("preserves session state when server-side logout cannot be confirmed", async () => {
+		(apiMod.api.delete as any).mockRejectedValueOnce(new Error("network unavailable"));
+		const app = useAppStore();
+		app.setCurrentAdmin({
+			_id: "a1",
+			name: "A",
+			email: "a@e.com",
+			editAdmins: false
+		});
+
+		await expect(app.logout()).resolves.toBe(false);
+
+		expect(apiMod.clearCsrfToken).not.toHaveBeenCalled();
+		expect(app.currentAdmin?._id).toBe("a1");
+		expect(app.error).toMatch(/could not be confirmed/i);
+	});
+
+	it("clears local state when logout confirms the session is already expired", async () => {
+		(apiMod.api.delete as any).mockRejectedValueOnce({
+			response: { status: 401 }
+		});
+		const app = useAppStore();
+		app.setCurrentAdmin({
+			_id: "a1",
+			name: "A",
+			email: "a@e.com",
+			editAdmins: false
+		});
+
+		await expect(app.logout()).resolves.toBe(true);
+
+		expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
+		expect(app.currentAdmin).toBeNull();
 		expect(app.error).toBeNull();
 	});
 });

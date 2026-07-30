@@ -6,7 +6,7 @@ export interface IBaseUser extends Document {
 	name: string;
 	email: string;
 	password: string;
-	saveEdit: string; // the “Save” / “Edit” toggle text
+	authVersion: number;
 
 	comparePassword: (password: string) => Promise<boolean>;
 

@@ -26,6 +26,7 @@ const entityValues = computed<Record<string, Displayable>>(
 );
 
 function onInput(key: string, value: Displayable) {
+	(props.entity as Record<string, Displayable>)[key] = value;
 	emit("update", key, value);
 }
 </script>
@@ -50,8 +51,7 @@ function onInput(key: string, value: Displayable) {
 		</li>
 
 		<li v-else>
-			<strong v-if="false">{{ f.label }}</strong>
-			<!-- hidden label → keeps spacing -->
+			<strong>{{ f.label }}:</strong>
 			&ensp;
 			<p class="d-inline">
 				{{ entityValues[f.key] }}

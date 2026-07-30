@@ -16,6 +16,7 @@ const copyrightYear =
 					<li>
 						<a
 							href="https://github.com/anderson-webops/operationopportunity.jacobdanderson.net"
+							rel="noopener noreferrer"
 							target="_blank"
 							><img
 								id="githubIcon"
@@ -38,9 +39,8 @@ const copyrightYear =
 					<li>
 						©{{ copyrightYear }}
 						<a
+							class="footer-site-link"
 							href="https://operationopportunity.jacobdanderson.net"
-							style="text-decoration: none; color: inherit"
-							target="_blank"
 							>Operation Opportunity</a
 						>. All rights reserved.
 					</li>
@@ -56,4 +56,9 @@ const copyrightYear =
 	</footer>
 </template>
 
-<style scoped></style>
+<style scoped>
+.footer-site-link {
+	color: inherit;
+	text-decoration: none;
+}
+</style>

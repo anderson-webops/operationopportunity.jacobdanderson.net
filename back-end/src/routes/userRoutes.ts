@@ -1,49 +1,38 @@
-// src/routes/userRoutes.ts
-import express from "express";
-import { logout as logoutUser } from "../controllers/auth/authController.js";
+import { Router } from "express";
 import {
+	assignTutorToUser,
 	createUser,
 	deleteUser,
 	getAllUsers,
 	getLoggedInUser,
-	updateUser
+	getUsersOfTutor,
+	updateAssignedUser,
+	updateOwnUser
 } from "../controllers/users/userController.js";
-import { assignTutorToUser, deleteUsersUnderTutor, getUsersOfTutor } from "../controllers/users/userExtraController.js";
-import { validTutor, validUser } from "../middleware/auth.js";
+import {
+	optionalPrincipal,
+	validActiveTutorOrAdmin,
+	validAdmin,
+	validPrincipal,
+	validUser
+} from "../middleware/auth.js";
+import {
+	authenticatedMutationRateLimit,
+	credentialMutationRateLimit,
+	signupRateLimit
+} from "../middleware/rateLimit.js";
 
-const router = express.Router();
+const router = Router();
 
-// Create a user
-router.post("/", createUser);
+router.post("/", signupRateLimit, optionalPrincipal, createUser);
+router.get("/all", ...validAdmin, getAllUsers);
+router.get("/oftutor/:tutorID", ...validActiveTutorOrAdmin, getUsersOfTutor);
+router.get("/loggedin", ...validUser, getLoggedInUser);
 
-// Get users belonging to a given tutor
-router.get("/oftutor/:tutorID", getUsersOfTutor);
-
-// Get all users
-router.get("/all", getAllUsers);
-
-// Update user info by the user themselves
-router.put("/user/:userID", validUser, updateUser);
-
-// Update user info by the tutor
-router.put("/tutor/:userID", validTutor, updateUser);
-
-// Assign a tutor to a user
-router.put("/tutor/:userID/:tutorID", assignTutorToUser);
-
-// Delete the user by the user themselves
-router.delete("/user/:userID", validUser, deleteUser);
-
-// Delete the user by the tutor
-router.delete("/tutor/:userID", validTutor, deleteUser);
-
-// Delete users under a tutor
-router.delete("/under/:tutorID", deleteUsersUnderTutor);
-
-// Get logged in user
-router.get("/loggedin", validUser, getLoggedInUser);
-
-// Logout
-router.delete("/logout", validUser, logoutUser);
+router.put("/user/:userID", credentialMutationRateLimit, ...validUser, updateOwnUser);
+router.put("/tutor/:userID/:tutorID", authenticatedMutationRateLimit, validPrincipal, assignTutorToUser);
+router.put("/tutor/:userID", authenticatedMutationRateLimit, ...validActiveTutorOrAdmin, updateAssignedUser);
+router.delete("/user/:userID", authenticatedMutationRateLimit, validPrincipal, deleteUser);
+router.delete("/admin/:userID", authenticatedMutationRateLimit, ...validAdmin, deleteUser);
 
 export const userRoutes = router;

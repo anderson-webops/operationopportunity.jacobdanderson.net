@@ -1,7 +1,7 @@
 {
 	"name": "opportunity-monorepo",
 	"type": "module",
-	"version": "1.0.0",
+	"version": "2.2.0",
 	"private": true,
 	"packageManager": "npm@11.16.0",
 	"engines": {
@@ -27,9 +27,17 @@
 		"lint": "npm run -w front-end lint && npm run -w back-end lint",
 		"lint-fix": "npm run -w front-end lint-fix && npm run -w back-end lint-fix",
 		"typecheck": "npm run -w front-end typecheck && npm run -w back-end typecheck",
-		"clean": "sudo rm -rf node_modules dist package-lock.json **/node_modules **/dist **/package-lock.json",
+		"clean": "node scripts/clean-build.mjs dist front-end/dist back-end/dist back-end/dist-test",
 		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up",
-		"a11y": "node scripts/a11y-smoke.mjs"
+		"a11y": "node scripts/a11y-smoke.mjs",
+		"test": "npm run -w front-end test:unit && npm run -w back-end test",
+		"audit": "npm audit --audit-level=high",
+		"audit:production": "npm audit --omit=dev --audit-level=high",
+		"verify:api-production-install": "node scripts/verify-api-production-install.mjs",
+		"verify:build-security": "node scripts/verify-build-security.mjs",
+		"verify:public": "node scripts/verify-public.mjs",
+		"verify:config": "npm run -w back-end verify:config",
+		"verify:deploy": "npm run audit && npm run audit:production && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^8.2.0",
@@ -48,9 +56,18 @@
 		"taze": "^19.11.0",
 		"typescript": "^6.0.3"
 	},
+	"allowScripts": {
+		"argon2@0.45.1": true,
+		"cypress@15.19.0": true,
+		"esbuild@0.28.1": true,
+		"fsevents@2.3.3": true,
+		"puppeteer@24.43.1": true,
+		"vue-demi@0.14.10": true
+	},
 	"overrides": {
 		"defu": "6.1.6",
 		"vite": "^8.1.0",
+		"oxc-parser": "0.142.0",
 		"vue-router": "^5.0.4",
 		"follow-redirects": "1.16.0",
 		"@cypress/request": {

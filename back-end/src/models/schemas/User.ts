@@ -1,8 +1,10 @@
 // src/models/schemas/User.ts
 
 import type { Model } from "mongoose";
-import type { IUser } from "../../types/entities/IUser.ts";
+import type { IUser } from "../../types/entities/IUser.js";
 import mongoose, { Schema } from "mongoose";
+import { normalizeEmail } from "../../validation.js";
+import { immutableRolePlugin } from "../plugins/immutableRole.js";
 import { passwordPlugin } from "../plugins/password.js";
 
 /**
@@ -15,21 +17,33 @@ const userSchema: Schema<IUser> = new Schema(
 			ref: "Tutor",
 			default: null
 		},
-		name: { type: String, required: true },
-		email: { type: String, required: true, unique: true },
-		age: { type: String },
-		state: { type: String },
-		password: { type: String, required: true },
-		editUsers: { type: Boolean, default: false, required: true }, // Added required: true
-		saveEdit: { type: String, default: "Edit", required: true }, // Added required: true
-		role: { type: String, default: "user" }
+		name: { type: String, required: true, trim: true, maxlength: 100 },
+		email: {
+			type: String,
+			required: true,
+			unique: true,
+			maxlength: 254,
+			set: normalizeEmail
+		},
+		age: { type: String, maxlength: 3 },
+		state: { type: String, trim: true, maxlength: 100 },
+		password: {
+			type: String,
+			required(this: IUser) {
+				return this.isNew || this.isModified("password");
+			},
+			select: false
+		},
+		authVersion: { type: Number, default: 0, min: 0, required: true },
+		role: { type: String, enum: ["user"], default: "user", required: true }
 	},
-	{ timestamps: true }
+	{ timestamps: true, strict: "throw" }
 );
 
 /**
  * Create and handle password hashing, comparison, and removal from JSON responses
  */
+userSchema.plugin(immutableRolePlugin);
 userSchema.plugin(passwordPlugin);
 
 /**

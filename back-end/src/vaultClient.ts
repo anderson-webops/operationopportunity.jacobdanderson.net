@@ -1,27 +1,77 @@
-// vaultClient.ts
-import { env } from "node:process";
+import type { VaultConfig } from "./config.js";
+import { Buffer } from "node:buffer";
 
-const VAULT_ADDR = env.VAULT_ADDR || "http://127.0.0.1:8200";
-const VAULT_ROLEID = env.VAULT_ROLE_ID!;
-const VAULT_SECRET = env.VAULT_SECRET_ID!;
+const VAULT_TIMEOUT_MS = 5_000;
+const MAX_VAULT_RESPONSE_BYTES = 64 * 1024;
 
-async function vaultLogin(): Promise<string> {
-	const r = await fetch(`${VAULT_ADDR}/v1/auth/approle/login`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ role_id: VAULT_ROLEID, secret_id: VAULT_SECRET })
-	});
-	if (!r.ok) throw new Error(`Vault login failed: ${r.status} ${await r.text()}`);
-	const data = await r.json();
-	return data.auth.client_token as string;
+async function readBoundedJson(response: Response): Promise<unknown> {
+	const declaredLength = Number(response.headers.get("content-length"));
+	if (Number.isFinite(declaredLength) && declaredLength > MAX_VAULT_RESPONSE_BYTES) {
+		throw new Error("Vault response exceeds the configured limit");
+	}
+	if (!response.body) throw new Error("Vault returned an empty response");
+
+	const reader = response.body.getReader();
+	const chunks: Buffer[] = [];
+	let size = 0;
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		size += value.byteLength;
+		if (size > MAX_VAULT_RESPONSE_BYTES) {
+			await reader.cancel();
+			throw new Error("Vault response exceeds the configured limit");
+		}
+		chunks.push(Buffer.from(value));
+	}
+	try {
+		return JSON.parse(Buffer.concat(chunks, size).toString("utf8"));
+	}
+	catch {
+		throw new Error("Vault returned invalid JSON");
+	}
 }
 
-export async function readMongoSecret() {
-	const token = await vaultLogin();
-	const r = await fetch(`${VAULT_ADDR}/v1/secret/data/opportunity/mongodb`, {
+async function vaultRequest(config: VaultConfig, path: string, init: RequestInit): Promise<Response> {
+	const response = await fetch(new URL(`/v1/${path}`, config.address), {
+		...init,
+		redirect: "error",
+		signal: AbortSignal.timeout(VAULT_TIMEOUT_MS)
+	});
+	if (!response.ok) {
+		throw new Error(`Vault request failed with status ${response.status}`);
+	}
+	return response;
+}
+
+async function vaultLogin(config: VaultConfig): Promise<string> {
+	const response = await vaultRequest(config, "auth/approle/login", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			role_id: config.roleId,
+			secret_id: config.secretId
+		})
+	});
+	const data = await readBoundedJson(response) as { auth?: { client_token?: unknown } };
+	const token = data.auth?.client_token;
+	if (typeof token !== "string" || token.length < 16) {
+		throw new Error("Vault login returned an invalid token");
+	}
+	return token;
+}
+
+export async function readMongoSecret(config: VaultConfig): Promise<string> {
+	const token = await vaultLogin(config);
+	const response = await vaultRequest(config, config.secretPath, {
 		headers: { "X-Vault-Token": token }
 	});
-	if (!r.ok) throw new Error(`Vault read failed: ${r.status} ${await r.text()}`);
-	const data = await r.json();
-	return data.data.data; // <- KV v2 payload
+	const data = await readBoundedJson(response) as {
+		data?: { data?: { uri?: unknown } };
+	};
+	const uri = data.data?.data?.uri;
+	if (typeof uri !== "string" || !/^mongodb(?:\+srv)?:\/\//.test(uri)) {
+		throw new Error("Vault Mongo secret is missing a valid URI");
+	}
+	return uri;
 }

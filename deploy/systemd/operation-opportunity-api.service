@@ -1,0 +1,50 @@
+[Unit]
+Description=Operation Opportunity API
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=operation-opportunity
+Group=operation-opportunity
+SupplementaryGroups=quotes
+WorkingDirectory=/srv/operation-opportunity/current/back-end
+EnvironmentFile=/etc/operation-opportunity/api.env
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+ExecStartPre=/usr/bin/env node dist/scripts/verifyConfig.js
+ExecStart=/usr/bin/env node dist/server.js
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=30s
+TimeoutStopSec=20s
+KillSignal=SIGTERM
+SyslogIdentifier=operation-opportunity-api
+
+AmbientCapabilities=
+CapabilityBoundingSet=
+LockPersonality=true
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateMounts=true
+PrivateTmp=true
+ProcSubset=pid
+ProtectClock=true
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+ReadOnlyPaths=/srv/operation-opportunity -/run/quotes
+RemoveIPC=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

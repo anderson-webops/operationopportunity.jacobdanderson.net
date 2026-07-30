@@ -13,6 +13,7 @@ const { loginBlock, signupBlock } = storeToRefs(app);
 
 const loginEmail = ref("");
 const loginPassword = ref("");
+const rememberLogin = ref(false);
 const errorLogin = ref("");
 
 function changeLoginView(show: boolean) {
@@ -27,10 +28,12 @@ async function loginTutor() {
 			"/accounts/login",
 			{
 				email: loginEmail.value,
-				password: loginPassword.value
+				password: loginPassword.value,
+				remember: rememberLogin.value
 			},
 			{ withCredentials: true }
 		);
+		app.clearSession();
 		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
 		if (data.currentUser) app.setCurrentUser(data.currentUser);
 		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
@@ -139,20 +142,13 @@ async function addSignup() {
 					>&times;</span
 				>
 
-				<div class="imgcontainer">
-					<img
-						alt="Avatar"
-						class="avatar"
-						loading="lazy"
-						src="https://www.w3schools.com/howto/img_avatar2.png"
-					/>
-				</div>
-
 				<div class="container">
 					<label for="uname"><b>Email</b></label>
 					<input
 						id="uname"
 						v-model="loginEmail"
+						autocomplete="username"
+						maxlength="254"
 						placeholder="Enter Email"
 						required
 						type="email"
@@ -162,6 +158,8 @@ async function addSignup() {
 					<input
 						id="psw1"
 						v-model="loginPassword"
+						autocomplete="current-password"
+						maxlength="128"
 						placeholder="Enter Password"
 						required
 						type="password"
@@ -169,7 +167,11 @@ async function addSignup() {
 
 					<button class="button" type="submit">Login</button>
 					<label>
-						<input checked name="remember" type="checkbox" />
+						<input
+							v-model="rememberLogin"
+							name="remember"
+							type="checkbox"
+						/>
 						Remember me
 					</label>
 					<span class="signup"
@@ -185,7 +187,7 @@ async function addSignup() {
 					>
 				</div>
 
-				<div class="container" style="background-color: #f1f1f1">
+				<div class="login-footer container">
 					<button
 						class="cancelbtn"
 						type="button"
@@ -196,7 +198,10 @@ async function addSignup() {
 					<p v-if="errorLogin" class="error loginError">
 						{{ errorLogin }}
 					</p>
-					<span class="psw">Forgot <a href="#">password?</a></span>
+					<span class="psw"
+						>Account recovery is handled by a verified
+						administrator.</span
+					>
 				</div>
 			</form>
 		</div>
@@ -266,6 +271,8 @@ async function addSignup() {
 					<input
 						id="email"
 						v-model="email"
+						autocomplete="email"
+						maxlength="254"
 						placeholder="Enter Email"
 						required
 						type="email"
@@ -275,6 +282,9 @@ async function addSignup() {
 					<input
 						id="psw2"
 						v-model="password"
+						autocomplete="new-password"
+						maxlength="128"
+						minlength="12"
 						placeholder="Enter Password"
 						required
 						type="password"
@@ -284,6 +294,9 @@ async function addSignup() {
 					<input
 						id="psw-repeat"
 						v-model="passwordRepeat"
+						autocomplete="new-password"
+						maxlength="128"
+						minlength="12"
 						placeholder="Repeat Password"
 						required
 						type="password"
@@ -334,6 +347,10 @@ async function addSignup() {
 	border: 1px solid #888;
 	width: 80%;
 	margin: auto;
+}
+
+.login-footer {
+	background-color: #f1f1f1;
 }
 
 .showSignup,
@@ -444,18 +461,6 @@ div.loginForm input[type="password"] {
 /* Add a hover effect for buttons */
 div.loginForm button:hover {
 	opacity: 0.8;
-}
-
-/* Center the avatar image inside this container */
-div.loginForm .imgcontainer {
-	text-align: center;
-	margin: 24px 0 12px 0;
-}
-
-/* Avatar image */
-div.loginForm img.avatar {
-	width: 25% !important;
-	border-radius: 50%;
 }
 
 /* The "Forgot password" text */

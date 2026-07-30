@@ -1,61 +1,54 @@
-// src/create-admin-user.ts
-import { env, exit } from "node:process";
+import { exit } from "node:process";
 import mongoose from "mongoose";
 import * as readlineSync from "readline-sync";
-
+import { loadConfig, validateResolvedMongoUri } from "./config.js";
 import { Admin } from "./models/schemas/Admin.js";
-import "dotenv/config";
+import { createAccount } from "./services/accountService.js";
+import { withAdminWorkflowLock } from "./services/adminWorkflow.js";
+import { ensureIdentityRegistry } from "./services/identityRegistry.js";
+import { applyAdditiveSecurityMigrations } from "./services/securityMigration.js";
+import { parseAdminCreate } from "./validation.js";
+import { readMongoSecret } from "./vaultClient.js";
 
-const MONGODB_URI = env.MONGODB_URI;
-if (!MONGODB_URI) {
-	console.error("MONGODB_URI is required");
-	exit(1);
+async function main() {
+	const config = loadConfig();
+	const mongoUri = config.vault ? await readMongoSecret(config.vault) : config.mongoUri;
+	if (!mongoUri) throw new Error("A MongoDB secret source is required");
+	validateResolvedMongoUri(mongoUri, config);
+	await mongoose.connect(mongoUri, {
+		serverSelectionTimeoutMS: 8_000,
+		connectTimeoutMS: 8_000
+	});
+	await applyAdditiveSecurityMigrations();
+	await ensureIdentityRegistry();
+
+	const input = parseAdminCreate({
+		name: readlineSync.question("Name: "),
+		email: readlineSync.questionEMail("Email: "),
+		password: readlineSync.question("Password (12-128 characters): ", { hideEchoBack: true }),
+		editAdmins: true
+	});
+	const admin = await withAdminWorkflowLock(async () => {
+		if (await Admin.countDocuments() !== 0) {
+			throw new Error("Bootstrap refused: admins already exist; use an authorized admin manager");
+		}
+		return createAccount("admin", input);
+	});
+	console.log(JSON.stringify({
+		level: "info",
+		event: "admin.bootstrap",
+		status: "success",
+		targetId: admin._id.toString()
+	}));
 }
 
-// Connect to MongoDB
-mongoose
-	.connect(MONGODB_URI)
-	.then(() => console.log("Connected to MongoDB"))
-	.catch((err) => {
-		console.error("Error connecting to MongoDB:", err);
+main()
+	.then(async () => {
+		await mongoose.disconnect();
+		exit(0);
+	})
+	.catch(async (error) => {
+		console.error(error instanceof Error ? error.message : "Admin bootstrap failed");
+		if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
 		exit(1);
 	});
-
-// Gather input
-const name: string = readlineSync.question("Name: ");
-const email: string = readlineSync.question("Email: ");
-const password: string = readlineSync.question("Password: ", {
-	hideEchoBack: true
-});
-
-if (!name || !email || !password) {
-	console.error("You need to enter name, email, and password!");
-	exit(1);
-}
-
-(async () => {
-	try {
-		const existingAdmin = await Admin.findOne({ email });
-		if (existingAdmin) {
-			console.error("That email already exists");
-			exit(1);
-		}
-
-		const admin = new Admin({
-			name,
-			email,
-			password,
-			editAdmins: false,
-			saveEdit: "Edit",
-			role: "admin"
-		});
-
-		await admin.save();
-		// console.log(`Admin user created for ${name} with email ${email}`);
-		exit(0);
-	}
-	catch (error) {
-		console.error(`Error: ${error}`);
-		exit(1);
-	}
-})();

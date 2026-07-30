@@ -1,30 +1,23 @@
-// src/routes/accountRoutes.ts
-
 import { Router } from "express";
-import { changeEmail, checkEmail, login, logout } from "../controllers/auth/authController.js";
+import {
+	getCsrfToken,
+	getCurrentSession,
+	login,
+	logout
+} from "../controllers/auth/authController.js";
+import { optionalPrincipal, validPrincipal } from "../middleware/auth.js";
+import {
+	authenticatedMutationRateLimit,
+	loginAccountRateLimit,
+	loginRateLimit,
+	publicReadRateLimit
+} from "../middleware/rateLimit.js";
 
 const router = Router();
 
-// Route to check if email is available (useful for account creation)
-router.post("/checkEmail", checkEmail);
+router.get("/csrf", publicReadRateLimit, getCsrfToken);
+router.get("/me", publicReadRateLimit, optionalPrincipal, getCurrentSession);
+router.post("/login", loginRateLimit, loginAccountRateLimit, login);
+router.delete("/logout", authenticatedMutationRateLimit, validPrincipal, logout);
 
-// Route to change email (could be used by users, tutors, or admins)
-router.post("/changeEmail/:ID", changeEmail);
-
-// Route to handle login
-router.post("/login", login);
-
-router.delete("/logout", logout);
-
-// in accountRoutes.ts
-router.get("/me", (req, res) => {
-	const s = req.session as any;
-	res.json({
-		adminID: s?.adminID ?? null,
-		tutorID: s?.tutorID ?? null,
-		userID: s?.userID ?? null
-	});
-});
-
-// Export the router
 export const accountRoutes = router;
