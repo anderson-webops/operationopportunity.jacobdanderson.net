@@ -16,11 +16,7 @@ export function useDeleteAccount(kind: Kind) {
 
 	/** delete on the server, then forget the session locally */
 	return async function deleteAccount(id: string) {
-		if (
-			!confirmDestructiveAction(
-				"Permanently delete this account? This cannot be undone."
-			)
-		) {
+		if (!confirmDestructiveAction("Permanently delete this account? This cannot be undone.")) {
 			return false;
 		}
 		await api.delete(`${endpoint[kind]}/${id}`, {

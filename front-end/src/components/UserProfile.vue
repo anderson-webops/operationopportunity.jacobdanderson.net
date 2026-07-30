@@ -37,30 +37,17 @@ const fields = [
 			<ul>
 				<li><h4>User</h4></li>
 
-				<ProfileFields
-					:editing="editing"
-					:entity="currentUser"
-					:fields="fields"
-				/>
+				<ProfileFields :editing="editing" :entity="currentUser" :fields="fields" />
 				<li><strong>Email:</strong> {{ currentUser.email }}</li>
 			</ul>
 			<br />
 
-			<button class="btn-danger btn" @click="deleteMe(currentUser!._id)">
-				Delete
-			</button>
-			<button
-				class="btn-primary btn"
-				@click="editing ? save(currentUser) : toggle()"
-			>
+			<button class="btn-danger btn" @click="deleteMe(currentUser!._id)">Delete</button>
+			<button class="btn-primary btn" @click="editing ? save(currentUser) : toggle()">
 				{{ editing ? "Save" : "Edit" }}
 			</button>
 		</div>
-		<ChangeCredentials
-			v-if="currentUser"
-			:account="currentUser"
-			kind="user"
-		/>
+		<ChangeCredentials v-if="currentUser" :account="currentUser" kind="user" />
 	</section>
 </template>
 

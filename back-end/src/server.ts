@@ -10,9 +10,7 @@ import { readMongoSecret } from "./vaultClient.js";
 
 async function main() {
 	const config = loadConfig();
-	const mongoUri = config.vault
-		? await readMongoSecret(config.vault)
-		: config.mongoUri;
+	const mongoUri = config.vault ? await readMongoSecret(config.vault) : config.mongoUri;
 	if (!mongoUri) {
 		throw new Error("MONGODB_URI or a complete Vault configuration is required");
 	}
@@ -36,12 +34,14 @@ async function main() {
 	});
 	const app = createApp(config, sessionStore);
 	const server = app.listen(config.port, config.host, () => {
-		console.log(JSON.stringify({
-			level: "info",
-			message: "Operation Opportunity API listening",
-			host: config.host,
-			port: config.port
-		}));
+		console.log(
+			JSON.stringify({
+				level: "info",
+				message: "Operation Opportunity API listening",
+				host: config.host,
+				port: config.port
+			})
+		);
 	});
 	server.requestTimeout = 15_000;
 	server.headersTimeout = 10_000;
@@ -57,15 +57,14 @@ async function main() {
 		try {
 			if (server.listening) {
 				await new Promise<void>((resolve, reject) => {
-					server.close(error => error ? reject(error) : resolve());
+					server.close((error) => (error ? reject(error) : resolve()));
 				});
 			}
 			clearTimeout(forceCloseTimer);
 			await sessionStore.close();
 			if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
 			exit(0);
-		}
-		catch (error) {
+		} catch (error) {
 			clearTimeout(forceCloseTimer);
 			console.error("Graceful shutdown failed", safeErrorSummary(error));
 			exit(1);

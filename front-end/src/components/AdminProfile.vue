@@ -23,11 +23,7 @@ const newAdmin = reactive({
 });
 
 /* editable helper for the admin card */
-const {
-	editing: adminEdit,
-	toggle: toggleAdmin,
-	save: saveAdmin
-} = useEditable("admin");
+const { editing: adminEdit, toggle: toggleAdmin, save: saveAdmin } = useEditable("admin");
 
 const adminFields = [{ key: "name", label: "Name" }];
 const memberFields = [
@@ -39,12 +35,7 @@ const memberFields = [
 
 /* fetch everything once */
 async function loadAll() {
-	await Promise.all([
-		app.fetchAdmins(),
-		app.fetchAllTutors(),
-		app.fetchUsers(),
-		app.refreshCurrentAdmin()
-	]);
+	await Promise.all([app.fetchAdmins(), app.fetchAllTutors(), app.fetchUsers(), app.refreshCurrentAdmin()]);
 }
 
 onMounted(loadAll);
@@ -55,10 +46,7 @@ async function setTutorStatus(tutorId: string, status: "active" | "suspended") {
 	try {
 		await api.patch(`/tutors/${tutorId}/status`, { status });
 		await app.fetchAllTutors();
-		message.value =
-			status === "active"
-				? "Tutor approved."
-				: "Tutor suspended and unassigned.";
+		message.value = status === "active" ? "Tutor approved." : "Tutor suspended and unassigned.";
 	} catch (caught: any) {
 		error.value = caught.response?.data?.message ?? caught.message;
 	}
@@ -87,20 +75,16 @@ async function setAdminManager(adminId: string, editAdmins: boolean) {
 	message.value = "";
 	try {
 		const { data } = await api.put(`/admins/${adminId}`, { editAdmins });
-		if (adminId === currentAdmin.value?._id)
-			app.setCurrentAdmin(data.currentAdmin);
+		if (adminId === currentAdmin.value?._id) app.setCurrentAdmin(data.currentAdmin);
 		await app.fetchAdmins();
-		message.value = editAdmins
-			? "Admin-management privilege granted."
-			: "Admin-management privilege revoked.";
+		message.value = editAdmins ? "Admin-management privilege granted." : "Admin-management privilege revoked.";
 	} catch (caught: any) {
 		error.value = caught.response?.data?.message ?? caught.message;
 	}
 }
 
 async function removeAdmin(adminId: string) {
-	if (!confirmDestructiveAction("Permanently delete this admin account?"))
-		return;
+	if (!confirmDestructiveAction("Permanently delete this admin account?")) return;
 	error.value = "";
 	message.value = "";
 	try {
@@ -113,11 +97,7 @@ async function removeAdmin(adminId: string) {
 }
 
 async function removeTutor(tutorId: string) {
-	if (
-		!confirmDestructiveAction(
-			"Delete this tutor and unassign all of their users?"
-		)
-	) {
+	if (!confirmDestructiveAction("Delete this tutor and unassign all of their users?")) {
 		return;
 	}
 	error.value = "";
@@ -133,8 +113,7 @@ async function removeTutor(tutorId: string) {
 }
 
 async function removeUser(userId: string) {
-	if (!confirmDestructiveAction("Permanently delete this user account?"))
-		return;
+	if (!confirmDestructiveAction("Permanently delete this user account?")) return;
 	error.value = "";
 	message.value = "";
 	try {
@@ -157,38 +136,21 @@ async function removeUser(userId: string) {
 			<ul>
 				<li><h4>Admin</h4></li>
 
-				<ProfileFields
-					:editing="adminEdit"
-					:entity="currentAdmin"
-					:fields="adminFields"
-				/>
+				<ProfileFields :editing="adminEdit" :entity="currentAdmin" :fields="adminFields" />
 				<li><strong>Email:</strong> {{ currentAdmin.email }}</li>
 			</ul>
 			<br />
 
-			<button class="btn-danger btn" @click="deleteMe(currentAdmin!._id)">
-				Delete
-			</button>
-			<button
-				class="btn-primary btn"
-				@click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()"
-			>
+			<button class="btn-danger btn" @click="deleteMe(currentAdmin!._id)">Delete</button>
+			<button class="btn-primary btn" @click="adminEdit ? saveAdmin(currentAdmin) : toggleAdmin()">
 				{{ adminEdit ? "Save" : "Edit" }}
 			</button>
 		</div>
-		<ChangeCredentials
-			v-if="currentAdmin"
-			:account="currentAdmin"
-			kind="admin"
-		/>
+		<ChangeCredentials v-if="currentAdmin" :account="currentAdmin" kind="admin" />
 
 		<hr />
 		<h2>Admins</h2>
-		<form
-			v-if="currentAdmin?.editAdmins"
-			class="admin-create"
-			@submit.prevent="createAdmin"
-		>
+		<form v-if="currentAdmin?.editAdmins" class="admin-create" @submit.prevent="createAdmin">
 			<h3>Create admin</h3>
 			<label>
 				Name
@@ -196,13 +158,7 @@ async function removeUser(userId: string) {
 			</label>
 			<label>
 				Email
-				<input
-					v-model="newAdmin.email"
-					autocomplete="off"
-					maxlength="254"
-					required
-					type="email"
-				/>
+				<input v-model="newAdmin.email" autocomplete="off" maxlength="254" required type="email" />
 			</label>
 			<label>
 				Temporary password
@@ -232,11 +188,7 @@ async function removeUser(userId: string) {
 				</li>
 			</ul>
 			<template v-if="currentAdmin?.editAdmins">
-				<button
-					class="btn-secondary btn"
-					type="button"
-					@click="setAdminManager(admin._id, !admin.editAdmins)"
-				>
+				<button class="btn-secondary btn" type="button" @click="setAdminManager(admin._id, !admin.editAdmins)">
 					{{ admin.editAdmins ? "Revoke manager" : "Grant manager" }}
 				</button>
 				<button
@@ -256,11 +208,7 @@ async function removeUser(userId: string) {
 		<div v-for="t in tutors" :key="t._id" class="tutorList mt-2">
 			<br />
 			<ul>
-				<ProfileFields
-					:editing="false"
-					:entity="t"
-					:fields="memberFields"
-				/>
+				<ProfileFields :editing="false" :entity="t" :fields="memberFields" />
 				<li>Status: {{ t.status }}</li>
 			</ul>
 			<button
@@ -277,12 +225,7 @@ async function removeUser(userId: string) {
 			>
 				Suspend
 			</button>
-			<button
-				v-if="currentAdmin?.editAdmins"
-				class="btn-danger btn"
-				type="button"
-				@click="removeTutor(t._id)"
-			>
+			<button v-if="currentAdmin?.editAdmins" class="btn-danger btn" type="button" @click="removeTutor(t._id)">
 				Delete tutor
 			</button>
 		</div>
@@ -293,19 +236,9 @@ async function removeUser(userId: string) {
 		<div v-for="u in users" :key="u._id" class="tutorList mt-2">
 			<br />
 			<ul>
-				<ProfileFields
-					:editing="false"
-					:entity="u"
-					:fields="memberFields"
-				/>
+				<ProfileFields :editing="false" :entity="u" :fields="memberFields" />
 			</ul>
-			<button
-				class="btn-danger btn"
-				type="button"
-				@click="removeUser(u._id)"
-			>
-				Delete user
-			</button>
+			<button class="btn-danger btn" type="button" @click="removeUser(u._id)">Delete user</button>
 		</div>
 
 		<p v-if="message" class="success" role="status">

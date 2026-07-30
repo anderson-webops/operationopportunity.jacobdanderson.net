@@ -85,5 +85,5 @@ jobs:
           install: false
           working-directory: front-end
           config-file: cypress.config.ts
-          start: npm run preview -- --port 3333
+          start: npm run preview -- --host 127.0.0.1 --port 3333
           wait-on: http://127.0.0.1:3333

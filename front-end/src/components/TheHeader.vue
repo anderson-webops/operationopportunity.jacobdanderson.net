@@ -26,11 +26,7 @@ async function logoutUser() {
 	<header>
 		<nav class="site-navbar navbar navbar-expand-lg navbar-light">
 			<div class="container-fluid">
-				<router-link
-					aria-current="page"
-					class="nav-item navbar-brand nav-link"
-					to="/"
-				>
+				<router-link aria-current="page" class="nav-item navbar-brand nav-link" to="/">
 					Operation Opportunity
 				</router-link>
 				<button
@@ -44,35 +40,22 @@ async function logoutUser() {
 				>
 					<span class="navbar-toggler-icon" />
 				</button>
-				<div
-					id="navbarSupportedContent"
-					class="collapse navbar-collapse"
-				>
+				<div id="navbarSupportedContent" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav mb-lg-0 mb-2 me-auto">
 						<li class="nav-item">
-							<router-link class="nav-link" to="/">
-								Home
-							</router-link>
+							<router-link class="nav-link" to="/"> Home </router-link>
 						</li>
 						<li class="nav-item">
-							<router-link class="nav-link" to="/signup">
-								Signup
-							</router-link>
+							<router-link class="nav-link" to="/signup"> Signup </router-link>
 						</li>
 						<li class="nav-item">
-							<router-link class="nav-link" to="/supportus">
-								Support Us
-							</router-link>
+							<router-link class="nav-link" to="/supportus"> Support Us </router-link>
 						</li>
 						<li class="nav-item">
-							<router-link class="nav-link" to="/about">
-								About
-							</router-link>
+							<router-link class="nav-link" to="/about"> About </router-link>
 						</li>
 						<li v-if="isLoggedIn" class="nav-item">
-							<router-link class="nav-link" to="/profile">
-								Profile
-							</router-link>
+							<router-link class="nav-link" to="/profile"> Profile </router-link>
 						</li>
 					</ul>
 					<!-- Logout Button -->
@@ -89,19 +72,11 @@ async function logoutUser() {
 						{{ error }}
 					</p>
 					<!-- Login button -->
-					<button
-						v-if="!isLoggedIn"
-						class="btn-outline-success btn"
-						@click="emit('loginClick')"
-					>
+					<button v-if="!isLoggedIn" class="btn-outline-success btn" @click="emit('loginClick')">
 						Login
 					</button>
 					<!-- Signup button -->
-					<button
-						v-if="!isLoggedIn"
-						class="btn-outline-primary btn"
-						@click="emit('signupClick')"
-					>
+					<button v-if="!isLoggedIn" class="btn-outline-primary btn" @click="emit('signupClick')">
 						Signup
 					</button>
 				</div>

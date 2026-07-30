@@ -8,17 +8,11 @@ function ipKey(req: Request): string {
 }
 
 function loginAccountKey(req: Request): string {
-	const email = typeof req.body?.email === "string"
-		? normalizeEmail(req.body.email).slice(0, 254)
-		: "invalid";
+	const email = typeof req.body?.email === "string" ? normalizeEmail(req.body.email).slice(0, 254) : "invalid";
 	return `account:${createHash("sha256").update(email).digest("hex")}`;
 }
 
-function createLimiter(
-	windowMs: number,
-	limit: number,
-	keyGenerator: (req: Request) => string = ipKey
-) {
+function createLimiter(windowMs: number, limit: number, keyGenerator: (req: Request) => string = ipKey) {
 	return rateLimit({
 		windowMs,
 		limit,
@@ -35,11 +29,7 @@ function createLimiter(
 }
 
 export const loginRateLimit = createLimiter(15 * 60 * 1000, 10);
-export const loginAccountRateLimit = createLimiter(
-	15 * 60 * 1000,
-	20,
-	loginAccountKey
-);
+export const loginAccountRateLimit = createLimiter(15 * 60 * 1000, 20, loginAccountKey);
 export const signupRateLimit = createLimiter(60 * 60 * 1000, 10);
 export const publicReadRateLimit = createLimiter(60 * 1000, 120);
 export const healthReadRateLimit = createLimiter(60 * 1000, 300);

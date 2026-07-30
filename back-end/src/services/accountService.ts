@@ -1,11 +1,6 @@
 import type { Types } from "mongoose";
 import type { AccountDocument, AccountRole } from "../types/account.js";
-import type {
-	AccountCreateInput,
-	AccountUpdateInput,
-	AdminCreateInput,
-	AdminUpdateInput
-} from "../validation.js";
+import type { AccountCreateInput, AccountUpdateInput, AdminCreateInput, AdminUpdateInput } from "../validation.js";
 import { HttpError, isDuplicateKeyError } from "../errors.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
@@ -20,12 +15,13 @@ async function verifyCurrentPassword(
 	role: AccountRole,
 	currentPassword: string | undefined
 ): Promise<void> {
-	const candidate = role === "admin"
-		? await Admin.findById(account._id).select("+password").exec()
-		: role === "tutor"
-			? await Tutor.findById(account._id).select("+password").exec()
-			: await User.findById(account._id).select("+password").exec();
-	if (!candidate || !currentPassword || !await candidate.comparePassword(currentPassword)) {
+	const candidate =
+		role === "admin"
+			? await Admin.findById(account._id).select("+password").exec()
+			: role === "tutor"
+				? await Tutor.findById(account._id).select("+password").exec()
+				: await User.findById(account._id).select("+password").exec();
+	if (!candidate || !currentPassword || !(await candidate.comparePassword(currentPassword))) {
 		throw new HttpError(403, "invalid_current_password", "Current password is incorrect.");
 	}
 }
@@ -50,8 +46,7 @@ export async function createAccount(role: AccountRole, input: CreateInput): Prom
 	try {
 		await account.save();
 		return account;
-	}
-	catch (error) {
+	} catch (error) {
 		await releaseIdentity(input.email, account._id);
 		if (isDuplicateKeyError(error)) {
 			throw new HttpError(409, "email_conflict", "That email address is already in use.");
@@ -92,8 +87,7 @@ export async function updateAccount(
 	const save = async () => {
 		try {
 			await account.save();
-		}
-		catch (error) {
+		} catch (error) {
 			if (isDuplicateKeyError(error)) {
 				throw new HttpError(409, "email_conflict", "That email address is already in use.");
 			}
@@ -103,8 +97,7 @@ export async function updateAccount(
 
 	if (input.email !== undefined && input.email !== previousEmail) {
 		await replaceIdentity(previousEmail, input.email, role, account._id, save);
-	}
-	else {
+	} else {
 		await save();
 	}
 	return account;

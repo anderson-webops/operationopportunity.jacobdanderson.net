@@ -14,9 +14,7 @@ const message = ref("");
 async function loadTutors() {
 	await app.fetchTutors();
 	selectedTutor.value =
-		tutors.value.find((tutor) => tutor._id === currentUser.value?.tutor) ||
-		tutors.value[0] ||
-		null;
+		tutors.value.find((tutor) => tutor._id === currentUser.value?.tutor) || tutors.value[0] || null;
 }
 
 async function selectTutor() {
@@ -24,9 +22,7 @@ async function selectTutor() {
 	error.value = "";
 	message.value = "";
 	try {
-		const { data } = await api.put(
-			`/users/tutor/${currentUser.value._id}/${selectedTutor.value._id}`
-		);
+		const { data } = await api.put(`/users/tutor/${currentUser.value._id}/${selectedTutor.value._id}`);
 		app.setCurrentUser(data.currentUser);
 		message.value = "Tutor selection saved.";
 	} catch (caught: any) {
@@ -43,10 +39,7 @@ onMounted(() => void loadTutors());
 			<label for="tutorSelect">Choose a tutor</label>
 			<select id="tutorSelect" v-model="selectedTutor" required>
 				<option v-for="tutor in tutors" :key="tutor._id" :value="tutor">
-					{{ tutor.name
-					}}<template v-if="tutor.state">
-						— {{ tutor.state }}</template
-					>
+					{{ tutor.name }}<template v-if="tutor.state"> — {{ tutor.state }}</template>
 				</option>
 			</select>
 			<button class="mt-3" type="submit">Save tutor selection</button>

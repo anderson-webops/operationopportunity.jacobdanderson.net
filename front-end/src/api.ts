@@ -47,13 +47,11 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
 	(response) => {
 		const replacement = response.headers["x-csrf-token"];
-		if (typeof replacement === "string" && replacement)
-			csrfToken = replacement;
+		if (typeof replacement === "string" && replacement) csrfToken = replacement;
 		return response;
 	},
 	async (error) => {
-		const request = error.config as
-			(typeof error.config & { _csrfRetried?: boolean }) | undefined;
+		const request = error.config as (typeof error.config & { _csrfRetried?: boolean }) | undefined;
 		const method = request?.method?.toUpperCase() || "GET";
 		const rejectedBeforeMutation =
 			error.response?.status === 403 &&

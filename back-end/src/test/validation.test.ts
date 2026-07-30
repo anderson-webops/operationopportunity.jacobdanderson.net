@@ -22,36 +22,41 @@ describe("account input validation", () => {
 		});
 		assert.equal(input.name, "Jane Doe");
 		assert.equal(input.email, "jane@example.com");
-		assert.throws(() => parseAccountCreate({
-			...input,
-			role: "admin"
-		}), /unsupported fields/);
-		assert.throws(() => parseAccountCreate({
-			...input,
-			editAdmins: true
-		}), /unsupported fields/);
+		assert.throws(
+			() =>
+				parseAccountCreate({
+					...input,
+					role: "admin"
+				}),
+			/unsupported fields/
+		);
+		assert.throws(
+			() =>
+				parseAccountCreate({
+					...input,
+					editAdmins: true
+				}),
+			/unsupported fields/
+		);
 	});
 
 	it("enforces bounded credentials and profile fields", () => {
-		assert.throws(
-			() => parseAccountUpdate({ password: "replacement-password" }),
-			/Current password/
+		assert.throws(() => parseAccountUpdate({ password: "replacement-password" }), /Current password/);
+		assert.throws(() => parseAccountUpdate({ password: "too-short", currentPassword: "existing" }), /12-128/);
+		assert.deepEqual(
+			parseAccountUpdate({
+				email: "new@example.com",
+				currentPassword: "existing-password"
+			}),
+			{
+				name: undefined,
+				email: "new@example.com",
+				password: undefined,
+				currentPassword: "existing-password",
+				age: undefined,
+				state: undefined
+			}
 		);
-		assert.throws(
-			() => parseAccountUpdate({ password: "too-short", currentPassword: "existing" }),
-			/12-128/
-		);
-		assert.deepEqual(parseAccountUpdate({
-			email: "new@example.com",
-			currentPassword: "existing-password"
-		}), {
-			name: undefined,
-			email: "new@example.com",
-			password: undefined,
-			currentPassword: "existing-password",
-			age: undefined,
-			state: undefined
-		});
 		assert.throws(() => parseAccountUpdate({ currentPassword: "existing" }), /only with/);
 		assert.throws(() => parseAccountUpdate({ age: "999" }), /0 to 130/);
 		assert.throws(() => parseAccountUpdate({}), /At least one/);
@@ -61,17 +66,11 @@ describe("account input validation", () => {
 	});
 
 	it("allows privilege changes only in an admin-manager path", () => {
-		assert.throws(
-			() => parseAdminUpdate({ editAdmins: true }, false),
-			/unsupported fields/
-		);
+		assert.throws(() => parseAdminUpdate({ editAdmins: true }, false), /unsupported fields/);
 		assert.deepEqual(parseAdminUpdate({ editAdmins: true }, true), { editAdmins: true });
 		assert.throws(() => parseAdminUpdate({ role: "admin" }, true), /unsupported fields/);
 		assert.deepEqual(parseAdminPeerPrivilegeUpdate({ editAdmins: false }), { editAdmins: false });
-		assert.throws(
-			() => parseAdminPeerPrivilegeUpdate({ email: "takeover@example.com" }),
-			/unsupported fields/
-		);
+		assert.throws(() => parseAdminPeerPrivilegeUpdate({ email: "takeover@example.com" }), /unsupported fields/);
 	});
 
 	it("prevents tutors and staff from changing user credentials or assignments", () => {

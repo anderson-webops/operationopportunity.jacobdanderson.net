@@ -20,7 +20,10 @@ export default antfu(
 		rules: {
 			"no-console": "off",
 			"antfu/if-newline": "off",
-			"style/comma-dangle": "off"
+			"style/arrow-parens": "off",
+			"style/brace-style": "off",
+			"style/comma-dangle": "off",
+			"style/operator-linebreak": "off"
 		}
 	},
 	{

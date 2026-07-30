@@ -21,9 +21,7 @@ const emit = defineEmits<{
 	(e: "update", key: string, value: Displayable): void;
 }>();
 
-const entityValues = computed<Record<string, Displayable>>(
-	() => props.entity as Record<string, Displayable>
-);
+const entityValues = computed<Record<string, Displayable>>(() => props.entity as Record<string, Displayable>);
 
 function onInput(key: string, value: Displayable) {
 	(props.entity as Record<string, Displayable>)[key] = value;
@@ -40,12 +38,7 @@ function onInput(key: string, value: Displayable) {
 					:value="entityValues[f.key]"
 					class="editTutor"
 					type="text"
-					@input="
-						onInput(
-							f.key,
-							($event.target as HTMLInputElement).value
-						)
-					"
+					@input="onInput(f.key, ($event.target as HTMLInputElement).value)"
 				/>
 			</label>
 		</li>

@@ -13,28 +13,27 @@ async function acquireLock(owner: string): Promise<void> {
 			const lock = await AdminWorkflowLock.findOneAndUpdate(
 				{
 					_id: "admin-membership",
-					$or: [
-						{ expiresAt: { $lte: now } },
-						{ owner }
-					]
+					$or: [{ expiresAt: { $lte: now } }, { owner }]
 				},
 				{ $set: { owner, expiresAt } },
 				{ upsert: true, returnDocument: "after" }
-			).lean().exec();
+			)
+				.lean()
+				.exec();
 			if (lock?.owner === owner) return;
-		}
-		catch (error) {
-			if (!(typeof error === "object" && error !== null && "code" in error && (error as { code?: unknown }).code === 11000)) {
+		} catch (error) {
+			if (!(
+				typeof error === "object" &&
+				error !== null &&
+				"code" in error &&
+				(error as { code?: unknown }).code === 11000
+			)) {
 				throw error;
 			}
 		}
-		await new Promise(resolve => setTimeout(resolve, 20 * (attempt + 1)));
+		await new Promise((resolve) => setTimeout(resolve, 20 * (attempt + 1)));
 	}
-	throw new HttpError(
-		503,
-		"admin_workflow_busy",
-		"Admin membership is temporarily busy. Please retry."
-	);
+	throw new HttpError(503, "admin_workflow_busy", "Admin membership is temporarily busy. Please retry.");
 }
 
 export async function withAdminWorkflowLock<T>(operation: () => Promise<T>): Promise<T> {
@@ -42,12 +41,10 @@ export async function withAdminWorkflowLock<T>(operation: () => Promise<T>): Pro
 	await acquireLock(owner);
 	try {
 		return await operation();
-	}
-	finally {
+	} finally {
 		try {
 			await AdminWorkflowLock.deleteOne({ _id: "admin-membership", owner });
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Admin workflow lock release failed", safeErrorSummary(error));
 		}
 	}

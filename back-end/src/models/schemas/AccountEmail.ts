@@ -17,7 +17,4 @@ const accountEmailSchema = new Schema<IAccountEmail>(
 	{ timestamps: true, strict: "throw" }
 );
 
-export const AccountEmail: Model<IAccountEmail> = mongoose.model<IAccountEmail>(
-	"AccountEmail",
-	accountEmailSchema
-);
+export const AccountEmail: Model<IAccountEmail> = mongoose.model<IAccountEmail>("AccountEmail", accountEmailSchema);

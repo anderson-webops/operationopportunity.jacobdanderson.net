@@ -29,17 +29,19 @@ async function main() {
 		editAdmins: true
 	});
 	const admin = await withAdminWorkflowLock(async () => {
-		if (await Admin.countDocuments() !== 0) {
+		if ((await Admin.countDocuments()) !== 0) {
 			throw new Error("Bootstrap refused: admins already exist; use an authorized admin manager");
 		}
 		return createAccount("admin", input);
 	});
-	console.log(JSON.stringify({
-		level: "info",
-		event: "admin.bootstrap",
-		status: "success",
-		targetId: admin._id.toString()
-	}));
+	console.log(
+		JSON.stringify({
+			level: "info",
+			event: "admin.bootstrap",
+			status: "success",
+			targetId: admin._id.toString()
+		})
+	);
 }
 
 main()

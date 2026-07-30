@@ -36,9 +36,7 @@ const config: AppConfig = {
 
 function assertDisposableMongoUri(uri: string): void {
 	if (!/^mongodb:\/\/(?:127\.0\.0\.1|localhost|\[::1\]):\d+\/operation_security_test_[\w-]+(?:\?.*)?$/i.test(uri)) {
-		throw new Error(
-			"TEST_MONGODB_URI must target a loopback database named operation_security_test_*"
-		);
+		throw new Error("TEST_MONGODB_URI must target a loopback database named operation_security_test_*");
 	}
 }
 
@@ -58,16 +56,8 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			autoIndex: false
 		});
 		await mongoose.connection.dropDatabase();
-		await Promise.all([
-			Admin.createCollection(),
-			Tutor.createCollection(),
-			User.createCollection()
-		]);
-		await Promise.all([
-			Admin.syncIndexes(),
-			Tutor.syncIndexes(),
-			User.syncIndexes()
-		]);
+		await Promise.all([Admin.createCollection(), Tutor.createCollection(), User.createCollection()]);
+		await Promise.all([Admin.syncIndexes(), Tutor.syncIndexes(), User.syncIndexes()]);
 		const legacyUserId = new mongoose.Types.ObjectId();
 		await User.collection.insertOne({
 			_id: legacyUserId,
@@ -140,11 +130,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 
 	it("enforces signup, promotion, demotion, isolation, and revocation end to end", async () => {
 		const legacyAgent = request.agent(app);
-		const legacyLogin = await login(
-			legacyAgent,
-			"legacy.user@example.test",
-			"legacy-user-password-123"
-		);
+		const legacyLogin = await login(legacyAgent, "legacy.user@example.test", "legacy-user-password-123");
 		assert.ok("currentUser" in legacyLogin.body);
 
 		const anonymous = request.agent(app);
@@ -181,11 +167,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 		await tutorAgent.get(`/users/oftutor/${tutorId}`).expect(403);
 
 		const managerAgent = request.agent(app);
-		const managerToken = (await login(
-			managerAgent,
-			"manager@example.test",
-			"manager-password-123"
-		)).csrfToken;
+		const managerToken = (await login(managerAgent, "manager@example.test", "manager-password-123")).csrfToken;
 
 		const adminCreate = await managerAgent
 			.post("/admins")
@@ -201,11 +183,8 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 		const ordinaryAdminId = adminCreate.body.admin._id as string;
 
 		const ordinaryAgent = request.agent(app);
-		const ordinaryToken = (await login(
-			ordinaryAgent,
-			"ordinary-admin@example.test",
-			"ordinary-password-123"
-		)).csrfToken;
+		const ordinaryToken = (await login(ordinaryAgent, "ordinary-admin@example.test", "ordinary-password-123"))
+			.csrfToken;
 		await ordinaryAgent
 			.post("/admins")
 			.set("Origin", origin)
@@ -247,18 +226,11 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			.expect(200);
 		const revokedAfterPromotion = await tutorAgent.get("/accounts/me").expect(200);
 		assert.equal(revokedAfterPromotion.body.role, null);
-		tutorToken = (await login(
-			tutorAgent,
-			"tutor@example.test",
-			"tutor-password-123"
-		)).csrfToken;
+		tutorToken = (await login(tutorAgent, "tutor@example.test", "tutor-password-123")).csrfToken;
 
 		const publicDirectory = await request(app).get("/tutors").expect(200);
 		assert.equal(publicDirectory.body.length, 1);
-		assert.deepEqual(
-			Object.keys(publicDirectory.body[0]).sort(),
-			["_id", "name", "state"]
-		);
+		assert.deepEqual(Object.keys(publicDirectory.body[0]).sort(), ["_id", "name", "state"]);
 
 		const userAgent = request.agent(app);
 		const userSignupToken = await csrf(userAgent);
@@ -311,10 +283,11 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			.set("X-CSRF-Token", userToken)
 			.send({})
 			.expect(200);
-		const assignedUsers = await tutorAgent
-			.get(`/users/oftutor/${tutorId}`)
-			.expect(200);
-		assert.deepEqual(assignedUsers.body.map((user: { _id: string }) => user._id), [userId]);
+		const assignedUsers = await tutorAgent.get(`/users/oftutor/${tutorId}`).expect(200);
+		assert.deepEqual(
+			assignedUsers.body.map((user: { _id: string }) => user._id),
+			[userId]
+		);
 
 		await tutorAgent
 			.put(`/users/tutor/${userId}`)
@@ -330,11 +303,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			.expect(403);
 
 		const concurrentUserAgent = request.agent(app);
-		await login(
-			concurrentUserAgent,
-			"user@example.test",
-			"user-password-123"
-		);
+		await login(concurrentUserAgent, "user@example.test", "user-password-123");
 		await userAgent
 			.put(`/users/user/${userId}`)
 			.set("Origin", origin)
@@ -357,16 +326,12 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 				currentPassword: "user-password-123"
 			})
 			.expect(200);
-		const rotatedUserCookie = (credentialUpdate.headers["set-cookie"] as unknown as string[])[0]!
-			.split(";")[0]!;
+		const rotatedUserCookie = (credentialUpdate.headers["set-cookie"] as unknown as string[])[0]!.split(";")[0]!;
 		assert.notEqual(rotatedUserCookie, originalUserCookie);
 		assert.equal(typeof credentialUpdate.headers["x-csrf-token"], "string");
 		await userAgent.get("/users/loggedin").expect(200);
 		await concurrentUserAgent.get("/users/loggedin").expect(401);
-		await request(app)
-			.get("/users/loggedin")
-			.set("Cookie", originalUserCookie)
-			.expect(401);
+		await request(app).get("/users/loggedin").set("Cookie", originalUserCookie).expect(401);
 
 		const oldPasswordAgent = request.agent(app);
 		const oldPasswordToken = await csrf(oldPasswordAgent);
@@ -380,11 +345,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			})
 			.expect(401);
 		const rotatedUserAgent = request.agent(app);
-		userToken = (await login(
-			rotatedUserAgent,
-			"user@example.test",
-			"new-user-password-123"
-		)).csrfToken;
+		userToken = (await login(rotatedUserAgent, "user@example.test", "new-user-password-123")).csrfToken;
 		assert.ok(userToken);
 
 		await managerAgent
@@ -396,9 +357,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 		const revokedAfterSuspension = await tutorAgent.get("/accounts/me").expect(200);
 		assert.equal(revokedAfterSuspension.body.role, null);
 		const privateUsers = await managerAgent.get("/users/all").expect(200);
-		const suspendedTutorUser = privateUsers.body.find(
-			(user: { _id: string }) => user._id === userId
-		);
+		const suspendedTutorUser = privateUsers.body.find((user: { _id: string }) => user._id === userId);
 		assert.equal(suspendedTutorUser.tutor, null);
 
 		await managerAgent

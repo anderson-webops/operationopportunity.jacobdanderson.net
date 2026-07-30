@@ -35,14 +35,14 @@ function normalizeTags(value: unknown): string[] {
 	if (Array.isArray(value)) {
 		return value
 			.filter((tag): tag is string => typeof tag === "string" && tag.trim().length > 0)
-			.map(tag => tag.trim().slice(0, 100));
+			.map((tag) => tag.trim().slice(0, 100));
 	}
 	if (typeof value === "string") {
 		return value
 			.split(",")
-			.map(tag => tag.trim())
+			.map((tag) => tag.trim())
 			.filter(Boolean)
-			.map(tag => tag.slice(0, 100));
+			.map((tag) => tag.slice(0, 100));
 	}
 	return [];
 }
@@ -62,16 +62,16 @@ function hasControlCharacter(value: string): boolean {
 function normalizeQuote(payload: unknown): NormalizedQuote | null {
 	if (!payload || typeof payload !== "object") return null;
 	const quote = payload as Record<string, unknown>;
-	const content = typeof quote.content === "string"
-		? quote.content.trim()
-		: typeof quote.body === "string"
-			? quote.body.trim()
-			: "";
+	const content =
+		typeof quote.content === "string"
+			? quote.content.trim()
+			: typeof quote.body === "string"
+				? quote.body.trim()
+				: "";
 	if (!content || content.length > 10_000) return null;
 
-	const author = typeof quote.author === "string" && quote.author.trim()
-		? quote.author.trim().slice(0, 200)
-		: "Unknown";
+	const author =
+		typeof quote.author === "string" && quote.author.trim() ? quote.author.trim().slice(0, 200) : "Unknown";
 	const now = new Date().toISOString();
 	const idSource = quote._id ?? quote.id ?? `${author}-${content.slice(0, 32)}`;
 	return {
@@ -79,12 +79,11 @@ function normalizeQuote(payload: unknown): NormalizedQuote | null {
 		content,
 		author,
 		tags: normalizeTags(quote.tags).slice(0, 20),
-		authorSlug: typeof quote.authorSlug === "string" && quote.authorSlug.trim()
-			? quote.authorSlug.slice(0, 200)
-			: slugifyAuthor(author),
-		length: typeof quote.length === "number" && Number.isFinite(quote.length)
-			? quote.length
-			: content.length,
+		authorSlug:
+			typeof quote.authorSlug === "string" && quote.authorSlug.trim()
+				? quote.authorSlug.slice(0, 200)
+				: slugifyAuthor(author),
+		length: typeof quote.length === "number" && Number.isFinite(quote.length) ? quote.length : content.length,
 		dateAdded: typeof quote.dateAdded === "string" ? quote.dateAdded.slice(0, 64) : now,
 		dateModified: typeof quote.dateModified === "string" ? quote.dateModified.slice(0, 64) : now
 	};
@@ -115,9 +114,7 @@ export function buildQuotesRequestPath(req: Request): string {
 		const normalized = value.trim();
 		if (!normalized) continue;
 		if (key === "limit") {
-			if (!/^\d{1,3}$/.test(normalized)
-				|| Number(normalized) < 1
-				|| Number(normalized) > 100) {
+			if (!/^\d{1,3}$/.test(normalized) || Number(normalized) < 1 || Number(normalized) > 100) {
 				continue;
 			}
 			searchParams.set(key, String(Number(normalized)));
@@ -138,7 +135,10 @@ function joinUpstreamPath(basePathname: string, requestPathname: string): string
 	const normalizedBasePath = basePathname === "/" ? "" : basePathname.replace(TRAILING_SLASHES_PATTERN, "");
 	const normalizedRequestPath = requestPathname.replace(LEADING_SLASHES_PATTERN, "");
 	if (!normalizedRequestPath) return normalizedBasePath || "/";
-	if (normalizedBasePath.endsWith(`/${normalizedRequestPath}`) || normalizedBasePath === `/${normalizedRequestPath}`) {
+	if (
+		normalizedBasePath.endsWith(`/${normalizedRequestPath}`) ||
+		normalizedBasePath === `/${normalizedRequestPath}`
+	) {
 		return normalizedBasePath || `/${normalizedRequestPath}`;
 	}
 	return `${normalizedBasePath}/${normalizedRequestPath}`.replace(DUPLICATE_SLASHES_PATTERN, "/");
@@ -190,8 +190,7 @@ export function fetchQuotesViaSocket(path: string, socketPath: string): Promise<
 						body: await readResponseBody(response),
 						transport: "socket"
 					});
-				}
-				catch (error) {
+				} catch (error) {
 					reject(error);
 				}
 			}
@@ -238,8 +237,7 @@ async function fetchQuotesUpstream(req: Request, config: AppConfig): Promise<Ups
 	if (config.quotesUpstreamSocketPath) {
 		try {
 			return await fetchQuotesViaSocket(requestPath, config.quotesUpstreamSocketPath);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Quotes socket request failed", {
 				requestId: req.requestId,
 				error: safeErrorSummary(error)
@@ -259,8 +257,7 @@ export function createQuoteProxy(config: AppConfig): Router {
 			const quotes = normalizeQuotesPayload(JSON.parse(upstream.body));
 			if (!quotes.length) return res.status(502).json({ error: "quotes_unavailable" });
 			return res.json(quotes);
-		}
-		catch (error) {
+		} catch (error) {
 			console.error("Quotes proxy failed", {
 				requestId: req.requestId,
 				error: safeErrorSummary(error)

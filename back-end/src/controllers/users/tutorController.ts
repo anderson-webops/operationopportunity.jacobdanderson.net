@@ -5,12 +5,7 @@ import { User } from "../../models/schemas/User.js";
 import { objectIdParam } from "../../requestParams.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
-import {
-	destroySession,
-	regenerateSession,
-	saveSession,
-	setSessionIdentity
-} from "../../security/session.js";
+import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
 import {
 	createAccount,
 	deleteAccount,
@@ -38,10 +33,7 @@ export const createTutor: RequestHandler = async (req, res) => {
 };
 
 export const getTutorDirectory: RequestHandler = async (_req, res) => {
-	const tutors = await Tutor.find(
-		{ status: "active" },
-		{ _id: 1, name: 1, state: 1 }
-	).sort({ name: 1 }).exec();
+	const tutors = await Tutor.find({ status: "active" }, { _id: 1, name: 1, state: 1 }).sort({ name: 1 }).exec();
 	res.json(tutors.map(serializeTutorDirectory));
 };
 

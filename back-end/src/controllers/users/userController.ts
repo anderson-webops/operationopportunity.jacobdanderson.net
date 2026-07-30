@@ -6,28 +6,10 @@ import { User } from "../../models/schemas/User.js";
 import { objectIdParam } from "../../requestParams.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
-import {
-	canAssignTutor,
-	canStaffUpdateUser,
-	canUserMutateSelf
-} from "../../security/policies.js";
-import {
-	destroySession,
-	regenerateSession,
-	saveSession,
-	setSessionIdentity
-} from "../../security/session.js";
-import {
-	createAccount,
-	deleteAccount,
-	serializeAccount,
-	updateAccount
-} from "../../services/accountService.js";
-import {
-	parseAccountCreate,
-	parseAccountUpdate,
-	parseStaffUserUpdate
-} from "../../validation.js";
+import { canAssignTutor, canStaffUpdateUser, canUserMutateSelf } from "../../security/policies.js";
+import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
+import { createAccount, deleteAccount, serializeAccount, updateAccount } from "../../services/accountService.js";
+import { parseAccountCreate, parseAccountUpdate, parseStaffUserUpdate } from "../../validation.js";
 
 export const createUser: RequestHandler = async (req, res) => {
 	if (req.session.identity) {
@@ -69,8 +51,10 @@ async function updateTargetUser(req: Parameters<RequestHandler>[0], res: Paramet
 export const updateOwnUser: RequestHandler = async (req, res) => {
 	const target = await updateTargetUser(req, res);
 	if (!target) return;
-	if (!req.currentPrincipal
-		|| !canUserMutateSelf(req.currentPrincipal.role, req.currentPrincipal.id, target.userId)) {
+	if (
+		!req.currentPrincipal ||
+		!canUserMutateSelf(req.currentPrincipal.role, req.currentPrincipal.id, target.userId)
+	) {
 		throw new HttpError(403, "self_only", "Users may update only their own account.");
 	}
 	const input = parseAccountUpdate(req.body);
@@ -92,11 +76,7 @@ export const updateAssignedUser: RequestHandler = async (req, res) => {
 	const target = await updateTargetUser(req, res);
 	if (!target) return;
 	const principal = req.currentPrincipal!;
-	if (!canStaffUpdateUser(
-		principal.role,
-		principal.id,
-		target.user.tutor?.toString() || null
-	)) {
+	if (!canStaffUpdateUser(principal.role, principal.id, target.user.tutor?.toString() || null)) {
 		throw new HttpError(403, "not_assigned", "Tutors may update only users assigned to them.");
 	}
 	const updated = await updateAccount(target.user, "user", parseStaffUserUpdate(req.body));
@@ -116,23 +96,16 @@ export const assignTutorToUser: RequestHandler = async (req, res) => {
 	if (!canAssignTutor(principal.role, principal.id, userId)) {
 		throw new HttpError(403, "self_only", "Users may select a tutor only for their own account.");
 	}
-	if (!await Tutor.exists({ _id: tutorId, status: "active" })) {
+	if (!(await Tutor.exists({ _id: tutorId, status: "active" }))) {
 		throw new HttpError(404, "not_found", "Tutor account not found.");
 	}
 	const user = await User.findById(userId).exec();
 	if (!user) throw new HttpError(404, "not_found", "User account not found.");
 	user.tutor = new Types.ObjectId(tutorId);
 	await user.save();
-	if (!await Tutor.exists({ _id: tutorId, status: "active" })) {
-		await User.updateOne(
-			{ _id: userId, tutor: tutorId },
-			{ $set: { tutor: null } }
-		);
-		throw new HttpError(
-			409,
-			"tutor_status_changed",
-			"The tutor is no longer active. Please choose another tutor."
-		);
+	if (!(await Tutor.exists({ _id: tutorId, status: "active" }))) {
+		await User.updateOne({ _id: userId, tutor: tutorId }, { $set: { tutor: null } });
+		throw new HttpError(409, "tutor_status_changed", "The tutor is no longer active. Please choose another tutor.");
 	}
 	auditSecurityEvent(req, "user.assign_tutor", {
 		status: "success",

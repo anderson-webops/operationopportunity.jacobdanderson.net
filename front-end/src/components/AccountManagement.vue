@@ -40,9 +40,7 @@ async function loginTutor() {
 		changeLoginView(false);
 	} catch (err: unknown) {
 		const e = err as AxiosError<{ message?: string }>;
-		errorLogin.value = `Login failed: ${
-			e.response?.data?.message ?? e.message ?? "Unknown error"
-		}`;
+		errorLogin.value = `Login failed: ${e.response?.data?.message ?? e.message ?? "Unknown error"}`;
 	}
 }
 
@@ -66,13 +64,7 @@ function changeSignupView(show: boolean) {
 
 // reset inputs after submission
 function resetData() {
-	name.value =
-		age.value =
-		state.value =
-		email.value =
-		password.value =
-		passwordRepeat.value =
-			"";
+	name.value = age.value = state.value = email.value = password.value = passwordRepeat.value = "";
 	error.value = "";
 }
 
@@ -118,9 +110,7 @@ async function addSignup() {
 		changeSignupView(false);
 	} catch (err: unknown) {
 		const e = err as AxiosError<{ message?: string }>;
-		errorLogin.value = `Error: ${
-			e.response?.data?.message ?? e.message ?? "Unknown error"
-		}`;
+		errorLogin.value = `Error: ${e.response?.data?.message ?? e.message ?? "Unknown error"}`;
 	}
 }
 </script>
@@ -135,12 +125,7 @@ async function addSignup() {
 		<div :class="{ showLogin: loginBlock }" class="loginForm modal">
 			<!-- Modal Content -->
 			<form class="animate modal-content" @submit.prevent="loginTutor">
-				<span
-					class="close"
-					title="Close Modal"
-					@click="changeLoginView(false)"
-					>&times;</span
-				>
+				<span class="close" title="Close Modal" @click="changeLoginView(false)">&times;</span>
 
 				<div class="container">
 					<label for="uname"><b>Email</b></label>
@@ -167,11 +152,7 @@ async function addSignup() {
 
 					<button class="button" type="submit">Login</button>
 					<label>
-						<input
-							v-model="rememberLogin"
-							name="remember"
-							type="checkbox"
-						/>
+						<input v-model="rememberLogin" name="remember" type="checkbox" />
 						Remember me
 					</label>
 					<span class="signup"
@@ -188,20 +169,11 @@ async function addSignup() {
 				</div>
 
 				<div class="login-footer container">
-					<button
-						class="cancelbtn"
-						type="button"
-						@click="changeLoginView(false)"
-					>
-						Cancel
-					</button>
+					<button class="cancelbtn" type="button" @click="changeLoginView(false)">Cancel</button>
 					<p v-if="errorLogin" class="error loginError">
 						{{ errorLogin }}
 					</p>
-					<span class="psw"
-						>Account recovery is handled by a verified
-						administrator.</span
-					>
+					<span class="psw">Account recovery is handled by a verified administrator.</span>
 				</div>
 			</form>
 		</div>
@@ -209,9 +181,7 @@ async function addSignup() {
 		<!-- ─── The Sign-Up Modal ──────────────────────────────────────────────── -->
 		<div :class="{ showSignup: signupBlock }" class="modal signupForm">
 			<form class="modal-content animate" @submit.prevent="addSignup">
-				<span class="close" @click="changeSignupView(false)"
-					>&times;</span
-				>
+				<span class="close" @click="changeSignupView(false)">&times;</span>
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
@@ -221,51 +191,25 @@ async function addSignup() {
 					<!-- ─── User Type Selector ────────────────────────────────────────── -->
 					<div class="mb-3">
 						<label>
-							<input
-								v-model="signupType"
-								type="radio"
-								value="tutor"
-							/>
+							<input v-model="signupType" type="radio" value="tutor" />
 							Tutor
 						</label>
 						&ensp;
 						<label>
-							<input
-								v-model="signupType"
-								type="radio"
-								value="user"
-							/>
+							<input v-model="signupType" type="radio" value="user" />
 							User
 						</label>
 					</div>
 
 					<!-- ─── Common Fields ─────────────────────────────────────────────── -->
 					<label for="name"><b>Name</b></label>
-					<input
-						id="name"
-						v-model="name"
-						placeholder="Enter Name"
-						required
-						type="text"
-					/>
+					<input id="name" v-model="name" placeholder="Enter Name" required type="text" />
 
 					<label for="age"><b>Age</b></label>
-					<input
-						id="age"
-						v-model="age"
-						placeholder="Enter Age"
-						required
-						type="text"
-					/>
+					<input id="age" v-model="age" placeholder="Enter Age" required type="text" />
 
 					<label for="state"><b>State</b></label>
-					<input
-						id="state"
-						v-model="state"
-						placeholder="Enter State"
-						required
-						type="text"
-					/>
+					<input id="state" v-model="state" placeholder="Enter State" required type="text" />
 
 					<label for="email"><b>Email</b></label>
 					<input
@@ -304,15 +248,10 @@ async function addSignup() {
 
 					<button class="signup button" type="submit">
 						Sign Up as a
-						{{
-							signupType.charAt(0).toUpperCase() +
-							signupType.slice(1)
-						}}
+						{{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
 					</button>
 
-					<p v-if="!passwordMatch" class="passwordMatchError">
-						Passwords do not match.
-					</p>
+					<p v-if="!passwordMatch" class="passwordMatchError">Passwords do not match.</p>
 					<p v-if="error" class="error">
 						{{ error }}
 					</p>

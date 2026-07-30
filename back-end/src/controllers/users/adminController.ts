@@ -4,28 +4,11 @@ import { Admin } from "../../models/schemas/Admin.js";
 import { objectIdParam } from "../../requestParams.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
-import {
-	adminRemovalBlockReason,
-	canMutateAdmin
-} from "../../security/policies.js";
-import {
-	destroySession,
-	regenerateSession,
-	saveSession,
-	setSessionIdentity
-} from "../../security/session.js";
-import {
-	createAccount,
-	deleteAccount,
-	serializeAccount,
-	updateAccount
-} from "../../services/accountService.js";
+import { adminRemovalBlockReason, canMutateAdmin } from "../../security/policies.js";
+import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
+import { createAccount, deleteAccount, serializeAccount, updateAccount } from "../../services/accountService.js";
 import { withAdminWorkflowLock } from "../../services/adminWorkflow.js";
-import {
-	parseAdminCreate,
-	parseAdminPeerPrivilegeUpdate,
-	parseAdminUpdate
-} from "../../validation.js";
+import { parseAdminCreate, parseAdminPeerPrivilegeUpdate, parseAdminUpdate } from "../../validation.js";
 
 export const createAdmin: RequestHandler = async (req, res) => {
 	const input = parseAdminCreate(req.body);
@@ -58,9 +41,7 @@ export const updateAdmin: RequestHandler = async (req, res) => {
 		throw new HttpError(403, "admin_management_required", "Admin-management privilege is required.");
 	}
 
-	const input = isSelf
-		? parseAdminUpdate(req.body, actor.editAdmins)
-		: parseAdminPeerPrivilegeUpdate(req.body);
+	const input = isSelf ? parseAdminUpdate(req.body, actor.editAdmins) : parseAdminPeerPrivilegeUpdate(req.body);
 	const changesCredentials = input.email !== undefined || input.password !== undefined;
 	const admin = await withAdminWorkflowLock(async () => {
 		const target = await Admin.findById(adminId).exec();

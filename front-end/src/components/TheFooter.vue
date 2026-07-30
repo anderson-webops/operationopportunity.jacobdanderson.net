@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 const startYear = 2021;
 const currentYear = new Date().getFullYear();
-const copyrightYear =
-	currentYear > startYear ? `${startYear}-${currentYear}` : `${currentYear}`;
+const copyrightYear = currentYear > startYear ? `${startYear}-${currentYear}` : `${currentYear}`;
 </script>
 
 <template>
@@ -38,9 +37,7 @@ const copyrightYear =
 					<li>Provo, UT, USA</li>
 					<li>
 						©{{ copyrightYear }}
-						<a
-							class="footer-site-link"
-							href="https://operationopportunity.jacobdanderson.net"
+						<a class="footer-site-link" href="https://operationopportunity.jacobdanderson.net"
 							>Operation Opportunity</a
 						>. All rights reserved.
 					</li>

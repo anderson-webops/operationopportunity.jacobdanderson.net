@@ -22,7 +22,7 @@ async function main() {
 	await ensureIdentityRegistry();
 
 	await withAdminWorkflowLock(async () => {
-		if (await Admin.countDocuments({ editAdmins: true }) > 0) {
+		if ((await Admin.countDocuments({ editAdmins: true })) > 0) {
 			throw new Error("Recovery grant refused: an admin manager already exists");
 		}
 		const email = normalizeEmail(readlineSync.questionEMail("Existing admin email: "));
@@ -31,12 +31,14 @@ async function main() {
 		admin.editAdmins = true;
 		admin.authVersion += 1;
 		await admin.save();
-		console.log(JSON.stringify({
-			level: "warning",
-			event: "admin.manager_recovery_grant",
-			status: "success",
-			targetId: admin._id.toString()
-		}));
+		console.log(
+			JSON.stringify({
+				level: "warning",
+				event: "admin.manager_recovery_grant",
+				status: "success",
+				targetId: admin._id.toString()
+			})
+		);
 	});
 }
 

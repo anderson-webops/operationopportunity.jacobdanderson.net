@@ -5,15 +5,9 @@ import { useAppStore } from "@/stores/app";
 
 defineOptions({ name: "ProfilePage" });
 
-const AdminProfile = defineAsyncComponent(
-	() => import("@/components/AdminProfile.vue")
-);
-const TutorProfile = defineAsyncComponent(
-	() => import("@/components/TutorProfile.vue")
-);
-const UserProfile = defineAsyncComponent(
-	() => import("@/components/UserProfile.vue")
-);
+const AdminProfile = defineAsyncComponent(() => import("@/components/AdminProfile.vue"));
+const TutorProfile = defineAsyncComponent(() => import("@/components/TutorProfile.vue"));
+const UserProfile = defineAsyncComponent(() => import("@/components/UserProfile.vue"));
 
 const { currentAdmin, currentTutor, currentUser } = storeToRefs(useAppStore());
 </script>

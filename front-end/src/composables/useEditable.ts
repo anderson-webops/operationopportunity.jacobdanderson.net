@@ -30,20 +30,11 @@ export function useEditable(kind: Kind) {
 
 		const payload = {
 			name: entity.name,
-			...(kind !== "admin" && entity.age !== undefined
-				? { age: String(entity.age) }
-				: {}),
-			...(kind !== "admin" && entity.state !== undefined
-				? { state: entity.state }
-				: {})
+			...(kind !== "admin" && entity.age !== undefined ? { age: String(entity.age) } : {}),
+			...(kind !== "admin" && entity.state !== undefined ? { state: entity.state } : {})
 		};
 		const { data } = await api.put(url, payload);
-		const updated =
-			kind === "user"
-				? data.currentUser
-				: kind === "tutor"
-					? data.currentTutor
-					: data.currentAdmin;
+		const updated = kind === "user" ? data.currentUser : kind === "tutor" ? data.currentTutor : data.currentAdmin;
 		editing.value = false;
 
 		if (kind === "user") app.setCurrentUser(updated);

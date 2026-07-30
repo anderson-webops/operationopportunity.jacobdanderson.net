@@ -11,9 +11,7 @@ const robotsContent = computed(() =>
 		? "noindex,nofollow"
 		: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
 );
-const canonicalUrl = computed(() =>
-	new URL(route.path || "/", `${siteUrl}/`).toString()
-);
+const canonicalUrl = computed(() => new URL(route.path || "/", `${siteUrl}/`).toString());
 useHead(
 	() =>
 		({
@@ -77,8 +75,7 @@ useHead(
 							{
 								defer: true,
 								src: "https://analytics.jacobdanderson.net/script.js",
-								"data-website-id":
-									"bb94526b-ea35-4cf9-ab26-839ecba29361"
+								"data-website-id": "bb94526b-ea35-4cf9-ab26-839ecba29361"
 							}
 						]
 					: [])

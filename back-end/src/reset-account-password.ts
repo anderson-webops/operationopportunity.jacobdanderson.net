@@ -47,20 +47,19 @@ async function main() {
 	const confirmation = readlineSync.question("Repeat new password: ", { hideEchoBack: true });
 	if (password !== confirmation) throw new Error("Password reset refused: passwords do not match");
 
-	const updated = await updateAccount(
-		account,
-		role,
-		parseOperatorPasswordReset({ password }),
-		{ operatorPasswordReset: true }
+	const updated = await updateAccount(account, role, parseOperatorPasswordReset({ password }), {
+		operatorPasswordReset: true
+	});
+	console.log(
+		JSON.stringify({
+			level: "warning",
+			event: "account.password_reset_by_operator",
+			status: "success",
+			targetRole: role,
+			targetId: updated._id.toString(),
+			sessionsRevoked: true
+		})
 	);
-	console.log(JSON.stringify({
-		level: "warning",
-		event: "account.password_reset_by_operator",
-		status: "success",
-		targetRole: role,
-		targetId: updated._id.toString(),
-		sessionsRevoked: true
-	}));
 }
 
 main()

@@ -8,13 +8,7 @@ import {
 	updateTutor,
 	updateTutorStatus
 } from "../controllers/users/tutorController.js";
-import {
-	optionalPrincipal,
-	validAdmin,
-	validAdminManager,
-	validTutor,
-	validTutorOrAdmin
-} from "../middleware/auth.js";
+import { optionalPrincipal, validAdmin, validAdminManager, validTutor, validTutorOrAdmin } from "../middleware/auth.js";
 import {
 	authenticatedMutationRateLimit,
 	credentialMutationRateLimit,

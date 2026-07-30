@@ -1,10 +1,5 @@
 import { Router } from "express";
-import {
-	getCsrfToken,
-	getCurrentSession,
-	login,
-	logout
-} from "../controllers/auth/authController.js";
+import { getCsrfToken, getCurrentSession, login, logout } from "../controllers/auth/authController.js";
 import { optionalPrincipal, validPrincipal } from "../middleware/auth.js";
 import {
 	authenticatedMutationRateLimit,

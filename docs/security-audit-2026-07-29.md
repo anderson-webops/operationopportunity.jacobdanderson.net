@@ -63,4 +63,4 @@ The audit found a 32-character APILayer key in an obsolete historical `script.js
 
 ## Live boundary at audit time
 
-Both the published A and AAAA addresses timed out from the audit workstation, so no live behavior is claimed. Source release, CI runner execution, host promotion, database backup, one-time manager recovery, APILayer revocation, and public verification are tracked as distinct gates.
+The IPv4 static site remained reachable, but it served the pre-remediation SSG build instead of release `v2.2.0`: `/release.json` fell through to old SPA HTML and the response retained the prior inline/eval-capable CSP. The IPv4 API health endpoint and both tested IPv6 endpoints timed out. Host access was unavailable, so no production promotion is claimed. Source release, CI runner execution, host promotion, database backup, one-time manager recovery, APILayer revocation, and public verification remain distinct gates.

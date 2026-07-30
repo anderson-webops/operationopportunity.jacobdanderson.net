@@ -25,12 +25,15 @@ describe("deployment invariants", () => {
 
 	it("keeps Linux ARM64 native bindings in the authoritative lockfile", async () => {
 		const lock = JSON.parse(await text("package-lock.json")) as {
-			packages: Record<string, {
-				version?: string;
-				cpu?: string[];
-				os?: string[];
-				optional?: boolean;
-			}>;
+			packages: Record<
+				string,
+				{
+					version?: string;
+					cpu?: string[];
+					os?: string[];
+					optional?: boolean;
+				}
+			>;
 		};
 		const bindingBySource = new Map([
 			["oxc-parser", "@oxc-parser/binding-linux-arm64-gnu"],
@@ -38,31 +41,41 @@ describe("deployment invariants", () => {
 			["rollup", "@rollup/rollup-linux-arm64-gnu"],
 			["lightningcss", "lightningcss-linux-arm64-gnu"]
 		]);
-		const containerBindingsBySource = new Map<
-			string,
-			ReadonlyArray<readonly [string, string]>
-		>([
-			["oxc-parser", [
-				["@oxc-parser/binding-linux-arm64-musl", "arm64"],
-				["@oxc-parser/binding-linux-x64-musl", "x64"]
-			]],
-			["rolldown", [
-				["@rolldown/binding-linux-arm64-musl", "arm64"],
-				["@rolldown/binding-linux-x64-musl", "x64"]
-			]],
-			["rollup", [
-				["@rollup/rollup-linux-arm64-musl", "arm64"],
-				["@rollup/rollup-linux-x64-musl", "x64"]
-			]],
-			["lightningcss", [
-				["lightningcss-linux-arm64-musl", "arm64"],
-				["lightningcss-linux-x64-musl", "x64"]
-			]]
+		const containerBindingsBySource = new Map<string, ReadonlyArray<readonly [string, string]>>([
+			[
+				"oxc-parser",
+				[
+					["@oxc-parser/binding-linux-arm64-musl", "arm64"],
+					["@oxc-parser/binding-linux-x64-musl", "x64"]
+				]
+			],
+			[
+				"rolldown",
+				[
+					["@rolldown/binding-linux-arm64-musl", "arm64"],
+					["@rolldown/binding-linux-x64-musl", "x64"]
+				]
+			],
+			[
+				"rollup",
+				[
+					["@rollup/rollup-linux-arm64-musl", "arm64"],
+					["@rollup/rollup-linux-x64-musl", "x64"]
+				]
+			],
+			[
+				"lightningcss",
+				[
+					["lightningcss-linux-arm64-musl", "arm64"],
+					["lightningcss-linux-x64-musl", "x64"]
+				]
+			]
 		]);
 		for (const [sourceName, bindingName] of bindingBySource) {
 			const suffix = `node_modules/${sourceName}`;
-			const sources = Object.entries(lock.packages)
-				.filter(([path]) => path === suffix || path.endsWith(`/${suffix}`));
+			const sources = Object.entries(lock.packages).filter(
+				([path]) => path === suffix || path.endsWith(`/${suffix}`)
+			);
 			assert.ok(sources.length > 0, `${sourceName} must be locked`);
 			for (const [sourcePath, source] of sources) {
 				const prefix = sourcePath.slice(0, -suffix.length);
@@ -73,13 +86,8 @@ describe("deployment invariants", () => {
 				assert.deepEqual(binding.os, ["linux"]);
 				assert.equal(binding.optional, true);
 				for (const [containerBindingName, cpu] of containerBindingsBySource.get(sourceName) ?? []) {
-					const containerBinding = lock.packages[
-						`${prefix}node_modules/${containerBindingName}`
-					];
-					assert.ok(
-						containerBinding,
-						`${containerBindingName} must be locked beside ${sourcePath}`
-					);
+					const containerBinding = lock.packages[`${prefix}node_modules/${containerBindingName}`];
+					assert.ok(containerBinding, `${containerBindingName} must be locked beside ${sourcePath}`);
 					assert.equal(containerBinding.version, source.version);
 					assert.deepEqual(containerBinding.cpu, [cpu]);
 					assert.deepEqual(containerBinding.os, ["linux"]);
@@ -129,7 +137,10 @@ describe("deployment invariants", () => {
 		assert.match(npmConfig, /^strict-allow-scripts=true$/m);
 		for (const allowed of ["argon2@0.45.1", "esbuild@0.28.1", "fsevents@2.3.3"]) {
 			assert.ok(
-				npmConfig.match(/^allow-scripts=(.+)$/m)?.[1].split(",").includes(allowed),
+				npmConfig
+					.match(/^allow-scripts=(.+)$/m)?.[1]
+					.split(",")
+					.includes(allowed),
 				`${allowed} must be explicitly reviewed for standalone npm installs`
 			);
 		}
@@ -150,7 +161,7 @@ describe("deployment invariants", () => {
 			".github/workflows/qodana_code_quality.yml"
 		]) {
 			const source = await text(workflow);
-			for (const line of source.split("\n").filter(line => line.includes("uses:"))) {
+			for (const line of source.split("\n").filter((line) => line.includes("uses:"))) {
 				assert.match(line, /@[0-9a-f]{40}(?:\s|$)/, `${workflow}: ${line.trim()}`);
 			}
 		}
@@ -229,23 +240,24 @@ describe("deployment invariants", () => {
 
 	it("fails closed without a production session store", () => {
 		assert.throws(
-			() => createApp({
-				environment: "production",
-				isProduction: true,
-				host: "127.0.0.1",
-				port: 3002,
-				publicOrigin: "https://operationopportunity.jacobdanderson.net",
-				trustedProxyIps: ["127.0.0.1"],
-				sessionSecrets: ["s".repeat(48)],
-				sessionCookieName: "__Host-operation.sid",
-				sessionMaxAgeMs: 60_000,
-				sessionRememberMaxAgeMs: 120_000,
-				mongoUri: "mongodb://operation:password@127.0.0.1/opportunity",
-				allowUnauthenticatedLoopbackMongo: false,
-				enableInternalDiagnostics: false,
-				quotesUpstreamUrl: new URL("https://jacobdanderson.net/quotes-api"),
-				requestBodyLimit: "64kb"
-			}),
+			() =>
+				createApp({
+					environment: "production",
+					isProduction: true,
+					host: "127.0.0.1",
+					port: 3002,
+					publicOrigin: "https://operationopportunity.jacobdanderson.net",
+					trustedProxyIps: ["127.0.0.1"],
+					sessionSecrets: ["s".repeat(48)],
+					sessionCookieName: "__Host-operation.sid",
+					sessionMaxAgeMs: 60_000,
+					sessionRememberMaxAgeMs: 120_000,
+					mongoUri: "mongodb://operation:password@127.0.0.1/opportunity",
+					allowUnauthenticatedLoopbackMongo: false,
+					enableInternalDiagnostics: false,
+					quotesUpstreamUrl: new URL("https://jacobdanderson.net/quotes-api"),
+					requestBodyLimit: "64kb"
+				}),
 			/external session store/
 		);
 	});

@@ -25,7 +25,13 @@ export function csrfProtection(publicOrigin: string): RequestHandler {
 		const supplied = req.get("x-csrf-token");
 		const expected = req.session.csrfToken;
 
-		if (origin !== publicOrigin || fetchSite === "cross-site" || !supplied || !expected || !safeEqual(supplied, expected)) {
+		if (
+			origin !== publicOrigin ||
+			fetchSite === "cross-site" ||
+			!supplied ||
+			!expected ||
+			!safeEqual(supplied, expected)
+		) {
 			auditSecurityEvent(req, "csrf.reject", {
 				status: "rejected",
 				reason: "origin_or_token"

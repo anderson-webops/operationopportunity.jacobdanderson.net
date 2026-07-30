@@ -1,10 +1,6 @@
 import type { UserModule } from "~/types.ts";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-	faFacebook,
-	faGithub,
-	faInstagram
-} from "@fortawesome/free-brands-svg-icons";
+import { faFacebook, faGithub, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createHead } from "@unhead/vue/client";
 import { createPinia } from "pinia";
@@ -45,17 +41,11 @@ async function start() {
 	await router.isReady();
 	app.mount("#app");
 	mounted = true;
-	await Promise.allSettled([
-		import("bootstrap"),
-		useAppStore().bootstrapSession()
-	]);
+	await Promise.allSettled([import("bootstrap"), useAppStore().bootstrapSession()]);
 }
 
 void start().catch((error: unknown) => {
-	console.error(
-		"Application startup failed",
-		error instanceof Error ? error.name : "UnknownError"
-	);
+	console.error("Application startup failed", error instanceof Error ? error.name : "UnknownError");
 	if (!mounted) {
 		app.mount("#app");
 		mounted = true;

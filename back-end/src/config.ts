@@ -76,24 +76,22 @@ function parseSessionSecrets(): string[] {
 	if (rawJson) {
 		try {
 			secrets = JSON.parse(rawJson);
-		}
-		catch {
+		} catch {
 			throw new Error("SESSION_SECRETS_JSON must be valid JSON");
 		}
-	}
-	else {
+	} else {
 		secrets = env.SESSION_SECRET ? [env.SESSION_SECRET] : [];
 	}
 
-	if (!Array.isArray(secrets) || secrets.length === 0 || !secrets.every(secret => typeof secret === "string")) {
+	if (!Array.isArray(secrets) || secrets.length === 0 || !secrets.every((secret) => typeof secret === "string")) {
 		throw new Error("At least one session secret is required");
 	}
 
-	const normalized = secrets.map(secret => secret.trim());
-	if (normalized.some(secret => secret.length < MIN_SECRET_LENGTH || secret.length > MAX_SECRET_LENGTH)) {
+	const normalized = secrets.map((secret) => secret.trim());
+	if (normalized.some((secret) => secret.length < MIN_SECRET_LENGTH || secret.length > MAX_SECRET_LENGTH)) {
 		throw new Error(`Session secrets must be ${MIN_SECRET_LENGTH}-${MAX_SECRET_LENGTH} characters`);
 	}
-	if (normalized.some(secret => /^replace[-_]/i.test(secret))) {
+	if (normalized.some((secret) => /^replace[-_]/i.test(secret))) {
 		throw new Error("Session secrets must not use example placeholders");
 	}
 	if (new Set(normalized).size !== normalized.length) {
@@ -103,9 +101,7 @@ function parseSessionSecrets(): string[] {
 }
 
 function parseOrigin(environment: AppConfig["environment"]): string {
-	const raw = env.PUBLIC_ORIGIN?.trim() || (environment === "production"
-		? ""
-		: "http://localhost:3333");
+	const raw = env.PUBLIC_ORIGIN?.trim() || (environment === "production" ? "" : "http://localhost:3333");
 	if (!raw) throw new Error("PUBLIC_ORIGIN is required in production");
 
 	const origin = new URL(raw);
@@ -124,9 +120,9 @@ function parseOrigin(environment: AppConfig["environment"]): string {
 function parseTrustedProxyIps(): string[] {
 	const values = (env.TRUSTED_PROXY_IPS || "")
 		.split(",")
-		.map(value => value.trim())
+		.map((value) => value.trim())
 		.filter(Boolean);
-	if (values.some(value => isIP(value) === 0)) {
+	if (values.some((value) => isIP(value) === 0)) {
 		throw new Error("TRUSTED_PROXY_IPS accepts exact IP addresses only");
 	}
 	return [...new Set(values)];
@@ -172,7 +168,7 @@ function mongoHostsAreLoopback(uri: string): boolean {
 		const colon = value.lastIndexOf(":");
 		return colon > 0 && value.indexOf(":") === colon ? value.slice(0, colon) : value;
 	});
-	return hosts.length > 0 && hosts.every(host => LOOPBACK_HOSTS.has(host));
+	return hosts.length > 0 && hosts.every((host) => LOOPBACK_HOSTS.has(host));
 }
 
 function mongoUriUsesTls(uri: string): boolean {
@@ -189,9 +185,11 @@ function mongoUriHasCredentials(uri: string): boolean {
 	const authority = uri.replace(/^mongodb(?:\+srv)?:\/\//, "").split("/")[0] || "";
 	const credentialPart = authority.includes("@") ? authority.slice(0, authority.lastIndexOf("@")) : "";
 	const separator = credentialPart.indexOf(":");
-	return separator > 0
-		&& separator < credentialPart.length - 1
-		&& !/^replace[-_]/i.test(credentialPart.slice(separator + 1));
+	return (
+		separator > 0 &&
+		separator < credentialPart.length - 1 &&
+		!/^replace[-_]/i.test(credentialPart.slice(separator + 1))
+	);
 }
 
 function validateMongoUri(uri: string, environment: AppConfig["environment"], allowLoopback: boolean) {
@@ -208,10 +206,10 @@ function validateMongoUri(uri: string, environment: AppConfig["environment"], al
 	}
 }
 
-export function validateResolvedMongoUri(uri: string, config: Pick<
-	AppConfig,
-	"environment" | "allowUnauthenticatedLoopbackMongo"
->): void {
+export function validateResolvedMongoUri(
+	uri: string,
+	config: Pick<AppConfig, "environment" | "allowUnauthenticatedLoopbackMongo">
+): void {
 	validateMongoUri(uri, config.environment, config.allowUnauthenticatedLoopbackMongo);
 }
 
@@ -280,7 +278,12 @@ export function loadConfig(): AppConfig {
 		sessionSecrets: parseSessionSecrets(),
 		sessionCookieName: isProduction ? "__Host-operation.sid" : "operation.sid",
 		sessionMaxAgeMs: readInteger("SESSION_MAX_AGE_MS", 24 * 60 * 60 * 1000, 5 * 60 * 1000, 7 * 24 * 60 * 60 * 1000),
-		sessionRememberMaxAgeMs: readInteger("SESSION_REMEMBER_MAX_AGE_MS", 30 * 24 * 60 * 60 * 1000, 24 * 60 * 60 * 1000, 90 * 24 * 60 * 60 * 1000),
+		sessionRememberMaxAgeMs: readInteger(
+			"SESSION_REMEMBER_MAX_AGE_MS",
+			30 * 24 * 60 * 60 * 1000,
+			24 * 60 * 60 * 1000,
+			90 * 24 * 60 * 60 * 1000
+		),
 		mongoUri,
 		allowUnauthenticatedLoopbackMongo,
 		vault: parseVault(environment),

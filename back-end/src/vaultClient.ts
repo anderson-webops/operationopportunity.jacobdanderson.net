@@ -26,8 +26,7 @@ async function readBoundedJson(response: Response): Promise<unknown> {
 	}
 	try {
 		return JSON.parse(Buffer.concat(chunks, size).toString("utf8"));
-	}
-	catch {
+	} catch {
 		throw new Error("Vault returned invalid JSON");
 	}
 }
@@ -53,7 +52,7 @@ async function vaultLogin(config: VaultConfig): Promise<string> {
 			secret_id: config.secretId
 		})
 	});
-	const data = await readBoundedJson(response) as { auth?: { client_token?: unknown } };
+	const data = (await readBoundedJson(response)) as { auth?: { client_token?: unknown } };
 	const token = data.auth?.client_token;
 	if (typeof token !== "string" || token.length < 16) {
 		throw new Error("Vault login returned an invalid token");
@@ -66,7 +65,7 @@ export async function readMongoSecret(config: VaultConfig): Promise<string> {
 	const response = await vaultRequest(config, config.secretPath, {
 		headers: { "X-Vault-Token": token }
 	});
-	const data = await readBoundedJson(response) as {
+	const data = (await readBoundedJson(response)) as {
 		data?: { data?: { uri?: unknown } };
 	};
 	const uri = data.data?.data?.uri;

@@ -8,10 +8,7 @@ import helmet from "helmet";
 import mongoose from "mongoose";
 import { createQuoteProxy } from "./controllers/common/quoteProxy.js";
 import { HttpError, isDuplicateKeyError, safeErrorSummary } from "./errors.js";
-import {
-	healthReadRateLimit,
-	publicReadRateLimit
-} from "./middleware/rateLimit.js";
+import { healthReadRateLimit, publicReadRateLimit } from "./middleware/rateLimit.js";
 import { getDeploymentIdentity } from "./release.js";
 import { accountRoutes } from "./routes/accountRoutes.js";
 import { adminRoutes } from "./routes/adminRoutes.js";
@@ -36,19 +33,21 @@ export function createApp(config: AppConfig, store?: Store) {
 	app.set("config", config);
 	app.set("trust proxy", config.trustedProxyIps.length ? config.trustedProxyIps : false);
 	app.use(requestContext);
-	app.use(helmet({
-		contentSecurityPolicy: {
-			directives: {
-				defaultSrc: ["'none'"],
-				baseUri: ["'none'"],
-				frameAncestors: ["'none'"],
-				formAction: ["'none'"]
-			}
-		},
-		crossOriginResourcePolicy: { policy: "same-site" },
-		frameguard: { action: "deny" },
-		hsts: config.isProduction
-	}));
+	app.use(
+		helmet({
+			contentSecurityPolicy: {
+				directives: {
+					defaultSrc: ["'none'"],
+					baseUri: ["'none'"],
+					frameAncestors: ["'none'"],
+					formAction: ["'none'"]
+				}
+			},
+			crossOriginResourcePolicy: { policy: "same-site" },
+			frameguard: { action: "deny" },
+			hsts: config.isProduction
+		})
+	);
 	app.use((_req, res, next) => {
 		res.setHeader("Cache-Control", "no-store");
 		next();
@@ -73,8 +72,7 @@ export function createApp(config: AppConfig, store?: Store) {
 				components: { db: { ok: true, state } },
 				...getDeploymentIdentity()
 			});
-		}
-		catch {
+		} catch {
 			return res.status(503).json({
 				ready: false,
 				components: { db: { ok: false, state } },
@@ -84,27 +82,31 @@ export function createApp(config: AppConfig, store?: Store) {
 	});
 
 	app.use(express.json({ limit: config.requestBodyLimit, strict: true }));
-	app.use(session({
-		name: config.sessionCookieName,
-		secret: config.sessionSecrets,
-		store,
-		resave: false,
-		saveUninitialized: false,
-		rolling: true,
-		proxy: config.trustedProxyIps.length > 0,
-		cookie: {
-			httpOnly: true,
-			secure: config.isProduction,
-			sameSite: "lax",
-			path: "/",
-			maxAge: config.sessionMaxAgeMs
-		}
-	}));
+	app.use(
+		session({
+			name: config.sessionCookieName,
+			secret: config.sessionSecrets,
+			store,
+			resave: false,
+			saveUninitialized: false,
+			rolling: true,
+			proxy: config.trustedProxyIps.length > 0,
+			cookie: {
+				httpOnly: true,
+				secure: config.isProduction,
+				sameSite: "lax",
+				path: "/",
+				maxAge: config.sessionMaxAgeMs
+			}
+		})
+	);
 	app.use(csrfProtection(config.publicOrigin));
 
 	app.get("/_dbinfo", (req, res) => {
-		if (!config.enableInternalDiagnostics
-			|| !secureEqual(req.get("x-internal-diagnostics-key"), config.internalDiagnosticsKey)) {
+		if (
+			!config.enableInternalDiagnostics ||
+			!secureEqual(req.get("x-internal-diagnostics-key"), config.internalDiagnosticsKey)
+		) {
 			return res.status(404).json({ error: "not_found" });
 		}
 		res.json({

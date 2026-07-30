@@ -3,13 +3,7 @@ const modelValue = defineModel<string>({ default: "" });
 </script>
 
 <template>
-	<input
-		id="input"
-		v-model="modelValue"
-		class="input-field"
-		type="text"
-		v-bind="$attrs"
-	/>
+	<input id="input" v-model="modelValue" class="input-field" type="text" v-bind="$attrs" />
 </template>
 
 <style scoped>

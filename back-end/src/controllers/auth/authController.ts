@@ -7,12 +7,7 @@ import { Tutor } from "../../models/schemas/Tutor.js";
 import { User } from "../../models/schemas/User.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
-import {
-	destroySession,
-	regenerateSession,
-	saveSession,
-	setSessionIdentity
-} from "../../security/session.js";
+import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
 import { serializeAccount } from "../../services/accountService.js";
 import { isValidEmail, normalizeEmail } from "../../validation.js";
 
@@ -70,15 +65,8 @@ export const login: RequestHandler = async (req, res) => {
 	}
 
 	await regenerateSession(req);
-	setSessionIdentity(
-		req,
-		candidate.role,
-		candidate.account._id.toString(),
-		candidate.account.authVersion
-	);
-	req.session.cookie.maxAge = remember
-		? config(req).sessionRememberMaxAgeMs
-		: config(req).sessionMaxAgeMs;
+	setSessionIdentity(req, candidate.role, candidate.account._id.toString(), candidate.account.authVersion);
+	req.session.cookie.maxAge = remember ? config(req).sessionRememberMaxAgeMs : config(req).sessionMaxAgeMs;
 	const csrfToken = issueCsrfToken(req, res);
 	await saveSession(req);
 	req.currentPrincipal = {
@@ -89,11 +77,8 @@ export const login: RequestHandler = async (req, res) => {
 	};
 	auditSecurityEvent(req, "login", { status: "success" });
 
-	const responseKey = candidate.role === "admin"
-		? "currentAdmin"
-		: candidate.role === "tutor"
-			? "currentTutor"
-			: "currentUser";
+	const responseKey =
+		candidate.role === "admin" ? "currentAdmin" : candidate.role === "tutor" ? "currentTutor" : "currentUser";
 	return res.json({ [responseKey]: serializeAccount(candidate.account), csrfToken });
 };
 

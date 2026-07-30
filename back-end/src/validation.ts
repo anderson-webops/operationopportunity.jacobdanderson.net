@@ -41,7 +41,7 @@ function asObject(value: unknown): Record<string, unknown> {
 }
 
 function rejectUnknown(input: Record<string, unknown>, allowed: Set<string>) {
-	const unknown = Object.keys(input).filter(key => !allowed.has(key));
+	const unknown = Object.keys(input).filter((key) => !allowed.has(key));
 	if (unknown.length) {
 		throw new HttpError(400, "unsupported_fields", "The request contains unsupported fields.");
 	}
@@ -67,9 +67,7 @@ export function normalizeEmail(value: string): string {
 }
 
 export function isValidEmail(value: string): boolean {
-	return value.length >= 3
-		&& value.length <= 254
-		&& EMAIL_PATTERN.test(value);
+	return value.length >= 3 && value.length <= 254 && EMAIL_PATTERN.test(value);
 }
 
 function email(input: Record<string, unknown>, required: boolean): string | undefined {
@@ -104,14 +102,7 @@ function state(input: Record<string, unknown>): string | undefined {
 }
 
 const ACCOUNT_CREATE_FIELDS = new Set(["name", "email", "password", "age", "state"]);
-const ACCOUNT_UPDATE_FIELDS = new Set([
-	"name",
-	"email",
-	"password",
-	"currentPassword",
-	"age",
-	"state"
-]);
+const ACCOUNT_UPDATE_FIELDS = new Set(["name", "email", "password", "currentPassword", "age", "state"]);
 
 export function parseAccountCreate(value: unknown): AccountCreateInput {
 	const input = asObject(value);
@@ -130,10 +121,10 @@ export function parseAccountUpdate(value: unknown): AccountUpdateInput {
 	rejectUnknown(input, ACCOUNT_UPDATE_FIELDS);
 	const changesCredentials = "email" in input || "password" in input;
 	const currentPassword = input.currentPassword;
-	if (changesCredentials
-		&& (typeof currentPassword !== "string"
-			|| currentPassword.length < 1
-			|| currentPassword.length > 128)) {
+	if (
+		changesCredentials &&
+		(typeof currentPassword !== "string" || currentPassword.length < 1 || currentPassword.length > 128)
+	) {
 		throw new HttpError(
 			400,
 			"current_password_required",
@@ -151,11 +142,11 @@ export function parseAccountUpdate(value: unknown): AccountUpdateInput {
 		name: optionalString(input, "name", 1, 100),
 		email: email(input, false),
 		password: password(input, false),
-		currentPassword: changesCredentials ? currentPassword as string : undefined,
+		currentPassword: changesCredentials ? (currentPassword as string) : undefined,
 		age: age(input),
 		state: state(input)
 	};
-	if (!Object.values(result).some(value => value !== undefined)) {
+	if (!Object.values(result).some((value) => value !== undefined)) {
 		throw new HttpError(400, "empty_update", "At least one supported field is required.");
 	}
 	return result;
@@ -170,9 +161,9 @@ export function parseOperatorPasswordReset(value: unknown): Pick<AccountUpdateIn
 export function parseAdminCreate(value: unknown): AdminCreateInput {
 	const input = asObject(value);
 	rejectUnknown(input, new Set([...ACCOUNT_CREATE_FIELDS, "editAdmins"]));
-	const base = parseAccountCreate(Object.fromEntries(
-		Object.entries(input).filter(([key]) => ACCOUNT_CREATE_FIELDS.has(key))
-	));
+	const base = parseAccountCreate(
+		Object.fromEntries(Object.entries(input).filter(([key]) => ACCOUNT_CREATE_FIELDS.has(key)))
+	);
 	if ("editAdmins" in input && typeof input.editAdmins !== "boolean") {
 		throw new HttpError(400, "invalid_input", "editAdmins must be a boolean.");
 	}
@@ -217,7 +208,7 @@ export function parseStaffUserUpdate(value: unknown): StaffUserUpdateInput {
 		age: age(input),
 		state: state(input)
 	};
-	if (!Object.values(result).some(value => value !== undefined)) {
+	if (!Object.values(result).some((value) => value !== undefined)) {
 		throw new HttpError(400, "empty_update", "At least one supported field is required.");
 	}
 	return result;

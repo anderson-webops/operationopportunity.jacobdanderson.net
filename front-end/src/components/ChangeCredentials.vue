@@ -49,28 +49,20 @@ async function saveCredentials() {
 	}
 
 	try {
-		const { data } = await api.put(
-			endpoint[props.kind](props.account._id),
-			{
-				currentPassword: currentPassword.value,
-				...(changesEmail ? { email: normalizedEmail } : {}),
-				...(changesPassword ? { password: newPassword.value } : {})
-			}
-		);
+		const { data } = await api.put(endpoint[props.kind](props.account._id), {
+			currentPassword: currentPassword.value,
+			...(changesEmail ? { email: normalizedEmail } : {}),
+			...(changesPassword ? { password: newPassword.value } : {})
+		});
 		const updated =
-			props.kind === "admin"
-				? data.currentAdmin
-				: props.kind === "tutor"
-					? data.currentTutor
-					: data.currentUser;
+			props.kind === "admin" ? data.currentAdmin : props.kind === "tutor" ? data.currentTutor : data.currentUser;
 		if (props.kind === "admin") app.setCurrentAdmin(updated);
 		else if (props.kind === "tutor") app.setCurrentTutor(updated);
 		else app.setCurrentUser(updated);
 		currentPassword.value = "";
 		newPassword.value = "";
 		passwordConfirmation.value = "";
-		message.value =
-			"Account credentials updated; other sessions were revoked.";
+		message.value = "Account credentials updated; other sessions were revoked.";
 	} catch (caught: any) {
 		error.value = caught.response?.data?.message ?? caught.message;
 	}
@@ -82,33 +74,15 @@ async function saveCredentials() {
 		<h3>Account security</h3>
 		<label>
 			Email
-			<input
-				v-model="email"
-				autocomplete="email"
-				maxlength="254"
-				required
-				type="email"
-			/>
+			<input v-model="email" autocomplete="email" maxlength="254" required type="email" />
 		</label>
 		<label>
 			Current password
-			<input
-				v-model="currentPassword"
-				autocomplete="current-password"
-				maxlength="128"
-				required
-				type="password"
-			/>
+			<input v-model="currentPassword" autocomplete="current-password" maxlength="128" required type="password" />
 		</label>
 		<label>
 			New password (optional)
-			<input
-				v-model="newPassword"
-				autocomplete="new-password"
-				maxlength="128"
-				minlength="12"
-				type="password"
-			/>
+			<input v-model="newPassword" autocomplete="new-password" maxlength="128" minlength="12" type="password" />
 		</label>
 		<label>
 			Repeat new password
@@ -120,9 +94,7 @@ async function saveCredentials() {
 				type="password"
 			/>
 		</label>
-		<button class="btn-primary btn" type="submit">
-			Update credentials
-		</button>
+		<button class="btn-primary btn" type="submit">Update credentials</button>
 		<p v-if="message" class="success" role="status">{{ message }}</p>
 		<p v-if="error" class="error" role="alert">{{ error }}</p>
 	</form>

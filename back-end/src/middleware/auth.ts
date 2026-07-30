@@ -17,8 +17,7 @@ async function findAccount(role: AccountRole, id: string): Promise<AccountDocume
 async function clearInvalidSession(req: Request) {
 	try {
 		await destroySession(req);
-	}
-	catch {
+	} catch {
 		// Authentication still fails closed if session-store cleanup is unavailable.
 	}
 }
@@ -45,11 +44,7 @@ async function hydratePrincipal(req: Request): Promise<boolean> {
 	return true;
 }
 
-function authenticationUnavailable(
-	req: Request,
-	res: Parameters<RequestHandler>[1],
-	error: unknown
-) {
+function authenticationUnavailable(req: Request, res: Parameters<RequestHandler>[1], error: unknown) {
 	console.error("Principal validation failed", {
 		requestId: req.requestId,
 		error: safeErrorSummary(error)
@@ -64,8 +59,7 @@ export const optionalPrincipal: RequestHandler = async (req, res, next) => {
 	try {
 		await hydratePrincipal(req);
 		next();
-	}
-	catch (error) {
+	} catch (error) {
 		return authenticationUnavailable(req, res, error);
 	}
 };
@@ -80,12 +74,14 @@ export const validPrincipal: RequestHandler = async (req, res, next) => {
 				reason: "expired_or_revoked"
 			});
 		}
-		return res.status(401).set("Cache-Control", "no-store").json({
-			error: hadIdentity ? "session_expired" : "authentication_required",
-			message: hadIdentity ? "The session is no longer valid." : "Sign in is required."
-		});
-	}
-	catch (error) {
+		return res
+			.status(401)
+			.set("Cache-Control", "no-store")
+			.json({
+				error: hadIdentity ? "session_expired" : "authentication_required",
+				message: hadIdentity ? "The session is no longer valid." : "Sign in is required."
+			});
+	} catch (error) {
 		return authenticationUnavailable(req, res, error);
 	}
 };
@@ -157,9 +153,11 @@ export const validActiveTutorOrAdmin: RequestHandler[] = [
 	(req, res, next) => {
 		const tutorId = stringParam(req.params.tutorID);
 		if (req.currentPrincipal?.role === "admin") return next();
-		if (req.currentPrincipal?.role === "tutor"
-			&& req.currentTutor?.status === "active"
-			&& (!tutorId || req.currentPrincipal.id === tutorId)) {
+		if (
+			req.currentPrincipal?.role === "tutor" &&
+			req.currentTutor?.status === "active" &&
+			(!tutorId || req.currentPrincipal.id === tutorId)
+		) {
 			return next();
 		}
 		auditSecurityEvent(req, "authorization.reject", {

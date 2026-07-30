@@ -24,8 +24,7 @@ interface Quote {
 /* -------------- fetcher ---------------- */
 async function updateQuote() {
 	const fallback = {
-		content:
-			"Success is the sum of small efforts, repeated day in and day out.",
+		content: "Success is the sum of small efforts, repeated day in and day out.",
 		author: "Robert Collier"
 	};
 
@@ -64,12 +63,7 @@ onMounted(updateQuote);
 
 	<section class="Home text-center">
 		<h1>Operation Opportunity</h1>
-		<div
-			v-if="quotePresent"
-			aria-label="Inspirational quote"
-			class="quote quote-card mt-4"
-			role="note"
-		>
+		<div v-if="quotePresent" aria-label="Inspirational quote" class="quote quote-card mt-4" role="note">
 			<p class="quote-label">Words to Work By</p>
 			<blockquote class="quote-text">
 				<p>{{ quoteText }}</p>
@@ -84,11 +78,9 @@ onMounted(updateQuote);
 
 		<h2>Welcome to Operation Opportunity!</h2>
 		<p class="mt-3">
-			Operation Opportunity is dedicated to helping all students
-			everywhere become ready and prepared for college. Starting early on,
-			our priority is to help students develop study and critical thinking
-			skills, aid them through the college application process, and make
-			higher education more accesible to everyone.
+			Operation Opportunity is dedicated to helping all students everywhere become ready and prepared for college.
+			Starting early on, our priority is to help students develop study and critical thinking skills, aid them
+			through the college application process, and make higher education more accesible to everyone.
 		</p>
 	</section>
 </template>
@@ -101,11 +93,7 @@ onMounted(updateQuote);
 	padding: 1.5rem 1.75rem;
 	border: 1px solid rgba(120, 159, 190, 0.24);
 	border-radius: 24px;
-	background: linear-gradient(
-		145deg,
-		rgba(255, 255, 255, 0.96),
-		rgba(227, 242, 253, 0.92)
-	);
+	background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(227, 242, 253, 0.92));
 	box-shadow: 0 18px 36px rgba(41, 72, 104, 0.12);
 }
 

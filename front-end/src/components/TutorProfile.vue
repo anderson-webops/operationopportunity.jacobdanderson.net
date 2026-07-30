@@ -15,11 +15,7 @@ const error = ref("");
 const deleteMe = useDeleteAccount("tutor");
 
 /* editable (the tutor card itself) */
-const {
-	editing: tutorEdit,
-	toggle: toggleTutor,
-	save: saveTutor
-} = useEditable("tutor");
+const { editing: tutorEdit, toggle: toggleTutor, save: saveTutor } = useEditable("tutor");
 
 /* field list */
 const tutorFields = [
@@ -38,9 +34,7 @@ const userFields = [
 async function loadUsers() {
 	if (!currentTutor.value || currentTutor.value.status !== "active") return;
 	try {
-		const { data } = await api.get(
-			`/users/oftutor/${currentTutor.value._id}`
-		);
+		const { data } = await api.get(`/users/oftutor/${currentTutor.value._id}`);
 		app.setUsers(data);
 	} catch (e: any) {
 		error.value = e.message;
@@ -59,34 +53,19 @@ onMounted(loadUsers);
 			<br />
 			<ul>
 				<li><h4>Tutor</h4></li>
-				<li v-if="currentTutor.status !== 'active'">
-					Account status: {{ currentTutor.status }}
-				</li>
+				<li v-if="currentTutor.status !== 'active'">Account status: {{ currentTutor.status }}</li>
 
-				<ProfileFields
-					:editing="tutorEdit"
-					:entity="currentTutor"
-					:fields="tutorFields"
-				/>
+				<ProfileFields :editing="tutorEdit" :entity="currentTutor" :fields="tutorFields" />
 				<li><strong>Email:</strong> {{ currentTutor.email }}</li>
 			</ul>
 			<br />
 
-			<button class="btn-danger btn" @click="deleteMe(currentTutor!._id)">
-				Delete
-			</button>
-			<button
-				class="btn-primary btn"
-				@click="tutorEdit ? saveTutor(currentTutor) : toggleTutor()"
-			>
+			<button class="btn-danger btn" @click="deleteMe(currentTutor!._id)">Delete</button>
+			<button class="btn-primary btn" @click="tutorEdit ? saveTutor(currentTutor) : toggleTutor()">
 				{{ tutorEdit ? "Save" : "Edit" }}
 			</button>
 		</div>
-		<ChangeCredentials
-			v-if="currentTutor"
-			:account="currentTutor"
-			kind="tutor"
-		/>
+		<ChangeCredentials v-if="currentTutor" :account="currentTutor" kind="tutor" />
 
 		<!-- ───── Users under this tutor (read-only) ───── -->
 		<hr v-if="currentTutor?.status === 'active'" />
@@ -97,11 +76,7 @@ onMounted(loadUsers);
 			<ul>
 				<!-- Fields: name / email / age / state -->
 				<!-- Editing = false: read-only list -->
-				<ProfileFields
-					:editing="false"
-					:entity="u"
-					:fields="userFields"
-				/>
+				<ProfileFields :editing="false" :entity="u" :fields="userFields" />
 			</ul>
 		</div>
 

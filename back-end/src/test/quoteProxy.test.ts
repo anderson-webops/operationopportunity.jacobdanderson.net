@@ -35,12 +35,14 @@ describe("quotes proxy boundary", () => {
 
 	it("normalizes and bounds upstream data", () => {
 		const quotes = normalizeQuotesPayload({
-			quotes: [{
-				_id: "1",
-				body: "A useful quote",
-				author: "Author",
-				tags: ["one", "x".repeat(150), "", 2]
-			}]
+			quotes: [
+				{
+					_id: "1",
+					body: "A useful quote",
+					author: "Author",
+					tags: ["one", "x".repeat(150), "", 2]
+				}
+			]
 		});
 		assert.equal(quotes.length, 1);
 		assert.equal(quotes[0]?.content, "A useful quote");
@@ -67,10 +69,9 @@ describe("quotes proxy boundary", () => {
 				() => fetchQuotesViaHttp(new URL(`http://127.0.0.1:${address.port}/quotes`)),
 				/exceeds the configured limit/
 			);
-		}
-		finally {
+		} finally {
 			await new Promise<void>((resolve, reject) => {
-				server.close(error => error ? reject(error) : resolve());
+				server.close((error) => (error ? reject(error) : resolve()));
 			});
 		}
 	});

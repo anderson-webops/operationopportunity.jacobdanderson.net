@@ -50,16 +50,8 @@ describe("hTTP security boundary", () => {
 		);
 
 		await agent.post("/missing").expect(403);
-		await agent
-			.post("/missing")
-			.set("Origin", "https://attacker.example")
-			.set("X-CSRF-Token", token)
-			.expect(403);
-		await agent
-			.post("/missing")
-			.set("Origin", origin)
-			.set("X-CSRF-Token", token)
-			.expect(404);
+		await agent.post("/missing").set("Origin", "https://attacker.example").set("X-CSRF-Token", token).expect(403);
+		await agent.post("/missing").set("Origin", origin).set("X-CSRF-Token", token).expect(404);
 	});
 
 	it("protects admin creation and account directories from anonymous access", async () => {

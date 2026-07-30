@@ -46,7 +46,7 @@ declare global {
   const inject: typeof import('vue').inject
   const injectHead: typeof import('@unhead/vue').injectHead
   const injectLocal: typeof import('@vueuse/core').injectLocal
-  const isDark: typeof import('./composables/dark').isDark
+  const isDark: typeof import("./composables/dark").isDark
   const isDefined: typeof import('@vueuse/core').isDefined
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
@@ -78,7 +78,7 @@ declare global {
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
   const pausableWatch: typeof import('@vueuse/core').pausableWatch
-  const preferredDark: typeof import('./composables/dark').preferredDark
+  const preferredDark: typeof import("./composables/dark").preferredDark
   const provide: typeof import('vue').provide
   const provideLocal: typeof import('@vueuse/core').provideLocal
   const reactify: typeof import('@vueuse/core').reactify
@@ -96,8 +96,8 @@ declare global {
   const refThrottled: typeof import('@vueuse/core').refThrottled
   const refWithControl: typeof import('@vueuse/core').refWithControl
   const resolveComponent: typeof import('vue').resolveComponent
-  const resolveRef: typeof import('@vueuse/core').resolveRef
-  const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
+  const resolveRef: typeof import("@vueuse/core").resolveRef
+  const resolveUnref: (typeof import("@vueuse/core"))["resolveUnref"]
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
@@ -111,7 +111,7 @@ declare global {
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
   const toValue: typeof import('vue').toValue
-  const toggleDark: typeof import('./composables/dark').toggleDark
+  const toggleDark: typeof import("./composables/dark").toggleDark
   const triggerRef: typeof import('vue').triggerRef
   const tryOnBeforeMount: typeof import('@vueuse/core').tryOnBeforeMount
   const tryOnBeforeUnmount: typeof import('@vueuse/core').tryOnBeforeUnmount
@@ -253,9 +253,9 @@ declare global {
   const useScroll: typeof import('@vueuse/core').useScroll
   const useScrollLock: typeof import('@vueuse/core').useScrollLock
   const useSeoMeta: typeof import('@unhead/vue').useSeoMeta
-  const useServerHead: typeof import('@unhead/vue').useServerHead
-  const useServerHeadSafe: typeof import('@unhead/vue').useServerHeadSafe
-  const useServerSeoMeta: typeof import('@unhead/vue').useServerSeoMeta
+  const useServerHead: typeof import("@unhead/vue").useServerHead
+  const useServerHeadSafe: typeof import("@unhead/vue").useServerHeadSafe
+  const useServerSeoMeta: typeof import("@unhead/vue").useServerSeoMeta
   const useSessionStorage: typeof import('@vueuse/core').useSessionStorage
   const useShare: typeof import('@vueuse/core').useShare
   const useSlots: typeof import('vue').useSlots

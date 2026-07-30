@@ -38,10 +38,7 @@ export async function ensureIdentityRegistry(): Promise<void> {
 	}> = [];
 
 	for (const source of SOURCES) {
-		const accounts = await source.model
-			.find({}, { _id: 1, email: 1 })
-			.lean<ExistingIdentity[]>()
-			.exec();
+		const accounts = await source.model.find({}, { _id: 1, email: 1 }).lean<ExistingIdentity[]>().exec();
 		for (const account of accounts) {
 			const email = normalizeEmail(account.email);
 			const conflict = expected.get(email);
@@ -72,21 +69,17 @@ export async function ensureIdentityRegistry(): Promise<void> {
 			if (result.matchedCount !== 1) {
 				throw new Error("Login identity changed during startup");
 			}
-		}
-		catch {
+		} catch {
 			throw new Error("Login identity normalization failed during startup");
 		}
 	}
 
-	const storedIdentities = await AccountEmail
-		.find({}, { _id: 1, role: 1, accountId: 1 })
+	const storedIdentities = await AccountEmail.find({}, { _id: 1, role: 1, accountId: 1 })
 		.lean<RegistryIdentity[]>()
 		.exec();
 	for (const stored of storedIdentities) {
 		const authoritative = expected.get(stored._id);
-		if (!authoritative
-			|| authoritative.role !== stored.role
-			|| !authoritative.accountId.equals(stored.accountId)) {
+		if (!authoritative || authoritative.role !== stored.role || !authoritative.accountId.equals(stored.accountId)) {
 			await AccountEmail.deleteOne({
 				_id: stored._id,
 				role: stored.role,
@@ -96,11 +89,7 @@ export async function ensureIdentityRegistry(): Promise<void> {
 	}
 
 	for (const [email, identity] of expected) {
-		await AccountEmail.updateOne(
-			{ _id: email },
-			{ $set: identity },
-			{ upsert: true }
-		);
+		await AccountEmail.updateOne({ _id: email }, { $set: identity }, { upsert: true });
 		const stored = await AccountEmail.findById(email).lean().exec();
 		if (!stored || stored.role !== identity.role || !stored.accountId.equals(identity.accountId)) {
 			throw new Error("Login identity registry mismatch detected during startup");
@@ -108,11 +97,7 @@ export async function ensureIdentityRegistry(): Promise<void> {
 	}
 }
 
-export async function reserveIdentity(
-	email: string,
-	role: AccountRole,
-	accountId: Types.ObjectId
-): Promise<void> {
+export async function reserveIdentity(email: string, role: AccountRole, accountId: Types.ObjectId): Promise<void> {
 	await AccountEmail.create({ _id: normalizeEmail(email), role, accountId });
 }
 
@@ -137,8 +122,7 @@ export async function replaceIdentity(
 	await reserveIdentity(normalizedNew, role, accountId);
 	try {
 		await updateAccount();
-	}
-	catch (error) {
+	} catch (error) {
 		await releaseIdentity(normalizedNew, accountId);
 		throw error;
 	}
