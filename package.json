@@ -42,7 +42,7 @@
 		"verify:deploy": "npm run audit && npm run audit:production && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^8.2.0",
+		"@antfu/eslint-config": "^9.2.0",
 		"@typescript-eslint/eslint-plugin": "^8.59.0",
 		"@typescript-eslint/parser": "^8.59.0",
 		"@unocss/eslint-plugin": "^66.6.7",
