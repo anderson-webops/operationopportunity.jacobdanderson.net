@@ -148,8 +148,9 @@ describe("deployment invariants", () => {
 
 	it("pins container and GitHub Action supply-chain inputs", async () => {
 		const dockerfile = await text("Dockerfile");
-		assert.match(dockerfile, /FROM node:24\.18\.0-alpine@sha256:[0-9a-f]{64}/);
+		assert.match(dockerfile, /FROM node:24\.18\.1-alpine3\.24@sha256:[0-9a-f]{64}/);
 		assert.match(dockerfile, /FROM nginxinc\/nginx-unprivileged:stable-alpine@sha256:[0-9a-f]{64}/);
+		assert.match(dockerfile, /^USER 101$/m);
 		assert.match(dockerfile, /\\d\{4\}-\\d\{2\}-\\d\{2\}T/);
 		assert.match(dockerfile, /"\$SOURCE_REVISION" "\$OPPORTUNITY_DEPLOYED_AT"/);
 

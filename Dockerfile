@@ -1,8 +1,9 @@
-FROM node:24.18.0-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd AS build-stage
+FROM node:24.18.1-alpine3.24@sha256:f70403e87646dc51b45295f4b8b70cdad0b63d2297c4c9899119b03f7af7a6b3 AS build-stage
 
 WORKDIR /app
-RUN test "$(node --version)" = "v24.18.0" \
-	&& test "$(npm --version)" = "11.16.0"
+RUN npm install --global npm@12.0.2 --allow-scripts=npm \
+	&& test "$(node --version)" = "v24.18.1" \
+	&& test "$(npm --version)" = "12.0.2"
 
 COPY .npmrc package.json package-lock.json ./
 COPY front-end/package.json ./front-end/package.json
@@ -23,6 +24,7 @@ FROM nginxinc/nginx-unprivileged:stable-alpine@sha256:44e36330f74d4f3a1d4e222acc
 COPY --from=build-stage /app/front-end/dist /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY nginx/security-headers.conf /etc/nginx/operation-security-headers.conf
+USER 101
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD wget --quiet --spider http://127.0.0.1:8080/ || exit 1

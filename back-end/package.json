@@ -2,10 +2,10 @@
 	"name": "back-end",
 	"version": "2.2.0",
 	"private": true,
-	"packageManager": "npm@11.16.0",
+	"packageManager": "npm@12.0.2",
 	"engines": {
-		"node": ">=24.18.0 <25",
-		"npm": ">=11.16.0 <12"
+		"node": ">=24.18.1 <25",
+		"npm": ">=12.0.2 <13"
 	},
 	"description": "",
 	"type": "module",
@@ -59,6 +59,6 @@
 		"js-yaml": "4.3.0",
 		"postcss": "8.5.24",
 		"qs": "6.15.3",
-		"vite": "8.1.5"
+		"vite": "8.2.0"
 	}
 }

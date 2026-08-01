@@ -3,7 +3,7 @@ publish = "front-end/dist"
 command = "npm run -w front-end build"
 
 [build.environment]
-NODE_VERSION = "24.18.0"
+NODE_VERSION = "24.18.1"
 
 [[redirects]]
 from = "/api"

@@ -38,7 +38,7 @@ Admin membership operations are serialized through a short MongoDB lease so conc
 
 ## Runtime and deployment controls
 
-- Node 24.18.0/npm 11.16.0 are aligned across local metadata, CI, and the digest-pinned build image.
+- Node 24.18.1/npm 12.0.2 are aligned across local metadata, CI, and the digest-pinned build image.
 - The API listens on loopback by default, accepts exact trusted proxy IPs only, authenticates production MongoDB, and fails closed when configured Vault access fails.
 - Sessions are stored in MongoDB with an ordered secret-rotation list, secure `__Host-` cookie, regeneration at login/signup/credential change, and account session-version revocation. The browser does not claim logout success unless server-side destruction is confirmed.
 - Every mutation requires exact `PUBLIC_ORIGIN` and a session CSRF token. Login/signup and public/authenticated surfaces have separate rate limits.
