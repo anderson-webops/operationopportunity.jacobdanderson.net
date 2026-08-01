@@ -1,4 +1,4 @@
-FROM node:24.18.1-alpine3.24@sha256:f70403e87646dc51b45295f4b8b70cdad0b63d2297c4c9899119b03f7af7a6b3 AS build-stage
+FROM node:26.5.0-alpine3.24@sha256:e88a35be04478413b7c71c455cd9865de9b9360e1f43456be5951032d7ac1a66 AS build-stage
 
 WORKDIR /app
 RUN npm install --global npm@12.0.2 --allow-scripts=npm \
