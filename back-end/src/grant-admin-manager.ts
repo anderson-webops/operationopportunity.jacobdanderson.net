@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import * as readlineSync from "readline-sync";
 import { loadConfig, validateResolvedMongoUri } from "./config.js";
 import { Admin } from "./models/schemas/Admin.js";
-import { withAdminWorkflowLock } from "./services/adminWorkflow.js";
+import { withAuthorizationWorkflowLock } from "./services/adminWorkflow.js";
 import { ensureIdentityRegistry } from "./services/identityRegistry.js";
 import { applyAdditiveSecurityMigrations } from "./services/securityMigration.js";
 import { normalizeEmail } from "./validation.js";
@@ -21,7 +21,7 @@ async function main() {
 	await applyAdditiveSecurityMigrations();
 	await ensureIdentityRegistry();
 
-	await withAdminWorkflowLock(async () => {
+	await withAuthorizationWorkflowLock(async () => {
 		if ((await Admin.countDocuments({ editAdmins: true })) > 0) {
 			throw new Error("Recovery grant refused: an admin manager already exists");
 		}

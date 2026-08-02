@@ -71,6 +71,9 @@ function readRequestBodyLimit(): string {
 
 function parseSessionSecrets(): string[] {
 	const rawJson = env.SESSION_SECRETS_JSON?.trim();
+	if (rawJson && env.SESSION_SECRET?.trim()) {
+		throw new Error("Configure SESSION_SECRET or SESSION_SECRETS_JSON, not both");
+	}
 	let secrets: unknown;
 
 	if (rawJson) {
@@ -135,6 +138,16 @@ function parseVault(environment: AppConfig["environment"]): VaultConfig | undefi
 	if (!roleId || !secretId) {
 		throw new Error("VAULT_ROLE_ID and VAULT_SECRET_ID must be configured together");
 	}
+	if (
+		roleId.length < 8 ||
+		roleId.length > MAX_SECRET_LENGTH ||
+		secretId.length < 8 ||
+		secretId.length > MAX_SECRET_LENGTH ||
+		/^replace[-_]/i.test(roleId) ||
+		/^replace[-_]/i.test(secretId)
+	) {
+		throw new Error("Vault role and secret identifiers must be non-placeholder values of 8-512 characters");
+	}
 
 	const address = new URL(env.VAULT_ADDR?.trim() || "http://127.0.0.1:8200");
 	if (!["http:", "https:"].includes(address.protocol)) {
@@ -185,21 +198,22 @@ function mongoUriHasCredentials(uri: string): boolean {
 	const authority = uri.replace(/^mongodb(?:\+srv)?:\/\//, "").split("/")[0] || "";
 	const credentialPart = authority.includes("@") ? authority.slice(0, authority.lastIndexOf("@")) : "";
 	const separator = credentialPart.indexOf(":");
-	return (
-		separator > 0 &&
-		separator < credentialPart.length - 1 &&
-		!/^replace[-_]/i.test(credentialPart.slice(separator + 1))
-	);
+	if (separator <= 0 || separator >= credentialPart.length - 1) return false;
+	try {
+		const username = decodeURIComponent(credentialPart.slice(0, separator)).trim();
+		const password = decodeURIComponent(credentialPart.slice(separator + 1)).trim();
+		return Boolean(username && password && !/^replace[-_]/i.test(password));
+	} catch {
+		return false;
+	}
 }
 
-function validateMongoUri(uri: string, environment: AppConfig["environment"], allowLoopback: boolean) {
+function validateMongoUri(uri: string, environment: AppConfig["environment"], _allowLoopback: boolean) {
 	if (!/^mongodb(?:\+srv)?:\/\//.test(uri)) {
 		throw new Error("MONGODB_URI must use mongodb:// or mongodb+srv://");
 	}
 	if (environment === "production" && !mongoUriHasCredentials(uri)) {
-		if (!allowLoopback || !mongoHostsAreLoopback(uri)) {
-			throw new Error("Production MongoDB must authenticate unless the explicit loopback exception is enabled");
-		}
+		throw new Error("Production MongoDB must authenticate");
 	}
 	if (environment === "production" && !mongoHostsAreLoopback(uri) && !mongoUriUsesTls(uri)) {
 		throw new Error("Production MongoDB traffic must use TLS unless every host is loopback-only");
@@ -244,16 +258,44 @@ export function loadConfig(): AppConfig {
 	if (isIP(host) === 0 && host !== "localhost") {
 		throw new Error("HOST must be an exact IP address or localhost");
 	}
-	if (isProduction && !LOOPBACK_HOSTS.has(host) && !readBoolean("ALLOW_PUBLIC_LISTENER")) {
-		throw new Error("Production listeners must be loopback-only unless ALLOW_PUBLIC_LISTENER=true");
+	if (isProduction && !LOOPBACK_HOSTS.has(host)) {
+		throw new Error("Production listeners must be loopback-only");
 	}
 	if (isProduction && readBoolean("CROSS_SITE")) {
 		throw new Error("Cross-site cookie sessions are not supported; proxy the API under PUBLIC_ORIGIN");
 	}
 
 	const allowUnauthenticatedLoopbackMongo = readBoolean("ALLOW_UNAUTHENTICATED_MONGO_LOOPBACK");
+	if (isProduction && allowUnauthenticatedLoopbackMongo) {
+		throw new Error("Unauthenticated MongoDB is not permitted in production");
+	}
 	const mongoUri = env.MONGODB_URI?.trim() || undefined;
 	if (mongoUri) validateMongoUri(mongoUri, environment, allowUnauthenticatedLoopbackMongo);
+	const vault = parseVault(environment);
+	if (mongoUri && vault) throw new Error("Configure MONGODB_URI or Vault, not both");
+	if (isProduction && !mongoUri && !vault) {
+		throw new Error("Production requires exactly one MongoDB secret source");
+	}
+	const trustedProxyIps = parseTrustedProxyIps();
+	if (isProduction && (!trustedProxyIps.length || trustedProxyIps.some((value) => !LOOPBACK_HOSTS.has(value)))) {
+		throw new Error("Production requires one or more exact loopback trusted proxy IPs");
+	}
+	const sessionSecrets = parseSessionSecrets();
+	const sessionMaxAgeMs = readInteger(
+		"SESSION_MAX_AGE_MS",
+		24 * 60 * 60 * 1000,
+		5 * 60 * 1000,
+		7 * 24 * 60 * 60 * 1000
+	);
+	const sessionRememberMaxAgeMs = readInteger(
+		"SESSION_REMEMBER_MAX_AGE_MS",
+		30 * 24 * 60 * 60 * 1000,
+		24 * 60 * 60 * 1000,
+		90 * 24 * 60 * 60 * 1000
+	);
+	if (sessionRememberMaxAgeMs < sessionMaxAgeMs) {
+		throw new Error("SESSION_REMEMBER_MAX_AGE_MS must not be shorter than SESSION_MAX_AGE_MS");
+	}
 
 	const enableInternalDiagnostics = readBoolean("ENABLE_INTERNAL_DIAGNOSTICS");
 	const internalDiagnosticsKey = env.INTERNAL_DIAGNOSTICS_KEY?.trim() || undefined;
@@ -274,19 +316,14 @@ export function loadConfig(): AppConfig {
 		host,
 		port: readInteger("PORT", 3002, 1, 65_535),
 		publicOrigin: parseOrigin(environment),
-		trustedProxyIps: parseTrustedProxyIps(),
-		sessionSecrets: parseSessionSecrets(),
+		trustedProxyIps,
+		sessionSecrets,
 		sessionCookieName: isProduction ? "__Host-operation.sid" : "operation.sid",
-		sessionMaxAgeMs: readInteger("SESSION_MAX_AGE_MS", 24 * 60 * 60 * 1000, 5 * 60 * 1000, 7 * 24 * 60 * 60 * 1000),
-		sessionRememberMaxAgeMs: readInteger(
-			"SESSION_REMEMBER_MAX_AGE_MS",
-			30 * 24 * 60 * 60 * 1000,
-			24 * 60 * 60 * 1000,
-			90 * 24 * 60 * 60 * 1000
-		),
+		sessionMaxAgeMs,
+		sessionRememberMaxAgeMs,
 		mongoUri,
 		allowUnauthenticatedLoopbackMongo,
-		vault: parseVault(environment),
+		vault,
 		enableInternalDiagnostics,
 		internalDiagnosticsKey,
 		quotesUpstreamSocketPath,

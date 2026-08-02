@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { HttpError } from "../../errors.js";
+import { HttpError, isVersionConflictError } from "../../errors.js";
 import { Tutor } from "../../models/schemas/Tutor.js";
 import { User } from "../../models/schemas/User.js";
 import { objectIdParam } from "../../requestParams.js";
@@ -13,6 +13,7 @@ import {
 	serializeTutorDirectory,
 	updateAccount
 } from "../../services/accountService.js";
+import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
 import { parseAccountCreate, parseAccountUpdate, parseTutorStatus } from "../../validation.js";
 
 export const createTutor: RequestHandler = async (req, res) => {
@@ -70,14 +71,31 @@ export const updateTutor: RequestHandler = async (req, res) => {
 export const deleteTutor: RequestHandler = async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
-	const tutor = await Tutor.findById(tutorId).exec();
-	if (!tutor) throw new HttpError(404, "not_found", "Tutor account not found.");
-	if (req.currentPrincipal?.role === "admin" && !req.currentAdmin?.editAdmins) {
-		throw new HttpError(403, "admin_management_required", "Admin-management privilege is required.");
-	}
+	const principal = req.currentPrincipal!;
+	await withAuthorizationWorkflowLock(async () => {
+		if (principal.role === "admin") {
+			await requireCurrentAdminManager(principal.id, principal.authVersion);
+		} else {
+			const currentTutor = await Tutor.findById(principal.id).exec();
+			if (
+				principal.role !== "tutor" ||
+				principal.id !== tutorId ||
+				!currentTutor ||
+				currentTutor.authVersion !== principal.authVersion
+			) {
+				throw new HttpError(
+					403,
+					"self_or_admin_required",
+					"This tutor account or an admin manager is required."
+				);
+			}
+		}
 
-	await User.updateMany({ tutor: tutor._id }, { $set: { tutor: null } });
-	await deleteAccount(tutor);
+		const tutor = await Tutor.findById(tutorId).exec();
+		if (!tutor) throw new HttpError(404, "not_found", "Tutor account not found.");
+		await User.updateMany({ tutor: tutor._id }, { $set: { tutor: null } });
+		await deleteAccount(tutor);
+	});
 	auditSecurityEvent(req, "tutor.delete", {
 		status: "success",
 		targetRole: "tutor",
@@ -97,18 +115,31 @@ export const updateTutorStatus: RequestHandler = async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const status = parseTutorStatus(req.body);
-	const tutor = await Tutor.findById(tutorId).exec();
-	if (!tutor) throw new HttpError(404, "not_found", "Tutor account not found.");
-	const previousStatus = tutor.status;
-	if (previousStatus === status) {
-		return res.json({ tutor: serializeAccount(tutor) });
-	}
-	tutor.status = status;
-	tutor.authVersion += 1;
-	await tutor.save();
-	if (status === "suspended") {
-		await User.updateMany({ tutor: tutor._id }, { $set: { tutor: null } });
-	}
+	const actor = req.currentPrincipal!;
+	const tutor = await withAuthorizationWorkflowLock(async () => {
+		await requireCurrentAdminManager(actor.id, actor.authVersion);
+		const target = await Tutor.findById(tutorId).exec();
+		if (!target) throw new HttpError(404, "not_found", "Tutor account not found.");
+		if (target.status === status) return target;
+		target.status = status;
+		target.authVersion += 1;
+		try {
+			await target.save();
+		} catch (error) {
+			if (isVersionConflictError(error)) {
+				throw new HttpError(
+					409,
+					"stale_update",
+					"The tutor changed during this request. Reload and try again."
+				);
+			}
+			throw error;
+		}
+		if (status === "suspended") {
+			await User.updateMany({ tutor: target._id }, { $set: { tutor: null } });
+		}
+		return target;
+	});
 	auditSecurityEvent(req, status === "active" ? "tutor.promote" : "tutor.demote", {
 		status: "success",
 		targetRole: "tutor",

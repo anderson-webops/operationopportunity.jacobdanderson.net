@@ -41,36 +41,6 @@ describe("deployment invariants", () => {
 			["rollup", "@rollup/rollup-linux-arm64-gnu"],
 			["lightningcss", "lightningcss-linux-arm64-gnu"]
 		]);
-		const containerBindingsBySource = new Map<string, ReadonlyArray<readonly [string, string]>>([
-			[
-				"oxc-parser",
-				[
-					["@oxc-parser/binding-linux-arm64-musl", "arm64"],
-					["@oxc-parser/binding-linux-x64-musl", "x64"]
-				]
-			],
-			[
-				"rolldown",
-				[
-					["@rolldown/binding-linux-arm64-musl", "arm64"],
-					["@rolldown/binding-linux-x64-musl", "x64"]
-				]
-			],
-			[
-				"rollup",
-				[
-					["@rollup/rollup-linux-arm64-musl", "arm64"],
-					["@rollup/rollup-linux-x64-musl", "x64"]
-				]
-			],
-			[
-				"lightningcss",
-				[
-					["lightningcss-linux-arm64-musl", "arm64"],
-					["lightningcss-linux-x64-musl", "x64"]
-				]
-			]
-		]);
 		for (const [sourceName, bindingName] of bindingBySource) {
 			const suffix = `node_modules/${sourceName}`;
 			const sources = Object.entries(lock.packages).filter(
@@ -85,14 +55,6 @@ describe("deployment invariants", () => {
 				assert.deepEqual(binding.cpu, ["arm64"]);
 				assert.deepEqual(binding.os, ["linux"]);
 				assert.equal(binding.optional, true);
-				for (const [containerBindingName, cpu] of containerBindingsBySource.get(sourceName) ?? []) {
-					const containerBinding = lock.packages[`${prefix}node_modules/${containerBindingName}`];
-					assert.ok(containerBinding, `${containerBindingName} must be locked beside ${sourcePath}`);
-					assert.equal(containerBinding.version, source.version);
-					assert.deepEqual(containerBinding.cpu, [cpu]);
-					assert.deepEqual(containerBinding.os, ["linux"]);
-					assert.equal(containerBinding.optional, true);
-				}
 			}
 		}
 
@@ -146,20 +108,19 @@ describe("deployment invariants", () => {
 		}
 	});
 
-	it("pins container and GitHub Action supply-chain inputs", async () => {
-		const dockerfile = await text("Dockerfile");
-		assert.match(dockerfile, /FROM node:24\.18\.1-alpine3\.24@sha256:[0-9a-f]{64}/);
-		assert.match(dockerfile, /FROM nginxinc\/nginx-unprivileged:stable-alpine@sha256:[0-9a-f]{64}/);
-		assert.match(dockerfile, /^USER 101$/m);
-		assert.match(dockerfile, /\\d\{4\}-\\d\{2\}-\\d\{2\}T/);
-		assert.match(dockerfile, /"\$SOURCE_REVISION" "\$OPPORTUNITY_DEPLOYED_AT"/);
-
+	it("uses only the direct production path and pins CI supply-chain inputs", async () => {
+		await assert.rejects(() => text("Dockerfile"));
+		await assert.rejects(() => text("netlify.toml"));
+		const dependabot = await text(".github/dependabot.yml");
+		assert.doesNotMatch(dependabot, /package-ecosystem:\s*docker/);
 		const ciWorkflow = await text(".github/workflows/ci.yml");
 		assert.match(ciWorkflow, /image: mongo:8\.0\.28@sha256:[0-9a-f]{64}/);
 		for (const workflow of [
 			".github/workflows/ci.yml",
 			".github/workflows/codeql-analysis.yml",
-			".github/workflows/qodana_code_quality.yml"
+			".github/workflows/qodana_code_quality.yml",
+			".github/workflows/release-source.yml",
+			".github/workflows/post-deploy.yml"
 		]) {
 			const source = await text(workflow);
 			for (const line of source.split("\n").filter((line) => line.includes("uses:"))) {
@@ -208,27 +169,19 @@ describe("deployment invariants", () => {
 		assert.doesNotMatch(staticEdge, /unsafe-inline|unsafe-eval/);
 	});
 
-	it("enforces a no-inline static content security policy", async () => {
-		const [nginx, nginxHeaders, netlify, staticEdge] = await Promise.all([
-			text("nginx/default.conf"),
-			text("nginx/security-headers.conf"),
-			text("netlify.toml"),
-			text("deploy/nginx/operation-opportunity-static.locations.conf")
+	it("enforces no-inline static and no-content API policies", async () => {
+		const [staticEdge, apiEdge] = await Promise.all([
+			text("deploy/nginx/operation-opportunity-static.locations.conf"),
+			text("deploy/nginx/operation-opportunity-api.location.conf")
 		]);
-		for (const source of [nginxHeaders, netlify, staticEdge]) {
-			assert.doesNotMatch(source, /unsafe-inline|unsafe-eval/);
-			assert.match(source, /script-src-attr 'none'/);
-			assert.match(source, /style-src 'self'/);
-			assert.match(source, /style-src-attr 'none'/);
-			assert.match(source, /frame-ancestors 'none'/);
-		}
-		assert.equal(
-			nginx.match(/include \/etc\/nginx\/operation-security-headers\.conf;/g)?.length,
-			4,
-			"Nginx locations with cache headers must repeat inherited security headers."
-		);
-		assert.match(netlify, /Cross-Origin-Opener-Policy = "same-origin"/);
-		assert.match(netlify, /Cross-Origin-Resource-Policy = "same-origin"/);
+		assert.doesNotMatch(staticEdge, /unsafe-inline|unsafe-eval/);
+		assert.match(staticEdge, /script-src-attr 'none'/);
+		assert.match(staticEdge, /style-src 'self'/);
+		assert.match(staticEdge, /style-src-attr 'none'/);
+		assert.match(staticEdge, /frame-ancestors 'none'/);
+		assert.match(apiEdge, /default-src 'none'/);
+		assert.match(apiEdge, /frame-ancestors 'none'/);
+		assert.match(apiEdge, /add_header X-Frame-Options "DENY" always/);
 	});
 
 	it("runs the API as a confined, loopback-only service", async () => {
@@ -238,7 +191,9 @@ describe("deployment invariants", () => {
 		assert.match(service, /ProtectSystem=strict/);
 		assert.match(service, /CapabilityBoundingSet=\n/);
 		assert.match(service, /RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6/);
-		assert.match(service, /ExecStartPre=.*verifyConfig\.js/);
+		assert.match(service, /ExecStartPre=\/usr\/bin\/node dist\/scripts\/verifyConfig\.js/);
+		assert.match(service, /ExecStart=\/usr\/bin\/node dist\/server\.js/);
+		assert.match(service, /EnvironmentFile=\/etc\/operation-opportunity\/release\.env/);
 
 		const environment = await text("deploy/systemd/api.env.example");
 		assert.match(environment, /HOST=127\.0\.0\.1/);
@@ -246,6 +201,26 @@ describe("deployment invariants", () => {
 		assert.match(environment, /TRUSTED_PROXY_IPS=127\.0\.0\.1,::1/);
 		assert.match(environment, /SESSION_SECRET=replace-with-at-least-32-random-characters/);
 		assert.match(environment, /SESSION_SECRETS_JSON='\["newest-secret","previous-secret"\]'/);
+	});
+
+	it("prepares and promotes atomic direct releases with rollback and dual-stack edge gates", async () => {
+		const [install, prepare, promote, releaseWorkflow] = await Promise.all([
+			text("deploy/systemd/install-api-unit.sh"),
+			text("deploy/systemd/prepare-release.sh"),
+			text("deploy/systemd/promote-release.sh"),
+			text(".github/workflows/release-source.yml")
+		]);
+		assert.match(install, /Node 24\.18\.1 at \/usr\/bin\/node/);
+		assert.match(prepare, /Candidate must resolve beneath/);
+		assert.match(prepare, /npm ci --include=dev --include=optional --strict-allow-scripts/);
+		assert.match(prepare, /npm ci --omit=dev --include=optional --ignore-scripts/);
+		assert.match(promote, /Candidate must resolve beneath/);
+		assert.match(promote, /--ipv4/);
+		assert.match(promote, /--ipv6/);
+		assert.match(promote, /static_headers_are_strict/);
+		assert.match(promote, /api_headers_are_strict/);
+		assert.match(promote, /restoring the previous release/);
+		assert.match(releaseWorkflow, /atomic host systemd\/Nginx promotion/);
 	});
 
 	it("has no legacy client-side identity session or mass-assignment controller", async () => {

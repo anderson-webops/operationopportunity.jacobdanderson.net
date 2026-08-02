@@ -4,7 +4,7 @@ import * as readlineSync from "readline-sync";
 import { loadConfig, validateResolvedMongoUri } from "./config.js";
 import { Admin } from "./models/schemas/Admin.js";
 import { createAccount } from "./services/accountService.js";
-import { withAdminWorkflowLock } from "./services/adminWorkflow.js";
+import { withAuthorizationWorkflowLock } from "./services/adminWorkflow.js";
 import { ensureIdentityRegistry } from "./services/identityRegistry.js";
 import { applyAdditiveSecurityMigrations } from "./services/securityMigration.js";
 import { parseAdminCreate } from "./validation.js";
@@ -28,7 +28,7 @@ async function main() {
 		password: readlineSync.question("Password (12-128 characters): ", { hideEchoBack: true }),
 		editAdmins: true
 	});
-	const admin = await withAdminWorkflowLock(async () => {
+	const admin = await withAuthorizationWorkflowLock(async () => {
 		if ((await Admin.countDocuments()) !== 0) {
 			throw new Error("Bootstrap refused: admins already exist; use an authorized admin manager");
 		}

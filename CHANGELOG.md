@@ -2,6 +2,16 @@
 
 All notable release tags for Operation Opportunity are recorded here.
 
+## v2.3.0
+
+- Revalidated administrator authority inside a cross-process authorization lock so a demoted or credential-revoked manager cannot complete an already in-flight privileged request.
+- Serialized tutor approval, suspension, deletion, assignment, and assigned-user updates to prevent dangling or post-demotion relationships.
+- Added optimistic account writes, privilege-change session revocation, and complete identity-registry cleanup for concurrent credential and deletion workflows.
+- Tightened production configuration to one authenticated MongoDB secret source, loopback-only listeners and trusted proxies, unambiguous session-secret rotation, and ordered session lifetimes.
+- Updated the lint, browser automation, and Qodana toolchains while retaining Node 24 typings and TypeScript 6 until their upstream compatibility ranges permit the next major versions.
+- Removed the production Docker and incomplete static-only deployment paths in favor of atomic systemd/Nginx preparation, promotion, edge verification, and rollback.
+- Added release-tag and post-deployment verification workflows for the direct runtime.
+
 ## v2.1.2
 
 - Removed the deprecated `@intlify/unplugin-vue-i18n` plugin path that was pulling in `vue-i18n@10.0.8`.

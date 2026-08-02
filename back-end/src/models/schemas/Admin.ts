@@ -31,7 +31,7 @@ const adminSchema: Schema<IAdmin> = new Schema(
 		editAdmins: { type: Boolean, default: false, required: true },
 		role: { type: String, enum: ["admin"], default: "admin", required: true }
 	},
-	{ timestamps: true, strict: "throw" }
+	{ timestamps: true, strict: "throw", optimisticConcurrency: true }
 );
 
 /**

@@ -37,7 +37,7 @@ const userSchema: Schema<IUser> = new Schema(
 		authVersion: { type: Number, default: 0, min: 0, required: true },
 		role: { type: String, enum: ["user"], default: "user", required: true }
 	},
-	{ timestamps: true, strict: "throw" }
+	{ timestamps: true, strict: "throw", optimisticConcurrency: true }
 );
 
 /**

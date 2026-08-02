@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { HttpError, safeErrorSummary } from "../errors.js";
+import { Admin } from "../models/schemas/Admin.js";
 import { AdminWorkflowLock } from "../models/schemas/AdminWorkflowLock.js";
 
+const LOCK_ID = "authorization-workflow";
 const LOCK_DURATION_MS = 30_000;
-const LOCK_ATTEMPTS = 5;
+const LOCK_ATTEMPTS = 50;
 
 async function acquireLock(owner: string): Promise<void> {
 	for (let attempt = 0; attempt < LOCK_ATTEMPTS; attempt += 1) {
@@ -12,7 +14,7 @@ async function acquireLock(owner: string): Promise<void> {
 		try {
 			const lock = await AdminWorkflowLock.findOneAndUpdate(
 				{
-					_id: "admin-membership",
+					_id: LOCK_ID,
 					$or: [{ expiresAt: { $lte: now } }, { owner }]
 				},
 				{ $set: { owner, expiresAt } },
@@ -31,21 +33,39 @@ async function acquireLock(owner: string): Promise<void> {
 				throw error;
 			}
 		}
-		await new Promise((resolve) => setTimeout(resolve, 20 * (attempt + 1)));
+		await new Promise((resolve) => setTimeout(resolve, Math.min(25 * (attempt + 1), 100)));
 	}
-	throw new HttpError(503, "admin_workflow_busy", "Admin membership is temporarily busy. Please retry.");
+	throw new HttpError(
+		503,
+		"authorization_workflow_busy",
+		"An authorization change is temporarily busy. Please retry."
+	);
 }
 
-export async function withAdminWorkflowLock<T>(operation: () => Promise<T>): Promise<T> {
+export async function withAuthorizationWorkflowLock<T>(operation: () => Promise<T>): Promise<T> {
 	const owner = randomUUID();
 	await acquireLock(owner);
 	try {
 		return await operation();
 	} finally {
 		try {
-			await AdminWorkflowLock.deleteOne({ _id: "admin-membership", owner });
+			await AdminWorkflowLock.deleteOne({ _id: LOCK_ID, owner });
 		} catch (error) {
-			console.error("Admin workflow lock release failed", safeErrorSummary(error));
+			console.error("Authorization workflow lock release failed", safeErrorSummary(error));
 		}
 	}
+}
+
+export async function requireCurrentAdminManager(
+	adminId: string,
+	expectedAuthVersion: number
+): Promise<InstanceType<typeof Admin>> {
+	const admin = await Admin.findById(adminId).exec();
+	if (!admin || admin.authVersion !== expectedAuthVersion) {
+		throw new HttpError(401, "session_expired", "The session is no longer valid.");
+	}
+	if (!admin.editAdmins) {
+		throw new HttpError(403, "admin_management_required", "Admin-management privilege is required.");
+	}
+	return admin;
 }

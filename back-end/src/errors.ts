@@ -16,6 +16,10 @@ export function isDuplicateKeyError(error: unknown): boolean {
 	);
 }
 
+export function isVersionConflictError(error: unknown): boolean {
+	return error instanceof Error && error.name === "VersionError";
+}
+
 export function safeErrorSummary(error: unknown): { name: string; code?: string | number } {
 	if (!(error instanceof Error)) return { name: "UnknownError" };
 	const code =

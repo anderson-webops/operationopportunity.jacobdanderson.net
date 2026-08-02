@@ -105,6 +105,10 @@ export async function releaseIdentity(email: string, accountId: Types.ObjectId):
 	await AccountEmail.deleteOne({ _id: normalizeEmail(email), accountId });
 }
 
+export async function releaseAccountIdentities(accountId: Types.ObjectId): Promise<void> {
+	await AccountEmail.deleteMany({ accountId });
+}
+
 export async function replaceIdentity(
 	oldEmail: string,
 	newEmail: string,

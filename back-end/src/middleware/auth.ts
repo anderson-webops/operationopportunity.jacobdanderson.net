@@ -6,7 +6,7 @@ import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
 import { stringParam } from "../requestParams.js";
 import { auditSecurityEvent } from "../security/audit.js";
-import { destroySession } from "../security/session.js";
+import { destroySession, regenerateSession } from "../security/session.js";
 
 async function findAccount(role: AccountRole, id: string): Promise<AccountDocument | null> {
 	if (role === "admin") return Admin.findById(id).exec();
@@ -14,21 +14,25 @@ async function findAccount(role: AccountRole, id: string): Promise<AccountDocume
 	return User.findById(id).exec();
 }
 
-async function clearInvalidSession(req: Request) {
+async function clearInvalidSession(req: Request, preserveAnonymousSession: boolean) {
+	if (preserveAnonymousSession) {
+		await regenerateSession(req);
+		return;
+	}
 	try {
 		await destroySession(req);
 	} catch {
-		// Authentication still fails closed if session-store cleanup is unavailable.
+		// Protected routes still fail closed if session-store cleanup is unavailable.
 	}
 }
 
-async function hydratePrincipal(req: Request): Promise<boolean> {
+async function hydratePrincipal(req: Request, preserveAnonymousSession = false): Promise<boolean> {
 	const identity = req.session.identity;
 	if (!identity) return false;
 
 	const account = await findAccount(identity.role, identity.id);
 	if (!account || account.authVersion !== identity.authVersion) {
-		await clearInvalidSession(req);
+		await clearInvalidSession(req, preserveAnonymousSession);
 		return false;
 	}
 
@@ -57,7 +61,7 @@ function authenticationUnavailable(req: Request, res: Parameters<RequestHandler>
 
 export const optionalPrincipal: RequestHandler = async (req, res, next) => {
 	try {
-		await hydratePrincipal(req);
+		await hydratePrincipal(req, true);
 		next();
 	} catch (error) {
 		return authenticationUnavailable(req, res, error);

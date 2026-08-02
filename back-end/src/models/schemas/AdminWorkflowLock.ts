@@ -2,7 +2,7 @@ import type { Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 interface IAdminWorkflowLock {
-	_id: "admin-membership";
+	_id: string;
 	owner: string;
 	expiresAt: Date;
 }

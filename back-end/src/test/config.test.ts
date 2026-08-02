@@ -17,11 +17,20 @@ function setProductionEnvironment() {
 	process.env.SESSION_SECRET = "s".repeat(48);
 	process.env.HOST = "127.0.0.1";
 	process.env.MONGODB_URI = "mongodb://operation:password@127.0.0.1:27017/opportunity";
+	process.env.TRUSTED_PROXY_IPS = "127.0.0.1,::1";
 	process.env.OPPORTUNITY_COMMIT_SHA = "a".repeat(40);
 	process.env.OPPORTUNITY_DEPLOYED_AT = "2026-07-29T12:00:00Z";
 	delete process.env.SESSION_SECRETS_JSON;
 	delete process.env.CROSS_SITE;
-	delete process.env.TRUSTED_PROXY_IPS;
+	delete process.env.REQUEST_BODY_LIMIT;
+	delete process.env.SESSION_MAX_AGE_MS;
+	delete process.env.SESSION_REMEMBER_MAX_AGE_MS;
+	delete process.env.QUOTES_UPSTREAM_SOCKET_PATH;
+	delete process.env.ALLOW_UNAUTHENTICATED_MONGO_LOOPBACK;
+	delete process.env.VAULT_ADDR;
+	delete process.env.VAULT_MONGO_SECRET_PATH;
+	delete process.env.VAULT_ROLE_ID;
+	delete process.env.VAULT_SECRET_ID;
 }
 
 describe("loadConfig", () => {
@@ -72,14 +81,17 @@ describe("loadConfig", () => {
 		assert.throws(() => loadConfig(), /OPPORTUNITY_COMMIT_SHA/);
 	});
 
-	it("requires authenticated production MongoDB unless an explicit loopback exception is enabled", () => {
+	it("always requires authenticated production MongoDB", () => {
 		process.env.MONGODB_URI = "mongodb://127.0.0.1:27017/opportunity";
 		assert.throws(() => loadConfig(), /must authenticate/);
 		process.env.ALLOW_UNAUTHENTICATED_MONGO_LOOPBACK = "true";
-		const config = loadConfig();
-		assert.equal(config.allowUnauthenticatedLoopbackMongo, true);
-		validateResolvedMongoUri("mongodb://127.0.0.1:27017/opportunity", config);
-		validateResolvedMongoUri("mongodb://[::1]:27017/opportunity", config);
+		assert.throws(() => loadConfig(), /not permitted in production/);
+		const config = {
+			environment: "production" as const,
+			allowUnauthenticatedLoopbackMongo: false
+		};
+		assert.throws(() => validateResolvedMongoUri("mongodb://127.0.0.1:27017/opportunity", config), /authenticate/);
+		assert.throws(() => validateResolvedMongoUri("mongodb://[::1]:27017/opportunity", config), /authenticate/);
 		assert.throws(
 			() => validateResolvedMongoUri("mongodb://database.example.com/opportunity", config),
 			/must authenticate/
@@ -106,15 +118,35 @@ describe("loadConfig", () => {
 
 	it("requires complete Vault credentials and protects non-loopback Vault traffic", () => {
 		delete process.env.MONGODB_URI;
-		process.env.VAULT_ROLE_ID = "role";
+		process.env.VAULT_ROLE_ID = "role-id-123";
 		delete process.env.VAULT_SECRET_ID;
 		assert.throws(() => loadConfig(), /configured together/);
 
-		process.env.VAULT_SECRET_ID = "secret";
+		process.env.VAULT_SECRET_ID = "secret-id-123";
 		process.env.VAULT_ADDR = "http://vault.example.com:8200";
 		assert.throws(() => loadConfig(), /must use HTTPS/);
 
 		process.env.VAULT_ADDR = "https://vault.example.com/proxy";
 		assert.throws(() => loadConfig(), /only scheme and host/);
+	});
+
+	it("rejects ambiguous secret sources, non-loopback proxies, and inverted session lifetimes", () => {
+		process.env.SESSION_SECRETS_JSON = JSON.stringify(["a".repeat(48)]);
+		assert.throws(() => loadConfig(), /not both/);
+
+		setProductionEnvironment();
+		process.env.VAULT_ROLE_ID = "role-id-123";
+		process.env.VAULT_SECRET_ID = "secret-id-123";
+		process.env.VAULT_ADDR = "https://vault.example.com";
+		assert.throws(() => loadConfig(), /MongoDB_URI or Vault, not both/i);
+
+		setProductionEnvironment();
+		process.env.TRUSTED_PROXY_IPS = "10.0.0.5";
+		assert.throws(() => loadConfig(), /loopback trusted proxy/);
+
+		setProductionEnvironment();
+		process.env.SESSION_MAX_AGE_MS = String(7 * 24 * 60 * 60 * 1000);
+		process.env.SESSION_REMEMBER_MAX_AGE_MS = String(24 * 60 * 60 * 1000);
+		assert.throws(() => loadConfig(), /must not be shorter/);
 	});
 });

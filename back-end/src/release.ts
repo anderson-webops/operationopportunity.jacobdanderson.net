@@ -1,6 +1,6 @@
 import { env } from "node:process";
 
-export const RELEASE_VERSION = "v2.2.0";
+export const RELEASE_VERSION = "v2.3.0";
 
 const COMMIT_PATTERN = /^[0-9a-f]{7,64}$/i;
 const ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;

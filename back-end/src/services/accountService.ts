@@ -1,11 +1,11 @@
 import type { Types } from "mongoose";
 import type { AccountDocument, AccountRole } from "../types/account.js";
 import type { AccountCreateInput, AccountUpdateInput, AdminCreateInput, AdminUpdateInput } from "../validation.js";
-import { HttpError, isDuplicateKeyError } from "../errors.js";
+import { HttpError, isDuplicateKeyError, isVersionConflictError } from "../errors.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
-import { releaseIdentity, replaceIdentity, reserveIdentity } from "./identityRegistry.js";
+import { releaseAccountIdentities, releaseIdentity, replaceIdentity, reserveIdentity } from "./identityRegistry.js";
 
 type CreateInput = AccountCreateInput | AdminCreateInput;
 type UpdateInput = AccountUpdateInput | AdminUpdateInput;
@@ -76,7 +76,11 @@ export async function updateAccount(
 		securityIdentityChanged = true;
 	}
 	if (role === "admin" && "editAdmins" in input && input.editAdmins !== undefined) {
-		(account as InstanceType<typeof Admin>).editAdmins = input.editAdmins;
+		const admin = account as InstanceType<typeof Admin>;
+		if (admin.editAdmins !== input.editAdmins) {
+			admin.editAdmins = input.editAdmins;
+			securityIdentityChanged = true;
+		}
 	}
 	if (input.email !== undefined && input.email !== previousEmail) {
 		account.email = input.email;
@@ -88,6 +92,13 @@ export async function updateAccount(
 		try {
 			await account.save();
 		} catch (error) {
+			if (isVersionConflictError(error)) {
+				throw new HttpError(
+					409,
+					"stale_update",
+					"The account changed during this request. Reload and try again."
+				);
+			}
 			if (isDuplicateKeyError(error)) {
 				throw new HttpError(409, "email_conflict", "That email address is already in use.");
 			}
@@ -105,9 +116,8 @@ export async function updateAccount(
 
 export async function deleteAccount(account: AccountDocument): Promise<void> {
 	const id = account._id as Types.ObjectId;
-	const email = account.email;
 	await account.deleteOne();
-	await releaseIdentity(email, id);
+	await releaseAccountIdentities(id);
 }
 
 export function serializeAccount(account: AccountDocument): Record<string, unknown> {

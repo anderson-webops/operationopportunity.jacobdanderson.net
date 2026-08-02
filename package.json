@@ -1,7 +1,7 @@
 {
 	"name": "opportunity-monorepo",
 	"type": "module",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -35,14 +35,15 @@
 		"test": "npm run -w front-end test:unit && npm run -w back-end test",
 		"audit": "npm audit --audit-level=high",
 		"audit:production": "npm audit --omit=dev --audit-level=high",
+		"audit:signatures": "npm audit signatures",
 		"verify:api-production-install": "node scripts/verify-api-production-install.mjs",
 		"verify:build-security": "node scripts/verify-build-security.mjs",
 		"verify:public": "node scripts/verify-public.mjs",
 		"verify:config": "npm run -w back-end verify:config",
-		"verify:deploy": "npm run audit && npm run audit:production && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install"
+		"verify:deploy": "npm run audit && npm run audit:production && npm run audit:signatures && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "^8.2.0",
+		"@antfu/eslint-config": "^9.2.0",
 		"@typescript-eslint/eslint-plugin": "^8.59.0",
 		"@typescript-eslint/parser": "^8.59.0",
 		"@unocss/eslint-plugin": "^66.6.7",
@@ -54,7 +55,7 @@
 		"globals": "^17.5.0",
 		"js-beautify": "2.0.3",
 		"prettier": "^3.8.3",
-		"puppeteer": "^24.43.1",
+		"puppeteer": "^25.4.0",
 		"taze": "^19.11.0",
 		"typescript": "^6.0.3"
 	},
@@ -63,7 +64,7 @@
 		"cypress@15.19.0": true,
 		"esbuild@0.28.1": true,
 		"fsevents@2.3.3": true,
-		"puppeteer@24.43.1": true,
+		"puppeteer@25.4.0": true,
 		"vue-demi@0.14.10": true
 	},
 	"overrides": {

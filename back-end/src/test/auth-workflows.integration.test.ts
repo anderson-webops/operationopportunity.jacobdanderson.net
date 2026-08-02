@@ -7,10 +7,12 @@ import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
 import request from "supertest";
 import { createApp } from "../app.js";
+import { AccountEmail } from "../models/schemas/AccountEmail.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
-import { createAccount } from "../services/accountService.js";
+import { createAccount, deleteAccount, updateAccount } from "../services/accountService.js";
+import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../services/adminWorkflow.js";
 import { ensureIdentityRegistry } from "../services/identityRegistry.js";
 import { applyAdditiveSecurityMigrations } from "../services/securityMigration.js";
 
@@ -102,6 +104,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 	});
 
 	type Agent = ReturnType<typeof request.agent>;
+	const delay = (milliseconds: number) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 	async function csrf(agent: Agent): Promise<string> {
 		const response = await agent.get("/accounts/csrf").expect(200);
@@ -183,7 +186,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 		const ordinaryAdminId = adminCreate.body.admin._id as string;
 
 		const ordinaryAgent = request.agent(app);
-		const ordinaryToken = (await login(ordinaryAgent, "ordinary-admin@example.test", "ordinary-password-123"))
+		let ordinaryToken = (await login(ordinaryAgent, "ordinary-admin@example.test", "ordinary-password-123"))
 			.csrfToken;
 		await ordinaryAgent
 			.post("/admins")
@@ -372,6 +375,7 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			.set("X-CSRF-Token", managerToken)
 			.send({ editAdmins: true })
 			.expect(200);
+		ordinaryToken = (await login(ordinaryAgent, "ordinary-admin@example.test", "ordinary-password-123")).csrfToken;
 		await managerAgent
 			.put(`/admins/${managerId}`)
 			.set("Origin", origin)
@@ -406,5 +410,176 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 			.set("Origin", origin)
 			.set("X-CSRF-Token", ordinaryToken)
 			.expect(409);
+	});
+
+	it("revalidates manager authority after an in-flight request reaches the workflow lock", async () => {
+		const staleManager = await createAccount("admin", {
+			name: "Concurrent Manager",
+			email: "concurrent-manager@example.test",
+			password: "concurrent-manager-password-123",
+			editAdmins: true
+		});
+		const staleManagerId = staleManager._id.toString();
+		const staleManagerVersion = staleManager.authVersion;
+		const staleAgent = request.agent(app);
+		const staleToken = (
+			await login(staleAgent, "concurrent-manager@example.test", "concurrent-manager-password-123")
+		).csrfToken;
+
+		let markHeld!: () => void;
+		let releaseHolder!: () => void;
+		const held = new Promise<void>((resolve) => {
+			markHeld = resolve;
+		});
+		const release = new Promise<void>((resolve) => {
+			releaseHolder = resolve;
+		});
+		const holder = withAuthorizationWorkflowLock(async () => {
+			markHeld();
+			await release;
+			const current = await Admin.findById(staleManagerId).exec();
+			assert.ok(current);
+			current.editAdmins = false;
+			current.authVersion += 1;
+			await current.save();
+		});
+		await held;
+
+		const attemptedEmail = "stale-authority@example.test";
+		const attemptedRequest = staleAgent
+			.post("/admins")
+			.set("Origin", origin)
+			.set("X-CSRF-Token", staleToken)
+			.send({
+				name: "Must Not Exist",
+				email: attemptedEmail,
+				password: "must-not-exist-password-123",
+				editAdmins: true
+			})
+			.then((response) => response);
+		await delay(75);
+		releaseHolder();
+		await holder;
+		const attemptedResponse = await attemptedRequest;
+		assert.ok([401, 403].includes(attemptedResponse.status));
+		assert.equal(await Admin.exists({ email: attemptedEmail }), null);
+		await assert.rejects(
+			() => requireCurrentAdminManager(staleManagerId, staleManagerVersion),
+			(error: unknown) =>
+				error instanceof Error && "status" in error && (error as { status: number }).status === 401
+		);
+	});
+
+	it("serializes tutor demotion against assignment and rejects stale account writes", async () => {
+		const tutorAccount = await createAccount("tutor", {
+			name: "Concurrent Tutor",
+			email: "concurrent-tutor@example.test",
+			password: "concurrent-tutor-password-123",
+			age: "30",
+			state: "Utah"
+		});
+		const tutor = await Tutor.findById(tutorAccount._id).exec();
+		assert.ok(tutor);
+		tutor.status = "active";
+		await tutor.save();
+		const user = await createAccount("user", {
+			name: "Concurrent User",
+			email: "concurrent-user@example.test",
+			password: "concurrent-user-password-123",
+			age: "17",
+			state: "Utah"
+		});
+		const userAgent = request.agent(app);
+		const userToken = (await login(userAgent, "concurrent-user@example.test", "concurrent-user-password-123"))
+			.csrfToken;
+
+		let markHeld!: () => void;
+		let releaseHolder!: () => void;
+		const held = new Promise<void>((resolve) => {
+			markHeld = resolve;
+		});
+		const release = new Promise<void>((resolve) => {
+			releaseHolder = resolve;
+		});
+		const holder = withAuthorizationWorkflowLock(async () => {
+			markHeld();
+			await release;
+			const current = await Tutor.findById(tutor._id).exec();
+			assert.ok(current);
+			current.status = "suspended";
+			current.authVersion += 1;
+			await current.save();
+			await User.updateMany({ tutor: current._id }, { $set: { tutor: null } });
+		});
+		await held;
+
+		const assignmentRequest = userAgent
+			.put(`/users/tutor/${user._id.toString()}/${tutor._id.toString()}`)
+			.set("Origin", origin)
+			.set("X-CSRF-Token", userToken)
+			.send({})
+			.then((response) => response);
+		await delay(75);
+		releaseHolder();
+		await holder;
+		assert.equal((await assignmentRequest).status, 404);
+		assert.equal((await User.findById(user._id).exec())?.tutor ?? null, null);
+
+		const first = await User.findById(user._id).exec();
+		const second = await User.findById(user._id).exec();
+		assert.ok(first && second);
+		await updateAccount(first, "user", { name: "First Update" });
+		await assert.rejects(
+			() => updateAccount(second, "user", { name: "Stale Update" }),
+			(error: unknown) =>
+				error instanceof Error && "code" in error && (error as { code: string }).code === "stale_update"
+		);
+
+		await AccountEmail.create({
+			_id: "stale-alias@example.test",
+			role: "user",
+			accountId: user._id
+		});
+		const latest = await User.findById(user._id).exec();
+		assert.ok(latest);
+		await deleteAccount(latest);
+		assert.equal(await AccountEmail.countDocuments({ accountId: user._id }), 0);
+	});
+
+	it("rotates a revoked optional session before anonymous signup continues", async () => {
+		const revokedAgent = request.agent(app);
+		const anonymousToken = await csrf(revokedAgent);
+		const tutorSignup = await revokedAgent
+			.post("/tutors")
+			.set("Origin", origin)
+			.set("X-CSRF-Token", anonymousToken)
+			.send({
+				name: "Revoked Optional Tutor",
+				email: "revoked-optional-tutor@example.test",
+				password: "revoked-optional-password-123",
+				age: "31",
+				state: "Utah"
+			})
+			.expect(201);
+		const revokedToken = tutorSignup.body.csrfToken as string;
+		const revokedTutor = await Tutor.findById(tutorSignup.body.currentTutor._id as string).exec();
+		assert.ok(revokedTutor);
+		revokedTutor.authVersion += 1;
+		await revokedTutor.save();
+
+		const signup = await revokedAgent
+			.post("/users")
+			.set("Origin", origin)
+			.set("X-CSRF-Token", revokedToken)
+			.send({
+				name: "Fresh Anonymous User",
+				email: "fresh-after-revocation@example.test",
+				password: "fresh-after-revocation-password-123",
+				age: "18",
+				state: "Utah"
+			})
+			.expect(201);
+		assert.equal(signup.body.currentUser.email, "fresh-after-revocation@example.test");
+		assert.equal(typeof signup.body.csrfToken, "string");
 	});
 });

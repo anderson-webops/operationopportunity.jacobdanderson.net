@@ -38,7 +38,7 @@ const tutorSchema: Schema<ITutor> = new Schema(
 		},
 		role: { type: String, enum: ["tutor"], default: "tutor", required: true }
 	},
-	{ timestamps: true, strict: "throw" }
+	{ timestamps: true, strict: "throw", optimisticConcurrency: true }
 );
 
 /**

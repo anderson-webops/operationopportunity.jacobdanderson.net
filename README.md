@@ -11,8 +11,13 @@ Operation Opportunity is a Vite/Vue front end with a same-origin Express/MongoDB
 - Admin credentials are self-managed. Managers cannot overwrite another admin’s email or password.
 - The final admin and final admin manager cannot be removed or demoted.
 - Role fields are immutable; the API has no cross-role mass-assignment path.
+- Administrator membership and tutor relationship changes are serialized across processes and revalidate the actor after acquiring the workflow lock.
+- Manager grants/revocations and credential changes increment the account authorization version, revoking every other session immediately.
+- Optimistic account writes reject stale concurrent changes instead of silently overwriting security state.
 
 Authentication uses revocable Mongo-backed sessions, an HTTPS `__Host-` cookie in production, exact trusted proxies, and a session-bound CSRF token plus exact-origin validation for every mutation.
+
+Production has one supported path: static assets served by Nginx and the loopback-only Node API run by systemd. The repository intentionally has no production container or static-only hosting configuration.
 
 ## Commands
 
@@ -25,4 +30,4 @@ npm run server
 npm run verify:public -- https://operationopportunity.jacobdanderson.net
 ```
 
-The root `package-lock.json` is authoritative; `back-end/package-lock.json` and `back-end/.npmrc` are kept synchronized for isolated API recovery and are verified through a clean production-only install. Production rollout and rollback are documented in [`deploy/systemd/README.md`](deploy/systemd/README.md).
+The root `package-lock.json` is authoritative; `back-end/package-lock.json` and `back-end/.npmrc` are kept synchronized for isolated API recovery and are verified through a clean production-only install. Atomic direct preparation, promotion, public edge verification, and rollback are documented in [`deploy/systemd/README.md`](deploy/systemd/README.md).

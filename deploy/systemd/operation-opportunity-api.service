@@ -10,9 +10,9 @@ Group=operation-opportunity
 SupplementaryGroups=quotes
 WorkingDirectory=/srv/operation-opportunity/current/back-end
 EnvironmentFile=/etc/operation-opportunity/api.env
-Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-ExecStartPre=/usr/bin/env node dist/scripts/verifyConfig.js
-ExecStart=/usr/bin/env node dist/server.js
+EnvironmentFile=/etc/operation-opportunity/release.env
+ExecStartPre=/usr/bin/node dist/scripts/verifyConfig.js
+ExecStart=/usr/bin/node dist/server.js
 Restart=on-failure
 RestartSec=5s
 TimeoutStartSec=30s
