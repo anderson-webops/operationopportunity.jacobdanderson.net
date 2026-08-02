@@ -189,13 +189,33 @@ describe("deployment invariants", () => {
 		assert.doesNotMatch(userRoutes, /deleteUsersUnderTutor|\/under\//);
 	});
 
+	it("ships a strict host static-edge policy beside the API boundary", async () => {
+		const staticEdge = await text("deploy/nginx/operation-opportunity-static.locations.conf");
+		assert.match(staticEdge, /location = \/release\.json/);
+		assert.match(staticEdge, /location \^~ \/assets\//);
+		assert.match(staticEdge, /location \/ \{/);
+		assert.match(staticEdge, /try_files \$uri \$uri\/ \/index\.html/);
+		assert.equal(
+			staticEdge.match(/add_header X-Frame-Options "DENY" always;/g)?.length,
+			4,
+			"Every host static location must deny framing."
+		);
+		assert.equal(
+			staticEdge.match(/frame-ancestors 'none'/g)?.length,
+			4,
+			"Every host static location must carry the reviewed CSP."
+		);
+		assert.doesNotMatch(staticEdge, /unsafe-inline|unsafe-eval/);
+	});
+
 	it("enforces a no-inline static content security policy", async () => {
-		const [nginx, nginxHeaders, netlify] = await Promise.all([
+		const [nginx, nginxHeaders, netlify, staticEdge] = await Promise.all([
 			text("nginx/default.conf"),
 			text("nginx/security-headers.conf"),
-			text("netlify.toml")
+			text("netlify.toml"),
+			text("deploy/nginx/operation-opportunity-static.locations.conf")
 		]);
-		for (const source of [nginxHeaders, netlify]) {
+		for (const source of [nginxHeaders, netlify, staticEdge]) {
 			assert.doesNotMatch(source, /unsafe-inline|unsafe-eval/);
 			assert.match(source, /script-src-attr 'none'/);
 			assert.match(source, /style-src 'self'/);
