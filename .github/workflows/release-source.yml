@@ -40,6 +40,9 @@ jobs:
           node-version: 24.18.1
           cache: npm
 
+      - name: Install security-patched npm
+        run: npm install --global npm@12.0.2
+
       - name: Verify annotated source release
         id: release
         shell: bash

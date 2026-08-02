@@ -123,6 +123,13 @@ describe("deployment invariants", () => {
 			".github/workflows/post-deploy.yml"
 		]) {
 			const source = await text(workflow);
+			const setupNodeCount = source.match(/actions\/setup-node@/g)?.length || 0;
+			const npmInstallCount = source.match(/npm install --global npm@12\.0\.2/g)?.length || 0;
+			assert.equal(
+				npmInstallCount,
+				setupNodeCount,
+				`${workflow} must install npm 12.0.2 after each Node 24 setup`
+			);
 			for (const line of source.split("\n").filter((line) => line.includes("uses:"))) {
 				assert.match(line, /@[0-9a-f]{40}(?:\s|$)/, `${workflow}: ${line.trim()}`);
 			}
