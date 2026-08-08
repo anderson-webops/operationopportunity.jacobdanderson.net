@@ -53,7 +53,7 @@
 		"cypress": "^15.19.0",
 		"eslint-plugin-format": "^2.0.1",
 		"jsdom": "^30.0.1",
-		"oxc-parser": "0.142.0",
+		"oxc-parser": "0.143.0",
 		"rolldown": "^1.2.1",
 		"rollup": "^4.62.3",
 		"unocss": "^66.6.7",
