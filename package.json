@@ -52,7 +52,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.5",
 		"eslint-plugin-vue": "^10.9.0",
-		"globals": "^17.5.0",
+		"globals": "^17.9.0",
 		"js-beautify": "2.0.3",
 		"prettier": "^3.8.3",
 		"puppeteer": "^25.4.0",
