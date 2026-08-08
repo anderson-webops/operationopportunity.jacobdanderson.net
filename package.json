@@ -56,7 +56,7 @@
 		"js-beautify": "2.0.3",
 		"prettier": "^3.8.3",
 		"puppeteer": "^25.4.0",
-		"taze": "^19.11.0",
+		"taze": "^19.17.1",
 		"typescript": "^6.0.3"
 	},
 	"allowScripts": {
