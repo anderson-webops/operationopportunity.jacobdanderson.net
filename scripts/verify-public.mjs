@@ -23,8 +23,9 @@ function commitMatches(actual) {
 	);
 }
 
-async function get(path) {
+async function get(path, init = {}) {
 	const response = await fetch(new URL(path, origin), {
+		...init,
 		headers: { accept: "application/json" },
 		redirect: "error",
 		signal: AbortSignal.timeout(15_000)
@@ -53,15 +54,22 @@ assert(staticRelease.json.deployedAt, "static deployment timestamp must be prese
 
 const health = await get("/api/healthz");
 assert(health.response.ok, "API health check must pass");
-assert(health.json.release === expectedRelease, `API release must be ${expectedRelease}`);
-assert(commitMatches(health.json.commit), `API commit must match ${expectedCommit}`);
-assert(health.json.commit === staticRelease.json.commit, "static and API commits must match");
-assert(health.json.deployedAt, "API deployment timestamp must be present");
+assert(JSON.stringify(health.json) === '{"ok":true}', "API health payload must be minimal");
 assert(health.response.headers.get("cache-control")?.includes("no-store"), "API health must not be cached");
 assert(health.response.headers.get("x-frame-options") === "DENY", "API must deny framing");
+for (const header of ["location", "set-cookie", "www-authenticate"]) {
+	assert(!health.response.headers.get(header), `API health must not set ${header}`);
+}
+const healthHead = await get("/api/healthz", { method: "HEAD" });
+assert(healthHead.response.ok && healthHead.body === "", "API health HEAD must be bodyless");
 
 const readiness = await get("/api/readyz");
-assert(readiness.response.ok && readiness.json.ready === true, "API readiness and database ping must pass");
+assert(
+	readiness.response.ok && JSON.stringify(readiness.json) === '{"ok":true}',
+	"API readiness and dependency checks must pass with a minimal payload"
+);
+const readinessHead = await get("/api/readyz", { method: "HEAD" });
+assert(readinessHead.response.ok && readinessHead.body === "", "API readiness HEAD must be bodyless");
 
 const csrf = await get("/api/accounts/csrf");
 const sessionCookie = csrf.response.headers.get("set-cookie") || "";
@@ -103,7 +111,6 @@ console.log(
 		origin: origin.origin,
 		release: expectedRelease,
 		staticCommit: staticRelease.json.commit,
-		apiCommit: health.json.commit,
 		publicTutorCount: directory.json.length
 	})
 );

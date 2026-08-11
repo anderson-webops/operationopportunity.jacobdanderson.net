@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import request from "supertest";
 import { createApp } from "../app.js";
-import { RELEASE_VERSION } from "../release.js";
 
 const origin = "http://localhost:3333";
 const config: AppConfig = {
@@ -25,14 +24,49 @@ const config: AppConfig = {
 };
 
 describe("hTTP security boundary", () => {
-	it("emits hardened, versioned health responses", async () => {
+	it("emits hardened, minimal health responses", async () => {
 		const response = await request(createApp(config)).get("/healthz").expect(200);
-		assert.equal(response.body.release, RELEASE_VERSION);
+		assert.deepEqual(response.body, { ok: true });
 		assert.equal(response.headers["x-content-type-options"], "nosniff");
 		assert.match(response.headers["content-security-policy"], /default-src 'none'/);
 		assert.equal(response.headers["x-frame-options"], "DENY");
 		assert.equal(response.headers["cache-control"], "no-store");
 		assert.ok(response.headers["x-request-id"]);
+		assert.equal(response.headers["set-cookie"], undefined);
+		assert.equal(response.headers.location, undefined);
+		assert.equal(response.headers["www-authenticate"], undefined);
+
+		const head = await request(createApp(config)).head("/healthz").expect(200);
+		assert.equal(head.text, undefined);
+		assert.equal(head.headers["cache-control"], "no-store");
+
+		const ready = await request(
+			createApp(config, undefined, {
+				getReadiness: async () => true
+			})
+		)
+			.get("/readyz")
+			.expect(200);
+		assert.deepEqual(ready.body, { ok: true });
+
+		const unavailableApp = createApp(config, undefined, {
+			getReadiness: async () => false
+		});
+		const unavailable = await request(unavailableApp).get("/readyz").expect(503);
+		assert.deepEqual(unavailable.body, { ok: false });
+		const unavailableHead = await request(unavailableApp).head("/readyz").expect(503);
+		assert.equal(unavailableHead.text, undefined);
+
+		const failed = await request(
+			createApp(config, undefined, {
+				getReadiness: async () => {
+					throw new Error("mongodb://operator:secret@internal-host/private-db");
+				}
+			})
+		)
+			.get("/readyz")
+			.expect(503);
+		assert.deepEqual(failed.body, { ok: false });
 	});
 
 	it("requires a same-origin, session-bound CSRF token for every mutation", async () => {

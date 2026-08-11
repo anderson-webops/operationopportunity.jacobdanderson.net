@@ -1,9 +1,14 @@
 # Health checks
 
-Use only these endpoints for monitoring:
+Use only these endpoints for monitoring. They are unauthenticated, never
+redirect, never set cookies, and always return `Cache-Control: no-store`.
 
-- `GET /api/healthz` is dependency-free liveness and returns `ok`, `release`, `commit`, and `deployedAt`.
-- `GET /api/readyz` returns `200` only when MongoDB is connected and pingable; it returns `503` without raw database errors otherwise.
+- `GET /api/healthz` returns `200 {"ok":true}`; `HEAD` returns the same status with no body.
+- `GET /api/readyz` returns `200 {"ok":true}` only when MongoDB is connected and pingable.
+- Unavailable storage returns `503 {"ok":false}`; `HEAD` performs the same check with no body.
 - `GET /release.json` identifies the static front-end artifact.
 
-All health responses are `Cache-Control: no-store`. Production monitoring must require release `v2.3.0`, the expected commit, and the same deployment timestamp on both the static and API surfaces. `/_dbinfo` is not a monitoring endpoint and is hidden unless diagnostics are explicitly enabled with a strong separate key.
+The probes expose no secrets, database names, host details, process metrics,
+environment information, or component diagnostics. Release identity remains on
+`/release.json`; `/_dbinfo` is not a monitoring endpoint and is hidden unless
+diagnostics are explicitly enabled with a strong separate key.

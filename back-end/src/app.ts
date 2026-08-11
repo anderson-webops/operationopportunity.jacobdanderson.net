@@ -8,7 +8,7 @@ import helmet from "helmet";
 import mongoose from "mongoose";
 import { createQuoteProxy } from "./controllers/common/quoteProxy.js";
 import { HttpError, isDuplicateKeyError, safeErrorSummary } from "./errors.js";
-import { healthReadRateLimit, publicReadRateLimit } from "./middleware/rateLimit.js";
+import { publicReadRateLimit } from "./middleware/rateLimit.js";
 import { getDeploymentIdentity } from "./release.js";
 import { accountRoutes } from "./routes/accountRoutes.js";
 import { adminRoutes } from "./routes/adminRoutes.js";
@@ -24,11 +24,28 @@ function secureEqual(left: string | undefined, right: string | undefined): boole
 	return leftBuffer.length === rightBuffer.length && timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-export function createApp(config: AppConfig, store?: Store) {
+interface AppDependencies {
+	getReadiness?: () => Promise<boolean>;
+}
+
+async function getMongoReadiness() {
+	const state = mongoose.connection.readyState;
+	if (state !== 1 || !mongoose.connection.db) return false;
+
+	try {
+		await mongoose.connection.db.admin().ping();
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export function createApp(config: AppConfig, store?: Store, dependencies: AppDependencies = {}) {
 	if (config.isProduction && !store) {
 		throw new Error("Production requires an external session store.");
 	}
 	const app = express();
+	const checkReadiness = dependencies.getReadiness ?? getMongoReadiness;
 	app.disable("x-powered-by");
 	app.set("config", config);
 	app.set("trust proxy", config.trustedProxyIps.length ? config.trustedProxyIps : false);
@@ -53,33 +70,22 @@ export function createApp(config: AppConfig, store?: Store) {
 		next();
 	});
 
-	app.get("/healthz", healthReadRateLimit, (_req, res) => {
-		res.json({ ok: true, ...getDeploymentIdentity() });
-	});
-	app.get("/readyz", healthReadRateLimit, async (_req, res) => {
-		const state = mongoose.connection.readyState;
-		if (state !== 1 || !mongoose.connection.db) {
-			return res.status(503).json({
-				ready: false,
-				components: { db: { ok: false, state } },
-				...getDeploymentIdentity()
-			});
-		}
+	const sendProbe = (request: express.Request, response: express.Response, ok: boolean) => {
+		const probe = response.status(ok ? 200 : 503);
+		return request.method === "HEAD" ? probe.end() : probe.json({ ok });
+	};
+	const healthHandler: express.RequestHandler = (request, response) => sendProbe(request, response, true);
+	const readinessHandler: express.RequestHandler = async (request, response) => {
 		try {
-			await mongoose.connection.db.admin().ping();
-			return res.json({
-				ready: true,
-				components: { db: { ok: true, state } },
-				...getDeploymentIdentity()
-			});
+			return sendProbe(request, response, await checkReadiness());
 		} catch {
-			return res.status(503).json({
-				ready: false,
-				components: { db: { ok: false, state } },
-				...getDeploymentIdentity()
-			});
+			return sendProbe(request, response, false);
 		}
-	});
+	};
+	app.head("/healthz", healthHandler);
+	app.get("/healthz", healthHandler);
+	app.head("/readyz", readinessHandler);
+	app.get("/readyz", readinessHandler);
 
 	app.use(express.json({ limit: config.requestBodyLimit, strict: true }));
 	app.use(
