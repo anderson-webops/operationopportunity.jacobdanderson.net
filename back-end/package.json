@@ -34,10 +34,10 @@
 		"argon2": "^0.45.1",
 		"connect-mongo": "^6.0.0",
 		"express": "^5.2.1",
-		"express-rate-limit": "^8.5.1",
+		"express-rate-limit": "^8.6.2",
 		"express-session": "^1.19.0",
 		"helmet": "^8.1.0",
-		"mongoose": "^9.3.3",
+		"mongoose": "^9.9.2",
 		"readline-sync": "^1.4.10"
 	},
 	"devDependencies": {
