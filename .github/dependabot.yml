@@ -4,7 +4,43 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 10
+      day: monday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    groups:
+      native-build-toolchain:
+        patterns:
+          - "oxc-parser"
+          - "@oxc-parser/binding-*"
+          - "rolldown"
+          - "@rolldown/binding-*"
+          - "rollup"
+          - "@rollup/rollup-*"
+          - "lightningcss"
+          - "lightningcss-*"
+        update-types:
+          - minor
+          - patch
+      npm-development:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+      npm-production:
+        dependency-type: production
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # Keep ambient types aligned with the production Node 24 runtime.
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
+      # TypeScript major upgrades require a dedicated compatibility pass.
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
     labels:
       - dependencies
 
@@ -12,6 +48,13 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+      day: monday
+      time: "09:15"
+      timezone: America/New_York
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns:
+          - "*"
     labels:
       - dependencies
