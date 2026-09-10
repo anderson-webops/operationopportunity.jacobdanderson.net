@@ -31,3 +31,33 @@ npm run verify:public -- https://operationopportunity.jacobdanderson.net
 ```
 
 The root `package-lock.json` is authoritative; `back-end/package-lock.json` and `back-end/.npmrc` are kept synchronized for isolated API recovery and are verified through a clean production-only install. Atomic direct preparation, promotion, public edge verification, and rollback are documented in [`deploy/systemd/README.md`](deploy/systemd/README.md).
+
+## Quotes integration
+
+The browser requests `/api/quotes?tags=success&random=true&limit=1`. The home page
+renders its built-in quote immediately, replaces it with validated API text, and
+cancels pending work after ten seconds or when navigating away. The quote uses a
+compact, neutral treatment based on the original view, with no promotional label,
+gradient, or shadow.
+
+The same-origin proxy uses `QUOTES_UPSTREAM_SOCKET_PATH` first when configured
+(normally `/run/quotes/quotes.sock`), then `QUOTES_UPSTREAM_URL`
+(default `https://jacobdanderson.net/quotes-api`). The HTTP base may include
+`/quotes-api` or the full `/quotes-api/quotes` path. Request filters override URL
+defaults without duplicate query parameters. Browser cookies and credentials are
+never forwarded upstream.
+
+Socket requests have a two-second total deadline; HTTP fallback has five seconds.
+Both transports bound response bodies to 1 MiB. Connection failures, upstream
+service errors, invalid JSON, and unusable payloads trigger one HTTP fallback.
+Upstream validation errors and rate limits are returned without retrying; numeric
+`Retry-After` values are preserved. Responses use `Cache-Control: no-store`.
+An empty collection is a valid `200 []` result and leaves the browser fallback in place.
+Invalid supported filters return `400 invalid_quote_query`; unknown query keys are
+not forwarded. Both failed transports return only `502 quotes_unavailable`.
+
+`npm test` covers the client lifecycle, socket/HTTP transports, query boundaries,
+rate limits, malformed responses, and cancellation. `npm run verify:public` checks
+that the deployed proxy supplies a usable success quote and that the static and
+API release identities match exactly. It is a post-deployment verifier; health
+probes remain minimal and independent of the optional quote service.

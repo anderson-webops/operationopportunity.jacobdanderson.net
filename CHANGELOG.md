@@ -2,6 +2,16 @@
 
 All notable release tags for Operation Opportunity are recorded here.
 
+## v2.3.1
+
+- Request one random success quote instead of downloading 100 and always selecting the first. Render the local fallback immediately, validate remote text, and cancel pending requests on navigation or timeout with a compact, neutral quote block closer to the original view.
+- Apply total deadlines and body-size limits to socket and HTTP requests. Recover through HTTPS on socket service/payload failures, preserve empty results, honor rate limits without retrying, and cancel upstream work when the caller leaves.
+- Validate supported quote filters and override configured query defaults without producing duplicate parameters. Keep response errors bounded and upstream credentials private.
+- Restore deployment promotion after the minimal-probe change: verify health/readiness separately and compare the running API's new `/api/release.json` identity against the static artifact over loopback, IPv4, and IPv6.
+- Patch Vitest to 4.1.11 and qs to 6.16.0, synchronize both lockfiles, and add quote and deployment regression coverage.
+- Repair the favicon URL and MIME type and restrict analytics to the production hostname so previews do not send pageviews.
+- No database migration or Quotes API deployment is required. Deploy the static assets and API together through the documented systemd preparation/promotion flow.
+
 ## v2.3.0
 
 - Revalidated administrator authority inside a cross-process authorization lock so a demoted or credential-revoked manager cannot complete an already in-flight privileged request.

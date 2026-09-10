@@ -15,6 +15,9 @@
 
 context("Navigation & page smoke-tests", () => {
 	beforeEach(() => {
+		cy.intercept("GET", "/api/quotes*", {
+			body: [{ content: "Make a start, then keep going.", author: "Quote integration fixture" }]
+		}).as("quotes");
 		cy.visit("/"); // -> Home
 	});
 
@@ -45,8 +48,22 @@ context("Navigation & page smoke-tests", () => {
 	});
 
 	it("shows a motivational quote on Home", () => {
-		cy.get(".quote")
-			.should("exist")
-			.and(($q) => expect($q.text().length).to.be.greaterThan(10)); // non-empty
+		cy.wait("@quotes").its("request.query").should("deep.equal", {
+			tags: "success",
+			random: "true",
+			limit: "1"
+		});
+		cy.get(".quote").should("contain.text", "Make a start, then keep going.");
+		cy.get("#quote-author").should("have.text", "Quote integration fixture");
+	});
+
+	it("keeps a quote visible when the API is unavailable", () => {
+		cy.intercept("GET", "/api/quotes*", { statusCode: 502, body: { error: "quotes_unavailable" } }).as(
+			"failedQuotes"
+		);
+		cy.visit("/");
+		cy.wait("@failedQuotes");
+		cy.get(".quote").should("contain.text", "Success is the sum of small efforts");
+		cy.get("#quote-author").should("have.text", "Robert Collier");
 	});
 });

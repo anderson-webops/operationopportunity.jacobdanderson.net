@@ -86,6 +86,7 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 	app.get("/healthz", healthHandler);
 	app.head("/readyz", readinessHandler);
 	app.get("/readyz", readinessHandler);
+	app.get("/release.json", (_request, response) => response.json(getDeploymentIdentity()));
 
 	app.use(express.json({ limit: config.requestBodyLimit, strict: true }));
 	app.use(

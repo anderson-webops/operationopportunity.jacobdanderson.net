@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import process from "node:process";
 import rootPackage from "../package.json" with { type: "json" };
+import { assertDeploymentIdentity } from "./verify-deployment-response.mjs";
 
 const origin = new URL(process.argv[2] || "https://operationopportunity.jacobdanderson.net");
 if (origin.protocol !== "https:") throw new Error("Public verification requires HTTPS");
@@ -16,11 +17,7 @@ function assert(condition, message) {
 }
 
 function commitMatches(actual) {
-	return (
-		typeof actual === "string" &&
-		/^[0-9a-f]{7,64}$/i.test(actual) &&
-		(actual === expectedCommit || actual.startsWith(expectedCommit) || expectedCommit.startsWith(actual))
-	);
+	return typeof actual === "string" && /^[0-9a-f]{7,64}$/i.test(actual) && actual === expectedCommit;
 }
 
 async function get(path, init = {}) {
@@ -51,6 +48,11 @@ assert(staticRelease.response.ok, "static release identity must be reachable");
 assert(staticRelease.json.release === expectedRelease, `static release must be ${expectedRelease}`);
 assert(commitMatches(staticRelease.json.commit), `static commit must match ${expectedCommit}`);
 assert(staticRelease.json.deployedAt, "static deployment timestamp must be present");
+
+const apiRelease = await get("/api/release.json");
+assert(apiRelease.response.ok, "API release identity must be reachable");
+assertDeploymentIdentity(staticRelease.json, apiRelease.json);
+assert(apiRelease.response.headers.get("cache-control")?.includes("no-store"), "API identity must not be cached");
 
 const health = await get("/api/healthz");
 assert(health.response.ok, "API health check must pass");
@@ -89,6 +91,17 @@ for (const tutor of directory.json) {
 	);
 }
 
+const quotes = await get("/api/quotes?tags=success&random=true&limit=1");
+assert(quotes.response.ok && Array.isArray(quotes.json), "quotes proxy must return a collection");
+assert(
+	quotes.json.length === 1 &&
+		typeof quotes.json[0]?.content === "string" &&
+		quotes.json[0].content.trim().length > 0 &&
+		typeof quotes.json[0]?.author === "string" &&
+		quotes.json[0].author.trim().length > 0,
+	"quotes proxy must supply one usable success quote"
+);
+
 assert((await get("/api/users/all")).response.status === 401, "user directory must require authentication");
 assert((await get("/api/tutors/all")).response.status === 401, "full tutor directory must require authentication");
 assert((await get("/api/_dbinfo")).response.status === 404, "database diagnostics must be hidden");
@@ -111,6 +124,8 @@ console.log(
 		origin: origin.origin,
 		release: expectedRelease,
 		staticCommit: staticRelease.json.commit,
+		apiCommit: apiRelease.json.commit,
+		quotesAvailable: true,
 		publicTutorCount: directory.json.length
 	})
 );

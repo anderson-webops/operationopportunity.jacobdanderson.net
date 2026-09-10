@@ -4,11 +4,15 @@ set -euo pipefail
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export PATH
 
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+response_verifier="$script_dir/../../scripts/verify-deployment-response.mjs"
+
 release_root="${RELEASE_ROOT:-/srv/operation-opportunity/releases}"
 current_link="${CURRENT_LINK:-/srv/operation-opportunity/current}"
 release_env_dest="${RELEASE_ENV_DEST:-/etc/operation-opportunity/release.env}"
 service_name="${SERVICE_NAME:-operation-opportunity-api.service}"
 api_health_url="${API_HEALTH_URL:-http://127.0.0.1:3002/healthz}"
+api_release_url="${API_RELEASE_URL:-http://127.0.0.1:3002/release.json}"
 api_ready_url="${API_READY_URL:-http://127.0.0.1:3002/readyz}"
 site_origin="${SITE_ORIGIN:-https://operationopportunity.jacobdanderson.net}"
 site_resolve_ipv4="${SITE_RESOLVE_IPV4:-operationopportunity.jacobdanderson.net:443:127.0.0.1}"
@@ -74,6 +78,8 @@ headers_static_ipv6="$(mktemp)"
 headers_api_ipv4="$(mktemp)"
 headers_api_ipv6="$(mktemp)"
 release_env_temp="$(mktemp)"
+# Invoked by the EXIT trap below.
+# shellcheck disable=SC2329
 cleanup() {
 	if [[ -L "$next_link" ]]; then unlink -- "$next_link"; fi
 	rm -f -- "$response_api" "$response_ipv4" "$response_ipv6" \
@@ -89,6 +95,8 @@ activate_target() {
 
 write_release_environment() {
 	local target="$1"
+	# Keep JavaScript template literals for Node to expand.
+	# shellcheck disable=SC2016
 	/usr/bin/node -e '
 const fs = require("node:fs")
 const release = JSON.parse(fs.readFileSync(process.argv[1], "utf8"))
@@ -100,14 +108,11 @@ process.stdout.write(`OPPORTUNITY_COMMIT_SHA=${release.commit}\nOPPORTUNITY_DEPL
 }
 
 identity_matches() {
-	local expected="$1"
-	local actual="$2"
-	/usr/bin/node -e '
-const fs = require("node:fs")
-const expected = JSON.parse(fs.readFileSync(process.argv[1], "utf8"))
-const actual = JSON.parse(fs.readFileSync(process.argv[2], "utf8"))
-if (expected.release !== actual.release || expected.commit !== actual.commit || expected.deployedAt !== actual.deployedAt) process.exit(1)
-' "$expected" "$actual"
+	/usr/bin/node "$response_verifier" identity "$1" "$2"
+}
+
+probe_is_ready() {
+	/usr/bin/node "$response_verifier" probe "$1"
 }
 
 static_headers_are_strict() {
@@ -128,12 +133,13 @@ api_headers_are_strict() {
 
 wait_for_target() {
 	local target="$1"
-	local attempt
-	for attempt in {1..30}; do
+	local _attempt
+	for _attempt in {1..30}; do
 		if curl --noproxy '*' --fail --silent --show-error --max-time 5 "$api_ready_url" --output "$response_api" \
-			&& grep -Eq '"ready"[[:space:]]*:[[:space:]]*true' "$response_api" \
-			&& identity_matches "$target/front-end/dist/release.json" "$response_api" \
+			&& probe_is_ready "$response_api" \
 			&& curl --noproxy '*' --fail --silent --show-error --max-time 5 "$api_health_url" --output "$response_api" \
+			&& probe_is_ready "$response_api" \
+			&& curl --noproxy '*' --fail --silent --show-error --max-time 5 "$api_release_url" --output "$response_api" \
 			&& identity_matches "$target/front-end/dist/release.json" "$response_api" \
 			&& curl --noproxy '*' --ipv4 --fail --silent --show-error --max-time 5 \
 				--resolve "$site_resolve_ipv4" "$site_origin/release.json" --output "$response_ipv4" \
@@ -147,9 +153,21 @@ wait_for_target() {
 				--dump-header "$headers_static_ipv6" "$site_origin/" --output /dev/null \
 			&& curl --noproxy '*' --ipv4 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv4" \
 				--dump-header "$headers_api_ipv4" "$site_origin/api/healthz" --output "$response_api" \
+			&& probe_is_ready "$response_api" \
+			&& curl --noproxy '*' --ipv4 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv4" \
+				"$site_origin/api/readyz" --output "$response_api" \
+			&& probe_is_ready "$response_api" \
+			&& curl --noproxy '*' --ipv4 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv4" \
+				"$site_origin/api/release.json" --output "$response_api" \
 			&& identity_matches "$target/front-end/dist/release.json" "$response_api" \
 			&& curl --noproxy '*' --ipv6 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv6" \
 				--dump-header "$headers_api_ipv6" "$site_origin/api/healthz" --output "$response_api" \
+			&& probe_is_ready "$response_api" \
+			&& curl --noproxy '*' --ipv6 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv6" \
+				"$site_origin/api/readyz" --output "$response_api" \
+			&& probe_is_ready "$response_api" \
+			&& curl --noproxy '*' --ipv6 --fail --silent --show-error --max-time 5 --resolve "$site_resolve_ipv6" \
+				"$site_origin/api/release.json" --output "$response_api" \
 			&& identity_matches "$target/front-end/dist/release.json" "$response_api" \
 			&& static_headers_are_strict "$headers_static_ipv4" \
 			&& static_headers_are_strict "$headers_static_ipv6" \

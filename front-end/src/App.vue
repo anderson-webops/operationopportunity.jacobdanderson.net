@@ -61,8 +61,8 @@ useHead(
 			link: [
 				{
 					rel: "icon",
-					type: "image/svg+xml",
-					href: "/Favicons/favicon.ico"
+					type: "image/x-icon",
+					href: "/favicon.ico"
 				},
 				{
 					rel: "canonical",
@@ -75,7 +75,8 @@ useHead(
 							{
 								defer: true,
 								src: "https://analytics.jacobdanderson.net/script.js",
-								"data-website-id": "bb94526b-ea35-4cf9-ab26-839ecba29361"
+								"data-website-id": "bb94526b-ea35-4cf9-ab26-839ecba29361",
+								"data-domains": new URL(siteUrl).hostname
 							}
 						]
 					: [])

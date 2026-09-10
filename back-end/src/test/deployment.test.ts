@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { createApp } from "../app.js";
@@ -228,6 +231,47 @@ describe("deployment invariants", () => {
 		assert.match(promote, /api_headers_are_strict/);
 		assert.match(promote, /restoring the previous release/);
 		assert.match(releaseWorkflow, /atomic host systemd\/Nginx promotion/);
+	});
+
+	it("accepts minimal successful probes and rejects stale or missing API identity", async () => {
+		const directory = await mkdtemp(join(tmpdir(), "opportunity-probes-"));
+		const expected = { release: RELEASE_VERSION, commit: "a".repeat(40), deployedAt: "2026-09-10T00:00:00Z" };
+		const expectedPath = join(directory, "expected.json");
+		const actualPath = join(directory, "actual.json");
+		const verifier = join(root, "scripts/verify-deployment-response.mjs");
+		const run = (mode: string) =>
+			spawnSync(
+				process.execPath,
+				[verifier, mode, ...(mode === "identity" ? [expectedPath, actualPath] : [actualPath])],
+				{ encoding: "utf8" }
+			);
+		try {
+			await writeFile(expectedPath, JSON.stringify(expected));
+			await writeFile(actualPath, JSON.stringify({ ok: true }));
+			assert.equal(run("probe").status, 0);
+			assert.notEqual(run("identity").status, 0);
+			for (const payload of [{ ok: false }, { ready: true }, { ok: true, release: "private" }, null]) {
+				await writeFile(actualPath, JSON.stringify(payload));
+				assert.notEqual(run("probe").status, 0);
+			}
+			await writeFile(actualPath, JSON.stringify(expected));
+			assert.equal(run("identity").status, 0);
+			for (const changed of [
+				{ commit: "b".repeat(40) },
+				{ commit: expected.commit.slice(0, 7) },
+				{ deployedAt: null },
+				{ release: "v2.0.0" }
+			]) {
+				await writeFile(actualPath, JSON.stringify({ ...expected, ...changed }));
+				assert.notEqual(run("identity").status, 0);
+			}
+			const promote = await text("deploy/systemd/promote-release.sh");
+			assert.match(promote, /verify-deployment-response\.mjs/);
+			assert.match(promote, /site_origin\/api\/release\.json/);
+			assert.doesNotMatch(promote, /"ready"\[\[:space:\]\]/);
+		} finally {
+			await rm(directory, { recursive: true, force: true });
+		}
 	});
 
 	it("has no legacy client-side identity session or mass-assignment controller", async () => {

@@ -34,3 +34,17 @@ Startup initializes missing account authorization versions, treats legacy tutors
 ## Recovery notes
 
 The v2.3 schema changes are additive. Do not delete `sessions`, `accountemails`, `adminworkflowlocks`, authorization versions, or optimistic concurrency fields during an emergency rollback. If database restoration is required, restore the pre-rollout backup as a separate, explicitly approved operation.
+
+## v2.3.1 quote and probe update
+
+Deploy the API and static assets together. Health/readiness remain minimal
+`{ok:true}` responses; the separate `/api/release.json` must match the static
+`/release.json` release, full commit, and timestamp. The corrected promotion gate
+checks these independently over loopback, IPv4, and IPv6. Public verification also
+checks that the quote proxy returns one usable success quote.
+
+No database migration or Quotes API deployment is required. Previous API builds
+without `/api/release.json` cannot satisfy the new identity check. Automatic
+rollback still restores them, but reports unsuccessful verification rather than
+claiming a verified recovery. Keep this boundary in mind when choosing a rollback
+candidate for the first v2.3.1 rollout.

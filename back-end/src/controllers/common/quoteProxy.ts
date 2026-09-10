@@ -1,9 +1,10 @@
 import type { Request } from "express";
+import type { IncomingMessage } from "node:http";
 import type { AppConfig } from "../../config.js";
 import { Buffer } from "node:buffer";
 import { request } from "node:http";
 import { Router } from "express";
-import { safeErrorSummary } from "../../errors.js";
+import { HttpError, safeErrorSummary } from "../../errors.js";
 
 interface NormalizedQuote {
 	_id: string;
@@ -16,15 +17,18 @@ interface NormalizedQuote {
 	dateModified: string;
 }
 
+type QuotesConfig = Pick<AppConfig, "quotesUpstreamSocketPath" | "quotesUpstreamUrl">;
+
 interface UpstreamResponse {
 	status: number;
 	body: string;
-	transport: "socket" | "url";
+	retryAfter?: string;
 }
 
 const DEFAULT_QUOTES_REQUEST_PATH = "/quotes";
 const MAX_UPSTREAM_BODY_BYTES = 1024 * 1024;
-const UPSTREAM_TIMEOUT_MS = 5_000;
+const SOCKET_TIMEOUT_MS = 2_000;
+const HTTP_TIMEOUT_MS = 5_000;
 const ALLOWED_QUERY_KEYS = ["author", "limit", "random", "search", "tags"] as const;
 const AUTHOR_WHITESPACE_PATTERN = /\s+/g;
 const TRAILING_SLASHES_PATTERN = /\/+$/;
@@ -60,7 +64,7 @@ function hasControlCharacter(value: string): boolean {
 }
 
 function normalizeQuote(payload: unknown): NormalizedQuote | null {
-	if (!payload || typeof payload !== "object") return null;
+	if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
 	const quote = payload as Record<string, unknown>;
 	const content =
 		typeof quote.content === "string"
@@ -75,7 +79,10 @@ function normalizeQuote(payload: unknown): NormalizedQuote | null {
 	const now = new Date().toISOString();
 	const idSource = quote._id ?? quote.id ?? `${author}-${content.slice(0, 32)}`;
 	return {
-		_id: String(idSource).slice(0, 200),
+		_id: (typeof idSource === "string" || typeof idSource === "number"
+			? String(idSource)
+			: slugifyAuthor(author)
+		).slice(0, 200),
 		content,
 		author,
 		tags: normalizeTags(quote.tags).slice(0, 20),
@@ -89,15 +96,18 @@ function normalizeQuote(payload: unknown): NormalizedQuote | null {
 	};
 }
 
-export function normalizeQuotesPayload(payload: unknown): NormalizedQuote[] {
-	const candidates = Array.isArray(payload)
+function quoteCandidates(payload: unknown): unknown[] {
+	return Array.isArray(payload)
 		? payload
 		: payload && typeof payload === "object" && Array.isArray((payload as Record<string, unknown>).quotes)
 			? (payload as { quotes: unknown[] }).quotes
 			: payload && typeof payload === "object" && "quote" in payload
 				? [(payload as Record<string, unknown>).quote]
 				: [payload];
-	return candidates
+}
+
+export function normalizeQuotesPayload(payload: unknown): NormalizedQuote[] {
+	return quoteCandidates(payload)
 		.map(normalizeQuote)
 		.filter((quote): quote is NormalizedQuote => quote !== null)
 		.slice(0, 100);
@@ -106,23 +116,29 @@ export function normalizeQuotesPayload(payload: unknown): NormalizedQuote[] {
 export function buildQuotesRequestPath(req: Request): string {
 	const searchParams = new URLSearchParams();
 	for (const key of ALLOWED_QUERY_KEYS) {
-		const rawValue = req.query[key];
-		const value = Array.isArray(rawValue) ? rawValue[0] : rawValue;
-		if (typeof value !== "string" || !value || value.length > 200 || hasControlCharacter(value)) {
-			continue;
-		}
+		const value = req.query[key];
+		if (value === undefined) continue;
+		const invalid = () => new HttpError(400, "invalid_quote_query", `Invalid ${key} filter.`);
+		if (typeof value !== "string" || value.length > 200 || hasControlCharacter(value)) throw invalid();
 		const normalized = value.trim();
 		if (!normalized) continue;
 		if (key === "limit") {
-			if (!/^\d{1,3}$/.test(normalized) || Number(normalized) < 1 || Number(normalized) > 100) {
-				continue;
-			}
+			if (!/^\d{1,3}$/.test(normalized) || Number(normalized) < 1 || Number(normalized) > 100) throw invalid();
 			searchParams.set(key, String(Number(normalized)));
 			continue;
 		}
-		if (key === "random") {
-			if (normalized !== "true" && normalized !== "false") continue;
-			searchParams.set(key, normalized);
+		if (key === "random" && normalized !== "true" && normalized !== "false") throw invalid();
+		if (key === "tags") {
+			const tags = [
+				...new Set(
+					normalized
+						.split(",")
+						.map((tag) => tag.trim().toLowerCase())
+						.filter(Boolean)
+				)
+			];
+			if (tags.length > 20 || tags.some((tag) => tag.length > 50)) throw invalid();
+			if (tags.length) searchParams.set(key, tags.join(","));
 			continue;
 		}
 		searchParams.set(key, normalized);
@@ -149,120 +165,166 @@ export function resolveQuotesUpstreamUrl(base: URL, requestPath: string): URL {
 	const requestUrl = new URL(requestPath, "http://quotes.local");
 	const mergedSearchParams = new URLSearchParams(baseUrl.search);
 	baseUrl.pathname = joinUpstreamPath(baseUrl.pathname, requestUrl.pathname);
-	for (const [key, value] of requestUrl.searchParams) mergedSearchParams.append(key, value);
+	for (const [key, value] of requestUrl.searchParams) mergedSearchParams.set(key, value);
 	baseUrl.search = mergedSearchParams.toString();
 	return baseUrl;
 }
 
-function readResponseBody(stream: NodeJS.ReadableStream): Promise<string> {
-	return new Promise((resolve, reject) => {
-		let body = "";
-		let size = 0;
-		stream.setEncoding("utf8");
-		stream.on("data", (chunk: string) => {
-			size += Buffer.byteLength(chunk);
-			if (size > MAX_UPSTREAM_BODY_BYTES) {
-				reject(new Error("Quotes response exceeds the configured limit"));
-				if ("destroy" in stream && typeof stream.destroy === "function") stream.destroy();
-				return;
-			}
-			body += chunk;
-		});
-		stream.on("end", () => resolve(body));
-		stream.on("error", reject);
-	});
+async function readResponseBody(stream: IncomingMessage): Promise<string> {
+	const chunks: Buffer[] = [];
+	let size = 0;
+	try {
+		for await (const chunk of stream) {
+			const bytes = Buffer.from(chunk);
+			size += bytes.length;
+			if (size > MAX_UPSTREAM_BODY_BYTES) throw new Error("Quotes response exceeds the configured limit");
+			chunks.push(bytes);
+		}
+		return Buffer.concat(chunks, size).toString("utf8");
+	} finally {
+		stream.destroy();
+	}
 }
 
-export function fetchQuotesViaSocket(path: string, socketPath: string): Promise<UpstreamResponse> {
+export function fetchQuotesViaSocket(
+	path: string,
+	socketPath: string,
+	signal?: AbortSignal
+): Promise<UpstreamResponse> {
 	return new Promise((resolve, reject) => {
+		const deadline = AbortSignal.timeout(SOCKET_TIMEOUT_MS);
 		const upstreamRequest = request(
 			{
 				socketPath,
 				path,
 				method: "GET",
 				headers: { accept: "application/json", host: "localhost" },
-				timeout: UPSTREAM_TIMEOUT_MS
+				signal: signal ? AbortSignal.any([signal, deadline]) : deadline
 			},
 			async (response) => {
 				try {
+					const status = response.statusCode ?? 502;
+					if (status < 200 || status >= 300) {
+						response.destroy();
+						resolve({ status, body: "", retryAfter: response.headers["retry-after"] });
+						return;
+					}
 					resolve({
-						status: response.statusCode ?? 502,
+						status,
 						body: await readResponseBody(response),
-						transport: "socket"
+						retryAfter: response.headers["retry-after"]
 					});
 				} catch (error) {
 					reject(error);
 				}
 			}
 		);
-		upstreamRequest.on("timeout", () => upstreamRequest.destroy(new Error("Quotes socket request timed out")));
 		upstreamRequest.on("error", reject);
 		upstreamRequest.end();
 	});
 }
 
-export async function fetchQuotesViaHttp(url: URL): Promise<UpstreamResponse> {
+export async function fetchQuotesViaHttp(url: URL, signal?: AbortSignal): Promise<UpstreamResponse> {
+	const deadline = AbortSignal.timeout(HTTP_TIMEOUT_MS);
 	const response = await fetch(url, {
 		headers: { accept: "application/json" },
 		redirect: "error",
-		signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
+		signal: signal ? AbortSignal.any([signal, deadline]) : deadline
 	});
+	if (!response.ok) {
+		await response.body?.cancel();
+		return { status: response.status, body: "", retryAfter: response.headers.get("retry-after") ?? undefined };
+	}
 	const declaredLength = Number(response.headers.get("content-length"));
 	if (Number.isFinite(declaredLength) && declaredLength > MAX_UPSTREAM_BODY_BYTES) {
+		await response.body?.cancel();
 		throw new Error("Quotes response exceeds the configured limit");
 	}
 	if (!response.body) throw new Error("Quotes service returned an empty response");
 	const reader = response.body.getReader();
 	const chunks: Buffer[] = [];
 	let size = 0;
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) break;
-		size += value.byteLength;
-		if (size > MAX_UPSTREAM_BODY_BYTES) {
-			await reader.cancel();
-			throw new Error("Quotes response exceeds the configured limit");
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			size += value.byteLength;
+			if (size > MAX_UPSTREAM_BODY_BYTES) throw new Error("Quotes response exceeds the configured limit");
+			chunks.push(Buffer.from(value));
 		}
-		chunks.push(Buffer.from(value));
+	} finally {
+		try {
+			await reader.cancel();
+		} finally {
+			reader.releaseLock();
+		}
 	}
 	return {
 		status: response.status,
 		body: Buffer.concat(chunks, size).toString("utf8"),
-		transport: "url"
+		retryAfter: response.headers.get("retry-after") ?? undefined
 	};
 }
 
-async function fetchQuotesUpstream(req: Request, config: AppConfig): Promise<UpstreamResponse> {
+function parseUpstream(response: UpstreamResponse): NormalizedQuote[] {
+	if (response.status < 200 || response.status >= 300) throw new Error("Quotes service returned an error");
+	const payload: unknown = JSON.parse(response.body);
+	const quotes = normalizeQuotesPayload(payload);
+	// An empty collection is a valid filter result. Unusable nonempty data is an upstream failure.
+	if (!quotes.length && quoteCandidates(payload).length) throw new Error("Quotes service returned invalid data");
+	return quotes;
+}
+
+function upstreamRejection(response: UpstreamResponse): boolean {
+	return response.status === 400 || response.status === 429;
+}
+
+async function fetchQuotesUpstream(req: Request, config: QuotesConfig, signal: AbortSignal): Promise<UpstreamResponse> {
 	const requestPath = buildQuotesRequestPath(req);
 	if (config.quotesUpstreamSocketPath) {
 		try {
-			return await fetchQuotesViaSocket(requestPath, config.quotesUpstreamSocketPath);
+			const response = await fetchQuotesViaSocket(requestPath, config.quotesUpstreamSocketPath, signal);
+			if (!upstreamRejection(response)) parseUpstream(response);
+			return response;
 		} catch (error) {
+			signal.throwIfAborted();
 			console.error("Quotes socket request failed", {
 				requestId: req.requestId,
 				error: safeErrorSummary(error)
 			});
 		}
 	}
-	return fetchQuotesViaHttp(resolveQuotesUpstreamUrl(config.quotesUpstreamUrl, requestPath));
+	signal.throwIfAborted();
+	return fetchQuotesViaHttp(resolveQuotesUpstreamUrl(config.quotesUpstreamUrl, requestPath), signal);
 }
 
-export function createQuoteProxy(config: AppConfig): Router {
+export function createQuoteProxy(config: QuotesConfig): Router {
 	return Router().get("/", async (req, res) => {
+		const controller = new AbortController();
+		const cancel = () => controller.abort();
+		res.once("close", cancel);
+		res.setHeader("Cache-Control", "no-store");
 		try {
-			const upstream = await fetchQuotesUpstream(req, config);
-			if (upstream.status < 200 || upstream.status >= 300) {
-				return res.status(502).json({ error: "quotes_unavailable" });
+			const upstream = await fetchQuotesUpstream(req, config, controller.signal);
+			if (upstream.status === 429) {
+				// Quotes API uses delta-seconds. Never reflect arbitrary upstream header content.
+				if (upstream.retryAfter && /^\d{1,6}$/.test(upstream.retryAfter)) {
+					res.setHeader("Retry-After", upstream.retryAfter);
+				}
+				return res.status(429).json({ error: "quotes_rate_limited" });
 			}
-			const quotes = normalizeQuotesPayload(JSON.parse(upstream.body));
-			if (!quotes.length) return res.status(502).json({ error: "quotes_unavailable" });
-			return res.json(quotes);
+			if (upstream.status === 400) return res.status(400).json({ error: "invalid_quote_query" });
+			return res.json(parseUpstream(upstream));
 		} catch (error) {
+			if (controller.signal.aborted) return;
+			if (error instanceof HttpError) return res.status(error.status).json({ error: error.code });
 			console.error("Quotes proxy failed", {
 				requestId: req.requestId,
 				error: safeErrorSummary(error)
 			});
 			return res.status(502).json({ error: "quotes_unavailable" });
+		} finally {
+			res.off("close", cancel);
 		}
 	});
 }

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import request from "supertest";
 import { createApp } from "../app.js";
+import { getDeploymentIdentity } from "../release.js";
 
 const origin = "http://localhost:3333";
 const config: AppConfig = {
@@ -67,6 +68,17 @@ describe("hTTP security boundary", () => {
 			.get("/readyz")
 			.expect(503);
 		assert.deepEqual(failed.body, { ok: false });
+	});
+
+	it("serves public API identity separately from minimal probes without creating a session", async () => {
+		const app = createApp(config);
+		const response = await request(app).get("/release.json").expect(200);
+		assert.deepEqual(response.body, getDeploymentIdentity());
+		assert.equal(response.headers["cache-control"], "no-store");
+		assert.equal(response.headers["set-cookie"], undefined);
+		const head = await request(app).head("/release.json").expect(200);
+		assert.equal(head.text, undefined);
+		assert.equal(head.headers["set-cookie"], undefined);
 	});
 
 	it("requires a same-origin, session-bound CSRF token for every mutation", async () => {
