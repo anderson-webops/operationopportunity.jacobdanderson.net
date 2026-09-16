@@ -74,9 +74,10 @@ is server-global even when it filters by application name. Concurrent fault
 suites could replace or clear one another's failpoint; serialization preserves
 the real failure/recovery assertions rather than making them timing-dependent.
 
-Final exact-source Linux ARM64 validation and publication evidence is recorded
-separately after the release gate; a successful local build alone is not artifact
-acceptance. The prior release and its assets remain immutable.
+Final exact-source Linux ARM64 validation and publication evidence is recorded in
+[`identity-runtime-acceptance-2026-09-16.md`](identity-runtime-acceptance-2026-09-16.md).
+A successful local build alone is not artifact acceptance. The prior release and
+its assets remain immutable.
 
 Local clean locked install, lint, types, 47 frontend and 79 backend tests (no
 skips), compiled builds, build-security and standalone production/native-install
