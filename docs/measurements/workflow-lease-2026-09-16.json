@@ -1,0 +1,12 @@
+{
+  "baseline": {
+    "baseline": "0b764a530f1a2db175041a513916f17ed2151878",
+    "naturalLeaseExpiryMs": 30210.954458,
+    "overlappingAuthorizationOperations": true
+  },
+  "candidate": {
+    "candidateVersion": "2.3.5",
+    "naturalLeaseExpiryMs": 30415.312791999997,
+    "overlappingAuthorizationOperations": false
+  }
+}

@@ -127,6 +127,34 @@ or maintenance boundary with no concurrent account writers. Do not run a recover
 CLI concurrently with a serving API or a second reconciler. This change does not
 claim to solve distributed startup or authorization-lease coordination.
 
+Authorization workflows now also have one process-owned FIFO slot with at most
+32 waiting operations. The slot stays held until the operation and Mongo lock
+release settle, even after the 30-second Mongo lease expires. Queueing and Mongo
+acquisition share one monotonic five-second admission deadline; slow retries do
+not receive fresh five-second budgets. A rejected waiter has not begun its
+account mutation. Disconnected readers release their waiters, while accepted
+mutations retain their request/drain slots until they settle. Clients must retain
+drafts and must not automatically replay writes with an unknown outcome.
+
+The existing single-API/exclusive-maintenance boundary is essential: this local
+serialization does not make the expiring Mongo lease a fenced cross-process lock
+or turn several account writes into a transaction. Do not overlap old and new API
+processes or maintenance tools during promotion or rollback. Multiple API writers
+would require a separately reviewed transactional/coordination design. No replica
+set requirement or new host state directory is introduced here.
+
+The additive tutor index `{status: 1, name: 1, _id: 1}` supports public active-tutor
+pages without walking inactive accounts. Existing indexes and data formats remain
+valid. Rehearse the exact retained API against the candidate indexes using
+`scripts/test-directory-rollback.mjs` before activation. Returning to v2.3.4 also
+restores its earlier authorization-lease behavior; a compatible data format does
+not mean the old application gains the new concurrency protection.
+
+Artifact acceptance now includes a ten-minute authenticated-read trace followed
+by 65 seconds idle recovery, crossing the pool's 60-second idle threshold. Samples
+are recorded every 30 seconds; latency uses a bounded one-millisecond histogram.
+This provides finite recovery evidence, not a promise of indefinite leak freedom.
+
 Preserve the actual database and retained application through promotion and
 rollback. The old application does not need this disposable index; no new durable
 schema or identity semantics are introduced.

@@ -56,6 +56,7 @@ try {
 		assert.ok(indexes[name].includes("createdAt_1__id_1"));
 	}
 	assert.ok(indexes.users.includes("tutor_1_name_1__id_1"));
+	assert.ok(indexes.tutors.includes("status_1_name_1__id_1"));
 	const origin = "http://fixture.example";
 	child = fork(join(root, "scripts/measure-directory-runtime.mjs"), ["server", retained, uri.toString(), origin], {
 		stdio: ["ignore", "ignore", "pipe", "ipc"]

@@ -54,6 +54,7 @@ tutorSchema.plugin(passwordPlugin);
 tutorSchema.plugin(readCancellationPlugin);
 
 tutorSchema.index({ name: 1, _id: 1 });
+tutorSchema.index({ status: 1, name: 1, _id: 1 });
 tutorSchema.index({ createdAt: 1, _id: 1 });
 
 export const Tutor: Model<ITutor> = mongoose.model<ITutor>("Tutor", tutorSchema);

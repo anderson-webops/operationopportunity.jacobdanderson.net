@@ -333,12 +333,14 @@ try {
 			);
 		};
 		const before = memory(),
-			latency = [],
+			latency = new Uint32Array(10001),
 			started = performance.now();
+		const trace = [{ elapsedSeconds: 0, phase: "before", ...before }];
+		let nextSampleAt = started + 30000;
 		let completed = 0;
 		await Promise.all(
 			Array.from({ length: 8 }, async () => {
-				while (performance.now() - started < 60000) {
+				while (performance.now() - started < 600000) {
 					const at = performance.now();
 					const response = await fetch(base + "/users/loggedin", {
 						headers: { Cookie: cookie, "X-Forwarded-Proto": "https" },
@@ -347,29 +349,48 @@ try {
 					assert.equal(response.status, 200);
 					assert.equal((await response.json()).currentUser.email, "artifact@fixture.test");
 					completed++;
-					latency.push(performance.now() - at);
+					const elapsed = performance.now() - at;
+					assert.ok(elapsed <= 10000, "Successful read exceeded its latency bound");
+					latency[Math.ceil(elapsed)]++;
+					if (performance.now() >= nextSampleAt) {
+						trace.push({
+							elapsedSeconds: (performance.now() - started) / 1000,
+							phase: "load",
+							...memory()
+						});
+						nextSampleAt = performance.now() + 30000;
+					}
 					await delay(25);
 				}
 			})
 		);
 		const loaded = memory();
-		await delay(5000);
+		trace.push({ elapsedSeconds: (performance.now() - started) / 1000, phase: "loaded", ...loaded });
+		await delay(65000);
 		const recovered = memory();
-		latency.sort((a, b) => a - b);
+		trace.push({ elapsedSeconds: (performance.now() - started) / 1000, phase: "recovered", ...recovered });
+		let observations = 0,
+			p95Ms = 0;
+		for (; p95Ms < latency.length; p95Ms++) {
+			observations += latency[p95Ms];
+			if (observations >= Math.ceil(completed * 0.95)) break;
+		}
 		assert.ok(completed > 100);
 		console.log(
 			JSON.stringify({
 				soak: {
 					passed: true,
 					commit: manifest.commit,
-					seconds: 60,
-					idleRecoverySeconds: 5,
+					seconds: 600,
+					idleRecoverySeconds: 65,
 					concurrency: 8,
 					completed,
 					before,
 					loaded,
 					recovered,
-					p95Ms: latency[Math.floor(latency.length * 0.95)]
+					p95Ms,
+					latencyResolutionMs: 1,
+					trace
 				}
 			})
 		);

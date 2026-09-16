@@ -16,7 +16,7 @@ fi
 state=$(mktemp -d "$(dirname "$artifact")/acceptance-state.XXXXXX")
 trap 'rm -rf -- "$state"' EXIT
 mkdir "$state/tmp"
-timeout -k 5 360 bwrap --unshare-all --die-with-parent --new-session \
+timeout -k 5 900 bwrap --unshare-all --die-with-parent --new-session \
   --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/sbin /sbin --symlink usr/lib /lib \
   --ro-bind "$node" /runtime/node --proc /proc --dev /dev --tmpfs /tmp --bind "$state" /state \
   --ro-bind /sys/devices/system/cpu/possible /sys/devices/system/cpu/possible \

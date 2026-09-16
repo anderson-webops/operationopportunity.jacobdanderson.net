@@ -104,6 +104,7 @@ test(
 				for (const [model, filter] of [
 					[Admin, {}],
 					[Tutor, {}],
+					[Tutor, { status: "active" }],
 					[User, {}],
 					[User, { tutor: tutor._id }]
 				] as const) {
@@ -206,6 +207,31 @@ test(
 			for (const row of own.body.items) assert.equal(row.tutor, tutor._id.toString());
 			await Tutor.updateOne({ _id: tutor._id }, { $set: { status: "suspended" } });
 			await assignedTutor.get(`/users/oftutor/${tutor._id}?pageSize=50`).expect(403);
+		});
+		await context.test("inactive tutor growth does not turn public pages into full account scans", async () => {
+			for (let batch = 0; batch < 10; batch++) {
+				await Tutor.collection.insertMany(
+					Array.from({ length: 1000 }, (_, index) => ({
+						name: `A Hidden ${batch}-${index}`,
+						email: `hidden-${batch}-${index}@fixture.test`,
+						status: index % 2 ? "pending" : "suspended",
+						role: "tutor",
+						authVersion: 0
+					}))
+				);
+			}
+			const plan = await Tutor.collection
+				.find({ $and: [{ status: "active" }] })
+				.sort({ name: 1, _id: 1 })
+				.limit(51)
+				.explain("executionStats");
+			assert.equal(plan.executionStats.nReturned, 51);
+			assert.ok(plan.executionStats.totalDocsExamined <= 51);
+			assert.ok(plan.executionStats.totalKeysExamined <= 51);
+			assert.doesNotMatch(JSON.stringify(plan.queryPlanner.winningPlan), /COLLSCAN|"stage":"SORT"/);
+			const page = await request(app).get("/tutors?pageSize=50").expect(200);
+			assert.equal(page.body.items.length, 50);
+			assert.doesNotMatch(page.text, /Hidden|email|password|authVersion/);
 		});
 	}
 );
