@@ -6,36 +6,36 @@
     "node": "v24.18.1",
     "requests": 901,
     "idle": {
-      "rss": 103874560,
-      "heapTotal": 57917440,
-      "heapUsed": 27755776,
+      "rss": 104415232,
+      "heapTotal": 57393152,
+      "heapUsed": 27492656,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215154688,
+      "rss": 215138304,
       "heapTotal": 60801024,
-      "heapUsed": 33820208,
-      "external": 22726518,
-      "arrayBuffers": 18727727
+      "heapUsed": 33881896,
+      "external": 22726494,
+      "arrayBuffers": 18727703
     },
     "loaded": {
-      "rss": 280952832,
-      "heapTotal": 106151936,
-      "heapUsed": 48256344,
-      "external": 22751902,
-      "arrayBuffers": 18753111
+      "rss": 280510464,
+      "heapTotal": 105889792,
+      "heapUsed": 47767280,
+      "external": 22748794,
+      "arrayBuffers": 18750003
     },
     "recovered": {
-      "rss": 280952832,
-      "heapTotal": 106151936,
-      "heapUsed": 48386312,
-      "external": 22752446,
-      "arrayBuffers": 18753655
+      "rss": 280510464,
+      "heapTotal": 105889792,
+      "heapUsed": 47898248,
+      "external": 22749338,
+      "arrayBuffers": 18750547
     },
-    "peakRss": 280952832,
-    "p95Ms": 5.133709000000067,
-    "elapsedMs": 378.363834,
+    "peakRss": 280510464,
+    "p95Ms": 4.8785839999999325,
+    "elapsedMs": 372.93441699999994,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 0,
     "rejected": 0,
@@ -44,7 +44,8 @@
       "signal": null
     },
     "variant": "baseline",
-    "repeat": 1
+    "repeat": 1,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
   },
   {
     "scenario": "normal",
@@ -53,130 +54,36 @@
     "node": "v24.18.1",
     "requests": 901,
     "idle": {
-      "rss": 103841792,
+      "rss": 103825408,
       "heapTotal": 57393152,
-      "heapUsed": 25870152,
+      "heapUsed": 26105008,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215400448,
-      "heapTotal": 61587456,
-      "heapUsed": 33603112,
-      "external": 22723888,
-      "arrayBuffers": 18725097
-    },
-    "loaded": {
-      "rss": 292487168,
-      "heapTotal": 114016256,
-      "heapUsed": 50370296,
-      "external": 23047090,
-      "arrayBuffers": 19048299
-    },
-    "recovered": {
-      "rss": 292519936,
-      "heapTotal": 114016256,
-      "heapUsed": 50507240,
-      "external": 23047634,
-      "arrayBuffers": 19048843
-    },
-    "peakRss": 292519936,
-    "p95Ms": 5.308790999999928,
-    "elapsedMs": 374.229416,
-    "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
-    "slowClients": 0,
-    "rejected": 0,
-    "shutdown": {
-      "code": 0,
-      "signal": null
-    },
-    "variant": "candidate",
-    "repeat": 1
-  },
-  {
-    "scenario": "normal",
-    "platform": "darwin",
-    "arch": "arm64",
-    "node": "v24.18.1",
-    "requests": 901,
-    "idle": {
-      "rss": 104595456,
-      "heapTotal": 57393152,
-      "heapUsed": 27399112,
-      "external": 22441701,
-      "arrayBuffers": 18589040
-    },
-    "warm": {
-      "rss": 215302144,
-      "heapTotal": 61063168,
-      "heapUsed": 33742744,
-      "external": 22725968,
-      "arrayBuffers": 18727177
-    },
-    "loaded": {
-      "rss": 280428544,
-      "heapTotal": 105889792,
-      "heapUsed": 47510368,
-      "external": 22748268,
-      "arrayBuffers": 18749477
-    },
-    "recovered": {
-      "rss": 280428544,
-      "heapTotal": 105889792,
-      "heapUsed": 47640360,
-      "external": 22748812,
-      "arrayBuffers": 18750021
-    },
-    "peakRss": 280428544,
-    "p95Ms": 5.0598340000000235,
-    "elapsedMs": 375.12474999999995,
-    "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
-    "slowClients": 0,
-    "rejected": 0,
-    "shutdown": {
-      "code": 0,
-      "signal": null
-    },
-    "variant": "baseline",
-    "repeat": 2
-  },
-  {
-    "scenario": "normal",
-    "platform": "darwin",
-    "arch": "arm64",
-    "node": "v24.18.1",
-    "requests": 901,
-    "idle": {
-      "rss": 103972864,
-      "heapTotal": 57917440,
-      "heapUsed": 25887328,
-      "external": 22441701,
-      "arrayBuffers": 18589040
-    },
-    "warm": {
-      "rss": 215597056,
+      "rss": 215220224,
       "heapTotal": 61849600,
-      "heapUsed": 33669448,
-      "external": 22724390,
-      "arrayBuffers": 18725599
+      "heapUsed": 33851544,
+      "external": 22724940,
+      "arrayBuffers": 18726149
     },
     "loaded": {
-      "rss": 288096256,
-      "heapTotal": 110084096,
-      "heapUsed": 58985056,
-      "external": 23100670,
-      "arrayBuffers": 19101879
+      "rss": 292012032,
+      "heapTotal": 113754112,
+      "heapUsed": 51081544,
+      "external": 23051250,
+      "arrayBuffers": 19052459
     },
     "recovered": {
-      "rss": 288096256,
-      "heapTotal": 110084096,
-      "heapUsed": 59121712,
-      "external": 23101214,
-      "arrayBuffers": 19102423
+      "rss": 292012032,
+      "heapTotal": 113754112,
+      "heapUsed": 51218168,
+      "external": 23051794,
+      "arrayBuffers": 19053003
     },
-    "peakRss": 288096256,
-    "p95Ms": 5.3576249999999845,
-    "elapsedMs": 373.60354200000006,
+    "peakRss": 292012032,
+    "p95Ms": 5.107958999999937,
+    "elapsedMs": 373.631167,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 0,
     "rejected": 0,
@@ -185,7 +92,8 @@
       "signal": null
     },
     "variant": "candidate",
-    "repeat": 2
+    "repeat": 1,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
   },
   {
     "scenario": "normal",
@@ -194,36 +102,36 @@
     "node": "v24.18.1",
     "requests": 901,
     "idle": {
-      "rss": 104529920,
-      "heapTotal": 57393152,
-      "heapUsed": 27723072,
+      "rss": 104480768,
+      "heapTotal": 56868864,
+      "heapUsed": 27005896,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215187456,
-      "heapTotal": 61325312,
-      "heapUsed": 34156344,
-      "external": 22727044,
-      "arrayBuffers": 18728253
+      "rss": 215449600,
+      "heapTotal": 60801024,
+      "heapUsed": 33520256,
+      "external": 22724916,
+      "arrayBuffers": 18726125
     },
     "loaded": {
-      "rss": 281870336,
-      "heapTotal": 105627648,
-      "heapUsed": 47764336,
-      "external": 22749296,
-      "arrayBuffers": 18750505
+      "rss": 281018368,
+      "heapTotal": 106151936,
+      "heapUsed": 47429304,
+      "external": 22747216,
+      "arrayBuffers": 18748425
     },
     "recovered": {
-      "rss": 281870336,
-      "heapTotal": 105627648,
-      "heapUsed": 47895336,
-      "external": 22749840,
-      "arrayBuffers": 18751049
+      "rss": 281051136,
+      "heapTotal": 106151936,
+      "heapUsed": 47559056,
+      "external": 22747760,
+      "arrayBuffers": 18748969
     },
-    "peakRss": 281870336,
-    "p95Ms": 5.177542000000017,
-    "elapsedMs": 368.814833,
+    "peakRss": 281051136,
+    "p95Ms": 5.543791000000056,
+    "elapsedMs": 371.110917,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 0,
     "rejected": 0,
@@ -232,7 +140,8 @@
       "signal": null
     },
     "variant": "baseline",
-    "repeat": 3
+    "repeat": 2,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
   },
   {
     "scenario": "normal",
@@ -242,35 +151,35 @@
     "requests": 901,
     "idle": {
       "rss": 103940096,
-      "heapTotal": 57655296,
-      "heapUsed": 25965080,
+      "heapTotal": 57393152,
+      "heapUsed": 25796592,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215433216,
-      "heapTotal": 61325312,
-      "heapUsed": 33685328,
-      "external": 22724390,
-      "arrayBuffers": 18725599
+      "rss": 215662592,
+      "heapTotal": 62111744,
+      "heapUsed": 33567128,
+      "external": 22723864,
+      "arrayBuffers": 18725073
     },
     "loaded": {
-      "rss": 289701888,
-      "heapTotal": 110346240,
-      "heapUsed": 58664496,
-      "external": 23098208,
-      "arrayBuffers": 19099417
+      "rss": 289931264,
+      "heapTotal": 110870528,
+      "heapUsed": 58630632,
+      "external": 23098638,
+      "arrayBuffers": 19099847
     },
     "recovered": {
-      "rss": 289701888,
-      "heapTotal": 110346240,
-      "heapUsed": 58802512,
-      "external": 23098752,
-      "arrayBuffers": 19099961
+      "rss": 289947648,
+      "heapTotal": 110870528,
+      "heapUsed": 58770200,
+      "external": 23099182,
+      "arrayBuffers": 19100391
     },
-    "peakRss": 289701888,
-    "p95Ms": 4.91866600000003,
-    "elapsedMs": 369.757167,
+    "peakRss": 289947648,
+    "p95Ms": 4.940540999999939,
+    "elapsedMs": 365.18899999999996,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 0,
     "rejected": 0,
@@ -279,7 +188,104 @@
       "signal": null
     },
     "variant": "candidate",
-    "repeat": 3
+    "repeat": 2,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
+  },
+  {
+    "scenario": "normal",
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v24.18.1",
+    "requests": 901,
+    "idle": {
+      "rss": 104251392,
+      "heapTotal": 57131008,
+      "heapUsed": 27290648,
+      "external": 22441701,
+      "arrayBuffers": 18589040
+    },
+    "warm": {
+      "rss": 215138304,
+      "heapTotal": 61063168,
+      "heapUsed": 33905560,
+      "external": 22726494,
+      "arrayBuffers": 18727703
+    },
+    "loaded": {
+      "rss": 282460160,
+      "heapTotal": 106151936,
+      "heapUsed": 47746112,
+      "external": 22747862,
+      "arrayBuffers": 18749071
+    },
+    "recovered": {
+      "rss": 282460160,
+      "heapTotal": 106151936,
+      "heapUsed": 47876120,
+      "external": 22748406,
+      "arrayBuffers": 18749615
+    },
+    "peakRss": 282460160,
+    "p95Ms": 4.6957080000000815,
+    "elapsedMs": 361.90495799999997,
+    "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
+    "slowClients": 0,
+    "rejected": 0,
+    "shutdown": {
+      "code": 0,
+      "signal": null
+    },
+    "variant": "baseline",
+    "repeat": 3,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
+  },
+  {
+    "scenario": "normal",
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v24.18.1",
+    "requests": 901,
+    "idle": {
+      "rss": 103907328,
+      "heapTotal": 57655296,
+      "heapUsed": 25840536,
+      "external": 22441701,
+      "arrayBuffers": 18589040
+    },
+    "warm": {
+      "rss": 215515136,
+      "heapTotal": 61325312,
+      "heapUsed": 33558912,
+      "external": 22723864,
+      "arrayBuffers": 18725073
+    },
+    "loaded": {
+      "rss": 289865728,
+      "heapTotal": 110608384,
+      "heapUsed": 58583432,
+      "external": 23098686,
+      "arrayBuffers": 19099895
+    },
+    "recovered": {
+      "rss": 289914880,
+      "heapTotal": 110608384,
+      "heapUsed": 58720744,
+      "external": 23099230,
+      "arrayBuffers": 19100439
+    },
+    "peakRss": 289914880,
+    "p95Ms": 5.1223340000000235,
+    "elapsedMs": 377.29050000000007,
+    "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
+    "slowClients": 0,
+    "rejected": 0,
+    "shutdown": {
+      "code": 0,
+      "signal": null
+    },
+    "variant": "candidate",
+    "repeat": 3,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
   },
   {
     "scenario": "slow-bodies",
@@ -288,36 +294,36 @@
     "node": "v24.18.1",
     "requests": 101,
     "idle": {
-      "rss": 104497152,
-      "heapTotal": 57393152,
-      "heapUsed": 27496088,
+      "rss": 104398848,
+      "heapTotal": 57655296,
+      "heapUsed": 27549936,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215269376,
-      "heapTotal": 61063168,
-      "heapUsed": 33857720,
-      "external": 22726494,
-      "arrayBuffers": 18727703
+      "rss": 215302144,
+      "heapTotal": 61325312,
+      "heapUsed": 33765528,
+      "external": 22725466,
+      "arrayBuffers": 18726675
     },
     "loaded": {
       "rss": 229015552,
       "heapTotal": 64733184,
-      "heapUsed": 38187688,
-      "external": 24210574,
-      "arrayBuffers": 20211783
+      "heapUsed": 38174608,
+      "external": 24180550,
+      "arrayBuffers": 20181759
     },
     "recovered": {
-      "rss": 232849408,
-      "heapTotal": 67092480,
-      "heapUsed": 33797216,
-      "external": 22708108,
-      "arrayBuffers": 18709317
+      "rss": 232914944,
+      "heapTotal": 66306048,
+      "heapUsed": 27228472,
+      "external": 22577028,
+      "arrayBuffers": 18578237
     },
-    "peakRss": 232849408,
-    "p95Ms": 4.457250000000016,
-    "elapsedMs": 1018.649583,
+    "peakRss": 232914944,
+    "p95Ms": 4.784458999999998,
+    "elapsedMs": 1017.799667,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 0,
@@ -326,7 +332,8 @@
       "signal": null
     },
     "variant": "baseline",
-    "repeat": 1
+    "repeat": 1,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
   },
   {
     "scenario": "slow-bodies",
@@ -335,36 +342,36 @@
     "node": "v24.18.1",
     "requests": 101,
     "idle": {
-      "rss": 103907328,
+      "rss": 103841792,
       "heapTotal": 57393152,
-      "heapUsed": 25977200,
+      "heapUsed": 26004504,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215367680,
+      "rss": 215171072,
       "heapTotal": 61587456,
-      "heapUsed": 33763312,
-      "external": 22724414,
-      "arrayBuffers": 18725623
+      "heapUsed": 33780736,
+      "external": 22724940,
+      "arrayBuffers": 18726149
     },
     "loaded": {
-      "rss": 229441536,
+      "rss": 229130240,
       "heapTotal": 65257472,
-      "heapUsed": 35878024,
-      "external": 23924002,
-      "arrayBuffers": 19925211
+      "heapUsed": 35823032,
+      "external": 23969038,
+      "arrayBuffers": 19970247
     },
     "recovered": {
-      "rss": 229785600,
-      "heapTotal": 66043904,
-      "heapUsed": 38744208,
-      "external": 23924546,
-      "arrayBuffers": 19925755
+      "rss": 229490688,
+      "heapTotal": 65257472,
+      "heapUsed": 38690016,
+      "external": 23969582,
+      "arrayBuffers": 19970791
     },
-    "peakRss": 229785600,
-    "p95Ms": 4.4642089999999826,
-    "elapsedMs": 1019.9380830000001,
+    "peakRss": 229490688,
+    "p95Ms": 4.631292000000002,
+    "elapsedMs": 1018.24825,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 192,
@@ -373,7 +380,8 @@
       "signal": null
     },
     "variant": "candidate",
-    "repeat": 1
+    "repeat": 1,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
   },
   {
     "scenario": "slow-bodies",
@@ -382,36 +390,36 @@
     "node": "v24.18.1",
     "requests": 101,
     "idle": {
-      "rss": 104513536,
-      "heapTotal": 57393152,
-      "heapUsed": 27322264,
+      "rss": 104644608,
+      "heapTotal": 57655296,
+      "heapUsed": 27616504,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215236608,
-      "heapTotal": 61587456,
-      "heapUsed": 33793248,
-      "external": 22725992,
-      "arrayBuffers": 18727201
+      "rss": 215662592,
+      "heapTotal": 61325312,
+      "heapUsed": 33843432,
+      "external": 22726494,
+      "arrayBuffers": 18727703
     },
     "loaded": {
-      "rss": 229310464,
-      "heapTotal": 64995328,
-      "heapUsed": 38075680,
-      "external": 24105490,
-      "arrayBuffers": 20106699
+      "rss": 229687296,
+      "heapTotal": 64471040,
+      "heapUsed": 38078160,
+      "external": 24090478,
+      "arrayBuffers": 20091687
     },
     "recovered": {
-      "rss": 233029632,
-      "heapTotal": 66568192,
-      "heapUsed": 27228256,
-      "external": 22577028,
-      "arrayBuffers": 18578237
+      "rss": 233160704,
+      "heapTotal": 66830336,
+      "heapUsed": 34281360,
+      "external": 22708199,
+      "arrayBuffers": 18709408
     },
-    "peakRss": 233029632,
-    "p95Ms": 4.499374999999986,
-    "elapsedMs": 1018.621625,
+    "peakRss": 233160704,
+    "p95Ms": 4.486875000000026,
+    "elapsedMs": 1018.317917,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 0,
@@ -420,7 +428,8 @@
       "signal": null
     },
     "variant": "baseline",
-    "repeat": 2
+    "repeat": 2,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
   },
   {
     "scenario": "slow-bodies",
@@ -430,35 +439,35 @@
     "requests": 101,
     "idle": {
       "rss": 103874560,
-      "heapTotal": 57393152,
-      "heapUsed": 25872040,
+      "heapTotal": 57917440,
+      "heapUsed": 25777416,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215564288,
+      "rss": 215449600,
       "heapTotal": 61587456,
-      "heapUsed": 33624856,
-      "external": 22723888,
-      "arrayBuffers": 18725097
+      "heapUsed": 33541728,
+      "external": 22723864,
+      "arrayBuffers": 18725073
     },
     "loaded": {
-      "rss": 229736448,
+      "rss": 229605376,
       "heapTotal": 65257472,
-      "heapUsed": 35649496,
-      "external": 23743858,
-      "arrayBuffers": 19745067
+      "heapUsed": 35550944,
+      "external": 23698822,
+      "arrayBuffers": 19700031
     },
     "recovered": {
-      "rss": 230080512,
+      "rss": 229933056,
       "heapTotal": 65257472,
-      "heapUsed": 38515472,
-      "external": 23744402,
-      "arrayBuffers": 19745611
+      "heapUsed": 38416856,
+      "external": 23699366,
+      "arrayBuffers": 19700575
     },
-    "peakRss": 230080512,
-    "p95Ms": 4.466915999999998,
-    "elapsedMs": 1018.2992499999999,
+    "peakRss": 229933056,
+    "p95Ms": 4.4014589999999885,
+    "elapsedMs": 1017.918834,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 192,
@@ -467,7 +476,8 @@
       "signal": null
     },
     "variant": "candidate",
-    "repeat": 2
+    "repeat": 2,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
   },
   {
     "scenario": "slow-bodies",
@@ -476,36 +486,36 @@
     "node": "v24.18.1",
     "requests": 101,
     "idle": {
-      "rss": 104660992,
+      "rss": 104611840,
       "heapTotal": 57655296,
-      "heapUsed": 27251520,
+      "heapUsed": 27434272,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215580672,
+      "rss": 215384064,
       "heapTotal": 61063168,
-      "heapUsed": 33752680,
-      "external": 22725466,
-      "arrayBuffers": 18726675
+      "heapUsed": 33706680,
+      "external": 22725442,
+      "arrayBuffers": 18726651
     },
     "loaded": {
-      "rss": 229294080,
-      "heapTotal": 64471040,
-      "heapUsed": 37992944,
-      "external": 24150526,
-      "arrayBuffers": 20151735
+      "rss": 229687296,
+      "heapTotal": 64995328,
+      "heapUsed": 37990368,
+      "external": 23955370,
+      "arrayBuffers": 19956579
     },
     "recovered": {
-      "rss": 232898560,
+      "rss": 232996864,
       "heapTotal": 67092480,
-      "heapUsed": 33831320,
-      "external": 22708108,
-      "arrayBuffers": 18709317
+      "heapUsed": 34290424,
+      "external": 22708206,
+      "arrayBuffers": 18709415
     },
-    "peakRss": 232898560,
-    "p95Ms": 4.277834000000013,
-    "elapsedMs": 1018.90125,
+    "peakRss": 232996864,
+    "p95Ms": 4.504708999999991,
+    "elapsedMs": 1017.5106249999999,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 0,
@@ -514,7 +524,8 @@
       "signal": null
     },
     "variant": "baseline",
-    "repeat": 3
+    "repeat": 3,
+    "sourceCommit": "7ec0958ea3d92670788a0a336c12637b96dd4102"
   },
   {
     "scenario": "slow-bodies",
@@ -523,36 +534,36 @@
     "node": "v24.18.1",
     "requests": 101,
     "idle": {
-      "rss": 103645184,
-      "heapTotal": 57131008,
-      "heapUsed": 25978512,
+      "rss": 103956480,
+      "heapTotal": 57655296,
+      "heapUsed": 25963264,
       "external": 22441701,
       "arrayBuffers": 18589040
     },
     "warm": {
-      "rss": 215220224,
-      "heapTotal": 61325312,
-      "heapUsed": 33780432,
+      "rss": 215384064,
+      "heapTotal": 61587456,
+      "heapUsed": 33725656,
       "external": 22724414,
       "arrayBuffers": 18725623
     },
     "loaded": {
-      "rss": 229310464,
-      "heapTotal": 64995328,
-      "heapUsed": 35889384,
-      "external": 23939014,
-      "arrayBuffers": 19940223
+      "rss": 229408768,
+      "heapTotal": 64471040,
+      "heapUsed": 35646136,
+      "external": 23833930,
+      "arrayBuffers": 19835139
     },
     "recovered": {
-      "rss": 229687296,
+      "rss": 229736448,
       "heapTotal": 64995328,
-      "heapUsed": 38756480,
-      "external": 23939558,
-      "arrayBuffers": 19940767
+      "heapUsed": 38512752,
+      "external": 23834474,
+      "arrayBuffers": 19835683
     },
-    "peakRss": 229687296,
-    "p95Ms": 4.483249999999998,
-    "elapsedMs": 1017.354458,
+    "peakRss": 229736448,
+    "p95Ms": 4.567667,
+    "elapsedMs": 1019.558292,
     "responseSha256": "1faf3bb797084b001578a66e92c6a4a7924e9f97ae3fd1df8b41052e9a36c114",
     "slowClients": 256,
     "rejected": 192,
@@ -561,6 +572,7 @@
       "signal": null
     },
     "variant": "candidate",
-    "repeat": 3
+    "repeat": 3,
+    "sourceCommit": "95a8508d3aa23f0988b932a712edbf69bbe47e04"
   }
 ]

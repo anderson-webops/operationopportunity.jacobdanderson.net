@@ -1,5 +1,11 @@
 # Operation Opportunity direct deployment
 
+For v2.3.2 off-host runtime artifacts, use
+[`docs/runtime-artifact-contract.md`](../../docs/runtime-artifact-contract.md).
+The source-checkout scripts below require their original preparation contract;
+do not pass them an unpacked artifact or overwrite an installed runtime prefix.
+Preserve the reviewed host topology and protected state.
+
 The only reviewed production boundary is:
 
 - the public TLS Nginx server serves `/srv/operation-opportunity/current/front-end/dist` and forwards only `/api/` to `127.0.0.1:3002`;

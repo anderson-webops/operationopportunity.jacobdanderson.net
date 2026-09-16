@@ -2,8 +2,8 @@
 
 Build source, package acceptance, source release and production activation are
 separate gates. `scripts/build-arm64-release.sh OUTPUT` runs on an unprivileged
-Linux ARM64 builder with Node24.18.1/npm12.0.2, MongoDB8 fixture binaries,
-Python3 and bubblewrap. OUTPUT must be under the owning checkout's ignored
+Linux ARM64 builder with Node 24.18.1/npm 12.0.2, MongoDB 8 fixture binaries,
+Python 3 and bubblewrap. OUTPUT must be under the owning checkout's ignored
 `.ai-work/runs/`. Both `TEST_MONGODB_URI` and `MONGO_FAULT_TEST_URI` must identify
 owned synthetic loopback databases; the fault fixture requires test commands.
 No production connection or provider secret is used.
@@ -59,9 +59,9 @@ builder are not publishable. Keep existing tags/assets immutable.
 
 The existing documented topology is `/srv/operation-opportunity/current` with
 `back-end/dist/server.js`, production modules under `back-end/node_modules`, static
-`front-end/dist`, `operation-opportunity-api.service` and loopback3002. Preserve
+`front-end/dist`, `operation-opportunity-api.service` and loopback 3002. Preserve
 actual installed paths/users/listeners if the operator's reviewed host differs.
-Use the already installed Node24.18.1 prefix in the service; do not replace
+Use the already installed Node 24.18.1 prefix in the service; do not replace
 host-wide `/usr/bin/node` to satisfy a template. npm is build tooling, not the
 production service entrypoint. Do not install a canonical template over an
 existing compatibility host.

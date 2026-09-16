@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "commit": "95a8508d3aa23f0988b932a712edbf69bbe47e04",
+  "archiveSha256": "a3fe32b93e8f6700a1818d56e31b2d96404c7f2be72f62a71956653c7ce230b2",
+  "harnessFiles": {
+    "scripts/test-unpacked-artifact.sh": "439b727e5aef0dd66ccdddc226ca65b5b648ccfe975d7655736f3a9850c89f01",
+    "scripts/runtime-artifact.py": "e81ec3f9da9889c79b0843b7dd8bf9ac0bb5c7c6a43956fec0f23db6016e83f0",
+    "deploy/runtime-artifact.json": "26fc1c125a8ab45a17f789b0f41452a6a070332e32058223b8cdf9eb5cf1472d",
+    "scripts/artifact-acceptance/runtime.mjs": "7776c8b5a50be55e8af4ae8615da62f706d260c9dfbec7e399a6020fa929f01a"
+  }
+}
