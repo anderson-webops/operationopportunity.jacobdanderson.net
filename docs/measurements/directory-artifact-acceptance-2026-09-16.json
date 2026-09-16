@@ -1,0 +1,103 @@
+{
+  "release": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/tag/v2.3.4",
+  "publishedAt": "2026-09-16T18:35:43Z",
+  "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+  "annotatedTagObject": "8da3e6f280b4cfa0dae0b22b7286fa19b9f7e7ac",
+  "assets": [
+    {
+      "name": "acceptance-receipt.json",
+      "bytes": 619,
+      "sha256": "682e34da74eb658fb3665070828acbd3aac9534d214ded50450c0d5286fc89a4"
+    },
+    {
+      "name": "acceptance.jsonl",
+      "bytes": 1133,
+      "sha256": "962c4966073eb4929d1674df88e9d485a88b8e380712d0af387e2940a4f1d667"
+    },
+    {
+      "name": "operation-opportunity-v2.3.4-9ade7e3ca2af-linux-arm64.tar.gz",
+      "bytes": 3972080,
+      "sha256": "5c96beab987a79515dcd1d16a23594c6ae01213d602b351b42dbe0c3015d6f03"
+    },
+    {
+      "name": "operation-opportunity-v2.3.4-9ade7e3ca2af-linux-arm64.tar.gz.manifest.json",
+      "bytes": 333894,
+      "sha256": "7588816a3094334d68396c6a843518f7e5fad77f3575e1ec870fcd1ca647c969"
+    },
+    {
+      "name": "operation-opportunity-v2.3.4-9ade7e3ca2af-linux-arm64.tar.gz.sha256",
+      "bytes": 127,
+      "sha256": "f57b0092057c5554379cd61b4534657ca2fb8611a61bcc8e708f93f6032f9698"
+    }
+  ],
+  "receipt": {
+    "passed": true,
+    "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+    "archiveSha256": "5c96beab987a79515dcd1d16a23594c6ae01213d602b351b42dbe0c3015d6f03",
+    "harnessFiles": {
+      "scripts/test-unpacked-artifact.sh": "37574683178a600d2d070bdb29a1c49dbab1ab54669750ef4a71772612be3edd",
+      "scripts/runtime-artifact.py": "3b892012d3fc420848500961a00d56f600c6a80aa0fa78477800403b862e5a0a",
+      "deploy/runtime-artifact.json": "d1dcbcfbb009ddf57f243b3e69b98d62353cd23afb9e476bfff43e9900cb24ed",
+      "scripts/artifact-acceptance/runtime.mjs": "587b686bacbd182259c086bb7d71ede3949786335aad59d6dd20465aa7a0c88a"
+    }
+  },
+  "records": [
+    {
+      "negativeModule": "passed"
+    },
+    {
+      "verified": true,
+      "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+      "files": 1911
+    },
+    {
+      "soak": {
+        "passed": true,
+        "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+        "seconds": 60,
+        "idleRecoverySeconds": 5,
+        "concurrency": 8,
+        "completed": 15157,
+        "before": {
+          "VmRSS": 122781696,
+          "VmHWM": 176955392
+        },
+        "loaded": {
+          "VmRSS": 200273920,
+          "VmHWM": 200368128
+        },
+        "recovered": {
+          "VmRSS": 200273920,
+          "VmHWM": 200368128
+        },
+        "p95Ms": 9.617139999998471
+      }
+    },
+    {
+      "accepted": true,
+      "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+      "checks": [
+        "production-native-binding",
+        "startup-query-cancellation-and-private-index-cleanup",
+        "ram-backed-scratch-rejected",
+        "compiled-server-and-maintenance-entrypoint-guards",
+        "GET-HEAD-health-readiness",
+        "signup-login-CSRF-role-isolation-logout",
+        "complete-paged-and-legacy-directories-public-field-isolation",
+        "quotes-provider-failure-recovery",
+        "database-failure-recovery",
+        "disconnected-write-drain-audit",
+        "repeated-signals",
+        "retained-session-and-account-restart",
+        "immutable-artifact",
+        "no-source-development-dependencies-or-external-network"
+      ]
+    },
+    {
+      "verified": true,
+      "commit": "9ade7e3ca2af127f0c19398ffcf3fe637920cc16",
+      "files": 1911
+    }
+  ],
+  "remoteAssetBytesSizesDigestsAndRefsVerified": true
+}

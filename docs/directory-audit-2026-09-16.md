@@ -1,9 +1,9 @@
 # Directory and session lifetime audit, 2026-09-16
 
-Candidate: v2.3.4. Baseline: v2.3.3 application, retained checkout
+Published: v2.3.4 / 9ade7e3ca2af127f0c19398ffcf3fe637920cc16. Baseline: v2.3.3 application, retained checkout
 fc61b773ab158d4d847c9cdb38c3d24aebe4988c (documentation after tagged application
-d76675e40e4fe610d03857bcfba6da00792ac296). This report describes source checks;
-Linux ARM64 package acceptance and publication are pending. No production change.
+d76675e40e4fe610d03857bcfba6da00792ac296). Exact Linux ARM64 package acceptance and publication are verified in the
+[directory runtime report](directory-runtime-acceptance-2026-09-16.md). No production change.
 
 ## Result and tradeoff
 
@@ -73,8 +73,8 @@ lease work remain separate requirements of the wider audit.
   omission of the new compiled directory module.
 
 The isolated ARM64 runner now includes complete paged/legacy directory comparisons,
-late search and public/private authorization checks. Its exact-source result must
-pass before publishing an archive or making release-readiness claims.
+late search and public/private authorization checks. Its exact-source acceptance passed before publication; the runtime report links
+the verified archive, receipt and published files.
 
 ## Reproduction and deployment boundary
 
