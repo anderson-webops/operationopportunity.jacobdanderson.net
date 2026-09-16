@@ -39,6 +39,8 @@ by starting the broken service. There is no artificial `shared/` directory.
 
 The unpacked acceptance runner uses a read-only artifact, unprivileged process,
 zero effective capabilities, isolated loopback network and disposable state.
+The disposable fixture state is disk-backed. A separate tmpfs probe requires
+the compiled server to reject RAM-backed identity scratch before listening.
 Neither source checkout nor development modules nor real providers are visible.
 Missing isolation support fails; do not fall back to running in the checkout.
 It executes the real native binding and compiled API, checks maintenance CLI
@@ -49,6 +51,8 @@ update that must drain and audit under repeated signals. Restart must retain the
 account and session. The CLI guard checks do not claim interactive operator
 recovery workflows were performed. Existing integration tests cover their shared
 account/authorization logic; operator recovery remains privileged.
+Startup acceptance also stops the compiled service during a blocked identity
+cursor and checks exit 0, private-index permissions and complete scratch cleanup.
 
 Publish archive, checksum, manifest, acceptance receipt and acceptance records
 only after all gates pass for the exact annotated source. The receipt binds the
@@ -88,3 +92,35 @@ This milestone changes no schema. For future schema changes, rehearse candidate
 and exact retained application reads/writes and sessions against the migrated
 synthetic database before activation. Application rollback does not reverse a
 migration. Database restoration requires a separately reviewed operation.
+
+## Private startup identity scratch
+
+Startup scans every account with 128-row cursors and preserves JavaScript Unicode
+email normalization. A private SQLite index detects duplicates across all roles
+before account or identity-registry repairs. Its page cache is two MiB; the index
+itself grows on disk with account count. Already-correct registry entries are not
+rewritten. Node's built-in `node:sqlite` is part of the pinned runtime, not an
+additional npm/native package. Extension loading and memory mapping are disabled.
+
+On Linux, the index uses `TMPDIR` if supplied, otherwise `/var/tmp`; it rejects
+tmpfs and ramfs. The operator must verify that the service's existing private
+temporary namespace exposes a writable, disk-backed location outside immutable
+releases with enough free space. Preserve its existing isolation and permissions;
+do not change the host template or put scratch under the release to bypass this
+check. The directory is private (0700), its database is 0600, and both contain
+sensitive account identifiers. No index, journal or identifier belongs in an
+artifact, public log, report or backup of an immutable release.
+
+Completion, ordinary failure and cooperative startup cancellation remove this
+scratch. An uncatchable process/host failure can leave it until the service's
+private temporary namespace is retired; operators must retain private ownership
+and perform reviewed cleanup, never treat it as authoritative data. Disk failures
+fail startup closed. Repairs remain restartable, but they are not a single
+transaction across account collections: maintain the existing exclusive startup
+or maintenance boundary with no concurrent account writers. Do not run a recovery
+CLI concurrently with a serving API or a second reconciler. This change does not
+claim to solve distributed startup or authorization-lease coordination.
+
+Preserve the actual database and retained application through promotion and
+rollback. The old application does not need this disposable index; no new durable
+schema or identity semantics are introduced.

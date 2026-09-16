@@ -13,13 +13,16 @@ test -x /usr/bin/mongod
 if [[ "$case_name" == complete ]]; then
   python3 -B "$script_dir/runtime-artifact.py" verify "$artifact"
 fi
+state=$(mktemp -d "$(dirname "$artifact")/acceptance-state.XXXXXX")
+trap 'rm -rf -- "$state"' EXIT
+mkdir "$state/tmp"
 timeout -k 5 360 bwrap --unshare-all --die-with-parent --new-session \
   --ro-bind /usr /usr --symlink usr/bin /bin --symlink usr/sbin /sbin --symlink usr/lib /lib \
-  --ro-bind "$node" /runtime/node --proc /proc --dev /dev --tmpfs /tmp --tmpfs /state \
+  --ro-bind "$node" /runtime/node --proc /proc --dev /dev --tmpfs /tmp --bind "$state" /state \
   --ro-bind /sys/devices/system/cpu/possible /sys/devices/system/cpu/possible \
   --dir /run --dir /run/quotes --ro-bind "$artifact" /app \
   --ro-bind "$script_dir/artifact-acceptance" /harness \
-  --clearenv --setenv PATH /runtime:/usr/bin:/bin --setenv HOME /state \
+  --clearenv --setenv PATH /runtime:/usr/bin:/bin --setenv HOME /state --setenv TMPDIR /state/tmp \
   --chdir /app /runtime/node /harness/runtime.mjs "$case_name" "$script_dir"
 if [[ "$case_name" == complete ]]; then
   python3 -B "$script_dir/runtime-artifact.py" verify "$artifact"

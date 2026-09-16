@@ -1,0 +1,475 @@
+{
+  "node": "v24.18.1",
+  "platform": "darwin",
+  "arch": "arm64",
+  "results": [
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 0,
+      "variant": "baseline",
+      "elapsedMs": 4135.872875,
+      "idle": {
+        "rss": 90734592,
+        "heapUsed": 21453312
+      },
+      "warmed": {
+        "rss": 313442304,
+        "heapUsed": 34508552
+      },
+      "recovered": {
+        "rss": 313442304,
+        "heapUsed": 34561672
+      },
+      "peakRss": 313507840,
+      "peakHeap": 118962976,
+      "peakScratch": 0,
+      "commands": {
+        "find": 30004,
+        "getMore": 4,
+        "update": 30000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 313556992,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 0,
+      "variant": "candidate",
+      "elapsedMs": 327.091667,
+      "idle": {
+        "rss": 89325568,
+        "heapUsed": 19578856
+      },
+      "warmed": {
+        "rss": 122306560,
+        "heapUsed": 33552824
+      },
+      "recovered": {
+        "rss": 122322944,
+        "heapUsed": 33619400
+      },
+      "peakRss": 122322944,
+      "peakHeap": 35246648,
+      "peakScratch": 3265040,
+      "commands": {
+        "find": 4,
+        "getMore": 468,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 122437632,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 1,
+      "variant": "candidate",
+      "elapsedMs": 333.13425000000007,
+      "idle": {
+        "rss": 89079808,
+        "heapUsed": 19401792
+      },
+      "warmed": {
+        "rss": 122208256,
+        "heapUsed": 33557248
+      },
+      "recovered": {
+        "rss": 122208256,
+        "heapUsed": 33616216
+      },
+      "peakRss": 122208256,
+      "peakHeap": 33977000,
+      "peakScratch": 3265040,
+      "commands": {
+        "find": 4,
+        "getMore": 468,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 122322944,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 1,
+      "variant": "baseline",
+      "elapsedMs": 4176.492459,
+      "idle": {
+        "rss": 90357760,
+        "heapUsed": 21159968
+      },
+      "warmed": {
+        "rss": 364544000,
+        "heapUsed": 68444392
+      },
+      "recovered": {
+        "rss": 364544000,
+        "heapUsed": 68499832
+      },
+      "peakRss": 366051328,
+      "peakHeap": 167594376,
+      "peakScratch": 0,
+      "commands": {
+        "find": 30004,
+        "getMore": 4,
+        "update": 30000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 367181824,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 2,
+      "variant": "baseline",
+      "elapsedMs": 4634.567167,
+      "idle": {
+        "rss": 91144192,
+        "heapUsed": 21255264
+      },
+      "warmed": {
+        "rss": 358760448,
+        "heapUsed": 60805744
+      },
+      "recovered": {
+        "rss": 358760448,
+        "heapUsed": 60865992
+      },
+      "peakRss": 359448576,
+      "peakHeap": 164413976,
+      "peakScratch": 0,
+      "commands": {
+        "find": 30004,
+        "getMore": 4,
+        "update": 30000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 359612416,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "valid-registry",
+      "accounts": 30000,
+      "pair": 2,
+      "variant": "candidate",
+      "elapsedMs": 322.569833,
+      "idle": {
+        "rss": 89096192,
+        "heapUsed": 19476672
+      },
+      "warmed": {
+        "rss": 122781696,
+        "heapUsed": 35358912
+      },
+      "recovered": {
+        "rss": 122798080,
+        "heapUsed": 35425048
+      },
+      "peakRss": 122798080,
+      "peakHeap": 36523056,
+      "peakScratch": 3265040,
+      "commands": {
+        "find": 4,
+        "getMore": 468,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 122896384,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 10000,
+        "tutors": 10000,
+        "users": 10000,
+        "accountemails": 30000
+      },
+      "semanticSha256": "eec5dff203598435d95569914fc6407329716c54f8d4cc091de49aafa3c0d79d"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 0,
+      "variant": "baseline",
+      "elapsedMs": 813.172917,
+      "idle": {
+        "rss": 90980352,
+        "heapUsed": 21401056
+      },
+      "warmed": {
+        "rss": 140771328,
+        "heapUsed": 33238456
+      },
+      "recovered": {
+        "rss": 140771328,
+        "heapUsed": 33292416
+      },
+      "peakRss": 140771328,
+      "peakHeap": 38686080,
+      "peakScratch": 0,
+      "commands": {
+        "find": 3004,
+        "getMore": 4,
+        "update": 6000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 140869632,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 0,
+      "variant": "candidate",
+      "elapsedMs": 618.566959,
+      "idle": {
+        "rss": 89210880,
+        "heapUsed": 19501912
+      },
+      "warmed": {
+        "rss": 117325824,
+        "heapUsed": 26694208
+      },
+      "recovered": {
+        "rss": 117325824,
+        "heapUsed": 26756592
+      },
+      "peakRss": 117325824,
+      "peakHeap": 29754960,
+      "peakScratch": 16912,
+      "commands": {
+        "find": 1504,
+        "getMore": 32,
+        "update": 4500,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 117407744,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 1,
+      "variant": "candidate",
+      "elapsedMs": 619.0074159999999,
+      "idle": {
+        "rss": 89260032,
+        "heapUsed": 19619696
+      },
+      "warmed": {
+        "rss": 128876544,
+        "heapUsed": 27247192
+      },
+      "recovered": {
+        "rss": 128876544,
+        "heapUsed": 27309664
+      },
+      "peakRss": 128876544,
+      "peakHeap": 29918592,
+      "peakScratch": 16912,
+      "commands": {
+        "find": 1504,
+        "getMore": 32,
+        "update": 4500,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 128974848,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 1,
+      "variant": "baseline",
+      "elapsedMs": 777.449625,
+      "idle": {
+        "rss": 91029504,
+        "heapUsed": 21334120
+      },
+      "warmed": {
+        "rss": 137183232,
+        "heapUsed": 29116136
+      },
+      "recovered": {
+        "rss": 137183232,
+        "heapUsed": 29170128
+      },
+      "peakRss": 137183232,
+      "peakHeap": 36997224,
+      "peakScratch": 0,
+      "commands": {
+        "find": 3004,
+        "getMore": 4,
+        "update": 6000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 137281536,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 2,
+      "variant": "baseline",
+      "elapsedMs": 786.6851670000001,
+      "idle": {
+        "rss": 90587136,
+        "heapUsed": 21355352
+      },
+      "warmed": {
+        "rss": 136691712,
+        "heapUsed": 37239832
+      },
+      "recovered": {
+        "rss": 136708096,
+        "heapUsed": 37293184
+      },
+      "peakRss": 136708096,
+      "peakHeap": 37379240,
+      "peakScratch": 0,
+      "commands": {
+        "find": 3004,
+        "getMore": 4,
+        "update": 6000,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 136806400,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    },
+    {
+      "scenario": "legacy-repair",
+      "accounts": 3000,
+      "pair": 2,
+      "variant": "candidate",
+      "elapsedMs": 602.679625,
+      "idle": {
+        "rss": 88915968,
+        "heapUsed": 19563360
+      },
+      "warmed": {
+        "rss": 128385024,
+        "heapUsed": 32897136
+      },
+      "recovered": {
+        "rss": 128401408,
+        "heapUsed": 32961216
+      },
+      "peakRss": 128401408,
+      "peakHeap": 32961216,
+      "peakScratch": 16912,
+      "commands": {
+        "find": 1504,
+        "getMore": 32,
+        "update": 4500,
+        "endSessions": 1
+      },
+      "processHighWaterRss": 128516096,
+      "sampleIntervalMs": 20,
+      "recoveryMs": 1000,
+      "counts": {
+        "admins": 1000,
+        "tutors": 1000,
+        "users": 1000,
+        "accountemails": 3000
+      },
+      "semanticSha256": "e12cdbc72f30127b80474bf053e971986c48a39a8ae73dc2f986296a35258870"
+    }
+  ],
+  "baselineCommit": "8e95c5a5a74c38728cdfa7bd3821c49b77748bfb",
+  "candidateVersion": "2.3.3",
+  "method": "Three paired fresh processes per scenario, alternating order; compiled identity-registry routine after connection/model init; parent-only seeding and complete semantic digest; 20 ms samples and 1 second idle recovery; no forced GC or heap limits.",
+  "sourceSha256": {
+    "baseline": {
+      "back-end/src/services/identityRegistry.ts": "3ec57be7f35f07873614b4b224f160a5c0c537db81a9963352de541a43180ed8",
+      "back-end/src/databaseCapacity.ts": "d977f62eb668ae422c6523436ece6b67bb0dabe0915e7043297126c6c4492cdc"
+    },
+    "candidate": {
+      "back-end/src/services/identityRegistry.ts": "6502f5f1703becc30d904a4ad804ce08e142f84350caff9755372c9122c5f35d",
+      "back-end/src/services/identityIndex.ts": "b3edf79518d7e32f15a7ab3d8de90325fc057e7b0ac8fb2bd8921a0aaf6626b0",
+      "back-end/src/databaseCapacity.ts": "d977f62eb668ae422c6523436ece6b67bb0dabe0915e7043297126c6c4492cdc"
+    }
+  },
+  "harnessSha256": "8575206fc467b836c15a6256e3a80b4fb1badce6ee02df8a38ca7ef8b0711afb"
+}

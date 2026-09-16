@@ -1,10 +1,13 @@
 import type { Model, Types } from "mongoose";
 import type { AccountRole } from "../types/account.js";
+import { setImmediate } from "node:timers/promises";
+import mongoose from "mongoose";
 import { AccountEmail } from "../models/schemas/AccountEmail.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
 import { normalizeEmail } from "../validation.js";
+import { createIdentityIndex } from "./identityIndex.js";
 import { accountWriteDefinitelyFailed } from "./identityWriteSafety.js";
 
 interface ExistingIdentity {
@@ -29,72 +32,95 @@ const SOURCES: IdentitySource[] = [
 	{ role: "user", model: User }
 ];
 
-export async function ensureIdentityRegistry(): Promise<void> {
-	const expected = new Map<string, { role: AccountRole; accountId: Types.ObjectId }>();
-	const normalizations: Array<{
-		source: IdentitySource;
-		accountId: Types.ObjectId;
-		previousEmail: string;
-		email: string;
-	}> = [];
-
-	for (const source of SOURCES) {
-		const accounts = await source.model.find({}, { _id: 1, email: 1 }).lean<ExistingIdentity[]>().exec();
-		for (const account of accounts) {
-			const email = normalizeEmail(account.email);
-			const conflict = expected.get(email);
-			if (conflict && !conflict.accountId.equals(account._id)) {
-				throw new Error("Duplicate normalized login identity detected during startup");
-			}
-			expected.set(email, { role: source.role, accountId: account._id });
-			if (account.email !== email) {
-				normalizations.push({
-					source,
-					accountId: account._id,
-					previousEmail: account.email,
-					email
-				});
-			}
+/** Validate the full account set before repairing, with bounded cursor batches. */
+export async function ensureIdentityRegistry(signal?: AbortSignal): Promise<void> {
+	signal?.throwIfAborted();
+	const index = await createIdentityIndex();
+	let processed = 0;
+	async function checkpoint() {
+		signal?.throwIfAborted();
+		if (++processed % 128 === 0) {
+			await setImmediate();
+			signal?.throwIfAborted();
 		}
 	}
-
-	for (const normalization of normalizations) {
-		try {
-			const result = await normalization.source.model.collection.updateOne(
-				{
-					_id: normalization.accountId,
-					email: normalization.previousEmail
-				},
-				{ $set: { email: normalization.email } }
+	try {
+		for (const source of SOURCES) {
+			const cursor = source.model
+				.find({}, { _id: 1, email: 1 })
+				.sort({ _id: 1 })
+				.setOptions({ signal, timeoutMS: 5000, timeoutMode: "iteration" })
+				.lean<ExistingIdentity[]>()
+				.cursor({ batchSize: 128 });
+			try {
+				for await (const account of cursor) {
+					await checkpoint();
+					// Keep JavaScript Unicode trim/lowercase behavior, not MongoDB $toLower.
+					index.add({
+						email: normalizeEmail(account.email),
+						role: source.role,
+						accountId: account._id.toString(),
+						previousEmail: account.email
+					});
+				}
+			} finally {
+				await cursor.close();
+			}
+		}
+		// Duplicate detection is complete before any authoritative account changes.
+		for (const item of index.normalizations()) {
+			await checkpoint();
+			const source = SOURCES.find((source) => source.role === item.role)!;
+			const result = await source.model.collection.updateOne(
+				{ _id: new mongoose.Types.ObjectId(item.accountId), email: item.previousEmail },
+				{ $set: { email: item.email } }
 			);
-			if (result.matchedCount !== 1) {
-				throw new Error("Login identity changed during startup");
+			if (result.matchedCount !== 1) throw new Error("Login identity changed during startup");
+		}
+		const stored = AccountEmail.find({}, { _id: 1, role: 1, accountId: 1 })
+			.sort({ _id: 1 })
+			.setOptions({ signal, timeoutMS: 5000, timeoutMode: "iteration" })
+			.lean<RegistryIdentity[]>()
+			.cursor({ batchSize: 128 });
+		try {
+			for await (const identity of stored) {
+				await checkpoint();
+				const expected = index.get(identity._id);
+				if (
+					expected &&
+					expected.role === identity.role &&
+					expected.accountId === identity.accountId.toString()
+				) {
+					// Do not rewrite every already-valid identity or allocate an in-memory set.
+					index.markVerified(identity._id);
+				} else {
+					await AccountEmail.deleteOne({
+						_id: identity._id,
+						role: identity.role,
+						accountId: identity.accountId
+					});
+				}
 			}
-		} catch {
-			throw new Error("Login identity normalization failed during startup");
+		} finally {
+			await stored.close();
 		}
-	}
-
-	const storedIdentities = await AccountEmail.find({}, { _id: 1, role: 1, accountId: 1 })
-		.lean<RegistryIdentity[]>()
-		.exec();
-	for (const stored of storedIdentities) {
-		const authoritative = expected.get(stored._id);
-		if (!authoritative || authoritative.role !== stored.role || !authoritative.accountId.equals(stored.accountId)) {
-			await AccountEmail.deleteOne({
-				_id: stored._id,
-				role: stored.role,
-				accountId: stored.accountId
-			});
+		for (const identity of index.missing()) {
+			await checkpoint();
+			const accountId = new mongoose.Types.ObjectId(identity.accountId);
+			// A concurrent different owner must cause a duplicate-key failure, never
+			// an unconditional ownership overwrite.
+			await AccountEmail.updateOne(
+				{ _id: identity.email, role: identity.role, accountId },
+				{ $setOnInsert: { role: identity.role, accountId } },
+				{ upsert: true }
+			);
+			const stored = await AccountEmail.findById(identity.email).lean().exec();
+			if (!stored || stored.role !== identity.role || !stored.accountId.equals(accountId)) {
+				throw new Error("Login identity registry mismatch detected during startup");
+			}
 		}
-	}
-
-	for (const [email, identity] of expected) {
-		await AccountEmail.updateOne({ _id: email }, { $set: identity }, { upsert: true });
-		const stored = await AccountEmail.findById(email).lean().exec();
-		if (!stored || stored.role !== identity.role || !stored.accountId.equals(identity.accountId)) {
-			throw new Error("Login identity registry mismatch detected during startup");
-		}
+	} finally {
+		await index.dispose();
 	}
 }
 

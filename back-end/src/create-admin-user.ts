@@ -2,6 +2,7 @@ import { exit } from "node:process";
 import mongoose from "mongoose";
 import * as readlineSync from "readline-sync";
 import { loadConfig, validateResolvedMongoUri } from "./config.js";
+import { DATABASE_OPTIONS } from "./databaseCapacity.js";
 import { Admin } from "./models/schemas/Admin.js";
 import { createAccount } from "./services/accountService.js";
 import { withAuthorizationWorkflowLock } from "./services/adminWorkflow.js";
@@ -15,10 +16,7 @@ async function main() {
 	const mongoUri = config.vault ? await readMongoSecret(config.vault) : config.mongoUri;
 	if (!mongoUri) throw new Error("A MongoDB secret source is required");
 	validateResolvedMongoUri(mongoUri, config);
-	await mongoose.connect(mongoUri, {
-		serverSelectionTimeoutMS: 8_000,
-		connectTimeoutMS: 8_000
-	});
+	await mongoose.connect(mongoUri, DATABASE_OPTIONS);
 	await applyAdditiveSecurityMigrations();
 	await ensureIdentityRegistry();
 

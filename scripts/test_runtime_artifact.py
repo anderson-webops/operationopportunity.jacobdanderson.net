@@ -49,7 +49,7 @@ class RuntimeArtifactTests(unittest.TestCase):
             artifact.validate(self.root, self.manifest())
 
     def test_symlinks_and_private_state(self):
-        for name in [".env", "credentials.json", "back-end/dist/key.pem", "back-end/dist/enrollment.sqlite3"]:
+        for name in [".env", "credentials.json", "back-end/dist/key.pem", "back-end/dist/enrollment.sqlite3", "back-end/dist/index.sqlite", "back-end/dist/index.sqlite-wal", "back-end/dist/index.sqlite-journal"]:
             with self.subTest(name=name):
                 path = self.root / name
                 path.write_text("synthetic forbidden content")

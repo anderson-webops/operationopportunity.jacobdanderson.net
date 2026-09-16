@@ -9,17 +9,18 @@ export function createService(options: {
 	port: number;
 	capacity: RequestCapacity;
 	log: ServiceLog;
-	initialize: () => Promise<Express>;
+	initialize: (signal: AbortSignal) => Promise<Express>;
 	dispose: () => Promise<void>;
 	shutdownMs?: number;
 }) {
 	let server: Server | undefined;
 	let starting: Promise<void> | undefined;
 	let stopping: Promise<number> | undefined;
+	const startup = new AbortController();
 	function start(): Promise<void> {
 		if (stopping) return Promise.reject(new Error("Service is already stopping"));
 		return (starting ??= (async () => {
-			const app = await options.initialize();
+			const app = await options.initialize(startup.signal);
 			if (stopping) return;
 			server = createServer(app);
 			server.maxConnections = 256;
@@ -40,6 +41,7 @@ export function createService(options: {
 	}
 	function shutdown(reason: string): Promise<number> {
 		if (stopping) return stopping;
+		startup.abort(new Error("Startup was cancelled by shutdown"));
 		options.capacity.stop();
 		options.log.write({ level: "info", message: "Graceful shutdown started", reason });
 		stopping = (async () => {
@@ -90,5 +92,5 @@ export function createService(options: {
 		})();
 		return stopping;
 	}
-	return { start, shutdown, address: () => server?.address() };
+	return { start, shutdown, address: () => server?.address(), isStopping: () => Boolean(stopping) };
 }

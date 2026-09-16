@@ -252,3 +252,36 @@ test("startup and cleanup failures remain failures; shutdown deadline is bounded
 	held.resolve();
 	await assert.rejects(timed.start(), /already stopping/);
 });
+
+test("shutdown cooperatively cancels startup before binding a listener", async () => {
+	const entered = deferred();
+	let disposed = false;
+	const service = createService({
+		host: "127.0.0.1",
+		port: 0,
+		capacity: new RequestCapacity(),
+		log: new ServiceLog(
+			new Writable({
+				write(_chunk, _encoding, callback) {
+					callback();
+				}
+			})
+		),
+		initialize: async (signal) => {
+			entered.resolve();
+			await new Promise<void>((_resolve, reject) =>
+				signal.addEventListener("abort", () => reject(signal.reason), { once: true })
+			);
+			return express();
+		},
+		dispose: async () => {
+			disposed = true;
+		}
+	});
+	const starting = assert.rejects(service.start(), /cancelled by shutdown/);
+	await entered.promise;
+	assert.equal(await service.shutdown("fixture"), 0);
+	await starting;
+	assert.equal(disposed, true);
+	assert.equal(service.address(), undefined);
+});

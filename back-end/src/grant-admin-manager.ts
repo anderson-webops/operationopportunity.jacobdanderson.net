@@ -2,6 +2,7 @@ import { exit } from "node:process";
 import mongoose from "mongoose";
 import * as readlineSync from "readline-sync";
 import { loadConfig, validateResolvedMongoUri } from "./config.js";
+import { DATABASE_OPTIONS } from "./databaseCapacity.js";
 import { Admin } from "./models/schemas/Admin.js";
 import { withAuthorizationWorkflowLock } from "./services/adminWorkflow.js";
 import { ensureIdentityRegistry } from "./services/identityRegistry.js";
@@ -14,18 +15,16 @@ async function main() {
 	const mongoUri = config.vault ? await readMongoSecret(config.vault) : config.mongoUri;
 	if (!mongoUri) throw new Error("A MongoDB secret source is required");
 	validateResolvedMongoUri(mongoUri, config);
-	await mongoose.connect(mongoUri, {
-		serverSelectionTimeoutMS: 8_000,
-		connectTimeoutMS: 8_000
-	});
+	await mongoose.connect(mongoUri, DATABASE_OPTIONS);
 	await applyAdditiveSecurityMigrations();
 	await ensureIdentityRegistry();
 
+	// Never hold an expiring authorization lock while waiting for operator input.
+	const email = normalizeEmail(readlineSync.questionEMail("Existing admin email: "));
 	await withAuthorizationWorkflowLock(async () => {
 		if ((await Admin.countDocuments({ editAdmins: true })) > 0) {
 			throw new Error("Recovery grant refused: an admin manager already exists");
 		}
-		const email = normalizeEmail(readlineSync.questionEMail("Existing admin email: "));
 		const admin = await Admin.findOne({ email }).exec();
 		if (!admin) throw new Error("Admin account not found");
 		admin.editAdmins = true;

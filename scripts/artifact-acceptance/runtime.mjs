@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "node:fs";
 import http from "node:http";
 import { createRequire } from "node:module";
 import { networkInterfaces } from "node:os";
@@ -176,6 +176,42 @@ try {
 			assert.doesNotMatch(command.output(), /ERR_MODULE_NOT_FOUND|Cannot find module/);
 			assert.match(command.output(), /Production requires valid OPPORTUNITY_COMMIT_SHA/);
 		}
+
+		const ramBacked = start(process.execPath, ["dist/server.js"], { ...environment, TMPDIR: "/tmp" });
+		assert.deepEqual(await exitWithin(ramBacked), { code: 1, signal: null });
+		assert.doesNotMatch(ramBacked.output(), /API listening/);
+		assert.deepEqual(
+			readdirSync("/tmp").filter((name) => name.startsWith("operation-identities-")),
+			[]
+		);
+		// Stop the actual compiled service during a blocked startup cursor.
+		await control.db("admin").command({
+			configureFailPoint: "failCommand",
+			mode: "alwaysOn",
+			data: {
+				appName: "opportunity-acceptance",
+				failCommands: ["find"],
+				blockConnection: true,
+				blockTimeMS: 4000
+			}
+		});
+		const initializing = start(process.execPath, ["dist/server.js"], environment);
+		await waitFor(async () => {
+			const ops = await control.db("admin").command({ currentOp: 1, active: true });
+			assert.ok(ops.inprog.some((op) => op.appName === "opportunity-acceptance" && op.command?.find));
+		});
+		const scratch = readdirSync("/state/tmp").filter((name) => name.startsWith("operation-identities-"));
+		assert.equal(scratch.length, 1);
+		assert.equal(statSync(`/state/tmp/${scratch[0]}`).mode & 0o077, 0);
+		assert.equal(statSync(`/state/tmp/${scratch[0]}/index.sqlite`).mode & 0o777, 0o600);
+		initializing.child.kill("SIGTERM");
+		assert.deepEqual(await exitWithin(initializing, 3000), { code: 0, signal: null }, initializing.output());
+		assert.doesNotMatch(initializing.output(), /failed to start/);
+		assert.deepEqual(
+			readdirSync("/state/tmp").filter((name) => name.startsWith("operation-identities-")),
+			[]
+		);
+		await control.db("admin").command({ configureFailPoint: "failCommand", mode: "off" });
 		const api = start(process.execPath, ["dist/server.js"], environment);
 		await waitFor(() => probe("readyz", 200));
 		await probe("healthz", 200);
@@ -333,6 +369,8 @@ try {
 				commit: manifest.commit,
 				checks: [
 					"production-native-binding",
+					"startup-query-cancellation-and-private-index-cleanup",
+					"ram-backed-scratch-rejected",
 					"compiled-server-and-maintenance-entrypoint-guards",
 					"GET-HEAD-health-readiness",
 					"signup-login-CSRF-role-isolation-logout",

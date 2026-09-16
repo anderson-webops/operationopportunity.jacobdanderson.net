@@ -25,7 +25,7 @@ def permitted(name):
     ) and all(
         part not in (".", "..", ".git", ".ai-work", ".npmrc")
         and not part.startswith(".env")
-        and not part.endswith((".pem", ".key", ".sqlite3", ".sqlite3-wal", ".sqlite3-shm"))
+        and not part.endswith((".pem", ".key", ".sqlite3", ".sqlite3-wal", ".sqlite3-shm", ".sqlite", ".sqlite-wal", ".sqlite-shm", ".sqlite-journal"))
         and part not in ("credentials.json", "uploads", "spool", ".data", "dist-test", ".cache")
         for part in parts
     )

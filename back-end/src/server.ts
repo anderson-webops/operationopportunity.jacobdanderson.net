@@ -21,13 +21,13 @@ async function main() {
 		port: config.port,
 		capacity,
 		log: serviceLog,
-		initialize: async () => {
+		initialize: async (signal) => {
 			const mongoUri = config.vault ? await readMongoSecret(config.vault) : config.mongoUri;
 			if (!mongoUri) throw new Error("MONGODB_URI or a complete Vault configuration is required");
 			validateResolvedMongoUri(mongoUri, config);
 			await mongoose.connect(mongoUri, DATABASE_OPTIONS);
 			await applyAdditiveSecurityMigrations();
-			await ensureIdentityRegistry();
+			await ensureIdentityRegistry(signal);
 			sessionStore = MongoStore.create({
 				client: mongoose.connection.getClient(),
 				collectionName: "sessions",
@@ -61,6 +61,10 @@ async function main() {
 		});
 	}
 	await service.start().catch(async (error) => {
+		if (service.isStopping()) {
+			await service.shutdown("startup-cancelled");
+			return;
+		}
 		serviceLog.write({
 			level: "error",
 			message: "Operation Opportunity API failed to start",

@@ -66,14 +66,18 @@
     "back-end/dist/validation.js",
     "back-end/dist/vaultClient.js",
     "back-end/node_modules/argon2/prebuilds/linux-arm64/argon2.armv8.glibc.node",
-    "back-end/dist/services/identityWriteSafety.js"
+    "back-end/dist/services/identityWriteSafety.js",
+    "back-end/dist/services/identityIndex.js"
   ],
   "runtime": {
     "os": "linux",
     "arch": "arm64",
     "node": "24.18.1",
     "npmBuildOnly": "12.0.2",
-    "minimumGlibc": "2.39"
+    "minimumGlibc": "2.39",
+    "requiredBuiltins": [
+      "node:sqlite (DatabaseSync, extension loading disabled)"
+    ]
   },
   "modulesOutsideDist": [],
   "generatedClients": [],
@@ -104,6 +108,13 @@
       "name": "temporary-files",
       "location": "private OS temporary directory",
       "rollback": "disposable; no durable application state"
+    },
+    {
+      "name": "startup-identity-index",
+      "location": "private disk-backed temporary directory outside releases; TMPDIR if set, otherwise /var/tmp on Linux",
+      "permissions": "0700 directory and 0600 index; contains normalized account identities, never publish or log",
+      "promotion": "rebuild disposable index with exclusive account-write access; reject tmpfs/ramfs; verify disk capacity before activation",
+      "rollback": "index is disposable; graceful completion/cancellation removes it; preserve authoritative MongoDB data; do not copy scratch between releases"
     }
   ],
   "privateConfiguration": "Preserve the existing reviewed environment files and ownership/modes. No credentials or configuration values in artifacts.",
