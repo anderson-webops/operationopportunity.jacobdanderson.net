@@ -29,7 +29,7 @@ export function safeErrorSummary(error: unknown): { name: string; code?: string 
 			? (error as { code: string | number }).code
 			: undefined;
 	return {
-		name: error.name || "Error",
-		...(code === undefined ? {} : { code })
+		name: (error.name || "Error").slice(0, 96),
+		...(code === undefined ? {} : { code: typeof code === "string" ? code.slice(0, 96) : code })
 	};
 }

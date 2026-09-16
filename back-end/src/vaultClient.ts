@@ -7,6 +7,7 @@ const MAX_VAULT_RESPONSE_BYTES = 64 * 1024;
 async function readBoundedJson(response: Response): Promise<unknown> {
 	const declaredLength = Number(response.headers.get("content-length"));
 	if (Number.isFinite(declaredLength) && declaredLength > MAX_VAULT_RESPONSE_BYTES) {
+		await response.body?.cancel();
 		throw new Error("Vault response exceeds the configured limit");
 	}
 	if (!response.body) throw new Error("Vault returned an empty response");
@@ -14,15 +15,22 @@ async function readBoundedJson(response: Response): Promise<unknown> {
 	const reader = response.body.getReader();
 	const chunks: Buffer[] = [];
 	let size = 0;
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) break;
-		size += value.byteLength;
-		if (size > MAX_VAULT_RESPONSE_BYTES) {
-			await reader.cancel();
-			throw new Error("Vault response exceeds the configured limit");
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			size += value.byteLength;
+			if (size > MAX_VAULT_RESPONSE_BYTES) {
+				throw new Error("Vault response exceeds the configured limit");
+			}
+			chunks.push(Buffer.from(value));
 		}
-		chunks.push(Buffer.from(value));
+	} finally {
+		try {
+			await reader.cancel();
+		} finally {
+			reader.releaseLock();
+		}
 	}
 	try {
 		return JSON.parse(Buffer.concat(chunks, size).toString("utf8"));
@@ -38,6 +46,7 @@ async function vaultRequest(config: VaultConfig, path: string, init: RequestInit
 		signal: AbortSignal.timeout(VAULT_TIMEOUT_MS)
 	});
 	if (!response.ok) {
+		await response.body?.cancel();
 		throw new Error(`Vault request failed with status ${response.status}`);
 	}
 	return response;

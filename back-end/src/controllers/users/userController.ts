@@ -5,6 +5,7 @@ import { Admin } from "../../models/schemas/Admin.js";
 import { Tutor } from "../../models/schemas/Tutor.js";
 import { User } from "../../models/schemas/User.js";
 import { objectIdParam } from "../../requestParams.js";
+import { trackHandler } from "../../runtimeCapacity.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
 import { canAssignTutor, canStaffUpdateUser, canUserMutateSelf } from "../../security/policies.js";
@@ -13,7 +14,7 @@ import { createAccount, deleteAccount, serializeAccount, updateAccount } from ".
 import { withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
 import { parseAccountCreate, parseAccountUpdate, parseStaffUserUpdate } from "../../validation.js";
 
-export const createUser: RequestHandler = async (req, res) => {
+export const createUser: RequestHandler = trackHandler(async (req, res) => {
 	if (req.session.identity) {
 		throw new HttpError(409, "already_authenticated", "Sign out before creating another account.");
 	}
@@ -28,14 +29,14 @@ export const createUser: RequestHandler = async (req, res) => {
 		targetId: user._id.toString()
 	});
 	res.status(201).json({ currentUser: serializeAccount(user), csrfToken });
-};
+});
 
-export const getAllUsers: RequestHandler = async (_req, res) => {
+export const getAllUsers: RequestHandler = trackHandler(async (_req, res) => {
 	const users = await User.find().sort({ createdAt: 1 }).exec();
 	res.json(users.map(serializeAccount));
-};
+});
 
-export const getUsersOfTutor: RequestHandler = async (req, res) => {
+export const getUsersOfTutor: RequestHandler = trackHandler(async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const principal = req.currentPrincipal!;
@@ -56,7 +57,7 @@ export const getUsersOfTutor: RequestHandler = async (req, res) => {
 		return User.find({ tutor: tutorId }).sort({ createdAt: 1 }).exec();
 	});
 	res.json(users.map(serializeAccount));
-};
+});
 
 async function updateTargetUser(req: Parameters<RequestHandler>[0], res: Parameters<RequestHandler>[1]) {
 	const userId = objectIdParam(req.params.userID, res, "user");
@@ -66,7 +67,7 @@ async function updateTargetUser(req: Parameters<RequestHandler>[0], res: Paramet
 	return { userId, user };
 }
 
-export const updateOwnUser: RequestHandler = async (req, res) => {
+export const updateOwnUser: RequestHandler = trackHandler(async (req, res) => {
 	const target = await updateTargetUser(req, res);
 	if (!target) return;
 	if (
@@ -88,9 +89,9 @@ export const updateOwnUser: RequestHandler = async (req, res) => {
 		targetId: target.userId
 	});
 	res.json({ currentUser: serializeAccount(updated) });
-};
+});
 
-export const updateAssignedUser: RequestHandler = async (req, res) => {
+export const updateAssignedUser: RequestHandler = trackHandler(async (req, res) => {
 	const principal = req.currentPrincipal!;
 	const userId = objectIdParam(req.params.userID, res, "user");
 	if (!userId) return;
@@ -120,9 +121,9 @@ export const updateAssignedUser: RequestHandler = async (req, res) => {
 		targetId: userId
 	});
 	res.json({ user: serializeAccount(updated) });
-};
+});
 
-export const assignTutorToUser: RequestHandler = async (req, res) => {
+export const assignTutorToUser: RequestHandler = trackHandler(async (req, res) => {
 	const userId = objectIdParam(req.params.userID, res, "user");
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!userId || !tutorId) return;
@@ -160,9 +161,9 @@ export const assignTutorToUser: RequestHandler = async (req, res) => {
 		targetId: userId
 	});
 	res.json({ currentUser: serializeAccount(user) });
-};
+});
 
-export const deleteUser: RequestHandler = async (req, res) => {
+export const deleteUser: RequestHandler = trackHandler(async (req, res) => {
 	const userId = objectIdParam(req.params.userID, res, "user");
 	if (!userId) return;
 	const principal = req.currentPrincipal!;
@@ -187,8 +188,8 @@ export const deleteUser: RequestHandler = async (req, res) => {
 	});
 	if (principal.role === "user") await destroySession(req);
 	res.sendStatus(204);
-};
+});
 
-export const getLoggedInUser: RequestHandler = (req, res) => {
+export const getLoggedInUser: RequestHandler = trackHandler((req, res) => {
 	res.json({ currentUser: serializeAccount(req.currentUser!) });
-};
+});

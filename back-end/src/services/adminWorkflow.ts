@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { HttpError, safeErrorSummary } from "../errors.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { AdminWorkflowLock } from "../models/schemas/AdminWorkflowLock.js";
+import { serviceLog } from "../serviceLog.js";
 
 const LOCK_ID = "authorization-workflow";
 const LOCK_DURATION_MS = 30_000;
@@ -51,7 +52,11 @@ export async function withAuthorizationWorkflowLock<T>(operation: () => Promise<
 		try {
 			await AdminWorkflowLock.deleteOne({ _id: LOCK_ID, owner });
 		} catch (error) {
-			console.error("Authorization workflow lock release failed", safeErrorSummary(error));
+			serviceLog.write({
+				level: "error",
+				message: "Authorization workflow lock release failed",
+				error: safeErrorSummary(error)
+			});
 		}
 	}
 }

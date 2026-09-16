@@ -5,8 +5,10 @@ import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
 import { stringParam } from "../requestParams.js";
+import { trackHandler } from "../runtimeCapacity.js";
 import { auditSecurityEvent } from "../security/audit.js";
 import { destroySession, regenerateSession } from "../security/session.js";
+import { serviceLog } from "../serviceLog.js";
 
 async function findAccount(role: AccountRole, id: string): Promise<AccountDocument | null> {
 	if (role === "admin") return Admin.findById(id).exec();
@@ -49,7 +51,9 @@ async function hydratePrincipal(req: Request, preserveAnonymousSession = false):
 }
 
 function authenticationUnavailable(req: Request, res: Parameters<RequestHandler>[1], error: unknown) {
-	console.error("Principal validation failed", {
+	serviceLog.write({
+		level: "error",
+		message: "Principal validation failed",
 		requestId: req.requestId,
 		error: safeErrorSummary(error)
 	});
@@ -59,16 +63,16 @@ function authenticationUnavailable(req: Request, res: Parameters<RequestHandler>
 	});
 }
 
-export const optionalPrincipal: RequestHandler = async (req, res, next) => {
+export const optionalPrincipal: RequestHandler = trackHandler(async (req, res, next) => {
 	try {
 		await hydratePrincipal(req, true);
 		next();
 	} catch (error) {
 		return authenticationUnavailable(req, res, error);
 	}
-};
+});
 
-export const validPrincipal: RequestHandler = async (req, res, next) => {
+export const validPrincipal: RequestHandler = trackHandler(async (req, res, next) => {
 	const hadIdentity = Boolean(req.session.identity);
 	try {
 		if (await hydratePrincipal(req)) return next();
@@ -88,7 +92,7 @@ export const validPrincipal: RequestHandler = async (req, res, next) => {
 	} catch (error) {
 		return authenticationUnavailable(req, res, error);
 	}
-};
+});
 
 function requireRole(role: AccountRole): RequestHandler[] {
 	return [

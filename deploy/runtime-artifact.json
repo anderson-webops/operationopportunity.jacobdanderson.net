@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "entrypoints": [
+    "back-end/dist/server.js",
+    "back-end/dist/create-admin-user.js",
+    "back-end/dist/grant-admin-manager.js",
+    "back-end/dist/reset-account-password.js",
+    "back-end/dist/scripts/verifyConfig.js"
+  ],
+  "required": [
+    "package.json",
+    "package-lock.json",
+    "back-end/package.json",
+    "back-end/package-lock.json",
+    "front-end/package.json",
+    "front-end/dist/index.html",
+    "front-end/dist/release.json",
+    "back-end/dist/app.js",
+    "back-end/dist/config.js",
+    "back-end/dist/controllers/auth/authController.js",
+    "back-end/dist/controllers/common/quoteProxy.js",
+    "back-end/dist/controllers/users/adminController.js",
+    "back-end/dist/controllers/users/tutorController.js",
+    "back-end/dist/controllers/users/userController.js",
+    "back-end/dist/create-admin-user.js",
+    "back-end/dist/databaseCapacity.js",
+    "back-end/dist/errors.js",
+    "back-end/dist/grant-admin-manager.js",
+    "back-end/dist/middleware/auth.js",
+    "back-end/dist/middleware/boundedRateStore.js",
+    "back-end/dist/middleware/rateLimit.js",
+    "back-end/dist/models/plugins/immutableRole.js",
+    "back-end/dist/models/plugins/password.js",
+    "back-end/dist/models/schemas/AccountEmail.js",
+    "back-end/dist/models/schemas/Admin.js",
+    "back-end/dist/models/schemas/AdminWorkflowLock.js",
+    "back-end/dist/models/schemas/Tutor.js",
+    "back-end/dist/models/schemas/User.js",
+    "back-end/dist/passwordWork.js",
+    "back-end/dist/release.js",
+    "back-end/dist/requestParams.js",
+    "back-end/dist/reset-account-password.js",
+    "back-end/dist/routes/accountRoutes.js",
+    "back-end/dist/routes/adminRoutes.js",
+    "back-end/dist/routes/tutorRoutes.js",
+    "back-end/dist/routes/userRoutes.js",
+    "back-end/dist/runtimeCapacity.js",
+    "back-end/dist/scripts/verifyConfig.js",
+    "back-end/dist/security/audit.js",
+    "back-end/dist/security/csrf.js",
+    "back-end/dist/security/policies.js",
+    "back-end/dist/security/requestContext.js",
+    "back-end/dist/security/session.js",
+    "back-end/dist/server.js",
+    "back-end/dist/serviceLifecycle.js",
+    "back-end/dist/serviceLog.js",
+    "back-end/dist/services/accountService.js",
+    "back-end/dist/services/adminWorkflow.js",
+    "back-end/dist/services/identityRegistry.js",
+    "back-end/dist/services/securityMigration.js",
+    "back-end/dist/types/abstractions/BaseUser.js",
+    "back-end/dist/types/account.js",
+    "back-end/dist/types/entities/IAdmin.js",
+    "back-end/dist/types/entities/ITutor.js",
+    "back-end/dist/types/entities/IUser.js",
+    "back-end/dist/validation.js",
+    "back-end/dist/vaultClient.js",
+    "back-end/node_modules/argon2/prebuilds/linux-arm64/argon2.armv8.glibc.node",
+    "back-end/dist/services/identityWriteSafety.js"
+  ],
+  "runtime": {
+    "os": "linux",
+    "arch": "arm64",
+    "node": "24.18.1",
+    "npmBuildOnly": "12.0.2",
+    "minimumGlibc": "2.39"
+  },
+  "modulesOutsideDist": [],
+  "generatedClients": [],
+  "nativeBindings": [
+    "back-end/node_modules/argon2/prebuilds/linux-arm64/argon2.armv8.glibc.node"
+  ],
+  "allowedNativeTrees": [
+    "back-end/node_modules/argon2/prebuilds/"
+  ],
+  "staticAssets": [
+    "front-end/dist/index.html",
+    "front-end/dist/release.json",
+    "front-end/dist/assets/"
+  ],
+  "writableState": [
+    {
+      "name": "accounts-sessions-identities-locks",
+      "location": "existing authenticated external MongoDB",
+      "promotion": "preserve all records and additive security fields",
+      "rollback": "validate exact retained application; never overwrite database from an artifact"
+    },
+    {
+      "name": "logs",
+      "location": "existing service journal",
+      "rollback": "preserve journal; drain accepted security audit events"
+    },
+    {
+      "name": "temporary-files",
+      "location": "private OS temporary directory",
+      "rollback": "disposable; no durable application state"
+    }
+  ],
+  "privateConfiguration": "Preserve the existing reviewed environment files and ownership/modes. No credentials or configuration values in artifacts.",
+  "topology": "Independent operation-opportunity-api service and Nginx static frontend, documented /srv/operation-opportunity/current layout and loopback port 3002. Preserve operator-installed paths, user, runtime prefix, quotes socket group, IPv4/IPv6, Nginx and certificates. No production migration is authorized by this build contract."
+}

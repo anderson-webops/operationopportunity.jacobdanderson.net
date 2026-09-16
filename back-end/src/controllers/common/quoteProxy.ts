@@ -5,6 +5,8 @@ import { Buffer } from "node:buffer";
 import { request } from "node:http";
 import { Router } from "express";
 import { HttpError, safeErrorSummary } from "../../errors.js";
+import { trackHandler } from "../../runtimeCapacity.js";
+import { serviceLog } from "../../serviceLog.js";
 
 interface NormalizedQuote {
 	_id: string;
@@ -288,7 +290,9 @@ async function fetchQuotesUpstream(req: Request, config: QuotesConfig, signal: A
 			return response;
 		} catch (error) {
 			signal.throwIfAborted();
-			console.error("Quotes socket request failed", {
+			serviceLog.write({
+				level: "error",
+				message: "Quotes socket request failed",
 				requestId: req.requestId,
 				error: safeErrorSummary(error)
 			});
@@ -299,32 +303,37 @@ async function fetchQuotesUpstream(req: Request, config: QuotesConfig, signal: A
 }
 
 export function createQuoteProxy(config: QuotesConfig): Router {
-	return Router().get("/", async (req, res) => {
-		const controller = new AbortController();
-		const cancel = () => controller.abort();
-		res.once("close", cancel);
-		res.setHeader("Cache-Control", "no-store");
-		try {
-			const upstream = await fetchQuotesUpstream(req, config, controller.signal);
-			if (upstream.status === 429) {
-				// Quotes API uses delta-seconds. Never reflect arbitrary upstream header content.
-				if (upstream.retryAfter && /^\d{1,6}$/.test(upstream.retryAfter)) {
-					res.setHeader("Retry-After", upstream.retryAfter);
+	return Router().get(
+		"/",
+		trackHandler(async (req, res) => {
+			const controller = new AbortController();
+			const cancel = () => controller.abort();
+			res.once("close", cancel);
+			res.setHeader("Cache-Control", "no-store");
+			try {
+				const upstream = await fetchQuotesUpstream(req, config, controller.signal);
+				if (upstream.status === 429) {
+					// Quotes API uses delta-seconds. Never reflect arbitrary upstream header content.
+					if (upstream.retryAfter && /^\d{1,6}$/.test(upstream.retryAfter)) {
+						res.setHeader("Retry-After", upstream.retryAfter);
+					}
+					return res.status(429).json({ error: "quotes_rate_limited" });
 				}
-				return res.status(429).json({ error: "quotes_rate_limited" });
+				if (upstream.status === 400) return res.status(400).json({ error: "invalid_quote_query" });
+				return res.json(parseUpstream(upstream));
+			} catch (error) {
+				if (controller.signal.aborted) return;
+				if (error instanceof HttpError) return res.status(error.status).json({ error: error.code });
+				serviceLog.write({
+					level: "error",
+					message: "Quotes proxy failed",
+					requestId: req.requestId,
+					error: safeErrorSummary(error)
+				});
+				return res.status(502).json({ error: "quotes_unavailable" });
+			} finally {
+				res.off("close", cancel);
 			}
-			if (upstream.status === 400) return res.status(400).json({ error: "invalid_quote_query" });
-			return res.json(parseUpstream(upstream));
-		} catch (error) {
-			if (controller.signal.aborted) return;
-			if (error instanceof HttpError) return res.status(error.status).json({ error: error.code });
-			console.error("Quotes proxy failed", {
-				requestId: req.requestId,
-				error: safeErrorSummary(error)
-			});
-			return res.status(502).json({ error: "quotes_unavailable" });
-		} finally {
-			res.off("close", cancel);
-		}
-	});
+		})
+	);
 }

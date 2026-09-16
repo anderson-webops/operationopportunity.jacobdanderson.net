@@ -6,6 +6,7 @@ import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
 import { releaseAccountIdentities, releaseIdentity, replaceIdentity, reserveIdentity } from "./identityRegistry.js";
+import { accountWriteDefinitelyFailed } from "./identityWriteSafety.js";
 
 type CreateInput = AccountCreateInput | AdminCreateInput;
 type UpdateInput = AccountUpdateInput | AdminUpdateInput;
@@ -47,7 +48,9 @@ export async function createAccount(role: AccountRole, input: CreateInput): Prom
 		await account.save();
 		return account;
 	} catch (error) {
-		await releaseIdentity(input.email, account._id);
+		// A timeout/network error may follow a committed write. Keep its reservation
+		// until authoritative startup reconciliation instead of allowing another role.
+		if (accountWriteDefinitelyFailed(error)) await releaseIdentity(input.email, account._id);
 		if (isDuplicateKeyError(error)) {
 			throw new HttpError(409, "email_conflict", "That email address is already in use.");
 		}

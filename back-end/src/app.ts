@@ -7,6 +7,7 @@ import session from "express-session";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import { createQuoteProxy } from "./controllers/common/quoteProxy.js";
+import { singleFlightReadiness } from "./databaseCapacity.js";
 import { HttpError, isDuplicateKeyError, safeErrorSummary } from "./errors.js";
 import { publicReadRateLimit } from "./middleware/rateLimit.js";
 import { getDeploymentIdentity } from "./release.js";
@@ -14,8 +15,10 @@ import { accountRoutes } from "./routes/accountRoutes.js";
 import { adminRoutes } from "./routes/adminRoutes.js";
 import { tutorRoutes } from "./routes/tutorRoutes.js";
 import { userRoutes } from "./routes/userRoutes.js";
+import { RequestCapacity, trackSession } from "./runtimeCapacity.js";
 import { csrfProtection } from "./security/csrf.js";
 import { requestContext } from "./security/requestContext.js";
+import { serviceLog } from "./serviceLog.js";
 
 function secureEqual(left: string | undefined, right: string | undefined): boolean {
 	if (!left || !right) return false;
@@ -26,6 +29,7 @@ function secureEqual(left: string | undefined, right: string | undefined): boole
 
 interface AppDependencies {
 	getReadiness?: () => Promise<boolean>;
+	capacity?: RequestCapacity;
 }
 
 async function getMongoReadiness() {
@@ -33,7 +37,7 @@ async function getMongoReadiness() {
 	if (state !== 1 || !mongoose.connection.db) return false;
 
 	try {
-		await mongoose.connection.db.admin().ping();
+		await mongoose.connection.db.admin().ping({ timeoutMS: 1500 });
 		return true;
 	} catch {
 		return false;
@@ -45,7 +49,10 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 		throw new Error("Production requires an external session store.");
 	}
 	const app = express();
-	const checkReadiness = dependencies.getReadiness ?? getMongoReadiness;
+	const checkReadiness = singleFlightReadiness(dependencies.getReadiness ?? getMongoReadiness);
+	const capacity = dependencies.capacity ?? new RequestCapacity(64, () => serviceLog.ready);
+	let readinessWaiters = 0;
+	app.set("capacity", capacity);
 	app.disable("x-powered-by");
 	app.set("config", config);
 	app.set("trust proxy", config.trustedProxyIps.length ? config.trustedProxyIps : false);
@@ -76,10 +83,14 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 	};
 	const healthHandler: express.RequestHandler = (request, response) => sendProbe(request, response, true);
 	const readinessHandler: express.RequestHandler = async (request, response) => {
+		if (!capacity.ready || readinessWaiters >= 32) return sendProbe(request, response, false);
+		readinessWaiters++;
 		try {
-			return sendProbe(request, response, await checkReadiness());
+			return sendProbe(request, response, (await checkReadiness()) && capacity.ready);
 		} catch {
 			return sendProbe(request, response, false);
+		} finally {
+			readinessWaiters--;
 		}
 	};
 	app.head("/healthz", healthHandler);
@@ -88,24 +99,27 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 	app.get("/readyz", readinessHandler);
 	app.get("/release.json", (_request, response) => response.json(getDeploymentIdentity()));
 
+	app.use(capacity.middleware);
 	app.use(express.json({ limit: config.requestBodyLimit, strict: true }));
 	app.use(
-		session({
-			name: config.sessionCookieName,
-			secret: config.sessionSecrets,
-			store,
-			resave: false,
-			saveUninitialized: false,
-			rolling: true,
-			proxy: config.trustedProxyIps.length > 0,
-			cookie: {
-				httpOnly: true,
-				secure: config.isProduction,
-				sameSite: "lax",
-				path: "/",
-				maxAge: config.sessionMaxAgeMs
-			}
-		})
+		trackSession(
+			session({
+				name: config.sessionCookieName,
+				secret: config.sessionSecrets,
+				store,
+				resave: false,
+				saveUninitialized: false,
+				rolling: true,
+				proxy: config.trustedProxyIps.length > 0,
+				cookie: {
+					httpOnly: true,
+					secure: config.isProduction,
+					sameSite: "lax",
+					path: "/",
+					maxAge: config.sessionMaxAgeMs
+				}
+			})
+		)
 	);
 	app.use(csrfProtection(config.publicOrigin));
 
@@ -134,6 +148,7 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 		res.status(404).json({ error: "not_found", message: "Route not found." });
 	});
 	app.use((error: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+		if (res.destroyed || res.headersSent) return;
 		if (typeof error === "object" && error !== null && "status" in error) {
 			const status = (error as { status?: unknown }).status;
 			if (status === 400 || status === 413) {
@@ -144,6 +159,7 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 			}
 		}
 		if (error instanceof HttpError) {
+			if (error.status === 503) res.set("Retry-After", "1");
 			return res.status(error.status).json({ error: error.code, message: error.message });
 		}
 		if (isDuplicateKeyError(error)) {
@@ -152,7 +168,27 @@ export function createApp(config: AppConfig, store?: Store, dependencies: AppDep
 				message: "The requested value is already in use."
 			});
 		}
-		console.error("Unhandled request error", {
+		if (
+			error instanceof mongoose.mongo.MongoNetworkError ||
+			error instanceof mongoose.mongo.MongoOperationTimeoutError ||
+			error instanceof mongoose.mongo.MongoServerSelectionError ||
+			(error instanceof mongoose.mongo.MongoDriverError && error.name === "MongoWaitQueueTimeoutError") ||
+			(error instanceof mongoose.mongo.MongoServerError && error.code === 50)
+		) {
+			serviceLog.write({
+				level: "error",
+				message: "Database operation unavailable",
+				requestId: req.requestId,
+				error: safeErrorSummary(error)
+			});
+			return res.status(503).set("Retry-After", "1").json({
+				error: "database_unavailable",
+				message: "The operation could not be confirmed. Check the current state before retrying a change."
+			});
+		}
+		serviceLog.write({
+			level: "error",
+			message: "Unhandled request error",
 			requestId: req.requestId,
 			error: safeErrorSummary(error)
 		});

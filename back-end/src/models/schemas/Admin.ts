@@ -1,8 +1,9 @@
+import type { Model } from "mongoose";
 // src/models/schemas/Admin.ts
 
-import type { Model } from "mongoose";
 import type { IAdmin } from "../../types/entities/IAdmin.js";
 import mongoose, { Schema } from "mongoose";
+import { readCancellationPlugin } from "../../databaseCapacity.js";
 import { normalizeEmail } from "../../validation.js";
 import { immutableRolePlugin } from "../plugins/immutableRole.js";
 import { passwordPlugin } from "../plugins/password.js";
@@ -43,4 +44,6 @@ adminSchema.plugin(passwordPlugin);
 /**
  * Create and export Admin model
  */
+adminSchema.plugin(readCancellationPlugin);
+
 export const Admin: Model<IAdmin> = mongoose.model<IAdmin>("Admin", adminSchema);

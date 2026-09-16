@@ -1,6 +1,7 @@
 import type { Model } from "mongoose";
 import type { AccountRole } from "../../types/account.js";
 import mongoose, { Schema } from "mongoose";
+import { readCancellationPlugin } from "../../databaseCapacity.js";
 
 export interface IAccountEmail {
 	_id: string;
@@ -16,5 +17,7 @@ const accountEmailSchema = new Schema<IAccountEmail>(
 	},
 	{ timestamps: true, strict: "throw" }
 );
+
+accountEmailSchema.plugin(readCancellationPlugin);
 
 export const AccountEmail: Model<IAccountEmail> = mongoose.model<IAccountEmail>("AccountEmail", accountEmailSchema);

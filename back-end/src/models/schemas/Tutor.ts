@@ -1,8 +1,9 @@
+import type { Model } from "mongoose";
 // src/models/schemas/Tutor.ts
 
-import type { Model } from "mongoose";
 import type { ITutor } from "../../types/entities/ITutor.js";
 import mongoose, { Schema } from "mongoose";
+import { readCancellationPlugin } from "../../databaseCapacity.js";
 import { normalizeEmail } from "../../validation.js";
 import { immutableRolePlugin } from "../plugins/immutableRole.js";
 import { passwordPlugin } from "../plugins/password.js";
@@ -50,4 +51,6 @@ tutorSchema.plugin(passwordPlugin);
 /**
  * Create and export Tutor model
  */
+tutorSchema.plugin(readCancellationPlugin);
+
 export const Tutor: Model<ITutor> = mongoose.model<ITutor>("Tutor", tutorSchema);

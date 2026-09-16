@@ -522,7 +522,8 @@ describe("Mongo-backed authorization lifecycle", { skip: !integrationUri }, () =
 		await delay(75);
 		releaseHolder();
 		await holder;
-		assert.equal((await assignmentRequest).status, 404);
+		const assignmentResponse = await assignmentRequest;
+		assert.equal(assignmentResponse.status, 404, JSON.stringify(assignmentResponse.body));
 		assert.equal((await User.findById(user._id).exec())?.tutor ?? null, null);
 
 		const first = await User.findById(user._id).exec();

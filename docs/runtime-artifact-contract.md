@@ -1,0 +1,90 @@
+# Operation Opportunity runtime artifact contract
+
+Build source, package acceptance, source release and production activation are
+separate gates. `scripts/build-arm64-release.sh OUTPUT` runs on an unprivileged
+Linux ARM64 builder with Node24.18.1/npm12.0.2, MongoDB8 fixture binaries,
+Python3 and bubblewrap. OUTPUT must be under the owning checkout's ignored
+`.ai-work/runs/`. Both `TEST_MONGODB_URI` and `MONGO_FAULT_TEST_URI` must identify
+owned synthetic loopback databases; the fault fixture requires test commands.
+No production connection or provider secret is used.
+
+The builder runs clean locked installation, lint, types, frontend/backend tests,
+compiled builds, build-security/native-install verification, full/production
+audits and registry signatures. Browser binary downloads are skipped in this
+artifact gate; frontend unit tests still run. No frontend visual change is part
+of this milestone. Source and backend standalone locks must both pass.
+
+## Completeness and isolated execution
+
+`deploy/runtime-artifact.json` independently enumerates compiled server and
+maintenance entrypoints, runtime modules, production dependency metadata, native
+Argon2 binding and static frontend assets. This application has no generated
+client or shared runtime module outside `dist`; these are explicitly empty.
+Every packaged file has a size and SHA-256 in `runtime-manifest.json`, also emitted
+as a sidecar. Backend dependency versions must match its standalone lock;
+development tools, source trees, symlinks, credentials and mutable state fail
+verification. Static release identity must match the full source commit.
+
+Use the trusted archive digest and full revision from the reviewed release:
+
+```sh
+python3 -B scripts/runtime-artifact.py unpack EMPTY_TREE --archive ARCHIVE --sha256 SHA256 --commit FULL_COMMIT
+python3 -B scripts/runtime-artifact.py verify COPIED_TREE --archive ARCHIVE --sha256 SHA256 --commit FULL_COMMIT
+```
+
+The second command must run on the actual tree **after a deployment copier**.
+An incomplete tree cannot pass by deleting the omitted file from its manifest.
+A missing compiled `runtimeCapacity.js` is rejected independently and also tested
+by starting the broken service. There is no artificial `shared/` directory.
+
+The unpacked acceptance runner uses a read-only artifact, unprivileged process,
+zero effective capabilities, isolated loopback network and disposable state.
+Neither source checkout nor development modules nor real providers are visible.
+Missing isolation support fails; do not fall back to running in the checkout.
+It executes the real native binding and compiled API, checks maintenance CLI
+imports/fail-closed configuration guards, minimal GET/HEAD probes, static/API
+identity, signup/login/logout, CSRF and role denial, provider/database failures,
+recovery, a sustained authenticated-read workload and a disconnected accepted
+update that must drain and audit under repeated signals. Restart must retain the
+account and session. The CLI guard checks do not claim interactive operator
+recovery workflows were performed. Existing integration tests cover their shared
+account/authorization logic; operator recovery remains privileged.
+
+Publish archive, checksum, manifest, acceptance receipt and acceptance records
+only after all gates pass for the exact annotated source. The receipt binds the
+archive to hashes of every test/verification file. Leftover files from a failed
+builder are not publishable. Keep existing tags/assets immutable.
+
+## Operator compatibility and rollback
+
+The existing documented topology is `/srv/operation-opportunity/current` with
+`back-end/dist/server.js`, production modules under `back-end/node_modules`, static
+`front-end/dist`, `operation-opportunity-api.service` and loopback3002. Preserve
+actual installed paths/users/listeners if the operator's reviewed host differs.
+Use the already installed Node24.18.1 prefix in the service; do not replace
+host-wide `/usr/bin/node` to satisfy a template. npm is build tooling, not the
+production service entrypoint. Do not install a canonical template over an
+existing compatibility host.
+
+The existing `prepare-release.sh`/`promote-release.sh` scripts expect a source
+checkout and their preparation marker. An unpacked runtime archive is a different
+input contract. **Do not feed it to those scripts or forge that marker.** The
+operator's artifact adapter must verify the archive and copied tree, preserve
+existing protected environment/release files, atomically switch the reviewed
+pointer, restart only this API, and check readiness and exact API/static identity.
+Keep the previous immutable artifact for rollback. No source build is required
+on the Pi once that adapter is reviewed. No production deployment or host-adapter
+migration was performed by this source task.
+
+Accounts, sessions, unique login identities and authorization locks remain in the
+existing authenticated external MongoDB. There is no application email spool or
+upload tree in this service. Never copy database/session state from a release,
+clear sessions to reduce memory, or remove authorization/version fields during
+rollback. Journals remain service-managed and temporary files use private OS
+storage. Preserve the separate Quotes API and its socket group boundary. Preserve
+Nginx, TLS and both address families.
+
+This milestone changes no schema. For future schema changes, rehearse candidate
+and exact retained application reads/writes and sessions against the migrated
+synthetic database before activation. Application rollback does not reverse a
+migration. Database restoration requires a separately reviewed operation.

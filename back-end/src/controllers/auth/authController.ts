@@ -1,22 +1,18 @@
 import type { RequestHandler } from "express";
 import type { AppConfig } from "../../config.js";
 import type { AccountDocument, AccountRole } from "../../types/account.js";
-import argon2 from "argon2";
 import { Admin } from "../../models/schemas/Admin.js";
 import { Tutor } from "../../models/schemas/Tutor.js";
 import { User } from "../../models/schemas/User.js";
+import { hashPassword, verifyPassword } from "../../passwordWork.js";
+import { trackHandler } from "../../runtimeCapacity.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
 import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
 import { serializeAccount } from "../../services/accountService.js";
 import { isValidEmail, normalizeEmail } from "../../validation.js";
 
-const dummyHash = argon2.hash("operation-opportunity-dummy-password", {
-	type: argon2.argon2id,
-	memoryCost: 65_536,
-	timeCost: 3,
-	parallelism: 1
-});
+const dummyHash = hashPassword("operation-opportunity-dummy-password");
 
 function config(req: Parameters<RequestHandler>[0]): AppConfig {
 	return req.app.get("config") as AppConfig;
@@ -35,19 +31,19 @@ async function findLoginCandidates(email: string): Promise<Array<{ role: Account
 	];
 }
 
-export const login: RequestHandler = async (req, res) => {
+export const login: RequestHandler = trackHandler(async (req, res) => {
 	const email = typeof req.body?.email === "string" ? normalizeEmail(req.body.email) : "";
 	const password = typeof req.body?.password === "string" ? req.body.password : "";
 	const remember = req.body?.remember === true;
 	if (!isValidEmail(email) || password.length < 1 || password.length > 128) {
-		await argon2.verify(await dummyHash, password || "invalid");
+		await verifyPassword(await dummyHash, password || "invalid");
 		auditSecurityEvent(req, "login", { status: "rejected", reason: "invalid_input" });
 		return res.status(401).json({ error: "invalid_credentials", message: "Invalid email or password." });
 	}
 
 	const candidates = await findLoginCandidates(email);
 	if (candidates.length !== 1) {
-		await argon2.verify(await dummyHash, password);
+		await verifyPassword(await dummyHash, password);
 		auditSecurityEvent(req, "login", {
 			status: "rejected",
 			reason: candidates.length > 1 ? "identity_invariant" : "invalid_credentials"
@@ -80,22 +76,22 @@ export const login: RequestHandler = async (req, res) => {
 	const responseKey =
 		candidate.role === "admin" ? "currentAdmin" : candidate.role === "tutor" ? "currentTutor" : "currentUser";
 	return res.json({ [responseKey]: serializeAccount(candidate.account), csrfToken });
-};
+});
 
-export const logout: RequestHandler = async (req, res) => {
+export const logout: RequestHandler = trackHandler(async (req, res) => {
 	auditSecurityEvent(req, "logout", { status: "success" });
 	await destroySession(req);
 	res.clearCookie(config(req).sessionCookieName, { path: "/" });
 	return res.sendStatus(204);
-};
+});
 
-export const getCsrfToken: RequestHandler = async (req, res) => {
+export const getCsrfToken: RequestHandler = trackHandler(async (req, res) => {
 	const csrfToken = issueCsrfToken(req, res);
 	await saveSession(req);
 	res.set("Cache-Control", "no-store").json({ csrfToken });
-};
+});
 
-export const getCurrentSession: RequestHandler = (req, res) => {
+export const getCurrentSession: RequestHandler = trackHandler((req, res) => {
 	const identity = req.currentPrincipal;
 	res.set("Cache-Control", "no-store").json({
 		role: identity?.role || null,
@@ -104,4 +100,4 @@ export const getCurrentSession: RequestHandler = (req, res) => {
 		tutorID: identity?.role === "tutor" ? identity.id : null,
 		userID: identity?.role === "user" ? identity.id : null
 	});
-};
+});

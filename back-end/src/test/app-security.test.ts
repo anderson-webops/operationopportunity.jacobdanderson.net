@@ -1,5 +1,6 @@
 import type { AppConfig } from "../config.js";
 import assert from "node:assert/strict";
+import { createServer } from "node:http";
 import { describe, it } from "node:test";
 import request from "supertest";
 import { createApp } from "../app.js";
@@ -25,6 +26,62 @@ const config: AppConfig = {
 };
 
 describe("hTTP security boundary", () => {
+	it("shares one readiness command and bounds waiting probe responses", async () => {
+		let finish!: () => void;
+		const held = new Promise<void>((resolve) => {
+			finish = resolve;
+		});
+		let calls = 0;
+		let received = 0;
+		const server = createServer(
+			createApp(config, undefined, {
+				getReadiness: async () => {
+					calls++;
+					await held;
+					return true;
+				}
+			})
+		);
+		let allReceived!: () => void;
+		const arrived = new Promise<void>((resolve) => {
+			allReceived = resolve;
+		});
+		server.on("request", () => {
+			received++;
+			if (received === 32) allReceived();
+		});
+		await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+		const address = server.address();
+		assert.ok(address && typeof address !== "string");
+		const base = `http://127.0.0.1:${address.port}`;
+		const waiting = Array.from({ length: 32 }, () => {
+			return fetch(`${base}/readyz`, { signal: AbortSignal.timeout(5000) });
+		});
+		try {
+			await arrived;
+			const excess = await fetch(`${base}/readyz`);
+			assert.equal(excess.status, 503);
+			assert.deepEqual(await excess.json(), { ok: false });
+			const live = await fetch(`${base}/healthz`);
+			assert.equal(live.status, 200);
+			await live.arrayBuffer();
+			assert.equal(calls, 1);
+			finish();
+			for (const response of await Promise.all(waiting)) {
+				assert.equal(response.status, 200);
+				await response.arrayBuffer();
+			}
+			const fresh = await fetch(`${base}/readyz`);
+			assert.equal(fresh.status, 200);
+			await fresh.arrayBuffer();
+			assert.equal(calls, 2);
+		} finally {
+			finish();
+			await Promise.allSettled(waiting);
+			server.closeAllConnections();
+			await new Promise<void>((resolve) => server.close(() => resolve()));
+		}
+	});
 	it("emits hardened, minimal health responses", async () => {
 		const response = await request(createApp(config)).get("/healthz").expect(200);
 		assert.deepEqual(response.body, { ok: true });

@@ -1,8 +1,9 @@
+import type { Model } from "mongoose";
 // src/models/schemas/User.ts
 
-import type { Model } from "mongoose";
 import type { IUser } from "../../types/entities/IUser.js";
 import mongoose, { Schema } from "mongoose";
+import { readCancellationPlugin } from "../../databaseCapacity.js";
 import { normalizeEmail } from "../../validation.js";
 import { immutableRolePlugin } from "../plugins/immutableRole.js";
 import { passwordPlugin } from "../plugins/password.js";
@@ -49,4 +50,6 @@ userSchema.plugin(passwordPlugin);
 /**
  * Create and export Tutor model
  */
+userSchema.plugin(readCancellationPlugin);
+
 export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);

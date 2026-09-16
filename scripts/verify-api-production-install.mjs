@@ -12,7 +12,9 @@ function runNpm(arguments_) {
 		cwd: tempDirectory,
 		encoding: "utf8",
 		env: process.env,
-		maxBuffer: 10 * 1024 * 1024
+		maxBuffer: 10 * 1024 * 1024,
+		timeout: 180_000,
+		killSignal: "SIGKILL"
 	});
 	if (result.stdout) process.stdout.write(result.stdout);
 	if (result.stderr) process.stderr.write(result.stderr);
@@ -36,7 +38,7 @@ try {
 	}
 
 	runNpm(["ci", "--omit=dev", "--no-fund", "--no-audit"]);
-	runNpm(["audit", "--omit=dev", "--audit-level=high"]);
+	runNpm(["audit", "--omit=dev", "--audit-level=low"]);
 
 	const packageSource = JSON.parse(await readFile(join(tempDirectory, "package.json"), "utf8"));
 	const requireFromInstall = createRequire(join(tempDirectory, "package.json"));
@@ -59,7 +61,7 @@ try {
 		throw new Error("The production Argon2 native binding failed verification");
 	}
 
-	const omitted = ["esbuild", "fsevents"];
+	const omitted = ["esbuild", "fsevents", "typescript", "tsx"];
 	for (const packageName of omitted) {
 		if (await exists(join(tempDirectory, "node_modules", packageName))) {
 			throw new Error(`${packageName} must not be installed in the production-only API tree`);

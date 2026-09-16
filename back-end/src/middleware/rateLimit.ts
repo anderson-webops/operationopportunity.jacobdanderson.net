@@ -2,6 +2,7 @@ import type { Request } from "express";
 import { createHash } from "node:crypto";
 import { ipKeyGenerator, rateLimit } from "express-rate-limit";
 import { normalizeEmail } from "../validation.js";
+import { BoundedRateStore } from "./boundedRateStore.js";
 
 function ipKey(req: Request): string {
 	return ipKeyGenerator(req.ip || req.socket.remoteAddress || "127.0.0.1");
@@ -19,6 +20,7 @@ function createLimiter(windowMs: number, limit: number, keyGenerator: (req: Requ
 		standardHeaders: "draft-8",
 		legacyHeaders: false,
 		keyGenerator,
+		store: new BoundedRateStore(),
 		handler: (_req, res) => {
 			res.status(429).set("Cache-Control", "no-store").json({
 				error: "rate_limited",

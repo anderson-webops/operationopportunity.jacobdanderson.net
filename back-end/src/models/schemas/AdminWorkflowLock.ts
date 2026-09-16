@@ -1,5 +1,6 @@
 import type { Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
+import { readCancellationPlugin } from "../../databaseCapacity.js";
 
 interface IAdminWorkflowLock {
 	_id: string;
@@ -15,6 +16,8 @@ const adminWorkflowLockSchema = new Schema<IAdminWorkflowLock>(
 	},
 	{ versionKey: false, strict: "throw" }
 );
+
+adminWorkflowLockSchema.plugin(readCancellationPlugin);
 
 export const AdminWorkflowLock: Model<IAdminWorkflowLock> = mongoose.model<IAdminWorkflowLock>(
 	"AdminWorkflowLock",

@@ -3,6 +3,7 @@ import { HttpError, isVersionConflictError } from "../../errors.js";
 import { Tutor } from "../../models/schemas/Tutor.js";
 import { User } from "../../models/schemas/User.js";
 import { objectIdParam } from "../../requestParams.js";
+import { trackHandler } from "../../runtimeCapacity.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
 import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
@@ -16,7 +17,7 @@ import {
 import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
 import { parseAccountCreate, parseAccountUpdate, parseTutorStatus } from "../../validation.js";
 
-export const createTutor: RequestHandler = async (req, res) => {
+export const createTutor: RequestHandler = trackHandler(async (req, res) => {
 	if (req.session.identity) {
 		throw new HttpError(409, "already_authenticated", "Sign out before creating another account.");
 	}
@@ -31,19 +32,19 @@ export const createTutor: RequestHandler = async (req, res) => {
 		targetId: tutor._id.toString()
 	});
 	res.status(201).json({ currentTutor: serializeAccount(tutor), csrfToken });
-};
+});
 
-export const getTutorDirectory: RequestHandler = async (_req, res) => {
+export const getTutorDirectory: RequestHandler = trackHandler(async (_req, res) => {
 	const tutors = await Tutor.find({ status: "active" }, { _id: 1, name: 1, state: 1 }).sort({ name: 1 }).exec();
 	res.json(tutors.map(serializeTutorDirectory));
-};
+});
 
-export const getAllTutors: RequestHandler = async (_req, res) => {
+export const getAllTutors: RequestHandler = trackHandler(async (_req, res) => {
 	const tutors = await Tutor.find().sort({ createdAt: 1 }).exec();
 	res.json(tutors.map(serializeAccount));
-};
+});
 
-export const updateTutor: RequestHandler = async (req, res) => {
+export const updateTutor: RequestHandler = trackHandler(async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const tutor = await Tutor.findById(tutorId).exec();
@@ -66,9 +67,9 @@ export const updateTutor: RequestHandler = async (req, res) => {
 		targetId: tutorId
 	});
 	res.json({ currentTutor: serializeAccount(updated) });
-};
+});
 
-export const deleteTutor: RequestHandler = async (req, res) => {
+export const deleteTutor: RequestHandler = trackHandler(async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const principal = req.currentPrincipal!;
@@ -105,13 +106,13 @@ export const deleteTutor: RequestHandler = async (req, res) => {
 		await destroySession(req);
 	}
 	res.sendStatus(204);
-};
+});
 
-export const getLoggedInTutor: RequestHandler = (req, res) => {
+export const getLoggedInTutor: RequestHandler = trackHandler((req, res) => {
 	res.json({ currentTutor: serializeAccount(req.currentTutor!) });
-};
+});
 
-export const updateTutorStatus: RequestHandler = async (req, res) => {
+export const updateTutorStatus: RequestHandler = trackHandler(async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const status = parseTutorStatus(req.body);
@@ -146,4 +147,4 @@ export const updateTutorStatus: RequestHandler = async (req, res) => {
 		targetId: tutorId
 	});
 	res.json({ tutor: serializeAccount(tutor) });
-};
+});

@@ -1,21 +1,16 @@
 // src/models/plugins/password.ts
 import type { Document, Schema } from "mongoose";
-import argon2 from "argon2";
+import { hashPassword, verifyPassword } from "../../passwordWork.js";
 
 export function passwordPlugin<T extends Document & { password: string }>(schema: Schema<T>) {
 	schema.pre("save", async function (this: T) {
 		if (!this.isModified("password")) return;
-		this.password = await argon2.hash(this.password, {
-			type: argon2.argon2id,
-			memoryCost: 65_536,
-			timeCost: 3,
-			parallelism: 1
-		});
+		this.password = await hashPassword(this.password);
 	});
 
 	schema.methods.comparePassword = function (pw: string) {
 		// this.password is guaranteed to exist
-		return argon2.verify(this.password, pw);
+		return verifyPassword(this.password, pw);
 	};
 
 	schema.methods.toJSON = function () {

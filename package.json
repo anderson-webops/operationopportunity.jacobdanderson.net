@@ -1,7 +1,7 @@
 {
 	"name": "opportunity-monorepo",
 	"type": "module",
-	"version": "2.3.1",
+	"version": "2.3.2",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -33,14 +33,15 @@
 		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up",
 		"a11y": "node scripts/a11y-smoke.mjs",
 		"test": "npm run -w front-end test:unit && npm run -w back-end test",
-		"audit": "npm audit --audit-level=high",
-		"audit:production": "npm audit --omit=dev --audit-level=high",
+		"audit": "npm audit --audit-level=low",
+		"audit:production": "npm audit --omit=dev --audit-level=low",
 		"audit:signatures": "npm audit signatures",
 		"verify:api-production-install": "node scripts/verify-api-production-install.mjs",
 		"verify:build-security": "node scripts/verify-build-security.mjs",
 		"verify:public": "node scripts/verify-public.mjs",
 		"verify:config": "npm run -w back-end verify:config",
-		"verify:deploy": "npm run audit && npm run audit:production && npm run audit:signatures && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install"
+		"verify:deploy": "npm run audit && npm run audit:production && npm run audit:signatures && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:build-security && npm run verify:api-production-install",
+		"test:artifact": "python3 -B -m unittest discover -s scripts -p test_runtime_artifact.py -v"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^9.2.0",

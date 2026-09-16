@@ -2,6 +2,7 @@ import type { RequestHandler } from "express";
 import { HttpError } from "../../errors.js";
 import { Admin } from "../../models/schemas/Admin.js";
 import { objectIdParam } from "../../requestParams.js";
+import { trackHandler } from "../../runtimeCapacity.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
 import { adminRemovalBlockReason } from "../../security/policies.js";
@@ -10,7 +11,7 @@ import { createAccount, deleteAccount, serializeAccount, updateAccount } from ".
 import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
 import { parseAdminCreate, parseAdminPeerPrivilegeUpdate, parseAdminUpdate } from "../../validation.js";
 
-export const createAdmin: RequestHandler = async (req, res) => {
+export const createAdmin: RequestHandler = trackHandler(async (req, res) => {
 	const input = parseAdminCreate(req.body);
 	const actorId = req.currentAdmin!._id.toString();
 	const actorAuthVersion = req.currentPrincipal!.authVersion;
@@ -24,14 +25,14 @@ export const createAdmin: RequestHandler = async (req, res) => {
 		targetId: admin._id.toString()
 	});
 	res.status(201).json({ admin: serializeAccount(admin) });
-};
+});
 
-export const getAllAdmins: RequestHandler = async (_req, res) => {
+export const getAllAdmins: RequestHandler = trackHandler(async (_req, res) => {
 	const admins = await Admin.find().sort({ createdAt: 1 }).exec();
 	res.json(admins.map(serializeAccount));
-};
+});
 
-export const updateAdmin: RequestHandler = async (req, res) => {
+export const updateAdmin: RequestHandler = trackHandler(async (req, res) => {
 	const adminId = objectIdParam(req.params.adminID, res, "admin");
 	if (!adminId) return;
 	const actor = req.currentAdmin!;
@@ -89,9 +90,9 @@ export const updateAdmin: RequestHandler = async (req, res) => {
 		targetId: adminId
 	});
 	res.json({ currentAdmin: serializeAccount(admin) });
-};
+});
 
-export const deleteAdmin: RequestHandler = async (req, res) => {
+export const deleteAdmin: RequestHandler = trackHandler(async (req, res) => {
 	const adminId = objectIdParam(req.params.adminID, res, "admin");
 	if (!adminId) return;
 	const actor = req.currentAdmin!;
@@ -130,8 +131,8 @@ export const deleteAdmin: RequestHandler = async (req, res) => {
 	});
 	if (isSelf) await destroySession(req);
 	res.sendStatus(204);
-};
+});
 
-export const getLoggedInAdmin: RequestHandler = (req, res) => {
+export const getLoggedInAdmin: RequestHandler = trackHandler((req, res) => {
 	res.json({ currentAdmin: serializeAccount(req.currentAdmin!) });
-};
+});

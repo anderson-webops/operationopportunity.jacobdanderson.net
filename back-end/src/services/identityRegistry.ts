@@ -5,6 +5,7 @@ import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
 import { User } from "../models/schemas/User.js";
 import { normalizeEmail } from "../validation.js";
+import { accountWriteDefinitelyFailed } from "./identityWriteSafety.js";
 
 interface ExistingIdentity {
 	_id: Types.ObjectId;
@@ -127,7 +128,7 @@ export async function replaceIdentity(
 	try {
 		await updateAccount();
 	} catch (error) {
-		await releaseIdentity(normalizedNew, accountId);
+		if (accountWriteDefinitelyFailed(error)) await releaseIdentity(normalizedNew, accountId);
 		throw error;
 	}
 	await releaseIdentity(normalizedOld, accountId);

@@ -1,6 +1,6 @@
 {
 	"name": "back-end",
-	"version": "2.3.1",
+	"version": "2.3.2",
 	"private": true,
 	"packageManager": "npm@12.0.2",
 	"engines": {
@@ -22,10 +22,10 @@
 		"up": "taze major -I",
 		"lint": "eslint \"src/**/*.{js,ts}\"",
 		"lint-fix": "eslint \"src/**/*.{js,ts}\" --fix",
-		"create-admin": "tsx --env-file-if-exists=.env src/create-admin-user.ts",
-		"recover-admin-manager": "tsx --env-file-if-exists=.env src/grant-admin-manager.ts",
-		"reset-account-password": "tsx --env-file-if-exists=.env src/reset-account-password.ts",
-		"verify:config": "tsx src/scripts/verifyConfig.ts"
+		"create-admin": "node dist/create-admin-user.js",
+		"recover-admin-manager": "node dist/grant-admin-manager.js",
+		"reset-account-password": "node dist/reset-account-password.js",
+		"verify:config": "node dist/scripts/verifyConfig.js"
 	},
 	"keywords": [],
 	"author": "",
