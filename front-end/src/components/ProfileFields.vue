@@ -37,6 +37,7 @@ function onInput(key: string, value: Displayable) {
 				<input
 					:value="entityValues[f.key]"
 					class="editTutor"
+					:maxlength="f.key === 'age' ? 3 : f.key === 'email' ? 254 : 100"
 					type="text"
 					@input="onInput(f.key, ($event.target as HTMLInputElement).value)"
 				/>

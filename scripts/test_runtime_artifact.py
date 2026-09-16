@@ -44,9 +44,14 @@ class RuntimeArtifactTests(unittest.TestCase):
             artifact.validate(self.root, manifest)
 
     def test_missing_module_even_if_the_inventory_omits_it(self):
-        (self.root / "back-end/dist/runtimeCapacity.js").unlink()
-        with self.assertRaisesRegex(ValueError, "required runtime path missing"):
-            artifact.validate(self.root, self.manifest())
+        for name in ["back-end/dist/runtimeCapacity.js", "back-end/dist/services/directory.js"]:
+            with self.subTest(name=name):
+                path = self.root / name
+                contents = path.read_bytes()
+                path.unlink()
+                with self.assertRaisesRegex(ValueError, "required runtime path missing"):
+                    artifact.validate(self.root, self.manifest())
+                path.write_bytes(contents)
 
     def test_symlinks_and_private_state(self):
         for name in [".env", "credentials.json", "back-end/dist/key.pem", "back-end/dist/enrollment.sqlite3", "back-end/dist/index.sqlite", "back-end/dist/index.sqlite-wal", "back-end/dist/index.sqlite-journal"]:

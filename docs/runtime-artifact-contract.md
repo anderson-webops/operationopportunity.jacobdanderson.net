@@ -11,8 +11,9 @@ No production connection or provider secret is used.
 The builder runs clean locked installation, lint, types, frontend/backend tests,
 compiled builds, build-security/native-install verification, full/production
 audits and registry signatures. Browser binary downloads are skipped in this
-artifact gate; frontend unit tests still run. No frontend visual change is part
-of this milestone. Source and backend standalone locks must both pass.
+artifact gate; frontend unit tests still run. Compiled-browser acceptance and
+paired directory measurements run separately on a host with Chrome. Source and
+backend standalone locks must both pass.
 
 ## Completeness and isolated execution
 
@@ -36,6 +37,8 @@ The second command must run on the actual tree **after a deployment copier**.
 An incomplete tree cannot pass by deleting the omitted file from its manifest.
 A missing compiled `runtimeCapacity.js` is rejected independently and also tested
 by starting the broken service. There is no artificial `shared/` directory.
+The independent path contract also requires `services/directory.js`; removing it
+and rewriting the inventory still fails the packaging regression.
 
 The unpacked acceptance runner uses a read-only artifact, unprivileged process,
 zero effective capabilities, isolated loopback network and disposable state.
@@ -53,6 +56,9 @@ recovery workflows were performed. Existing integration tests cover their shared
 account/authorization logic; operator recovery remains privileged.
 Startup acceptance also stops the compiled service during a blocked identity
 cursor and checks exit 0, private-index permissions and complete scratch cleanup.
+Directory acceptance traverses all synthetic users through bounded pages, compares
+the complete legacy array, searches a late row, rejects invalid limits, and checks
+public tutor field filtering plus unauthenticated/cross-role denial.
 
 Publish archive, checksum, manifest, acceptance receipt and acceptance records
 only after all gates pass for the exact annotated source. The receipt binds the

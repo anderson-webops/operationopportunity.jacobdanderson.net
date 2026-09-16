@@ -52,4 +52,9 @@ userSchema.plugin(passwordPlugin);
  */
 userSchema.plugin(readCancellationPlugin);
 
+userSchema.index({ name: 1, _id: 1 });
+userSchema.index({ createdAt: 1, _id: 1 });
+userSchema.index({ tutor: 1, name: 1, _id: 1 });
+userSchema.index({ tutor: 1, createdAt: 1, _id: 1 });
+
 export const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);

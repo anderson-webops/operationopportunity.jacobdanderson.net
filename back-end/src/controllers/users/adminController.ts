@@ -9,6 +9,7 @@ import { adminRemovalBlockReason } from "../../security/policies.js";
 import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
 import { createAccount, deleteAccount, serializeAccount, updateAccount } from "../../services/accountService.js";
 import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
+import { sendDirectory } from "../../services/directory.js";
 import { parseAdminCreate, parseAdminPeerPrivilegeUpdate, parseAdminUpdate } from "../../validation.js";
 
 export const createAdmin: RequestHandler = trackHandler(async (req, res) => {
@@ -27,9 +28,8 @@ export const createAdmin: RequestHandler = trackHandler(async (req, res) => {
 	res.status(201).json({ admin: serializeAccount(admin) });
 });
 
-export const getAllAdmins: RequestHandler = trackHandler(async (_req, res) => {
-	const admins = await Admin.find().sort({ createdAt: 1 }).exec();
-	res.json(admins.map(serializeAccount));
+export const getAllAdmins: RequestHandler = trackHandler(async (req, res) => {
+	await sendDirectory(req, res, { model: Admin });
 });
 
 export const updateAdmin: RequestHandler = trackHandler(async (req, res) => {

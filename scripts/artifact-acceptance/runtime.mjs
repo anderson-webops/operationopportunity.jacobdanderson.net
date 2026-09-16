@@ -16,7 +16,7 @@ for (const value of Object.values(networkInterfaces()).flat()) assert.equal(valu
 assert.throws(() => writeFileSync("/app/forbidden-write", "fixture"));
 const require = createRequire("/app/back-end/package.json");
 for (const name of ["typescript", "tsx", "esbuild", "supertest"]) assert.throws(() => require.resolve(name));
-const { MongoClient } = require("mongoose").mongo;
+const { MongoClient, ObjectId } = require("mongoose").mongo;
 const manifest = JSON.parse(readFileSync("/app/runtime-manifest.json", "utf8"));
 const release = JSON.parse(readFileSync("/app/front-end/dist/release.json", "utf8"));
 const children = [];
@@ -235,6 +235,80 @@ try {
 		assert.equal(created.currentUser.password, undefined);
 		assert.equal((await request("/accounts/me")).role, "user");
 		await request("/users/all", "GET", undefined, 403);
+		await request("/users/all?pageSize=20", "GET", undefined, 403);
+		await request("/accounts/logout", "DELETE", undefined, 204);
+		// Exercise the paged directory from this exact unpacked production tree.
+		const database = control.db("operation_fixture");
+		const directoryAdmin = {
+			_id: new ObjectId(),
+			name: "Directory manager",
+			email: "manager@fixture.test",
+			password: hash,
+			role: "admin",
+			authVersion: 0,
+			editAdmins: true
+		};
+		const directoryTutors = ["active", "pending"].map((status) => ({
+			_id: new ObjectId(),
+			name: "Tutor " + status,
+			email: status + "@fixture.test",
+			password: hash,
+			role: "tutor",
+			status,
+			authVersion: 0,
+			age: "30",
+			state: "GA"
+		}));
+		const directoryUsers = Array.from({ length: 53 }, (_, index) => ({
+			_id: new ObjectId(),
+			name: "Directory user " + String(index).padStart(3, "0"),
+			email: "directory-" + index + "@fixture.test",
+			password: hash,
+			role: "user",
+			authVersion: 0,
+			age: "20",
+			state: "GA"
+		}));
+		await database.collection("admins").insertOne(directoryAdmin);
+		await database.collection("tutors").insertMany(directoryTutors);
+		await database.collection("users").insertMany(directoryUsers);
+		await database.collection("accountemails").insertMany(
+			[directoryAdmin, ...directoryTutors, ...directoryUsers].map((row) => ({
+				_id: row.email,
+				role: row.role,
+				accountId: row._id
+			}))
+		);
+		const publicPage = await request("/tutors?pageSize=1");
+		assert.equal(publicPage.items.length, 1);
+		assert.deepEqual(Object.keys(publicPage.items[0]).sort(), ["_id", "name", "state"]);
+		assert.equal(publicPage.items[0]._id, directoryTutors[0]._id.toString());
+		assert.equal(publicPage.next, null);
+		await request("/users/all?pageSize=20", "GET", undefined, 401, false);
+		await request("/accounts/csrf");
+		await request("/accounts/login", "POST", {
+			email: directoryAdmin.email,
+			password: "Synthetic-native-fixture-123"
+		});
+		const seen = [];
+		let next = null;
+		do {
+			const page = await request("/users/all?pageSize=20" + (next ? "&after=" + encodeURIComponent(next) : ""));
+			assert.ok(page.items.length <= 20);
+			assert.doesNotMatch(JSON.stringify(page), /password|authVersion/);
+			seen.push(...page.items.map((row) => row._id));
+			next = page.next;
+			assert.ok(seen.length <= 54);
+		} while (next);
+		assert.deepEqual(
+			seen.sort(),
+			[created.currentUser._id, ...directoryUsers.map((row) => row._id.toString())].sort()
+		);
+		const legacyUsers = await request("/users/all");
+		assert.deepEqual(legacyUsers.map((row) => row._id).sort(), seen);
+		const found = await request("/users/all?pageSize=20&q=Directory%20user%20052");
+		assert.equal(found.items.length, 1);
+		await request("/users/all?pageSize=51", "GET", undefined, 400);
 		await request("/accounts/logout", "DELETE", undefined, 204);
 		await request("/accounts/csrf");
 		await request("/accounts/login", "POST", { email: "artifact@fixture.test", password: "incorrect" }, 401);
@@ -374,6 +448,7 @@ try {
 					"compiled-server-and-maintenance-entrypoint-guards",
 					"GET-HEAD-health-readiness",
 					"signup-login-CSRF-role-isolation-logout",
+					"complete-paged-and-legacy-directories-public-field-isolation",
 					"quotes-provider-failure-recovery",
 					"database-failure-recovery",
 					"disconnected-write-drain-audit",

@@ -14,9 +14,9 @@ const { currentAdmin, currentTutor, currentUser } = storeToRefs(useAppStore());
 
 <template>
 	<div>
-		<AdminProfile v-if="currentAdmin" />
-		<TutorProfile v-else-if="currentTutor" />
-		<UserProfile v-else-if="currentUser" />
+		<AdminProfile v-if="currentAdmin" :key="currentAdmin._id" />
+		<TutorProfile v-else-if="currentTutor" :key="currentTutor._id" />
+		<UserProfile v-else-if="currentUser" :key="currentUser._id" />
 		<div v-else class="loginSignup">
 			<h3>Please login or signup!</h3>
 		</div>

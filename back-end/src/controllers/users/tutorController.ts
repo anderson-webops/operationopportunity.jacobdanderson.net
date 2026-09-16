@@ -7,14 +7,9 @@ import { trackHandler } from "../../runtimeCapacity.js";
 import { auditSecurityEvent } from "../../security/audit.js";
 import { issueCsrfToken } from "../../security/csrf.js";
 import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
-import {
-	createAccount,
-	deleteAccount,
-	serializeAccount,
-	serializeTutorDirectory,
-	updateAccount
-} from "../../services/accountService.js";
+import { createAccount, deleteAccount, serializeAccount, updateAccount } from "../../services/accountService.js";
 import { requireCurrentAdminManager, withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
+import { sendDirectory } from "../../services/directory.js";
 import { parseAccountCreate, parseAccountUpdate, parseTutorStatus } from "../../validation.js";
 
 export const createTutor: RequestHandler = trackHandler(async (req, res) => {
@@ -34,14 +29,17 @@ export const createTutor: RequestHandler = trackHandler(async (req, res) => {
 	res.status(201).json({ currentTutor: serializeAccount(tutor), csrfToken });
 });
 
-export const getTutorDirectory: RequestHandler = trackHandler(async (_req, res) => {
-	const tutors = await Tutor.find({ status: "active" }, { _id: 1, name: 1, state: 1 }).sort({ name: 1 }).exec();
-	res.json(tutors.map(serializeTutorDirectory));
+export const getTutorDirectory: RequestHandler = trackHandler(async (req, res) => {
+	await sendDirectory(req, res, {
+		model: Tutor,
+		filter: { status: "active" },
+		public: true,
+		legacySort: { name: 1, _id: 1 }
+	});
 });
 
-export const getAllTutors: RequestHandler = trackHandler(async (_req, res) => {
-	const tutors = await Tutor.find().sort({ createdAt: 1 }).exec();
-	res.json(tutors.map(serializeAccount));
+export const getAllTutors: RequestHandler = trackHandler(async (req, res) => {
+	await sendDirectory(req, res, { model: Tutor });
 });
 
 export const updateTutor: RequestHandler = trackHandler(async (req, res) => {

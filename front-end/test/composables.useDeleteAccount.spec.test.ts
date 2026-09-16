@@ -11,7 +11,7 @@ vi.mock("@/api", () => {
 		put: vi.fn(),
 		delete: vi.fn()
 	};
-	return { api: mock, clearCsrfToken: vi.fn() };
+	return { api: mock, clearCsrfToken: vi.fn(), resetApiSession: vi.fn() };
 });
 
 describe("useDeleteAccount()", () => {
@@ -41,7 +41,7 @@ describe("useDeleteAccount()", () => {
 				withCredentials: true
 			});
 			expect(clearSpy).toHaveBeenCalledTimes(1);
-			expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
+			expect(apiMod.resetApiSession).toHaveBeenCalledTimes(1);
 		}
 	);
 
@@ -50,6 +50,6 @@ describe("useDeleteAccount()", () => {
 		const del = useDeleteAccount("user");
 		expect(await del("u1")).toBe(false);
 		expect(apiMod.api.delete).not.toHaveBeenCalled();
-		expect(apiMod.clearCsrfToken).not.toHaveBeenCalled();
+		expect(apiMod.resetApiSession).not.toHaveBeenCalled();
 	});
 });

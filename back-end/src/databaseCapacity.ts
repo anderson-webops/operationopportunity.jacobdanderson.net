@@ -18,7 +18,12 @@ export function readCancellationPlugin(schema: Schema) {
 		schema.pre(operation, function () {
 			const signal = readRequestSignal();
 			signal?.throwIfAborted();
-			if (signal) this.setOptions({ signal });
+			if (signal) {
+				const existing = this.getOptions().signal as AbortSignal | undefined;
+				this.setOptions({
+					signal: existing && existing !== signal ? AbortSignal.any([existing, signal]) : signal
+				});
+			}
 		});
 	}
 }

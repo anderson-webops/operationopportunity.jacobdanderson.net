@@ -16,7 +16,15 @@ const deleteMe = useDeleteAccount("user");
 /* -------------------------------------------------- */
 /*  editable helper                                   */
 /* -------------------------------------------------- */
-const { editing, toggle, save } = useEditable("user");
+const {
+	editing,
+	toggle,
+	save,
+	draft: profileDraft,
+	pending: profilePending,
+	error: profileError,
+	message: profileMessage
+} = useEditable("user");
 
 /* -------------------------------------------------- */
 /*  field list (only once)                            */
@@ -37,16 +45,18 @@ const fields = [
 			<ul>
 				<li><h4>User</h4></li>
 
-				<ProfileFields :editing="editing" :entity="currentUser" :fields="fields" />
+				<ProfileFields :editing="editing" :entity="editing ? profileDraft : currentUser" :fields="fields" />
 				<li><strong>Email:</strong> {{ currentUser.email }}</li>
 			</ul>
 			<br />
 
 			<button class="btn-danger btn" @click="deleteMe(currentUser!._id)">Delete</button>
-			<button class="btn-primary btn" @click="editing ? save(currentUser) : toggle()">
+			<button class="btn-primary btn" :disabled="profilePending" @click="editing ? save(profileDraft) : toggle()">
 				{{ editing ? "Save" : "Edit" }}
 			</button>
 		</div>
+		<p v-if="profileError" class="error" role="alert">{{ profileError }}</p>
+		<p v-if="profileMessage" role="status">{{ profileMessage }}</p>
 		<ChangeCredentials v-if="currentUser" :account="currentUser" kind="user" />
 	</section>
 </template>

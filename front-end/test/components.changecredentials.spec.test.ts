@@ -12,7 +12,7 @@ vi.mock("@/api", () => ({
 		put: vi.fn(),
 		delete: vi.fn()
 	},
-	clearCsrfToken: vi.fn()
+	clearCsrfToken: vi.fn(), resetApiSession: vi.fn()
 }));
 
 describe("ChangeCredentials", () => {

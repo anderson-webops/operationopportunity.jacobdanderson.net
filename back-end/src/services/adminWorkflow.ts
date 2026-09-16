@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
 import { HttpError, safeErrorSummary } from "../errors.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { AdminWorkflowLock } from "../models/schemas/AdminWorkflowLock.js";
+import { readRequestSignal } from "../runtimeCapacity.js";
 import { serviceLog } from "../serviceLog.js";
 
 const LOCK_ID = "authorization-workflow";
@@ -9,7 +11,9 @@ const LOCK_DURATION_MS = 30_000;
 const LOCK_ATTEMPTS = 50;
 
 async function acquireLock(owner: string): Promise<void> {
+	const signal = readRequestSignal();
 	for (let attempt = 0; attempt < LOCK_ATTEMPTS; attempt += 1) {
+		signal?.throwIfAborted();
 		const now = new Date();
 		const expiresAt = new Date(now.getTime() + LOCK_DURATION_MS);
 		try {
@@ -34,7 +38,7 @@ async function acquireLock(owner: string): Promise<void> {
 				throw error;
 			}
 		}
-		await new Promise((resolve) => setTimeout(resolve, Math.min(25 * (attempt + 1), 100)));
+		await delay(Math.min(25 * (attempt + 1), 100), undefined, { signal });
 	}
 	throw new HttpError(
 		503,

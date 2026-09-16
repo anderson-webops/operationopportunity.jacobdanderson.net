@@ -1,5 +1,5 @@
 // components/accountmanagement.login.spec.test.ts
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createPinia, setActivePinia } from "pinia";
 import AccountManagement from "../src/components/AccountManagement.vue";
@@ -15,7 +15,7 @@ vi.mock("@/api", () => {
 		delete: vi.fn(),
 		defaults: { baseURL: "/api", withCredentials: true }
 	};
-	return { api: mock, clearCsrfToken: vi.fn() };
+	return { api: mock, clearCsrfToken: vi.fn(), resetApiSession: vi.fn() };
 });
 
 describe("AccountManagement.vue login (happy path)", () => {
@@ -75,5 +75,21 @@ describe("AccountManagement.vue login (happy path)", () => {
 		expect(modal.exists()).toBe(true);
 		// When closed, the "showLogin" class should be absent:
 		expect(modal.classes()).not.toContain("showLogin");
+	});
+
+	it("shows a failed signup in its own form and preserves the entered draft", async () => {
+		const app = useAppStore();
+		app.setSignupBlock(true);
+		vi.mocked(apiMod.api.post).mockRejectedValueOnce({ response: { data: { message: "Temporarily unavailable" } } });
+		const wrapper = mount(AccountManagement);
+		try {
+			for (const [selector, value] of [["#name", "Draft name"], ["#email", "draft@fixture.test"], ["#age", "20"], ["#state", "GA"], ["#psw2", "Synthetic-only-password"], ["#psw-repeat", "Synthetic-only-password"]]) await wrapper.get(selector).setValue(value);
+			await wrapper.get(".signupForm form").trigger("submit.prevent");
+			await flushPromises();
+			expect(wrapper.get(".signupForm .error").text()).toContain("Temporarily unavailable");
+			expect((wrapper.get("#name").element as HTMLInputElement).value).toBe("Draft name");
+			expect(app.signupBlock).toBe(true);
+			expect(app.sessionBusy).toBe(false);
+		} finally { wrapper.unmount(); }
 	});
 });

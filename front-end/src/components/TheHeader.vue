@@ -61,7 +61,7 @@ async function logoutUser() {
 					<!-- Logout Button -->
 					<button
 						v-if="isLoggedIn"
-						:disabled="logoutPending"
+						:disabled="logoutPending || app.sessionBusy"
 						class="btn-outline-danger btn"
 						type="button"
 						@click="logoutUser"

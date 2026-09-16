@@ -12,7 +12,7 @@ vi.mock("@/api", () => {
 		put: vi.fn(),
 		delete: vi.fn()
 	};
-	return { api: mock };
+	return { api: mock, resetApiSession: vi.fn() };
 });
 
 describe("app store bootstrapSession()", () => {

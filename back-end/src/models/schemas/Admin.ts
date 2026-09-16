@@ -46,4 +46,7 @@ adminSchema.plugin(passwordPlugin);
  */
 adminSchema.plugin(readCancellationPlugin);
 
+adminSchema.index({ name: 1, _id: 1 });
+adminSchema.index({ createdAt: 1, _id: 1 });
+
 export const Admin: Model<IAdmin> = mongoose.model<IAdmin>("Admin", adminSchema);

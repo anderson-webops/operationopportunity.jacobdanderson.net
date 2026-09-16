@@ -1,119 +1,64 @@
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAppStore } from "../src/stores/app";
-import * as apiMod from "../src/api";
-
-vi.mock("@/api", () => {
-	const mock = {
-		get: vi.fn(),
-		post: vi.fn(),
-		put: vi.fn(),
-		delete: vi.fn()
-	};
-	return { api: mock, clearCsrfToken: vi.fn() };
-});
-
-describe("app store actions", () => {
-	beforeEach(() => {
-		setActivePinia(createPinia());
-		vi.clearAllMocks();
+import { api, resetApiSession } from "../src/api";
+vi.mock("@/api", () => ({ api: { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn() }, resetApiSession: vi.fn() }));
+const admin = { _id: "a1", name: "Admin", email: "a@example.test", editAdmins: true };
+function pending() { let resolve!: (value: any) => void; const promise = new Promise((done) => { resolve = done; }); return { resolve, promise }; }
+describe("session-owned application state", () => {
+	beforeEach(() => { setActivePinia(createPinia()); vi.resetAllMocks(); });
+	it("switches identities atomically and retains no directory arrays", () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		app.setCurrentUser({ _id: "u1", name: "User", email: "u@example.test", age: 20, state: "GA" });
+		expect(app.currentAdmin).toBeNull(); expect(app.currentTutor).toBeNull();
+		expect(app.currentUser?._id).toBe("u1");
+		for (const key of ["users", "tutors", "admins"]) expect(app.$state).not.toHaveProperty(key);
 	});
-
-	it("fetchUsers populates the users array", async () => {
-		(apiMod.api.get as any).mockResolvedValueOnce({
-			data: [{ _id: "u1", name: "User", email: "u@e.com", age: 20, state: "CA" }]
-		});
-		const app = useAppStore();
-		await app.fetchUsers();
-
-		expect(apiMod.api.get).toHaveBeenCalledWith("/users/all");
-		expect(app.users).toHaveLength(1);
-		expect(app.users[0]._id).toBe("u1");
-	});
-
-	it("fetchTutors populates tutors array", async () => {
-		(apiMod.api.get as any).mockResolvedValueOnce({
-			data: [{ _id: "t1", name: "Tutor", state: "NY", status: "active" }]
-		});
-		const app = useAppStore();
-		await app.fetchTutors();
-
-		expect(apiMod.api.get).toHaveBeenCalledWith("/tutors");
-		expect(app.tutors).toHaveLength(1);
-		expect(app.tutors[0]._id).toBe("t1");
-	});
-
-	it("getUsersOfTutor fetches users for the current tutor", async () => {
-		(apiMod.api.get as any).mockResolvedValueOnce({
-			data: [{ _id: "u2", name: "Student", email: "s@e.com", age: 18, state: "AZ" }]
-		});
-		const app = useAppStore();
-		app.setCurrentTutor({
-			_id: "t55",
-			name: "Tutor",
-			email: "t@e.com",
-			age: 40,
-			state: "IL",
-			status: "active"
-		});
-
-		await app.getUsersOfTutor();
-
-		expect(apiMod.api.get).toHaveBeenCalledWith("/users/oftutor/t55");
-		expect(app.users[0]._id).toBe("u2");
-	});
-
-	it("logout clears all session state", async () => {
-		(apiMod.api.delete as any).mockResolvedValueOnce({});
-		const app = useAppStore();
-		app.setCurrentAdmin({ _id: "a1", name: "A", email: "a@e.com", editAdmins: false });
-		app.setCurrentTutor({ _id: "t1", name: "T", email: "t@e.com", age: 40, state: "TX", status: "active" });
-		app.setCurrentUser({ _id: "u1", name: "U", email: "u@e.com", age: 21, state: "CA" });
-		app.setError("boom");
-
-		await app.logout();
-
-		expect(apiMod.api.delete).toHaveBeenCalledWith("/accounts/logout");
-		expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
+	it("does not restore an old account when a read finishes after logout", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		const read = pending(); vi.mocked(api.get).mockReturnValueOnce(read.promise as any);
+		const refreshing = app.refreshCurrentAdmin(); app.clearSession();
+		read.resolve({ data: { currentAdmin: admin } }); await refreshing;
 		expect(app.currentAdmin).toBeNull();
-		expect(app.currentTutor).toBeNull();
-		expect(app.currentUser).toBeNull();
-		expect(app.error).toBeNull();
 	});
-
-	it("preserves session state when server-side logout cannot be confirmed", async () => {
-		(apiMod.api.delete as any).mockRejectedValueOnce(new Error("network unavailable"));
-		const app = useAppStore();
-		app.setCurrentAdmin({
-			_id: "a1",
-			name: "A",
-			email: "a@e.com",
-			editAdmins: false
-		});
-
-		await expect(app.logout()).resolves.toBe(false);
-
-		expect(apiMod.clearCsrfToken).not.toHaveBeenCalled();
-		expect(app.currentAdmin?._id).toBe("a1");
-		expect(app.error).toMatch(/could not be confirmed/i);
+	it("does not replace a confirmed profile update with an older refresh", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		const read = pending(); vi.mocked(api.get).mockReturnValueOnce(read.promise as any);
+		const refreshing = app.refreshCurrentAdmin(); app.setCurrentAdmin({ ...admin, name: "Updated" });
+		read.resolve({ data: { currentAdmin: admin } }); await refreshing;
+		expect(app.currentAdmin?.name).toBe("Updated");
 	});
-
-	it("clears local state when logout confirms the session is already expired", async () => {
-		(apiMod.api.delete as any).mockRejectedValueOnce({
-			response: { status: 401 }
-		});
-		const app = useAppStore();
-		app.setCurrentAdmin({
-			_id: "a1",
-			name: "A",
-			email: "a@e.com",
-			editAdmins: false
-		});
-
+	it("keeps the current account on temporary authentication-store failure", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		vi.mocked(api.get).mockRejectedValueOnce({ response: { status: 503 } });
+		await app.refreshCurrentAdmin(); expect(app.currentAdmin).toEqual(admin); expect(app.error).toMatch(/kept/);
+	});
+	it("clears private identity when expiry is confirmed", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		vi.mocked(api.get).mockRejectedValueOnce({ response: { status: 401 } });
+		await app.refreshCurrentAdmin(); expect(app.currentAdmin).toBeNull();
+	});
+	it("clears session state and cancels reads after confirmed logout", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin); vi.mocked(resetApiSession).mockClear();
+		vi.mocked(api.delete).mockResolvedValueOnce({} as any);
 		await expect(app.logout()).resolves.toBe(true);
-
-		expect(apiMod.clearCsrfToken).toHaveBeenCalledTimes(1);
-		expect(app.currentAdmin).toBeNull();
-		expect(app.error).toBeNull();
+		expect(app.currentAdmin).toBeNull(); expect(resetApiSession).toHaveBeenCalledOnce(); expect(app.sessionBusy).toBe(false);
+	});
+	it("keeps identity on unconfirmed logout and permits retry", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin); vi.mocked(resetApiSession).mockClear();
+		vi.mocked(api.delete).mockRejectedValueOnce(new Error("network unavailable"));
+		await expect(app.logout()).resolves.toBe(false); expect(app.currentAdmin).toEqual(admin);
+		expect(resetApiSession).not.toHaveBeenCalled(); expect(app.sessionBusy).toBe(false);
+	});
+	it("does not issue a second overlapping logout", async () => {
+		const app = useAppStore(); app.setCurrentAdmin(admin);
+		const request = pending(); vi.mocked(api.delete).mockReturnValueOnce(request.promise as any);
+		const first = app.logout(); await expect(app.logout()).resolves.toBe(false);
+		request.resolve({}); await first; expect(api.delete).toHaveBeenCalledOnce();
+	});
+	it("invalidates pending directory reads when tutor access changes", () => {
+		const app = useAppStore(); app.setCurrentTutor({ _id: "t1", name: "Tutor", status: "active" });
+		const revision = app.sessionRevision; app.setCurrentTutor({ _id: "t1", name: "Tutor", status: "suspended" });
+		expect(app.sessionRevision).toBeGreaterThan(revision); expect(app.currentTutor?.status).toBe("suspended");
 	});
 });

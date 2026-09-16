@@ -21,8 +21,10 @@ function changeLoginView(show: boolean) {
 }
 
 async function loginTutor() {
+	if (app.sessionBusy) return;
 	errorLogin.value = "";
 	if (!loginEmail.value || !loginPassword.value) return;
+	app.sessionBusy = true;
 	try {
 		const { data } = await api.post(
 			"/accounts/login",
@@ -37,10 +39,13 @@ async function loginTutor() {
 		if (data.currentTutor) app.setCurrentTutor(data.currentTutor);
 		if (data.currentUser) app.setCurrentUser(data.currentUser);
 		if (data.currentAdmin) app.setCurrentAdmin(data.currentAdmin);
+		loginPassword.value = "";
 		changeLoginView(false);
 	} catch (err: unknown) {
 		const e = err as AxiosError<{ message?: string }>;
 		errorLogin.value = `Login failed: ${e.response?.data?.message ?? e.message ?? "Unknown error"}`;
+	} finally {
+		app.sessionBusy = false;
 	}
 }
 
@@ -70,7 +75,8 @@ function resetData() {
 
 // on submit, dispatch to the right endpoint
 async function addSignup() {
-	if (!passwordMatch.value) return;
+	if (!passwordMatch.value || app.sessionBusy) return;
+	app.sessionBusy = true;
 
 	try {
 		// fire the right endpoint with credentials turned on
@@ -110,7 +116,9 @@ async function addSignup() {
 		changeSignupView(false);
 	} catch (err: unknown) {
 		const e = err as AxiosError<{ message?: string }>;
-		errorLogin.value = `Error: ${e.response?.data?.message ?? e.message ?? "Unknown error"}`;
+		error.value = `Error: ${e.response?.data?.message ?? e.message ?? "Unknown error"}`;
+	} finally {
+		app.sessionBusy = false;
 	}
 }
 </script>
@@ -132,6 +140,7 @@ async function addSignup() {
 					<input
 						id="uname"
 						v-model="loginEmail"
+						:disabled="app.sessionBusy"
 						autocomplete="username"
 						maxlength="254"
 						placeholder="Enter Email"
@@ -143,6 +152,7 @@ async function addSignup() {
 					<input
 						id="psw1"
 						v-model="loginPassword"
+						:disabled="app.sessionBusy"
 						autocomplete="current-password"
 						maxlength="128"
 						placeholder="Enter Password"
@@ -150,9 +160,9 @@ async function addSignup() {
 						type="password"
 					/>
 
-					<button class="button" type="submit">Login</button>
+					<button class="button" type="submit" :disabled="app.sessionBusy">Login</button>
 					<label>
-						<input v-model="rememberLogin" name="remember" type="checkbox" />
+						<input v-model="rememberLogin" :disabled="app.sessionBusy" name="remember" type="checkbox" />
 						Remember me
 					</label>
 					<span class="signup"
@@ -191,30 +201,52 @@ async function addSignup() {
 					<!-- ─── User Type Selector ────────────────────────────────────────── -->
 					<div class="mb-3">
 						<label>
-							<input v-model="signupType" type="radio" value="tutor" />
+							<input v-model="signupType" :disabled="app.sessionBusy" type="radio" value="tutor" />
 							Tutor
 						</label>
 						&ensp;
 						<label>
-							<input v-model="signupType" type="radio" value="user" />
+							<input v-model="signupType" :disabled="app.sessionBusy" type="radio" value="user" />
 							User
 						</label>
 					</div>
 
 					<!-- ─── Common Fields ─────────────────────────────────────────────── -->
 					<label for="name"><b>Name</b></label>
-					<input id="name" v-model="name" placeholder="Enter Name" required type="text" />
+					<input
+						id="name"
+						v-model="name"
+						:disabled="app.sessionBusy"
+						placeholder="Enter Name"
+						required
+						type="text"
+					/>
 
 					<label for="age"><b>Age</b></label>
-					<input id="age" v-model="age" placeholder="Enter Age" required type="text" />
+					<input
+						id="age"
+						v-model="age"
+						:disabled="app.sessionBusy"
+						placeholder="Enter Age"
+						required
+						type="text"
+					/>
 
 					<label for="state"><b>State</b></label>
-					<input id="state" v-model="state" placeholder="Enter State" required type="text" />
+					<input
+						id="state"
+						v-model="state"
+						:disabled="app.sessionBusy"
+						placeholder="Enter State"
+						required
+						type="text"
+					/>
 
 					<label for="email"><b>Email</b></label>
 					<input
 						id="email"
 						v-model="email"
+						:disabled="app.sessionBusy"
 						autocomplete="email"
 						maxlength="254"
 						placeholder="Enter Email"
@@ -226,6 +258,7 @@ async function addSignup() {
 					<input
 						id="psw2"
 						v-model="password"
+						:disabled="app.sessionBusy"
 						autocomplete="new-password"
 						maxlength="128"
 						minlength="12"
@@ -238,6 +271,7 @@ async function addSignup() {
 					<input
 						id="psw-repeat"
 						v-model="passwordRepeat"
+						:disabled="app.sessionBusy"
 						autocomplete="new-password"
 						maxlength="128"
 						minlength="12"
@@ -246,7 +280,7 @@ async function addSignup() {
 						type="password"
 					/>
 
-					<button class="signup button" type="submit">
+					<button class="signup button" type="submit" :disabled="app.sessionBusy">
 						Sign Up as a
 						{{ signupType.charAt(0).toUpperCase() + signupType.slice(1) }}
 					</button>

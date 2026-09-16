@@ -12,6 +12,7 @@ import { canAssignTutor, canStaffUpdateUser, canUserMutateSelf } from "../../sec
 import { destroySession, regenerateSession, saveSession, setSessionIdentity } from "../../security/session.js";
 import { createAccount, deleteAccount, serializeAccount, updateAccount } from "../../services/accountService.js";
 import { withAuthorizationWorkflowLock } from "../../services/adminWorkflow.js";
+import { sendDirectory } from "../../services/directory.js";
 import { parseAccountCreate, parseAccountUpdate, parseStaffUserUpdate } from "../../validation.js";
 
 export const createUser: RequestHandler = trackHandler(async (req, res) => {
@@ -31,16 +32,15 @@ export const createUser: RequestHandler = trackHandler(async (req, res) => {
 	res.status(201).json({ currentUser: serializeAccount(user), csrfToken });
 });
 
-export const getAllUsers: RequestHandler = trackHandler(async (_req, res) => {
-	const users = await User.find().sort({ createdAt: 1 }).exec();
-	res.json(users.map(serializeAccount));
+export const getAllUsers: RequestHandler = trackHandler(async (req, res) => {
+	await sendDirectory(req, res, { model: User });
 });
 
 export const getUsersOfTutor: RequestHandler = trackHandler(async (req, res) => {
 	const tutorId = objectIdParam(req.params.tutorID, res, "tutor");
 	if (!tutorId) return;
 	const principal = req.currentPrincipal!;
-	const users = await withAuthorizationWorkflowLock(async () => {
+	await withAuthorizationWorkflowLock(async () => {
 		if (principal.role === "tutor") {
 			const tutor = await Tutor.findOne({
 				_id: principal.id,
@@ -54,9 +54,8 @@ export const getUsersOfTutor: RequestHandler = trackHandler(async (req, res) => 
 			const admin = await Admin.findOne({ _id: principal.id, authVersion: principal.authVersion }).exec();
 			if (!admin) throw new HttpError(401, "session_expired", "The session is no longer valid.");
 		}
-		return User.find({ tutor: tutorId }).sort({ createdAt: 1 }).exec();
+		await sendDirectory(req, res, { model: User, filter: { tutor: new Types.ObjectId(tutorId) } });
 	});
-	res.json(users.map(serializeAccount));
 });
 
 async function updateTargetUser(req: Parameters<RequestHandler>[0], res: Parameters<RequestHandler>[1]) {

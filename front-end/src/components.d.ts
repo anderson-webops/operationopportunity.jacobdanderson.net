@@ -14,6 +14,7 @@ declare module 'vue' {
     AccountManagement: typeof import('./components/AccountManagement.vue')['default']
     AdminProfile: typeof import('./components/AdminProfile.vue')['default']
     ChangeCredentials: typeof import('./components/ChangeCredentials.vue')['default']
+    DirectoryControls: typeof import('./components/DirectoryControls.vue')['default']
     ProfileFields: typeof import('./components/ProfileFields.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

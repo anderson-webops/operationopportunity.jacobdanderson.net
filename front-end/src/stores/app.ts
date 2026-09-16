@@ -1,6 +1,7 @@
 // src/stores/app.ts
 import { defineStore } from "pinia";
-import { api, clearCsrfToken } from "@/api";
+import { api, resetApiSession } from "@/api";
+import { confirmDestructiveAction } from "@/security/confirm";
 
 /* ------------------------------------------------------------------ */
 /*  TypeScript interfaces                                             */
@@ -35,9 +36,10 @@ export interface Admin {
 /* ------------------------------------------------------------------ */
 export const useAppStore = defineStore("app", {
 	state: () => ({
-		users: [] as User[],
-		tutors: [] as Tutor[],
-		admins: [] as Admin[],
+		sessionRevision: 0,
+		profileRevision: 0,
+		sessionBusy: false,
+		unsavedCount: 0,
 
 		currentUser: null as User | null,
 		currentTutor: null as Tutor | null,
@@ -55,57 +57,52 @@ export const useAppStore = defineStore("app", {
 	},
 
 	actions: {
-		/*		async bootstrapSession() {
-			await Promise.allSettled([
-				this.refreshCurrentAdmin(),
-				this.refreshCurrentTutor(),
-				this.refreshCurrentUser()
-			]);
-		}, */
 		async bootstrapSession() {
+			const revision = this.sessionRevision;
 			try {
 				const { data } = await api.get("/accounts/me");
-				if (data.adminID) {
-					await this.refreshCurrentAdmin();
-					this.setCurrentTutor(null);
-					this.setCurrentUser(null);
-				} else if (data.tutorID) {
-					await this.refreshCurrentTutor();
-					this.setCurrentAdmin(null);
-					this.setCurrentUser(null);
-				} else if (data.userID) {
-					await this.refreshCurrentUser();
-					this.setCurrentAdmin(null);
-					this.setCurrentTutor(null);
-				} else {
-					this.setCurrentAdmin(null);
-					this.setCurrentTutor(null);
-					this.setCurrentUser(null);
-				}
-			} catch {
-				this.setCurrentAdmin(null);
-				this.setCurrentTutor(null);
-				this.setCurrentUser(null);
+				if (revision !== this.sessionRevision) return;
+				if (data.adminID) await this.refreshCurrentAdmin();
+				else if (data.tutorID) await this.refreshCurrentTutor();
+				else if (data.userID) await this.refreshCurrentUser();
+				else this.clearSession();
+			} catch (error) {
+				this.handleSessionReadFailure(error, revision);
 			}
+		},
+		handleSessionReadFailure(error: any, revision: number) {
+			if (revision !== this.sessionRevision || error?.code === "ERR_CANCELED") return;
+			if ([401, 403].includes(error?.response?.status)) {
+				this.clearSession();
+			} else {
+				this.error =
+					"Account refresh is temporarily unavailable. Your current work has been kept; please retry.";
+			}
+		},
+		invalidateSessionReads() {
+			this.sessionRevision++;
+			resetApiSession();
 		},
 
 		/* ---------- setters ---------- */
-		setUsers(u: User[]) {
-			this.users = u;
-		},
-		setTutors(t: Tutor[]) {
-			this.tutors = t;
-		},
-		setAdmins(a: Admin[]) {
-			this.admins = a;
-		},
 		setCurrentUser(u: User | null) {
+			if (u && (this.currentUser?._id !== u._id || this.currentTutor || this.currentAdmin)) this.clearSession();
+			if (!u && this.currentUser) this.clearSession();
+			this.profileRevision++;
 			this.currentUser = u;
 		},
 		setCurrentTutor(t: Tutor | null) {
+			if (t && (this.currentTutor?._id !== t._id || this.currentUser || this.currentAdmin)) this.clearSession();
+			else if (t && this.currentTutor?.status !== t.status) this.invalidateSessionReads();
+			if (!t && this.currentTutor) this.clearSession();
+			this.profileRevision++;
 			this.currentTutor = t;
 		},
 		setCurrentAdmin(a: Admin | null) {
+			if (a && (this.currentAdmin?._id !== a._id || this.currentTutor || this.currentUser)) this.clearSession();
+			else if (a && this.currentAdmin?.editAdmins !== a.editAdmins) this.invalidateSessionReads();
+			if (!a && this.currentAdmin) this.clearSession();
+			this.profileRevision++;
 			this.currentAdmin = a;
 		},
 		setLoginBlock(v: boolean) {
@@ -121,70 +118,34 @@ export const useAppStore = defineStore("app", {
 			this.error = e;
 		},
 		clearSession() {
-			this.setCurrentTutor(null);
-			this.setCurrentUser(null);
-			this.setCurrentAdmin(null);
-			this.setError(null);
-		},
-
-		/* ---------- data fetchers ---------- */
-		async fetchUsers() {
-			try {
-				const { data } = await api.get<User[]>("/users/all");
-				this.setUsers(data);
-			} catch (e) {
-				console.error(e);
-			}
-		},
-
-		async fetchTutors() {
-			try {
-				const { data } = await api.get<Tutor[]>("/tutors");
-				this.setTutors(data);
-			} catch (e) {
-				console.error(e);
-			}
-		},
-
-		async fetchAllTutors() {
-			try {
-				const { data } = await api.get<Tutor[]>("/tutors/all");
-				this.setTutors(data);
-			} catch (e) {
-				console.error(e);
-			}
-		},
-
-		async fetchAdmins() {
-			try {
-				const { data } = await api.get<Admin[]>("/admins");
-				this.setAdmins(data);
-			} catch (e) {
-				console.error(e);
-			}
-		},
-
-		async getUsersOfTutor() {
-			if (!this.currentTutor) return;
-			try {
-				const { data } = await api.get<User[]>(`/users/oftutor/${this.currentTutor._id}`);
-				this.setUsers(data);
-			} catch (e) {
-				console.error(e);
-			}
+			this.invalidateSessionReads();
+			this.profileRevision++;
+			this.currentTutor = null;
+			this.currentUser = null;
+			this.currentAdmin = null;
+			this.error = null;
 		},
 
 		/* ---------- session helpers ---------- */
 		async logout() {
+			if (this.sessionBusy) return false;
+			if (
+				this.unsavedCount > 0 &&
+				!confirmDestructiveAction("Sign out and discard changes that have not been saved?")
+			) {
+				return false;
+			}
+			this.sessionBusy = true;
+			const revision = this.sessionRevision;
 			this.setError(null);
 			try {
 				await api.delete("/accounts/logout"); // one endpoint for all roles
-				clearCsrfToken();
+				if (revision !== this.sessionRevision) return false;
 				this.clearSession();
 				return true;
 			} catch (e: any) {
 				if (e.response?.status === 401) {
-					clearCsrfToken();
+					if (revision !== this.sessionRevision) return false;
 					this.clearSession();
 					return true;
 				}
@@ -193,33 +154,44 @@ export const useAppStore = defineStore("app", {
 						"Sign out could not be confirmed. Your session remains active; please try again."
 				);
 				return false;
+			} finally {
+				this.sessionBusy = false;
 			}
 		},
 
 		async refreshCurrentUser() {
+			const revision = this.sessionRevision;
+			const profileRevision = this.profileRevision;
 			try {
 				const { data } = await api.get<{ currentUser: User }>("/users/loggedin");
-				this.setCurrentUser(data.currentUser);
-			} catch {
-				this.setCurrentUser(null);
+				if (revision === this.sessionRevision && profileRevision === this.profileRevision)
+					this.setCurrentUser(data.currentUser);
+			} catch (error) {
+				this.handleSessionReadFailure(error, revision);
 			}
 		},
 
 		async refreshCurrentTutor() {
+			const revision = this.sessionRevision;
+			const profileRevision = this.profileRevision;
 			try {
 				const { data } = await api.get<{ currentTutor: Tutor }>("/tutors/loggedin");
-				this.setCurrentTutor(data.currentTutor);
-			} catch {
-				this.setCurrentTutor(null);
+				if (revision === this.sessionRevision && profileRevision === this.profileRevision)
+					this.setCurrentTutor(data.currentTutor);
+			} catch (error) {
+				this.handleSessionReadFailure(error, revision);
 			}
 		},
 
 		async refreshCurrentAdmin() {
+			const revision = this.sessionRevision;
+			const profileRevision = this.profileRevision;
 			try {
 				const { data } = await api.get<{ currentAdmin: Admin }>("/admins/loggedin");
-				this.setCurrentAdmin(data.currentAdmin);
-			} catch {
-				this.setCurrentAdmin(null);
+				if (revision === this.sessionRevision && profileRevision === this.profileRevision)
+					this.setCurrentAdmin(data.currentAdmin);
+			} catch (error) {
+				this.handleSessionReadFailure(error, revision);
 			}
 		}
 	}

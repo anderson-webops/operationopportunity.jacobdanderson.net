@@ -12,7 +12,7 @@ vi.mock("@/api", () => {
 		delete: vi.fn(),
 		defaults: { baseURL: "/api", withCredentials: true }
 	};
-	return { api: mock, clearCsrfToken: vi.fn() };
+	return { api: mock, clearCsrfToken: vi.fn(), resetApiSession: vi.fn() };
 });
 
 describe("useEditable()", () => {
@@ -92,5 +92,33 @@ describe("useEditable()", () => {
 			name: "Ada"
 		});
 		expect(app.currentAdmin?._id).toBe("a1");
+	});
+});
+
+describe("profile draft lifetime", () => {
+	beforeEach(() => { setActivePinia(createPinia()); vi.clearAllMocks(); });
+	it("retains newer typing when an earlier save finishes", async () => {
+		const app = useAppStore(); const original = { _id: "a1", name: "Original", email: "a@example.test", editAdmins: false };
+		app.setCurrentAdmin(original);
+		const editor = useEditable("admin"); editor.toggle(); editor.draft.value.name = "Submitted";
+		let finish!: (value: any) => void;
+		(apiMod.api.put as any).mockReturnValueOnce(new Promise((resolve) => { finish = resolve; }));
+		const saving = editor.save(); editor.draft.value.name = "Newer typing";
+		finish({ data: { currentAdmin: { ...original, name: "Submitted" } } }); await saving;
+		expect(app.currentAdmin?.name).toBe("Submitted"); expect(editor.draft.value.name).toBe("Newer typing");
+		expect(editor.editing.value).toBe(true); expect(editor.message.value).toMatch(/unsaved/);
+	});
+	it("retains a draft after a failed save and does not mutate the displayed account", async () => {
+		const app = useAppStore(); app.setCurrentAdmin({ _id: "a1", name: "Original", email: "a@example.test", editAdmins: false });
+		const editor = useEditable("admin"); editor.toggle(); editor.draft.value.name = "Draft";
+		(apiMod.api.put as any).mockRejectedValueOnce(new Error("connection lost")); await editor.save();
+		expect(app.currentAdmin?.name).toBe("Original"); expect(editor.draft.value.name).toBe("Draft"); expect(editor.error.value).toMatch(/kept/);
+	});
+	it("does not restore an account after logout during an accepted save", async () => {
+		const app = useAppStore(); const original = { _id: "a1", name: "Original", email: "a@example.test", editAdmins: false }; app.setCurrentAdmin(original);
+		const editor = useEditable("admin"); editor.toggle(); let finish!: (value: any) => void;
+		(apiMod.api.put as any).mockReturnValueOnce(new Promise((resolve) => { finish = resolve; }));
+		const saving = editor.save(); app.clearSession(); finish({ data: { currentAdmin: original } }); await saving;
+		expect(app.currentAdmin).toBeNull();
 	});
 });

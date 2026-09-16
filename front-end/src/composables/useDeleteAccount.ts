@@ -1,5 +1,5 @@
 // src/composables/useDeleteAccount.ts
-import { api, clearCsrfToken } from "@/api";
+import { api } from "@/api";
 import { confirmDestructiveAction } from "@/security/confirm";
 import { useAppStore } from "@/stores/app";
 
@@ -19,11 +19,11 @@ export function useDeleteAccount(kind: Kind) {
 		if (!confirmDestructiveAction("Permanently delete this account? This cannot be undone.")) {
 			return false;
 		}
+		const revision = app.sessionRevision;
 		await api.delete(`${endpoint[kind]}/${id}`, {
 			withCredentials: true
 		});
-		clearCsrfToken();
-		app.clearSession();
+		if (revision === app.sessionRevision) app.clearSession();
 		return true;
 	};
 }
