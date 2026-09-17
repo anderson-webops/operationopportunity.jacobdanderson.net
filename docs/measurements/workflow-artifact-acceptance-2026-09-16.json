@@ -1,0 +1,433 @@
+{
+  "verified": true,
+  "release": "v2.3.5",
+  "sourceCommit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+  "tagObject": "94f742e28f3dee47b0d9f2872b32a2792090faf9",
+  "publishedAt": "2026-09-17T01:10:45Z",
+  "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/tag/v2.3.5",
+  "refs": {
+    "refs/heads/main": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+    "refs/tags/v2.3.5": "94f742e28f3dee47b0d9f2872b32a2792090faf9",
+    "refs/tags/v2.3.5^{}": "0acd8c9194850f9d95a372ccca49010fac2bfac7"
+  },
+  "assets": [
+    {
+      "name": "operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz",
+      "bytes": 3973011,
+      "sha256": "22a023b0a897839fc20dd601be45e84187b13b6f6e6aebabc1711ea7cfbfd932",
+      "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/download/v2.3.5/operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz"
+    },
+    {
+      "name": "operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz.sha256",
+      "bytes": 127,
+      "sha256": "a1d3cc9c797a2790f4082f97566f0f466bd90e2fbcb6d7a688071a093f3e82a9",
+      "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/download/v2.3.5/operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz.sha256"
+    },
+    {
+      "name": "operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz.manifest.json",
+      "bytes": 334108,
+      "sha256": "2b6dd50cd10c8580b3dc04751276a23b90ae3ec2e068ddc7ae465bf171e41341",
+      "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/download/v2.3.5/operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz.manifest.json"
+    },
+    {
+      "name": "acceptance-receipt.json",
+      "bytes": 619,
+      "sha256": "ddd9191ad010a1be56f5cd5456eaec82a17b421bb6951cd4f828ff55b03c6292",
+      "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/download/v2.3.5/acceptance-receipt.json"
+    },
+    {
+      "name": "acceptance.jsonl",
+      "bytes": 3050,
+      "sha256": "8d1a35da73bbc35ea7ef327e2cebead7b736af4e7d76b252bdd35b73d12b5812",
+      "url": "https://github.com/anderson-webops/operationopportunity.jacobdanderson.net/releases/download/v2.3.5/acceptance.jsonl"
+    }
+  ],
+  "independentArtifact": {
+    "verified": true,
+    "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+    "archive": "operation-opportunity-v2.3.5-0acd8c919485-linux-arm64.tar.gz",
+    "bytes": 3973011,
+    "sha256": "22a023b0a897839fc20dd601be45e84187b13b6f6e6aebabc1711ea7cfbfd932",
+    "files": 1912,
+    "acceptance": {
+      "accepted": true,
+      "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+      "checks": [
+        "production-native-binding",
+        "startup-query-cancellation-and-private-index-cleanup",
+        "ram-backed-scratch-rejected",
+        "compiled-server-and-maintenance-entrypoint-guards",
+        "GET-HEAD-health-readiness",
+        "signup-login-CSRF-role-isolation-logout",
+        "complete-paged-and-legacy-directories-public-field-isolation",
+        "quotes-provider-failure-recovery",
+        "database-failure-recovery",
+        "disconnected-write-drain-audit",
+        "repeated-signals",
+        "retained-session-and-account-restart",
+        "immutable-artifact",
+        "no-source-development-dependencies-or-external-network"
+      ]
+    },
+    "soak": {
+      "passed": true,
+      "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+      "seconds": 600,
+      "idleRecoverySeconds": 65,
+      "concurrency": 8,
+      "completed": 149244,
+      "before": {
+        "VmRSS": 121610240,
+        "VmHWM": 176422912
+      },
+      "loaded": {
+        "VmRSS": 203485184,
+        "VmHWM": 203485184
+      },
+      "recovered": {
+        "VmRSS": 203485184,
+        "VmHWM": 203485184
+      },
+      "p95Ms": 11,
+      "latencyResolutionMs": 1,
+      "trace": [
+        {
+          "elapsedSeconds": 0,
+          "phase": "before",
+          "VmRSS": 121610240,
+          "VmHWM": 176422912
+        },
+        {
+          "elapsedSeconds": 30.022190467,
+          "phase": "load",
+          "VmRSS": 200032256,
+          "VmHWM": 200032256
+        },
+        {
+          "elapsedSeconds": 60.052914439999995,
+          "phase": "load",
+          "VmRSS": 200896512,
+          "VmHWM": 200896512
+        },
+        {
+          "elapsedSeconds": 90.06209396300001,
+          "phase": "load",
+          "VmRSS": 201072640,
+          "VmHWM": 201072640
+        },
+        {
+          "elapsedSeconds": 120.076710901,
+          "phase": "load",
+          "VmRSS": 201371648,
+          "VmHWM": 201371648
+        },
+        {
+          "elapsedSeconds": 150.09175392699998,
+          "phase": "load",
+          "VmRSS": 201494528,
+          "VmHWM": 201494528
+        },
+        {
+          "elapsedSeconds": 180.119459797,
+          "phase": "load",
+          "VmRSS": 201629696,
+          "VmHWM": 201629696
+        },
+        {
+          "elapsedSeconds": 210.157722577,
+          "phase": "load",
+          "VmRSS": 201936896,
+          "VmHWM": 201936896
+        },
+        {
+          "elapsedSeconds": 240.15828347899998,
+          "phase": "load",
+          "VmRSS": 202067968,
+          "VmHWM": 202067968
+        },
+        {
+          "elapsedSeconds": 270.17995275100003,
+          "phase": "load",
+          "VmRSS": 202092544,
+          "VmHWM": 202092544
+        },
+        {
+          "elapsedSeconds": 300.203792318,
+          "phase": "load",
+          "VmRSS": 202166272,
+          "VmHWM": 202166272
+        },
+        {
+          "elapsedSeconds": 330.20702429799996,
+          "phase": "load",
+          "VmRSS": 202256384,
+          "VmHWM": 202256384
+        },
+        {
+          "elapsedSeconds": 360.208517435,
+          "phase": "load",
+          "VmRSS": 202272768,
+          "VmHWM": 202272768
+        },
+        {
+          "elapsedSeconds": 390.228708268,
+          "phase": "load",
+          "VmRSS": 202375168,
+          "VmHWM": 202375168
+        },
+        {
+          "elapsedSeconds": 420.242940817,
+          "phase": "load",
+          "VmRSS": 202383360,
+          "VmHWM": 202383360
+        },
+        {
+          "elapsedSeconds": 450.27224341299996,
+          "phase": "load",
+          "VmRSS": 202416128,
+          "VmHWM": 202416128
+        },
+        {
+          "elapsedSeconds": 480.295935881,
+          "phase": "load",
+          "VmRSS": 202739712,
+          "VmHWM": 202739712
+        },
+        {
+          "elapsedSeconds": 510.31790919699995,
+          "phase": "load",
+          "VmRSS": 203141120,
+          "VmHWM": 203141120
+        },
+        {
+          "elapsedSeconds": 540.3352985240001,
+          "phase": "load",
+          "VmRSS": 203366400,
+          "VmHWM": 203366400
+        },
+        {
+          "elapsedSeconds": 570.3425769190001,
+          "phase": "load",
+          "VmRSS": 203448320,
+          "VmHWM": 203448320
+        },
+        {
+          "elapsedSeconds": 600.0039726690001,
+          "phase": "loaded",
+          "VmRSS": 203485184,
+          "VmHWM": 203485184
+        },
+        {
+          "elapsedSeconds": 665.006376335,
+          "phase": "recovered",
+          "VmRSS": 203485184,
+          "VmHWM": 203485184
+        }
+      ]
+    }
+  },
+  "receipt": {
+    "passed": true,
+    "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+    "archiveSha256": "22a023b0a897839fc20dd601be45e84187b13b6f6e6aebabc1711ea7cfbfd932",
+    "harnessFiles": {
+      "scripts/test-unpacked-artifact.sh": "cc2b4ae800d94762e974ac37c8a5cebafbccb831ad783105c8fbd6ef71055bf8",
+      "scripts/runtime-artifact.py": "3b892012d3fc420848500961a00d56f600c6a80aa0fa78477800403b862e5a0a",
+      "deploy/runtime-artifact.json": "ee588e510ade88960ddc8fdb1414752c55f390964d4e4655e05473b417ced5ac",
+      "scripts/artifact-acceptance/runtime.mjs": "6132a0d9a2a0149e61485dc9c7231af91327bb1876ffca0472e1de633b79f7b6"
+    }
+  },
+  "acceptanceRecords": [
+    {
+      "negativeModule": "passed"
+    },
+    {
+      "verified": true,
+      "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+      "files": 1912
+    },
+    {
+      "soak": {
+        "passed": true,
+        "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+        "seconds": 600,
+        "idleRecoverySeconds": 65,
+        "concurrency": 8,
+        "completed": 149244,
+        "before": {
+          "VmRSS": 121610240,
+          "VmHWM": 176422912
+        },
+        "loaded": {
+          "VmRSS": 203485184,
+          "VmHWM": 203485184
+        },
+        "recovered": {
+          "VmRSS": 203485184,
+          "VmHWM": 203485184
+        },
+        "p95Ms": 11,
+        "latencyResolutionMs": 1,
+        "trace": [
+          {
+            "elapsedSeconds": 0,
+            "phase": "before",
+            "VmRSS": 121610240,
+            "VmHWM": 176422912
+          },
+          {
+            "elapsedSeconds": 30.022190467,
+            "phase": "load",
+            "VmRSS": 200032256,
+            "VmHWM": 200032256
+          },
+          {
+            "elapsedSeconds": 60.052914439999995,
+            "phase": "load",
+            "VmRSS": 200896512,
+            "VmHWM": 200896512
+          },
+          {
+            "elapsedSeconds": 90.06209396300001,
+            "phase": "load",
+            "VmRSS": 201072640,
+            "VmHWM": 201072640
+          },
+          {
+            "elapsedSeconds": 120.076710901,
+            "phase": "load",
+            "VmRSS": 201371648,
+            "VmHWM": 201371648
+          },
+          {
+            "elapsedSeconds": 150.09175392699998,
+            "phase": "load",
+            "VmRSS": 201494528,
+            "VmHWM": 201494528
+          },
+          {
+            "elapsedSeconds": 180.119459797,
+            "phase": "load",
+            "VmRSS": 201629696,
+            "VmHWM": 201629696
+          },
+          {
+            "elapsedSeconds": 210.157722577,
+            "phase": "load",
+            "VmRSS": 201936896,
+            "VmHWM": 201936896
+          },
+          {
+            "elapsedSeconds": 240.15828347899998,
+            "phase": "load",
+            "VmRSS": 202067968,
+            "VmHWM": 202067968
+          },
+          {
+            "elapsedSeconds": 270.17995275100003,
+            "phase": "load",
+            "VmRSS": 202092544,
+            "VmHWM": 202092544
+          },
+          {
+            "elapsedSeconds": 300.203792318,
+            "phase": "load",
+            "VmRSS": 202166272,
+            "VmHWM": 202166272
+          },
+          {
+            "elapsedSeconds": 330.20702429799996,
+            "phase": "load",
+            "VmRSS": 202256384,
+            "VmHWM": 202256384
+          },
+          {
+            "elapsedSeconds": 360.208517435,
+            "phase": "load",
+            "VmRSS": 202272768,
+            "VmHWM": 202272768
+          },
+          {
+            "elapsedSeconds": 390.228708268,
+            "phase": "load",
+            "VmRSS": 202375168,
+            "VmHWM": 202375168
+          },
+          {
+            "elapsedSeconds": 420.242940817,
+            "phase": "load",
+            "VmRSS": 202383360,
+            "VmHWM": 202383360
+          },
+          {
+            "elapsedSeconds": 450.27224341299996,
+            "phase": "load",
+            "VmRSS": 202416128,
+            "VmHWM": 202416128
+          },
+          {
+            "elapsedSeconds": 480.295935881,
+            "phase": "load",
+            "VmRSS": 202739712,
+            "VmHWM": 202739712
+          },
+          {
+            "elapsedSeconds": 510.31790919699995,
+            "phase": "load",
+            "VmRSS": 203141120,
+            "VmHWM": 203141120
+          },
+          {
+            "elapsedSeconds": 540.3352985240001,
+            "phase": "load",
+            "VmRSS": 203366400,
+            "VmHWM": 203366400
+          },
+          {
+            "elapsedSeconds": 570.3425769190001,
+            "phase": "load",
+            "VmRSS": 203448320,
+            "VmHWM": 203448320
+          },
+          {
+            "elapsedSeconds": 600.0039726690001,
+            "phase": "loaded",
+            "VmRSS": 203485184,
+            "VmHWM": 203485184
+          },
+          {
+            "elapsedSeconds": 665.006376335,
+            "phase": "recovered",
+            "VmRSS": 203485184,
+            "VmHWM": 203485184
+          }
+        ]
+      }
+    },
+    {
+      "accepted": true,
+      "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+      "checks": [
+        "production-native-binding",
+        "startup-query-cancellation-and-private-index-cleanup",
+        "ram-backed-scratch-rejected",
+        "compiled-server-and-maintenance-entrypoint-guards",
+        "GET-HEAD-health-readiness",
+        "signup-login-CSRF-role-isolation-logout",
+        "complete-paged-and-legacy-directories-public-field-isolation",
+        "quotes-provider-failure-recovery",
+        "database-failure-recovery",
+        "disconnected-write-drain-audit",
+        "repeated-signals",
+        "retained-session-and-account-restart",
+        "immutable-artifact",
+        "no-source-development-dependencies-or-external-network"
+      ]
+    },
+    {
+      "verified": true,
+      "commit": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+      "files": 1912
+    }
+  ]
+}

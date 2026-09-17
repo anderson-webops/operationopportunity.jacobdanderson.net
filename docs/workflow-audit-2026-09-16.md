@@ -1,10 +1,11 @@
 # Authorization concurrency and public-query audit, 2026-09-16
 
-Candidate application version: **v2.3.5**. Baseline source is
+Application release: **v2.3.5**. Baseline source is
 `0b764a530f1a2db175041a513916f17ed2151878`, whose application and dependency inputs
 match published v2.3.4. Raw measurements bind the compiled input files and source
-locks. Exact Linux ARM64 release acceptance/publication remains a separate gate;
-these local results do not claim production activation.
+locks. Exact Linux ARM64 acceptance and publication are recorded in the
+[final runtime report](workflow-runtime-acceptance-2026-09-16.md); these local
+results do not claim production activation.
 
 ## Reproduced findings and changes
 
@@ -79,8 +80,7 @@ these short samples as a long-term memory improvement or leak-free result.
 
 The exact artifact gate has been extended from one minute plus five seconds idle
 to ten minutes plus 65 seconds idle, with 30-second RSS/high-water samples and a
-bounded 1-ms latency histogram. Its longer recovery evidence must be collected
-before the candidate is published.
+bounded 1-ms latency histogram. Its longer recovery evidence is recorded in the final runtime report.
 
 ## Validation and reproduction
 
@@ -91,7 +91,7 @@ signatures and 282 attestations; shell checks passed. After the additional
 navigation correction, another clean install, lint/type checks, all 66 frontend
 checks, builds, compiled Chrome recovery and build-security checks passed. The
 backend and dependency inputs are unchanged. Both full and production audits
-remain zero; the final exact ARM64 source reruns the complete suite.
+remain zero; the final exact ARM64 source passed the complete suite.
 
 The authorization tests cover expiry, FIFO/overflow, cancelled waiters, failed
 operations, release, stale-manager denial, external-owner preservation, real

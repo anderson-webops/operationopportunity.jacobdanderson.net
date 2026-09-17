@@ -1,0 +1,325 @@
+{
+  "results": [
+    {
+      "label": "initial",
+      "cycles": 60,
+      "navigations": 181,
+      "quoteAbortRecovery": true,
+      "maxPending": 1,
+      "abortedQuotes": 61,
+      "errors": [],
+      "forcedGc": false,
+      "trace": [
+        {
+          "cycle": 0,
+          "seconds": 0.0009197079999999005,
+          "heapUsed": 3815208,
+          "heapTotal": 6291456,
+          "documents": 7,
+          "nodes": 273,
+          "jsEventListeners": 82,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 5,
+          "seconds": 6.549502166,
+          "heapUsed": 4961044,
+          "heapTotal": 7602176,
+          "documents": 7,
+          "nodes": 878,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 10,
+          "seconds": 13.049204625,
+          "heapUsed": 6075516,
+          "heapTotal": 8126464,
+          "documents": 7,
+          "nodes": 1478,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 15,
+          "seconds": 19.54870875,
+          "heapUsed": 5042896,
+          "heapTotal": 6291456,
+          "documents": 7,
+          "nodes": 2071,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 20,
+          "seconds": 26.048047625,
+          "heapUsed": 5426972,
+          "heapTotal": 6553600,
+          "documents": 7,
+          "nodes": 2669,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 25,
+          "seconds": 32.548186833,
+          "heapUsed": 4199684,
+          "heapTotal": 5505024,
+          "documents": 3,
+          "nodes": 405,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 30,
+          "seconds": 39.097330332999995,
+          "heapUsed": 4555804,
+          "heapTotal": 5505024,
+          "documents": 3,
+          "nodes": 1004,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 35,
+          "seconds": 45.59562124999999,
+          "heapUsed": 4896316,
+          "heapTotal": 5767168,
+          "documents": 3,
+          "nodes": 1604,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 40,
+          "seconds": 52.09671104099999,
+          "heapUsed": 4844904,
+          "heapTotal": 5767168,
+          "documents": 3,
+          "nodes": 736,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 45,
+          "seconds": 58.598129541,
+          "heapUsed": 4458472,
+          "heapTotal": 5242880,
+          "documents": 3,
+          "nodes": 1331,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 50,
+          "seconds": 65.464817125,
+          "heapUsed": 4404184,
+          "heapTotal": 5767168,
+          "documents": 3,
+          "nodes": 462,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 55,
+          "seconds": 71.962223416,
+          "heapUsed": 4715544,
+          "heapTotal": 6029312,
+          "documents": 3,
+          "nodes": 1060,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 60,
+          "seconds": 78.462286333,
+          "heapUsed": 5070224,
+          "heapTotal": 7077888,
+          "documents": 3,
+          "nodes": 1654,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": "recovered",
+          "seconds": 93.91977762500001,
+          "heapUsed": 5138804,
+          "heapTotal": 7340032,
+          "documents": 3,
+          "nodes": 1687,
+          "jsEventListeners": 78,
+          "pendingQuotes": 0
+        }
+      ]
+    },
+    {
+      "label": "final",
+      "cycles": 60,
+      "navigations": 181,
+      "quoteAbortRecovery": true,
+      "maxPending": 1,
+      "abortedQuotes": 61,
+      "errors": [],
+      "forcedGc": false,
+      "trace": [
+        {
+          "cycle": 0,
+          "seconds": 0.000859541000000263,
+          "heapUsed": 3970060,
+          "heapTotal": 5505024,
+          "documents": 7,
+          "nodes": 273,
+          "jsEventListeners": 82,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 5,
+          "seconds": 6.583158416,
+          "heapUsed": 5357556,
+          "heapTotal": 7602176,
+          "documents": 7,
+          "nodes": 876,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 10,
+          "seconds": 13.083220916,
+          "heapUsed": 5154056,
+          "heapTotal": 7077888,
+          "documents": 7,
+          "nodes": 1469,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 15,
+          "seconds": 19.582849749999998,
+          "heapUsed": 5576816,
+          "heapTotal": 7077888,
+          "documents": 7,
+          "nodes": 2065,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 20,
+          "seconds": 26.082690833,
+          "heapUsed": 5228100,
+          "heapTotal": 6291456,
+          "documents": 7,
+          "nodes": 2660,
+          "jsEventListeners": 84,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 25,
+          "seconds": 32.582190416,
+          "heapUsed": 4381228,
+          "heapTotal": 6029312,
+          "documents": 3,
+          "nodes": 488,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 30,
+          "seconds": 39.082128208,
+          "heapUsed": 4031056,
+          "heapTotal": 5505024,
+          "documents": 3,
+          "nodes": 280,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 35,
+          "seconds": 45.58161375,
+          "heapUsed": 4304032,
+          "heapTotal": 5505024,
+          "documents": 3,
+          "nodes": 876,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 40,
+          "seconds": 52.081231958000004,
+          "heapUsed": 4658088,
+          "heapTotal": 5767168,
+          "documents": 3,
+          "nodes": 1475,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 45,
+          "seconds": 58.581858458,
+          "heapUsed": 4641616,
+          "heapTotal": 6029312,
+          "documents": 3,
+          "nodes": 615,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 50,
+          "seconds": 65.08052475000001,
+          "heapUsed": 4996984,
+          "heapTotal": 6553600,
+          "documents": 3,
+          "nodes": 1215,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 55,
+          "seconds": 71.58027541599999,
+          "heapUsed": 4189140,
+          "heapTotal": 6553600,
+          "documents": 3,
+          "nodes": 339,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": 60,
+          "seconds": 78.079939625,
+          "heapUsed": 4524464,
+          "heapTotal": 6029312,
+          "documents": 3,
+          "nodes": 932,
+          "jsEventListeners": 78,
+          "pendingQuotes": 1
+        },
+        {
+          "cycle": "recovered",
+          "seconds": 93.516372916,
+          "heapUsed": 4591932,
+          "heapTotal": 6029312,
+          "documents": 3,
+          "nodes": 965,
+          "jsEventListeners": 78,
+          "pendingQuotes": 0
+        }
+      ]
+    }
+  ],
+  "sourceScope": {
+    "initialArtifact": "12aa37962dbfcd958f234fb47dca987c5839b6c1",
+    "candidateApplicationSource": "0acd8c9194850f9d95a372ccca49010fac2bfac7",
+    "method": "One matched finite browser trace per version; 60 public route cycles, stalled synthetic quotes, 15-second recovery; no forced GC."
+  },
+  "exactArtifactNavigationRecovery": {
+    "passed": true,
+    "blocked": 1,
+    "afterFailure": {
+      "path": "/",
+      "progress": false
+    },
+    "recovered": {
+      "path": "/supportus",
+      "progress": false
+    }
+  }
+}
