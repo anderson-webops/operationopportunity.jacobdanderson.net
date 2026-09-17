@@ -9,5 +9,8 @@ export const install: UserModule = ({ router }) => {
 		router.afterEach(() => {
 			NProgress.done();
 		});
+		router.onError(() => {
+			NProgress.done();
+		});
 	}
 };

@@ -1,0 +1,36 @@
+{
+  "baseline": {
+    "commit": "12aa37962dbfcd958f234fb47dca987c5839b6c1",
+    "result": {
+      "blocked": 1,
+      "failures": [],
+      "afterFailure": {
+        "path": "/",
+        "progress": true
+      },
+      "recovered": {
+        "path": "/supportus",
+        "progress": false
+      }
+    }
+  },
+  "candidate": {
+    "sourceInputs": {
+      "front-end/src/modules/nprogress.ts": "9ed8a9cf77549690a5464491acee4e4e865b986fe927761565aefdb04d66618c",
+      "front-end/test/module.nprogress.spec.test.ts": "c093bc9a46e92e2a0e1575dc71f2d47fb230d90077fc4234734b0358ffad6907",
+      "scripts/test-navigation-recovery.mjs": "8fa06ce1ae7939348cf2069d18844027546bbdbae036bd4d2953972348cf0ce5"
+    },
+    "result": {
+      "passed": true,
+      "blocked": 1,
+      "afterFailure": {
+        "path": "/",
+        "progress": false
+      },
+      "recovered": {
+        "path": "/supportus",
+        "progress": false
+      }
+    }
+  }
+}

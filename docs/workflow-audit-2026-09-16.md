@@ -29,6 +29,15 @@ these local results do not claim production activation.
    300 active accounts. The existing authenticated indexes remain. Public fields,
    literal search, forward/backward paging and complete legacy arrays retain
    their existing semantics.
+4. Blocking a lazy page download in the compiled frontend left its progress
+   indicator and recurring trickle timer running until a later navigation
+   succeeded. Router errors now stop that progress state. Real-router tests use
+   the actual NProgress implementation and verify no remaining timers after
+   failure, normal navigation, or a repeated same-route navigation. The compiled
+   Chrome regression blocks the About page download, requires cleanup without
+   leaving the current page, then successfully opens Support Us. All API replies
+   are synthetic and external requests are blocked. This corrects a timer lifetime
+   defect; it is not evidence of a large browser memory reduction.
 
 The Mongo lease is retained for compatibility and recovery under the documented
 single-API/exclusive-maintenance contract. A process queue is not a cross-process
@@ -75,10 +84,14 @@ before the candidate is published.
 
 ## Validation and reproduction
 
-Local clean locked install, full lint/type checks, 65 frontend and 97 backend
-checks (no skipped tests), builds, production-only native install and six artifact
-regressions passed. Full and production audits report zero findings. Registry
-verification covered 916 signatures and 282 attestations. Shell checks passed.
+The initial source passed a local clean locked install, full lint/type checks,
+65 frontend and 97 backend checks (no skipped tests), builds, production-only
+native install and six artifact regressions. Registry verification covered 916
+signatures and 282 attestations; shell checks passed. After the additional
+navigation correction, another clean install, lint/type checks, all 66 frontend
+checks, builds, compiled Chrome recovery and build-security checks passed. The
+backend and dependency inputs are unchanged. Both full and production audits
+remain zero; the final exact ARM64 source reruns the complete suite.
 
 The authorization tests cover expiry, FIFO/overflow, cancelled waiters, failed
 operations, release, stale-manager denial, external-owner preservation, real
@@ -103,6 +116,8 @@ node scripts/measure-workflow-runtime.mjs RETAINED_CHECKOUT . \
   .ai-work/runs/REVIEW/measurements.json 3
 node scripts/test-directory-rollback.mjs RETAINED_CHECKOUT \
   mongodb://127.0.0.1:PORT/operation_security_test
+# On a host with Chrome, after building the static frontend:
+CHROME_BIN=/path/to/chrome node scripts/test-navigation-recovery.mjs
 ```
 
 Evidence: [raw comparisons](measurements/workflows-2026-09-16.json),
