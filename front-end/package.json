@@ -1,6 +1,6 @@
 {
 	"name": "front-end",
-	"version": "2.3.5",
+	"version": "2.3.6",
 	"description": "",
 	"author": "Jacob Anderson",
 	"keywords": [],
@@ -32,7 +32,7 @@
 		"@unhead/vue": "^3.0.2",
 		"@unocss/reset": "^66.6.7",
 		"@vueuse/core": "^14.2.1",
-		"axios": "^1.19.0",
+		"axios": "^1.20.0",
 		"bootstrap": "^5.3.8",
 		"nprogress": "^0.2.0",
 		"pinia": "^4.0.2",
