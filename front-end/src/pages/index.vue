@@ -67,11 +67,9 @@ onBeforeUnmount(() => {
 			</p>
 		</div>
 
-		<h2>Welcome to Operation Opportunity!</h2>
 		<p class="mt-3">
-			Operation Opportunity is dedicated to helping all students everywhere become ready and prepared for college.
-			Starting early on, our priority is to help students develop study and critical thinking skills, aid them
-			through the college application process, and make higher education more accessible to everyone.
+			We help students develop study and critical thinking skills, navigate college applications, and access
+			higher education.
 		</p>
 	</section>
 </template>
