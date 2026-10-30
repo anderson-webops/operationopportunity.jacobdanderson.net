@@ -18,7 +18,7 @@ There is no production Docker or static-only hosting path.
 ## First v2.3 rollout
 
 1. Back up the `opportunity` database and confirm a restore command before changing the service.
-2. Install Node 24.18.1/npm 12.0.2 at `/usr/bin/node` and `/usr/bin/npm`. Create the unprivileged `operation-opportunity` account and its `quotes` supplementary group.
+2. For this source-checkout systemd template, install Node 26.13.0/npm 12.2.1 at `/usr/bin/node` and `/usr/bin/npm`. Create the unprivileged `operation-opportunity` account and its `quotes` supplementary group. Artifact-adapter hosts retain their reviewed application-scoped runtime paths instead.
 3. Run `sudo deploy/systemd/install-api-unit.sh`. Replace every placeholder in `/etc/operation-opportunity/api.env`; keep it owned by `root:operation-opportunity` with mode `0640`. Configure exactly one authenticated Mongo source: `MONGODB_URI`, or the complete Vault AppRole settings, never both.
 4. In the existing public TLS server block, set the static root to `/srv/operation-opportunity/current/front-end/dist` and include both files from the current release:
 

@@ -43,8 +43,8 @@ run() {
 }
 
 if [[ "$dry_run" == false ]]; then
-	if [[ ! -x /usr/bin/node || "$(/usr/bin/node --version)" != "v24.18.1" ]]; then
-		echo "The systemd runtime requires Node 24.18.1 at /usr/bin/node." >&2
+	if [[ ! -x /usr/bin/node || "$(/usr/bin/node --version)" != "v26.13.0" ]]; then
+		echo "The systemd runtime requires Node 26.13.0 at /usr/bin/node." >&2
 		exit 1
 	fi
 	if ! id operation-opportunity >/dev/null 2>&1; then
