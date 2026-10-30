@@ -62,10 +62,10 @@
 	},
 	"allowScripts": {
 		"argon2@0.45.1": true,
-		"cypress@15.19.0": true,
+		"cypress@15.21.1": true,
 		"esbuild@0.28.1": true,
 		"fsevents@2.3.3": true,
-		"puppeteer@25.4.0": true,
+		"puppeteer@25.16.0": true,
 		"vue-demi@0.14.10": true
 	},
 	"overrides": {
@@ -73,20 +73,22 @@
 		"vite": "^8.1.0",
 		"oxc-parser": "0.142.0",
 		"vue-router": "^5.0.4",
-		"follow-redirects": "1.16.0",
+		"follow-redirects": "1.16.2",
 		"@cypress/request": {
 			"uuid": "14.0.0",
-			"qs": "6.16.0"
+			"qs": "6.17.1"
 		},
 		"brace-expansion": "5.0.12",
 		"fast-uri": "3.1.5",
-		"js-yaml": "4.3.1",
+		"js-yaml": "4.3.2",
 		"postcss": "8.5.26",
 		"shell-quote": "1.10.0",
 		"svgo": "4.0.2",
 		"tar": "7.5.22",
 		"valibot": "1.4.2",
 		"js-beautify": "2.0.3",
-		"qs": "6.16.0"
+		"qs": "6.17.1",
+		"katex": "0.19.1",
+		"tinypool": "2.2.0"
 	}
 }
