@@ -195,7 +195,6 @@ async function addSignup() {
 
 				<div class="container">
 					<h1 class="mb-2">Sign Up</h1>
-					<p>Please fill in this form to create a new account.</p>
 					<hr />
 
 					<!-- ─── User Type Selector ────────────────────────────────────────── -->
