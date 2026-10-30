@@ -62,7 +62,7 @@
 	},
 	"allowScripts": {
 		"argon2@0.45.1": true,
-		"cypress@15.21.1": true,
+		"cypress@16.2.0": true,
 		"esbuild@0.28.1": true,
 		"fsevents@2.3.3": true,
 		"puppeteer@25.16.0": true,
