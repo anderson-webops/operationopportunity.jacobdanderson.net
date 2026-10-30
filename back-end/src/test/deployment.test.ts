@@ -117,7 +117,7 @@ describe("deployment invariants", () => {
 		const dependabot = await text(".github/dependabot.yml");
 		assert.doesNotMatch(dependabot, /package-ecosystem:\s*docker/);
 		const ciWorkflow = await text(".github/workflows/ci.yml");
-		assert.match(ciWorkflow, /image: mongo:8\.0\.28@sha256:[0-9a-f]{64}/);
+		assert.match(ciWorkflow, /image: mongo:8\.0\.32@sha256:[0-9a-f]{64}/);
 		for (const workflow of [
 			".github/workflows/ci.yml",
 			".github/workflows/codeql-analysis.yml",
