@@ -22,5 +22,11 @@ export default base.append(
 			"test/no-import-node-test": "off"
 		}
 	},
-	{ ignores: ["dist/**", "dist-test/**"] }
+	{ ignores: ["dist/**", "dist-test/**"] },
+	{
+		files: ["src/**/*.{js,ts}"],
+		rules: {
+			"antfu/reasonable-newline": "off"
+		}
+	}
 );

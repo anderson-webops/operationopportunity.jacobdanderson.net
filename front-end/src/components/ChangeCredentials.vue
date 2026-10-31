@@ -60,17 +60,16 @@ async function saveCredentials() {
 
 	pending.value = true;
 	try {
-		const { data } = await api.put(endpoint[props.kind](props.account._id), {
-			currentPassword: currentPassword.value,
-			...(changesEmail ? { email: normalizedEmail } : {}),
-			...(changesPassword ? { password: newPassword.value } : {})
-		});
+		const payload: { currentPassword: string; email?: string; password?: string } = {
+			currentPassword: currentPassword.value
+		};
+		if (changesEmail) payload.email = normalizedEmail;
+		if (changesPassword) payload.password = newPassword.value;
+		const { data } = await api.put(endpoint[props.kind](props.account._id), payload);
 		if (revision !== app.sessionRevision) return;
-		const updated =
-			props.kind === "admin" ? data.currentAdmin : props.kind === "tutor" ? data.currentTutor : data.currentUser;
-		if (props.kind === "admin") app.setCurrentAdmin(updated);
-		else if (props.kind === "tutor") app.setCurrentTutor(updated);
-		else app.setCurrentUser(updated);
+		if (props.kind === "admin") app.setCurrentAdmin(data.currentAdmin);
+		else if (props.kind === "tutor") app.setCurrentTutor(data.currentTutor);
+		else app.setCurrentUser(data.currentUser);
 		currentPassword.value = "";
 		newPassword.value = "";
 		passwordConfirmation.value = "";
