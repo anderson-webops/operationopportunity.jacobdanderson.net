@@ -19,9 +19,9 @@ const selectedTutorId = computed({
 	get: () => selectedTutor.value?._id ?? null,
 	set: (id: string | null) => {
 		selectionRevision++;
-		selectedTutor.value =
-			tutors.value.find((tutor) => tutor._id === id) ??
-			(selectedTutor.value?._id === id ? selectedTutor.value : null);
+		const match = tutors.value.find((tutor) => tutor._id === id);
+		if (match) selectedTutor.value = match;
+		else if (selectedTutor.value?._id !== id) selectedTutor.value = null;
 	}
 });
 const error = ref("");
@@ -44,7 +44,8 @@ watch(
 		const controller = new AbortController();
 		selectionRequest = controller;
 		try {
-			const { data } = await api.get("/tutors", { params: { pageSize: 1, id }, signal: controller.signal });
+			const params = { pageSize: 1, id };
+			const { data } = await api.get("/tutors", { params, signal: controller.signal });
 			if (!controller.signal.aborted && revision === selectionRevision && data.items?.length === 1)
 				selectedTutor.value = data.items[0];
 		} catch (caught: any) {

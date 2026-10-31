@@ -25,18 +25,19 @@ const { items: users } = userDirectory;
 const error = ref("");
 const message = ref("");
 const deleteMe = useDeleteAccount("admin");
-const newAdmin = reactive({
+const emptyAdmin = {
 	name: "",
 	email: "",
 	password: "",
 	editAdmins: false
-});
+};
+const newAdmin = reactive({ ...emptyAdmin });
 
 const actionPending = ref(false);
 watch(
 	() => currentAdmin.value?.editAdmins,
 	(allowed) => {
-		if (!allowed) Object.assign(newAdmin, { name: "", email: "", password: "", editAdmins: false });
+		if (!allowed) Object.assign(newAdmin, emptyAdmin);
 	},
 	{ immediate: true, flush: "sync" }
 );
@@ -55,7 +56,7 @@ const {
 	message: profileMessage
 } = useEditable("admin");
 
-const adminFields = [{ key: "name", label: "Name" }];
+const adminFields = Array.of({ key: "name", label: "Name" });
 const memberFields = [
 	{ key: "name", label: "Name" },
 	{ key: "email", label: "Email" },
@@ -71,7 +72,8 @@ async function setTutorStatus(tutorId: string, status: "active" | "suspended") {
 	try {
 		await api.patch(`/tutors/${tutorId}/status`, { status });
 		await tutorDirectory.refresh();
-		message.value = status === "active" ? "Tutor approved." : "Tutor suspended and unassigned.";
+		if (status === "active") message.value = "Tutor approved.";
+		else message.value = "Tutor suspended and unassigned.";
 	} catch (caught: any) {
 		error.value = caught.response?.data?.message ?? caught.message;
 	} finally {
@@ -86,12 +88,7 @@ async function createAdmin() {
 	actionPending.value = true;
 	try {
 		await api.post("/admins", { ...newAdmin });
-		Object.assign(newAdmin, {
-			name: "",
-			email: "",
-			password: "",
-			editAdmins: false
-		});
+		Object.assign(newAdmin, emptyAdmin);
 		await adminDirectory.refresh();
 		message.value = "Admin account created.";
 	} catch (caught: any) {

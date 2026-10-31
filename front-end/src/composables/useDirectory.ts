@@ -70,7 +70,11 @@ export function useDirectory<T extends { _id: string; name: string }>(
 		query.value = "";
 	}
 	watch(
-		() => [toValue(endpoint), toValue(enabled), app.sessionRevision],
+		() => {
+			const selectedEndpoint = toValue(endpoint);
+			const isEnabled = toValue(enabled);
+			return [selectedEndpoint, isEnabled, app.sessionRevision];
+		},
 		() => {
 			clear();
 			void load();
@@ -78,6 +82,28 @@ export function useDirectory<T extends { _id: string; name: string }>(
 		{ immediate: true, flush: "sync" }
 	);
 	onScopeDispose(clear);
+	function search() {
+		const value = query.value.trim();
+		if (value) return load({ q: value });
+		return load();
+	}
+	function pageParams() {
+		const params: Record<string, string> = {};
+		if (current.q) params.q = current.q;
+		return params;
+	}
+	async function next() {
+		if (!nextCursor.value) return;
+		const params = pageParams();
+		params.after = nextCursor.value;
+		await load(params);
+	}
+	async function previous() {
+		if (!previousCursor.value) return;
+		const params = pageParams();
+		params.before = previousCursor.value;
+		await load(params);
+	}
 	return {
 		items,
 		query,
@@ -85,15 +111,9 @@ export function useDirectory<T extends { _id: string; name: string }>(
 		error,
 		nextCursor,
 		previousCursor,
-		search: () => load(query.value.trim() ? { q: query.value.trim() } : {}),
+		search,
 		refresh: () => load(current),
-		next: () =>
-			nextCursor.value
-				? load({ ...(current.q ? { q: current.q } : {}), after: nextCursor.value })
-				: Promise.resolve(),
-		previous: () =>
-			previousCursor.value
-				? load({ ...(current.q ? { q: current.q } : {}), before: previousCursor.value })
-				: Promise.resolve()
+		next,
+		previous
 	};
 }
