@@ -1,7 +1,7 @@
 {
 	"name": "opportunity-monorepo",
 	"type": "module",
-	"version": "2.3.7",
+	"version": "2.3.8",
 	"private": true,
 	"packageManager": "npm@12.2.1",
 	"engines": {
@@ -17,6 +17,7 @@
 		"back-end"
 	],
 	"scripts": {
+		"postinstall": "node scripts/patch-layouts-brace-expansion.mjs",
 		"build": "npm run -w front-end build && npm run -w back-end build",
 		"dev": "npm run -w front-end dev",
 		"server": "npm run -w back-end server",
@@ -32,7 +33,7 @@
 		"clean": "node scripts/clean-build.mjs dist front-end/dist back-end/dist back-end/dist-test",
 		"up": "taze major -I && npm run -w front-end up && npm run -w back-end up",
 		"a11y": "node scripts/a11y-smoke.mjs",
-		"test": "npm run -w front-end test:unit && npm run -w back-end test",
+		"test": "node --test scripts/test-layouts-brace-expansion.mjs && npm run -w front-end test:unit && npm run -w back-end test",
 		"audit": "npm audit --audit-level=low",
 		"audit:production": "npm audit --omit=dev --audit-level=low",
 		"audit:signatures": "npm audit signatures",
