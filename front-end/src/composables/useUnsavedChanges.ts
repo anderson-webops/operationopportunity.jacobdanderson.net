@@ -13,7 +13,8 @@ export function useUnsavedChanges(dirty: MaybeRefOrGetter<boolean>) {
 		() => toValue(dirty),
 		(value) => {
 			if (value === counted) return;
-			app.unsavedCount += value ? 1 : -1;
+			if (value) app.unsavedCount++;
+			else app.unsavedCount--;
 			counted = value;
 		},
 		{ immediate: true, flush: "sync" }

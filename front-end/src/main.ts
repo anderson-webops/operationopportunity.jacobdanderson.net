@@ -41,11 +41,15 @@ async function start() {
 	await router.isReady();
 	app.mount("#app");
 	mounted = true;
-	await Promise.allSettled([import("bootstrap"), useAppStore().bootstrapSession()]);
+	const bootstrapModule = import("bootstrap");
+	const bootstrapSession = useAppStore().bootstrapSession();
+	await Promise.allSettled([bootstrapModule, bootstrapSession]);
 }
 
 void start().catch((error: unknown) => {
-	console.error("Application startup failed", error instanceof Error ? error.name : "UnknownError");
+	let errorName = "UnknownError";
+	if (error instanceof Error) errorName = error.name;
+	console.error("Application startup failed", errorName);
 	if (!mounted) {
 		app.mount("#app");
 		mounted = true;

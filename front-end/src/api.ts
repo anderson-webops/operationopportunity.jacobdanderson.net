@@ -55,7 +55,8 @@ api.interceptors.request.use(async (config) => {
 	if (config._sessionEpoch !== epoch) throw new CanceledError("Session changed");
 	const method = config.method?.toUpperCase() || "GET";
 	if (["GET", "HEAD", "OPTIONS"].includes(method)) {
-		config.signal = config.signal ? AbortSignal.any([config.signal as AbortSignal, reads.signal]) : reads.signal;
+		if (config.signal) config.signal = AbortSignal.any([config.signal as AbortSignal, reads.signal]);
+		else config.signal = reads.signal;
 	} else {
 		config.headers.set("X-CSRF-Token", await getCsrfToken());
 		if (config._sessionEpoch !== epoch) throw new CanceledError("Session changed");

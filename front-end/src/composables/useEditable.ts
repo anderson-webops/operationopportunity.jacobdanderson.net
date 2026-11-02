@@ -13,7 +13,11 @@ export function useEditable(kind: Kind) {
 	const message = ref("");
 	const draft = ref<Record<string, any>>({});
 	let original: Record<string, any> = {};
-	const current = () => (kind === "user" ? app.currentUser : kind === "tutor" ? app.currentTutor : app.currentAdmin);
+	const current = () => {
+		if (kind === "user") return app.currentUser;
+		if (kind === "tutor") return app.currentTutor;
+		return app.currentAdmin;
+	};
 	const unsaved = computed(
 		() =>
 			pending.value ||
@@ -27,7 +31,8 @@ export function useEditable(kind: Kind) {
 			draft.value = {};
 			return;
 		}
-		original = { ...current() };
+		const active = current();
+		original = { ...active };
 		draft.value = { ...original };
 		editing.value = true;
 		error.value = message.value = "";
@@ -38,19 +43,20 @@ export function useEditable(kind: Kind) {
 		if (pending.value) return false;
 		const revision = app.sessionRevision;
 		const submitted = { ...entity };
-		const url = kind === "user" ? `/users/user/${entity._id}` : `/${kind}s/${entity._id}`;
-		const payload = {
-			name: entity.name,
-			...(kind !== "admin" && entity.age !== undefined ? { age: String(entity.age) } : {}),
-			...(kind !== "admin" && entity.state !== undefined ? { state: entity.state } : {})
-		};
+		let url = `/${kind}s/${entity._id}`;
+		if (kind === "user") url = `/users/user/${entity._id}`;
+		const payload: Record<string, string> = { name: entity.name };
+		if (kind !== "admin" && entity.age !== undefined) payload.age = String(entity.age);
+		if (kind !== "admin" && entity.state !== undefined) payload.state = entity.state;
 		pending.value = true;
 		error.value = message.value = "";
 		try {
 			const { data } = await api.put(url, payload);
 			if (revision !== app.sessionRevision) return false;
-			const updated =
-				kind === "user" ? data.currentUser : kind === "tutor" ? data.currentTutor : data.currentAdmin;
+			let updated: any;
+			if (kind === "user") updated = data.currentUser;
+			else if (kind === "tutor") updated = data.currentTutor;
+			else updated = data.currentAdmin;
 			if (kind === "user") app.setCurrentUser(updated);
 			else if (kind === "tutor") app.setCurrentTutor(updated);
 			else app.setCurrentAdmin(updated);
@@ -75,5 +81,5 @@ export function useEditable(kind: Kind) {
 			pending.value = false;
 		}
 	}
-	return { editing, draft, pending, error, message, toggle, save };
+	return Object.assign({ editing, draft, pending }, { error, message, toggle, save });
 }
