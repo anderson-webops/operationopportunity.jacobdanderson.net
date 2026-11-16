@@ -54,8 +54,8 @@ unset NODE_ENV
 
 cd -- "$candidate"
 npm ci --include=dev --include=optional --strict-allow-scripts
-npm audit --audit-level=high
-npm audit --omit=dev --audit-level=high
+npm audit --workspaces --include-workspace-root --audit-level=low
+npm audit --workspaces --include-workspace-root --omit=dev --audit-level=low
 npm audit signatures
 npm run lint
 npm run typecheck
@@ -82,7 +82,7 @@ NODE
 
 npm ci --omit=dev --include=optional --ignore-scripts
 node scripts/patch-mongodb-cursor.mjs
-npm audit --omit=dev --audit-level=high
+npm audit --workspaces --include-workspace-root --omit=dev --audit-level=low
 node - <<'NODE'
 import argon2 from "argon2";
 const value = "operation-opportunity-direct-runtime";
