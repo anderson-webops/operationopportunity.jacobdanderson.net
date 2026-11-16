@@ -12,6 +12,8 @@
     "package-lock.json",
     "back-end/package.json",
     "back-end/package-lock.json",
+    "back-end/mongodb-cursor-patch.json",
+    "back-end/dist/mongodbCursor.js",
     "front-end/package.json",
     "front-end/dist/index.html",
     "front-end/dist/release.json",
@@ -81,7 +83,9 @@
       "node:sqlite (DatabaseSync, extension loading disabled)"
     ]
   },
-  "modulesOutsideDist": [],
+  "modulesOutsideDist": [
+    "back-end/mongodb-cursor-patch.json"
+  ],
   "generatedClients": [],
   "nativeBindings": [
     "back-end/node_modules/argon2/prebuilds/linux-arm64/argon2.armv8.glibc.node"

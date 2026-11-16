@@ -44,7 +44,8 @@ class RuntimeArtifactTests(unittest.TestCase):
             artifact.validate(self.root, manifest)
 
     def test_missing_module_even_if_the_inventory_omits_it(self):
-        for name in ["back-end/dist/runtimeCapacity.js", "back-end/dist/services/directory.js"]:
+        for name in ["back-end/dist/runtimeCapacity.js", "back-end/dist/services/directory.js",
+                     "back-end/dist/mongodbCursor.js", "back-end/mongodb-cursor-patch.json"]:
             with self.subTest(name=name):
                 path = self.root / name
                 contents = path.read_bytes()

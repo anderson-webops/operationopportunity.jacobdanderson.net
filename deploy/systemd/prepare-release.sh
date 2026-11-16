@@ -81,6 +81,7 @@ copyFileSync("front-end/dist/release.json", ".operation-opportunity-release-prep
 NODE
 
 npm ci --omit=dev --include=optional --ignore-scripts
+node scripts/patch-mongodb-cursor.mjs
 npm audit --omit=dev --audit-level=high
 node - <<'NODE'
 import argon2 from "argon2";

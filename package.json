@@ -17,7 +17,7 @@
 		"back-end"
 	],
 	"scripts": {
-		"postinstall": "node scripts/patch-layouts-brace-expansion.mjs",
+		"postinstall": "node scripts/patch-layouts-brace-expansion.mjs && node scripts/patch-mongodb-cursor.mjs",
 		"build": "node scripts/run-pinned-npm.mjs run -w front-end build && node scripts/run-pinned-npm.mjs run -w back-end build",
 		"dev": "node scripts/run-pinned-npm.mjs run -w front-end dev",
 		"server": "node scripts/run-pinned-npm.mjs run -w back-end server",
@@ -33,7 +33,7 @@
 		"clean": "node scripts/clean-build.mjs dist front-end/dist back-end/dist back-end/dist-test",
 		"up": "taze major -I && node scripts/run-pinned-npm.mjs run -w front-end up && node scripts/run-pinned-npm.mjs run -w back-end up",
 		"a11y": "node scripts/a11y-smoke.mjs",
-		"test": "node --test scripts/test-layouts-brace-expansion.mjs && node scripts/run-pinned-npm.mjs run -w front-end test:unit && node scripts/run-pinned-npm.mjs run -w back-end test",
+		"test": "node --test scripts/test-layouts-brace-expansion.mjs scripts/test-mongodb-cursor-patch.mjs && node scripts/run-pinned-npm.mjs run -w front-end test:unit && node scripts/run-pinned-npm.mjs run -w back-end test",
 		"audit": "node scripts/run-pinned-npm.mjs audit --workspaces --include-workspace-root --audit-level=low",
 		"audit:production": "node scripts/run-pinned-npm.mjs audit --workspaces --include-workspace-root --omit=dev --audit-level=low",
 		"audit:signatures": "node scripts/run-pinned-npm.mjs audit signatures",

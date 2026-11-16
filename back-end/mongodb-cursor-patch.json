@@ -1,0 +1,7 @@
+{
+	"version": "7.8.0",
+	"source": "https://registry.npmjs.org/mongodb/-/mongodb-7.8.0.tgz",
+	"integrity": "sha512-p2NKagbQ41+daACG/ZSvhTzeAo+DoEyWE9Cmpf/SyP3pTC43+X0mwKE/44PpKtCxp5wOxnXz+t2pXEZRSkt9Yg==",
+	"originalSha256": "cd68b318e4bf256f440d0d54a36d823009ac488af66d3916410269d79b462eb0",
+	"patchedSha256": "7ed0799abca25dd81cc98e4b663e95fb24115c2625c9e2c8f60d94d98a447717"
+}

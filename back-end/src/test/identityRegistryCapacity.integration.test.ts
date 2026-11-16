@@ -129,9 +129,20 @@ test(
 			await assertClean();
 			events.length = 0;
 			mongoose.connection.getClient().on("commandStarted", capture);
+			const slowBatches = Boolean(process.env.MONGO_FAULT_TEST_URI);
+			if (slowBatches) {
+				await control.db("admin").command({
+					configureFailPoint: "failCommand",
+					mode: "alwaysOn",
+					data: { appName: application, failCommands: ["getMore"], blockConnection: true, blockTimeMS: 600 }
+				});
+			}
+			const started = performance.now();
 			try {
 				await ensureIdentityRegistry();
+				if (slowBatches) assert.ok(performance.now() - started > 5000);
 			} finally {
+				if (slowBatches) await control.db("admin").command({ configureFailPoint: "failCommand", mode: "off" });
 				mongoose.connection.getClient().off("commandStarted", capture);
 			}
 			assert.equal(events.filter((e) => ["insert", "update", "delete"].includes(e.commandName)).length, 0);
@@ -176,21 +187,26 @@ test(
 				await control.db("admin").command({
 					configureFailPoint: "failCommand",
 					mode: "alwaysOn",
-					data: { appName: application, failCommands: ["find"], blockConnection: true, blockTimeMS: 2500 }
+					data: { appName: application, failCommands: ["getMore"], blockConnection: true, blockTimeMS: 8000 }
 				});
-				const seen = new Promise<void>((resolve) => {
-					const listener = (event: { commandName: string }) => {
-						if (event.commandName === "find") {
-							mongoose.connection.getClient().off("commandStarted", listener);
-							resolve();
-						}
-					};
-					mongoose.connection.getClient().on("commandStarted", listener);
-				});
+				const seen = async () => {
+					for (let attempt = 0; attempt < 100; attempt++) {
+						const current = await control.db("admin").command({ currentOp: 1, active: true });
+						if (
+							current.inprog.some(
+								(operation: { appName?: string; command?: { getMore?: unknown } }) =>
+									operation.appName === application && operation.command?.getMore !== undefined
+							)
+						)
+							return;
+						await delay(10);
+					}
+					assert.fail("Startup did not enter a server-side later batch");
+				};
 				const pending = ensureIdentityRegistry(abort.signal);
 				const rejected = assert.rejects(pending);
 				try {
-					await seen;
+					await seen();
 					const started = performance.now();
 					abort.abort(new Error("fixture cancellation"));
 					await rejected;

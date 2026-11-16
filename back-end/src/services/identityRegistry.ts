@@ -2,6 +2,7 @@ import type { Model, Types } from "mongoose";
 import type { AccountRole } from "../types/account.js";
 import { setImmediate } from "node:timers/promises";
 import mongoose from "mongoose";
+import { verifyMongoCursorCancellation } from "../mongodbCursor.js";
 import { AccountEmail } from "../models/schemas/AccountEmail.js";
 import { Admin } from "../models/schemas/Admin.js";
 import { Tutor } from "../models/schemas/Tutor.js";
@@ -9,6 +10,8 @@ import { User } from "../models/schemas/User.js";
 import { normalizeEmail } from "../validation.js";
 import { createIdentityIndex } from "./identityIndex.js";
 import { accountWriteDefinitelyFailed } from "./identityWriteSafety.js";
+
+verifyMongoCursorCancellation();
 
 interface ExistingIdentity {
 	_id: Types.ObjectId;

@@ -48,7 +48,18 @@ cannot accumulate overlapping probes after a timeout.
 `deploy/runtime-artifact.json` independently enumerates compiled server and
 maintenance entrypoints, runtime modules, production dependency metadata, native
 Argon2 binding and static frontend assets. This application has no generated
-client or shared runtime module outside `dist`; these are explicitly empty.
+client. `back-end/mongodb-cursor-patch.json` is the explicitly declared runtime
+input outside `dist`; it binds the reviewed driver version and original/patched
+cursor hashes. Root installation, standalone API verification and runtime staging
+apply the same exact, idempotent patch. Atomic replacement preserves hardlinked
+copies. An already-patched shared installation is verified read-only; applying
+changes requires an owned installation. Startup and maintenance reconciliation
+reject an unpatched driver before connecting or applying database migrations.
+Registry signatures authenticate the upstream package; the patch metadata and
+exact runtime inventory bind the modified cursor bytes.
+The patch preserves cancellation through later `getMore` batches and rejects an
+already-aborted cursor before driver entry. Reassess it when upgrading MongoDB;
+the currently reviewed 7.9 cursor source retains the same missing forwarding.
 Every packaged file has a size and SHA-256 in `runtime-manifest.json`, also emitted
 as a sidecar. Backend dependency versions must match its standalone lock;
 development tools, source trees, symlinks, credentials and mutable state fail

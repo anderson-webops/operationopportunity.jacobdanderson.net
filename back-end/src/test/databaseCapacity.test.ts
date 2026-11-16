@@ -27,6 +27,11 @@ test(
 			await setImmediate();
 			assert.equal(await check(), true);
 			assert.equal(attempts, 2);
+			const delayed = singleFlightReadiness(async () => {
+				Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 40);
+				return true;
+			}, 20);
+			assert.equal(await delayed(), false);
 		} finally {
 			held.resolve(false);
 		}

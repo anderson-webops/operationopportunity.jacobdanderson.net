@@ -62,7 +62,7 @@ def validate(root, manifest):
         raise ValueError("application source must not ship")
     for folder in ("back-end", "front-end"):
         for path in (root / folder).iterdir():
-            if path.name not in (("dist", "node_modules", "package.json", "package-lock.json") if folder == "back-end" else ("dist", "package.json")):
+            if path.name not in (("dist", "node_modules", "package.json", "package-lock.json", "mongodb-cursor-patch.json") if folder == "back-end" else ("dist", "package.json")):
                 raise ValueError("unexpected component path")
     package = json.loads((root / "back-end/package.json").read_text())
     lock = json.loads((root / "back-end/package-lock.json").read_text())

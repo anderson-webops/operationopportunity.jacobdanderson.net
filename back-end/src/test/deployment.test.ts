@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { createApp } from "../app.js";
+import { verifyMongoCursorCancellation } from "../mongodbCursor.js";
 import { RELEASE_VERSION } from "../release.js";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
@@ -103,6 +104,7 @@ describe("deployment invariants", () => {
 		const mongooseRequire = createRequire(require.resolve("mongoose"));
 		const sessionRequire = createRequire(require.resolve("connect-mongo"));
 		assert.equal(mongooseRequire.resolve("mongodb"), sessionRequire.resolve("mongodb"));
+		verifyMongoCursorCancellation();
 		assert.match(npmConfig, /^include=optional$/m);
 		assert.match(npmConfig, /^strict-allow-scripts=true$/m);
 		for (const packageName of ["argon2", "esbuild", "fsevents"]) {

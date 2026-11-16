@@ -3,6 +3,7 @@ import { access, copyFile, mkdtemp, readFile, realpath, rm } from "node:fs/promi
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
+import { patchInstalledMongoCursor } from "./patch-mongodb-cursor.mjs";
 
 const tempDirectory = await mkdtemp(join(tmpdir(), "operation-api-production-"));
 const npmExecPath = process.env.npm_execpath;
@@ -43,6 +44,7 @@ try {
 
 	runNpm(["audit", "--audit-level=low"]);
 	runNpm(["ci", "--omit=dev", "--no-fund", "--no-audit"]);
+	await patchInstalledMongoCursor(tempDirectory);
 	runNpm(["audit", "--omit=dev", "--audit-level=low"]);
 
 	const packageSource = JSON.parse(await readFile(join(tempDirectory, "package.json"), "utf8"));

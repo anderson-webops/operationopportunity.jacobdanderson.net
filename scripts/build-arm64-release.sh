@@ -37,11 +37,12 @@ npm audit signatures > "$output/signatures.log"
 python3 -B -m unittest discover -s scripts -p 'test_runtime_artifact.py' -v
 cp package.json package-lock.json "$stage/"
 mkdir -p "$stage/back-end" "$stage/front-end"
-cp back-end/package.json back-end/package-lock.json back-end/.npmrc "$stage/back-end/"
+cp back-end/package.json back-end/package-lock.json back-end/.npmrc back-end/mongodb-cursor-patch.json "$stage/back-end/"
 cp front-end/package.json "$stage/front-end/"
 cp -R back-end/dist "$stage/back-end/"
 cp -R front-end/dist "$stage/front-end/"
 (cd "$stage/back-end" && npm ci --workspaces=false --omit=dev --include=optional --strict-allow-scripts && npm audit --workspaces=false --omit=dev --audit-level=low)
+node scripts/patch-mongodb-cursor.mjs "$stage/back-end"
 rm "$stage/back-end/.npmrc"
 # Executable links are build tooling, not runtime module dependencies.
 find "$stage/back-end/node_modules" -type d -name .bin -prune -exec rm -rf '{}' +

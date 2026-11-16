@@ -34,6 +34,7 @@ export function singleFlightReadiness(check: (signal: AbortSignal) => Promise<bo
 	let pending: Promise<boolean> | undefined;
 	return () => {
 		if (!pending) {
+			const deadline = performance.now() + timeoutMs;
 			const result = Promise.withResolvers<boolean>();
 			const controller = new AbortController();
 			pending = result.promise;
@@ -46,7 +47,10 @@ export function singleFlightReadiness(check: (signal: AbortSignal) => Promise<bo
 					controller.signal.throwIfAborted();
 					return check(controller.signal);
 				})
-				.then(result.resolve, () => result.resolve(false))
+				.then(
+					(ok) => result.resolve(ok && performance.now() < deadline),
+					() => result.resolve(false)
+				)
 				.finally(() => {
 					clearTimeout(timer);
 					if (pending === result.promise) pending = undefined;
