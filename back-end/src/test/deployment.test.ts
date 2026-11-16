@@ -175,8 +175,11 @@ describe("deployment invariants", () => {
 		assert.doesNotMatch(userRoutes, /deleteUsersUnderTutor|\/under\//);
 	});
 
-	it("ships a strict host static-edge policy beside the API boundary", async () => {
-		const staticEdge = await text("deploy/nginx/operation-opportunity-static.locations.conf");
+	it("ships strict static-edge and API security policies", async () => {
+		const [staticEdge, apiEdge] = await Promise.all([
+			text("deploy/nginx/operation-opportunity-static.locations.conf"),
+			text("deploy/nginx/operation-opportunity-api.location.conf")
+		]);
 		assert.match(staticEdge, /location = \/release\.json/);
 		assert.match(staticEdge, /location \^~ \/assets\//);
 		assert.match(staticEdge, /location \/ \{/);
@@ -192,18 +195,9 @@ describe("deployment invariants", () => {
 			"Every host static location must carry the reviewed CSP."
 		);
 		assert.doesNotMatch(staticEdge, /unsafe-inline|unsafe-eval/);
-	});
-
-	it("enforces no-inline static and no-content API policies", async () => {
-		const [staticEdge, apiEdge] = await Promise.all([
-			text("deploy/nginx/operation-opportunity-static.locations.conf"),
-			text("deploy/nginx/operation-opportunity-api.location.conf")
-		]);
-		assert.doesNotMatch(staticEdge, /unsafe-inline|unsafe-eval/);
 		assert.match(staticEdge, /script-src-attr 'none'/);
 		assert.match(staticEdge, /style-src 'self'/);
 		assert.match(staticEdge, /style-src-attr 'none'/);
-		assert.match(staticEdge, /frame-ancestors 'none'/);
 		assert.match(apiEdge, /default-src 'none'/);
 		assert.match(apiEdge, /frame-ancestors 'none'/);
 		assert.match(apiEdge, /add_header X-Frame-Options "DENY" always/);
