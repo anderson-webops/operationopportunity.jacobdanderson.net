@@ -27,22 +27,16 @@ async function acquireLock(owner: string, deadline: number): Promise<void> {
 				{
 					upsert: true,
 					returnDocument: "after",
-					timeoutMS: Math.max(1, Math.ceil(deadline - performance.now()))
+					maxTimeMS: Math.max(1, Math.ceil(deadline - performance.now()))
 				}
 			)
 				.lean()
 				.exec();
 			if (lock?.owner === owner) return;
 		} catch (error) {
-			if (performance.now() >= deadline) throw workflowBusy();
-			if (!(
-				typeof error === "object" &&
-				error !== null &&
-				"code" in error &&
-				(error as { code?: unknown }).code === 11000
-			)) {
-				throw error;
-			}
+			const code = typeof error === "object" && error !== null && "code" in error ? error.code : undefined;
+			if (performance.now() >= deadline || code === 50) throw workflowBusy();
+			if (code !== 11000) throw error;
 		}
 		await delay(Math.max(1, Math.min(25 * (attempt + 1), 100, deadline - performance.now())), undefined, {
 			signal

@@ -17,13 +17,23 @@ await import(pathToFileURL(join(root, "back-end/dist/app.js")));
 const { createAccount } = await import(pathToFileURL(join(root, "back-end/dist/services/accountService.js")));
 const uri = new URL(fixture);
 uri.pathname = "/operation_security_test_directory_" + randomUUID().replaceAll("-", "").slice(0, 24);
-const control = new mongoose.mongo.MongoClient(uri.toString(), { maxPoolSize: 2, timeoutMS: 10000 });
+const control = new mongoose.mongo.MongoClient(uri.toString(), {
+	maxPoolSize: 2,
+	serverSelectionTimeoutMS: 10000,
+	connectTimeoutMS: 10000,
+	socketTimeoutMS: 10000
+});
 await control.connect();
 let child,
 	exited,
 	stderr = "";
 try {
-	await mongoose.connect(uri.toString(), { maxPoolSize: 2, timeoutMS: 5000 });
+	await mongoose.connect(uri.toString(), {
+		maxPoolSize: 2,
+		serverSelectionTimeoutMS: 5000,
+		connectTimeoutMS: 5000,
+		socketTimeoutMS: 5000
+	});
 	await Promise.all(Object.values(mongoose.models).map((model) => model.init()));
 	const password = "Synthetic-directory-rollback-123";
 	const admin = await createAccount("admin", {

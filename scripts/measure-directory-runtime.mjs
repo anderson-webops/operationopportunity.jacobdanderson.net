@@ -130,7 +130,12 @@ if (process.argv[2] === "server") {
 	const require = createRequire(join(candidate, "package.json"));
 	const { MongoClient, ObjectId } = require("mongoose").mongo,
 		puppeteer = require("puppeteer");
-	const client = new MongoClient(uri, { maxPoolSize: 2, timeoutMS: 10000 });
+	const client = new MongoClient(uri, {
+		maxPoolSize: 2,
+		serverSelectionTimeoutMS: 10000,
+		connectTimeoutMS: 10000,
+		socketTimeoutMS: 10000
+	});
 	await client.connect();
 	const password = "Synthetic-directory-fixture-123",
 		hash = await require("argon2").hash(password);

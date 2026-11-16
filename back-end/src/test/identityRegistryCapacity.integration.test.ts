@@ -28,7 +28,11 @@ test(
 		const oldTmp = process.env.TMPDIR;
 		process.env.TMPDIR = temporary;
 		const application = `identity-fixture-${randomUUID()}`;
-		const control = new mongoose.mongo.MongoClient(fixture, { timeoutMS: 10000 });
+		const control = new mongoose.mongo.MongoClient(fixture, {
+			serverSelectionTimeoutMS: 10000,
+			connectTimeoutMS: 10000,
+			socketTimeoutMS: 10000
+		});
 		context.after(async () => {
 			if (mongoose.connection.readyState !== 0) {
 				await mongoose.connection.dropDatabase();

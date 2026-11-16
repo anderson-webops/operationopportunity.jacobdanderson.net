@@ -185,7 +185,9 @@ test(
 				const controlUri = process.env.MONGO_FAULT_TEST_URI!;
 				assert.match(controlUri, /^mongodb:\/\/127\.0\.0\.1:\d+\/operation_security_test/);
 				const control = new mongoose.mongo.MongoClient(controlUri, {
-					timeoutMS: 10000,
+					serverSelectionTimeoutMS: 10000,
+					connectTimeoutMS: 10000,
+					socketTimeoutMS: 10000,
 					appName: "fixture-controller"
 				});
 				await control.connect();

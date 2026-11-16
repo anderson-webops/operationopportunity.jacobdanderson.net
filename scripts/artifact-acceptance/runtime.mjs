@@ -144,7 +144,11 @@ try {
 			"--setParameter",
 			"enableTestCommands=1"
 		]);
-		control = new MongoClient("mongodb://127.0.0.1:55432", { serverSelectionTimeoutMS: 300, timeoutMS: 10000 });
+		control = new MongoClient("mongodb://127.0.0.1:55432", {
+			serverSelectionTimeoutMS: 300,
+			connectTimeoutMS: 10000,
+			socketTimeoutMS: 10000
+		});
 		await waitFor(async () => {
 			await control.connect();
 			await control.db("admin").command({ ping: 1 });

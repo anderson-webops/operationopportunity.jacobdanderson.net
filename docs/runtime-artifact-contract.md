@@ -30,6 +30,19 @@ artifact gate; frontend unit tests still run. Compiled-browser acceptance and
 paired directory measurements run separately on a host with Chrome. Source and
 backend standalone locks must both pass.
 
+The patched MongoDB driver uses supported per-stage bounds: eight seconds for
+connection/server selection, one second for pool admission and five seconds for
+socket inactivity. Readiness uses a separate shared 1.5-second abortable command.
+Authorization admission keeps one absolute budget. The process slot remains held
+until an in-flight acquisition or accepted mutation settles, including a late
+reply. Directory reads retain their own deadline
+and server execution limit; startup cursors use bounded batches and per-command
+network limits without imposing a whole-scan deadline.
+
+Readiness responds at its deadline while retaining the single underlying probe
+until it settles, including uncancellable driver backoff. Repeated requests
+cannot accumulate overlapping probes after a timeout.
+
 ## Completeness and isolated execution
 
 `deploy/runtime-artifact.json` independently enumerates compiled server and

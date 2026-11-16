@@ -49,7 +49,7 @@ export async function ensureIdentityRegistry(signal?: AbortSignal): Promise<void
 			const cursor = source.model
 				.find({}, { _id: 1, email: 1 })
 				.sort({ _id: 1 })
-				.setOptions({ signal, timeoutMS: 5000, timeoutMode: "iteration" })
+				.setOptions({ signal })
 				.lean<ExistingIdentity[]>()
 				.cursor({ batchSize: 128 });
 			try {
@@ -79,7 +79,7 @@ export async function ensureIdentityRegistry(signal?: AbortSignal): Promise<void
 		}
 		const stored = AccountEmail.find({}, { _id: 1, role: 1, accountId: 1 })
 			.sort({ _id: 1 })
-			.setOptions({ signal, timeoutMS: 5000, timeoutMode: "iteration" })
+			.setOptions({ signal })
 			.lean<RegistryIdentity[]>()
 			.cursor({ batchSize: 128 });
 		try {

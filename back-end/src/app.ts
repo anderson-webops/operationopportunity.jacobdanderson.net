@@ -28,16 +28,17 @@ function secureEqual(left: string | undefined, right: string | undefined): boole
 }
 
 interface AppDependencies {
-	getReadiness?: () => Promise<boolean>;
+	getReadiness?: (signal: AbortSignal) => Promise<boolean>;
 	capacity?: RequestCapacity;
 }
 
-async function getMongoReadiness() {
+async function getMongoReadiness(signal: AbortSignal) {
 	const state = mongoose.connection.readyState;
 	if (state !== 1 || !mongoose.connection.db) return false;
 
 	try {
-		await mongoose.connection.db.admin().ping({ timeoutMS: 1500 });
+		signal.throwIfAborted();
+		await mongoose.connection.db.command({ ping: 1 }, { signal });
 		return true;
 	} catch {
 		return false;

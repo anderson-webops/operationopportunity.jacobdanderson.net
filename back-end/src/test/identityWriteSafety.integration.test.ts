@@ -18,7 +18,11 @@ test(
 		assert.ok(fixture && /^mongodb:\/\/127\.0\.0\.1:\d+\/operation_security_test/.test(fixture));
 		const uri = new URL(fixture);
 		uri.pathname = `/operation_security_test_${randomUUID().replaceAll("-", "")}`;
-		await mongoose.connect(uri.toString(), { serverSelectionTimeoutMS: 1000, timeoutMS: 5000 });
+		await mongoose.connect(uri.toString(), {
+			serverSelectionTimeoutMS: 1000,
+			connectTimeoutMS: 1000,
+			socketTimeoutMS: 5000
+		});
 		const originalSave = User.prototype.save;
 		try {
 			await User.init();

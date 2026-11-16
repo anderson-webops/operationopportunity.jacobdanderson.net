@@ -78,7 +78,12 @@ if (process.argv[2] === "worker") {
 	await mkdir(output, { recursive: true });
 	const require = createRequire(join(candidate, "package.json"));
 	const { MongoClient, ObjectId } = require("mongoose").mongo;
-	const control = new MongoClient(uri, { timeoutMS: 10000, maxPoolSize: 2 });
+	const control = new MongoClient(uri, {
+		serverSelectionTimeoutMS: 10000,
+		connectTimeoutMS: 10000,
+		socketTimeoutMS: 10000,
+		maxPoolSize: 2
+	});
 	await control.connect();
 	const results = [];
 	try {

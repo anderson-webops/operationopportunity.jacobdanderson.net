@@ -26,7 +26,12 @@ test(
 		const target = new URL(uri);
 		target.pathname = `/${database}`;
 		await mongoose.connect(target.toString(), { ...DATABASE_OPTIONS, appName: application, monitorCommands: true });
-		const control = new mongoose.mongo.MongoClient(uri, { timeoutMS: 10000, appName: "fixture-controller" });
+		const control = new mongoose.mongo.MongoClient(uri, {
+			serverSelectionTimeoutMS: 10000,
+			connectTimeoutMS: 10000,
+			socketTimeoutMS: 10000,
+			appName: "fixture-controller"
+		});
 		context.after(async () => {
 			await control.close();
 		});

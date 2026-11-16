@@ -108,7 +108,7 @@ export async function sendDirectory(
 		const find = options.model
 			.find({ $and: clauses })
 			.select(options.public ? PUBLIC_FIELDS : FIELDS)
-			.setOptions({ signal, timeoutMS: 5000, timeoutMode: "iteration", maxTimeMS: 5000 });
+			.setOptions({ signal, maxTimeMS: 5000 });
 		if (paged) {
 			const direction = backwards ? -1 : 1;
 			const rows = await find
