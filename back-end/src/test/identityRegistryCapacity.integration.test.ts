@@ -197,8 +197,9 @@ test(
 								(operation: { appName?: string; command?: { getMore?: unknown } }) =>
 									operation.appName === application && operation.command?.getMore !== undefined
 							)
-						)
+						) {
 							return;
+						}
 						await delay(10);
 					}
 					assert.fail("Startup did not enter a server-side later batch");
