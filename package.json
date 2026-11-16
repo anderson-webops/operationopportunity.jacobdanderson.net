@@ -74,7 +74,7 @@
 	"overrides": {
 		"defu": "6.1.6",
 		"vite": "^8.1.0",
-		"oxc-parser": "0.158.0",
+		"oxc-parser": "0.159.0",
 		"vue-router": "^5.0.4",
 		"follow-redirects": "1.16.2",
 		"@cypress/request": {
