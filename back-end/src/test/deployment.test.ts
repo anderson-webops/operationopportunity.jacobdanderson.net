@@ -100,7 +100,10 @@ describe("deployment invariants", () => {
 		}
 		assert.match(npmConfig, /^include=optional$/m);
 		assert.match(npmConfig, /^strict-allow-scripts=true$/m);
-		for (const allowed of ["argon2@0.45.1", "esbuild@0.28.1", "fsevents@2.3.3"]) {
+		for (const packageName of ["argon2", "esbuild", "fsevents"]) {
+			const version = apiLock.packages[`node_modules/${packageName}`]?.version;
+			assert.ok(version, `${packageName} must have a reviewed locked version`);
+			const allowed = `${packageName}@${version}`;
 			assert.ok(
 				npmConfig
 					.match(/^allow-scripts=(.+)$/m)?.[1]
@@ -121,6 +124,7 @@ describe("deployment invariants", () => {
 		assert.match(ciWorkflow, /image: mongo:8\.0\.32@sha256:[0-9a-f]{64}/);
 		const releaseWorkflow = await text(".github/workflows/release-source.yml");
 		assert.match(releaseWorkflow, /^ {2}validate:\n {4}runs-on: ubuntu-22\.04$/m);
+		const nodeVersion = (await text(".node-version")).trim();
 		for (const workflow of [
 			".github/workflows/ci.yml",
 			".github/workflows/codeql-analysis.yml",
@@ -130,12 +134,15 @@ describe("deployment invariants", () => {
 		]) {
 			const source = await text(workflow);
 			const setupNodeCount = source.match(/actions\/setup-node@/g)?.length || 0;
-			const npmInstallCount = source.match(/npm install --global npm@12\.2\.1/g)?.length || 0;
+			const buildToolsCount = source.match(/node scripts\/build-tools\.mjs --print-bin/g)?.length || 0;
 			assert.equal(
-				npmInstallCount,
+				buildToolsCount,
 				setupNodeCount,
-				`${workflow} must install npm 12.2.1 after each Node 26 setup`
+				`${workflow} must select verified build-only tools after each Node setup`
 			);
+			for (const match of source.matchAll(/node-version:\s*([^\s]+)/g)) {
+				assert.equal(match[1], nodeVersion, `${workflow} must use the pinned Node version`);
+			}
 			for (const line of source.split("\n").filter((line) => line.includes("uses:"))) {
 				assert.match(line, /@[0-9a-f]{40}(?:\s|$)/, `${workflow}: ${line.trim()}`);
 			}
@@ -223,7 +230,7 @@ describe("deployment invariants", () => {
 			text("deploy/systemd/promote-release.sh"),
 			text(".github/workflows/release-source.yml")
 		]);
-		assert.match(install, /Node 26\.13\.0 at \/usr\/bin\/node/);
+		assert.ok(install.includes(`Node ${(await text(".node-version")).trim()} at /usr/bin/node`));
 		assert.match(prepare, /Candidate must resolve beneath/);
 		assert.match(prepare, /npm ci --include=dev --include=optional --strict-allow-scripts/);
 		assert.match(prepare, /npm ci --omit=dev --include=optional --ignore-scripts/);

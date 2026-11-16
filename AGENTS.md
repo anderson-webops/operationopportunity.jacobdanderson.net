@@ -39,29 +39,37 @@ Treat this as a standing instruction for this site.
 ## Agent Delivery Workflow
 - Do not leave completed work uncommitted. After each coherent, validated change set, create a commit and push it in the same session.
 - Use multiple commits and pushes when that keeps unrelated changes, partial validations, or follow-up fixes clearly separated. Prefer small, logically grouped commits over one mixed commit.
-- Keep both `package-lock.json` and `back-end/package-lock.json` synchronized before every commit or push.
+- Keep both `package-lock.json` and `back-end/package-lock.json` synchronized with their manifests. Reviewed candidate commits may capture coherent progress for exact-revision CI qualification; default-branch integration and releases require all applicable checks to pass.
 - Use lowercase annotated semver tags only. Do not invent ad-hoc labels such as `V1`, `torca-r07`, `pre-lfs-migration-*`, or similar one-off names.
 - This repo follows the stable `v2.x` line. Stay on `v2` for routine work; only cut `v3` for an intentional breaking application or API change.
 - Cut a fresh semver tag and release only when the work crosses a real release boundary, such as a new deployable milestone, a materially different operator/user-facing state, or a version-line change that deserves its own notes and rollback point.
 - Create an annotated tag when user/admin flows, program logic, back-end API, health/deploy, dependency/security, or performance behavior materially changes.
 - Create a GitHub release when that tag represents a real production milestone for users, admins, or operators. Release notes should summarize scope, validation, rollout notes, and any migration or recovery steps.
-- If the existing tag or release history contains stale drafts, redundant entries, or ad-hoc labels, clean that history up instead of preserving clutter.
+- Preserve existing published tags, releases, artifacts and history. Retire only verified redundant unpublished work through the authorized repository workflow.
 - Skip tags and releases for trivial doc-only edits, formatting-only changes, or routine housekeeping unless they change deployment, operations, or a consumer-facing contract.
 
 ## Dependency & Lockfile Discipline
+
+- The backend compiler uses TypeScript 7. The shared ESLint API and Vue tooling
+  retain TypeScript 6 within their current supported peer ranges. Reassess those
+  ranges before migrating the remaining compiler API consumers.
+- Scoped minimatch 11 replacements preserve the APIs used by typescript-estree
+  and EditorConfig while replacing the vulnerable matcher. Keep the compact
+  configuration-matching regression in `scripts/test-layouts-brace-expansion.mjs`
+  and review the consumers before changing those overrides.
 
 - Treat the repo-root `npm ci` path as the source of truth for deploy readiness.
 - Any time `package.json`, any workspace `package.json`, dependency ranges, `package-lock.json`, or dependency update tooling changes, verify lockfile parity from the repo root before committing.
 - Do not rely on `npm install` fallback as success. A change is not deploy-ready unless root `npm ci` succeeds.
 
-Required production/dev dependency update flow before every dependency commit:
+Required production/dev dependency review for a coherent dependency milestone:
 1. Check production and development dependency freshness from the repository root with `npm outdated --workspaces --long` or the repo's documented equivalent.
 2. Review both `dependencies` and `devDependencies` in the root and every workspace package; do not limit updates to production-only packages.
 3. Apply needed updates with the narrowest command that updates the relevant manifest and lockfile together, such as `npm install -w <workspace> <package>@<version>` or `npm install -D -w <workspace> <package>@<version>`.
 4. If the update is only a lockfile/security refresh, regenerate from the root with `npm install --package-lock-only --ignore-scripts --no-fund --no-audit`.
 5. Run `npm audit` from the repository root and resolve all known production and development advisories before creating a release tag or publishing a release. Record genuine upstream blockers and keep the release held until they are resolved.
 
-Required dependency verification before every commit/push:
+Required dependency verification before default-branch integration or release:
 1. Run `npm ci` from the repository root.
 2. Run `npm run lint`.
 3. Run `npm run typecheck`.
@@ -73,7 +81,7 @@ If `npm ci` fails because `package.json` and `package-lock.json` are out of sync
 2. Re-run `npm ci` from the repository root.
 3. Commit the resulting `package-lock.json` change with the related dependency/package change.
 
-Never commit or push dependency/package changes if root `npm ci` fails.
+Use a checked candidate branch to obtain fresh exact-revision CI evidence when local resource limits hold installations. A failed, unavailable or unrun root `npm ci` remains unqualified; keep default-branch integration, tags and releases held until the required checks pass. Intermediate candidate commits retain the standing dependency completion policy and all source, security and production-access boundaries.
 
 ## Direct Delivery and Pull Requests
 

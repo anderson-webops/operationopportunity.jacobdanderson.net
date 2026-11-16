@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -31,4 +32,31 @@ test("layouts patch rejects unreviewed package bytes", () => {
 		() => patchLayoutsSource('import expand from "brace-expansion";\n'),
 		/Unexpected vite-plugin-vue-layouts-next source/
 	);
+});
+
+test("patched glob consumers preserve configuration matching", async () => {
+	const require = createRequire(import.meta.url);
+	const manifest = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+	for (const consumer of ["@typescript-eslint/typescript-estree", "editorconfig"]) {
+		const consumerRequire = createRequire(require.resolve(consumer));
+		const matcher = consumerRequire("minimatch");
+		assert.equal(consumerRequire("minimatch/package.json").version, manifest.overrides[consumer].minimatch);
+		assert.equal(matcher.minimatch(".config.js", "*.js", { dot: true }), true);
+		assert.equal(matcher.minimatch("scripts/check.mjs", "scripts/*.mjs", { dot: true }), true);
+		assert.equal(matcher.minimatch("src/index.ts", "scripts/*.mjs", { dot: true }), false);
+		const prefix = matcher.escape("/fixture/directory[1](draft)", { windowsPathsNoEscape: true });
+		const pattern = new matcher.Minimatch(`${prefix}/**/*.{js,ts}`, { matchBase: true, dot: true });
+		assert.equal(pattern.match("/fixture/directory[1](draft)/src/.config.ts"), true);
+		assert.equal(pattern.match("/fixture/directory[1](draft)/src/readme.md"), false);
+	}
+	const editorconfig = require("editorconfig");
+	const configuration = [
+		{
+			name: "/fixture/.editorconfig",
+			contents: Buffer.from("root=true\n[**/*.{js,ts}]\nindent_size=2\n[!(package).json]\nindent_size=4\n")
+		}
+	];
+	assert.equal(editorconfig.parseFromFilesSync("/fixture/src/.config.ts", configuration).indent_size, 2);
+	assert.equal(editorconfig.parseFromFilesSync("/fixture/settings.json", configuration).indent_size, 4);
+	assert.equal(editorconfig.parseFromFilesSync("/fixture/package.json", configuration).indent_size, undefined);
 });

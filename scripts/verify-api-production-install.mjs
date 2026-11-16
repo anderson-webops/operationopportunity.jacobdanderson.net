@@ -5,13 +5,17 @@ import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 
 const tempDirectory = await mkdtemp(join(tmpdir(), "operation-api-production-"));
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+const npmExecPath = process.env.npm_execpath;
+if (!npmExecPath) throw new Error("Run the production-install check through its npm package script.");
+const npmEnvironment = { ...process.env };
+delete npmEnvironment.npm_config_global_ignore_file;
+delete npmEnvironment.NPM_CONFIG_GLOBAL_IGNORE_FILE;
 
 function runNpm(arguments_) {
-	const result = spawnSync(npmCommand, arguments_, {
+	const result = spawnSync(process.execPath, [npmExecPath, ...arguments_], {
 		cwd: tempDirectory,
 		encoding: "utf8",
-		env: process.env,
+		env: npmEnvironment,
 		maxBuffer: 10 * 1024 * 1024,
 		timeout: 180_000,
 		killSignal: "SIGKILL"
@@ -37,6 +41,7 @@ try {
 		await copyFile(new URL(`../back-end/${file}`, import.meta.url), join(tempDirectory, file));
 	}
 
+	runNpm(["audit", "--audit-level=low"]);
 	runNpm(["ci", "--omit=dev", "--no-fund", "--no-audit"]);
 	runNpm(["audit", "--omit=dev", "--audit-level=low"]);
 

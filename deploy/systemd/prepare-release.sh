@@ -41,13 +41,14 @@ if [[ -n "$(git -C "$candidate" status --porcelain)" ]]; then
 	echo "Candidate checkout must be clean before preparation." >&2
 	exit 1
 fi
-if [[ "$(node --version)" != "v26.13.0" || "$(npm --version)" != "12.2.1" ]]; then
-	echo "Preparation requires Node 26.13.0 and npm 12.2.1." >&2
+if [[ "$(node --version)" != "v26.13.1" || "$(npm --version)" != "12.2.2" ]]; then
+	echo "Preparation requires Node 26.13.1 and npm 12.2.2." >&2
 	exit 1
 fi
 
-export OPPORTUNITY_COMMIT_SHA="$(git -C "$candidate" rev-parse HEAD)"
-export OPPORTUNITY_DEPLOYED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+OPPORTUNITY_COMMIT_SHA="$(git -C "$candidate" rev-parse HEAD)"
+OPPORTUNITY_DEPLOYED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+export OPPORTUNITY_COMMIT_SHA OPPORTUNITY_DEPLOYED_AT
 export SOURCE_REVISION="$OPPORTUNITY_COMMIT_SHA"
 unset NODE_ENV
 

@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      runtime_artifact:
+        description: Build and accept the exact Linux ARM64 runtime
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -37,16 +42,16 @@ jobs:
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 26.13.0
+          node-version: 26.13.1
           cache: npm
 
-      - name: Install security-patched npm
-        run: npm install --global npm@12.2.1
+      - name: Select verified build-only tools
+        run: node scripts/build-tools.mjs --print-bin >> "$GITHUB_PATH"
 
       - name: Verify toolchain
         run: |
-          test "$(node --version)" = "v26.13.0"
-          test "$(npm --version)" = "12.2.1"
+          test "$(node --version)" = "v26.13.1"
+          test "$(npm --version)" = "12.2.2"
 
       - name: Install dependencies
         run: npm ci
@@ -65,11 +70,11 @@ jobs:
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 26.13.0
+          node-version: 26.13.1
           cache: npm
 
-      - name: Install security-patched npm
-        run: npm install --global npm@12.2.1
+      - name: Select verified build-only tools
+        run: node scripts/build-tools.mjs --print-bin >> "$GITHUB_PATH"
 
       - run: npm ci
       - run: npm run a11y
@@ -83,11 +88,11 @@ jobs:
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 26.13.0
+          node-version: 26.13.1
           cache: npm
 
-      - name: Install security-patched npm
-        run: npm install --global npm@12.2.1
+      - name: Select verified build-only tools
+        run: node scripts/build-tools.mjs --print-bin >> "$GITHUB_PATH"
 
       - run: npm ci
       - run: npm run -w front-end build
@@ -99,3 +104,53 @@ jobs:
           config-file: cypress.config.ts
           start: npm run preview -- --host 127.0.0.1 --port 3333
           wait-on: http://127.0.0.1:3333
+
+  runtime-artifact:
+    if: github.event_name == 'workflow_dispatch' && inputs.runtime_artifact
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 26.13.1
+          package-manager-cache: false
+
+      - name: Select verified build-only tools
+        run: node scripts/build-tools.mjs --print-bin >> "$GITHUB_PATH"
+
+      - name: Install isolated runtime fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          test "$(uname -m)" = aarch64
+          key="$RUNNER_TEMP/mongodb-8.0.asc"
+          curl --fail --silent --show-error --location https://pgp.mongodb.com/server-8.0.asc --output "$key"
+          fingerprint=$(gpg --batch --show-keys --with-colons "$key" | awk -F: '$1 == "fpr" {print $10; exit}')
+          test "$fingerprint" = 4B0752C1BCA238C0B4EE14DC41DE058A4E7DCA05
+          gpg --batch --dearmor < "$key" | sudo tee /usr/share/keyrings/opportunity-ci-mongodb.gpg > /dev/null
+          printf '%s\n' 'deb [arch=arm64 signed-by=/usr/share/keyrings/opportunity-ci-mongodb.gpg] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse' | sudo tee /etc/apt/sources.list.d/opportunity-ci-mongodb.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends apparmor bubblewrap mongodb-org-server=8.0.32
+          sudo systemctl stop mongod
+          sudo apparmor_parser --replace .github/apparmor/bwrap-userns-restrict
+
+      - name: Build and accept the exact native archive
+        run: bash scripts/ci-arm64-runtime.sh
+
+      - name: Retain immutable runtime and acceptance evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: opportunity-${{ github.sha }}-linux-arm64
+          path: |
+            .ai-work/runs/ci-runtime/artifact/*.tar.gz*
+            .ai-work/runs/ci-runtime/artifact/*.json
+            .ai-work/runs/ci-runtime/artifact/*.jsonl
+            .ai-work/runs/ci-runtime/artifact/signatures.log
+          if-no-files-found: error
+          retention-days: 7

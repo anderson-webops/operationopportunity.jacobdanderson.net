@@ -2,11 +2,26 @@
 
 Build source, package acceptance, source release and production activation are
 separate gates. `scripts/build-arm64-release.sh OUTPUT` runs on an unprivileged
-Linux ARM64 builder with Node 26.13.0/npm 12.2.1, MongoDB 8 fixture binaries,
+Linux ARM64 builder with Node 26.13.1/npm 12.2.2, MongoDB 8 fixture binaries,
 Python 3 and bubblewrap. OUTPUT must be under the owning checkout's ignored
 `.ai-work/runs/`. Both `TEST_MONGODB_URI` and `MONGO_FAULT_TEST_URI` must identify
 owned synthetic loopback databases; the fault fixture requires test commands.
 No production connection or provider secret is used.
+
+Select the verified build-only npm with `node scripts/build-tools.mjs --print-bin`
+and add its output directory to `PATH`. The vendored canonical inputs, pinned
+runtime declarations and reusable toolchain payload are checked before use.
+`npm run verify:build-tools` audits this separate dependency graph and its registry
+signatures. The toolchain and its caches remain outside the runtime archive.
+
+The existing CI workflow accepts `runtime_artifact=true` on a manual run of an
+exact candidate revision. It uses a fresh standard Linux ARM64 runner, a signed
+MongoDB 8.0.32 fixture and the same unpacked-artifact harness. Its AppArmor profile
+retains the child capability restrictions from AppArmor's protected
+`apparmor-4.0` profile at `8d824b0cbbba0af66ac775ea8535866df209412e`.
+This optional release-qualification path adds no scheduled runs or production
+access. Its archive and acceptance receipts are retained for seven days; release
+publication preserves the independently verified accepted bytes permanently.
 
 The builder runs clean locked installation, lint, types, frontend/backend tests,
 compiled builds, build-security/native-install verification, full/production
@@ -71,7 +86,7 @@ The existing documented topology is `/srv/operation-opportunity/current` with
 `back-end/dist/server.js`, production modules under `back-end/node_modules`, static
 `front-end/dist`, `operation-opportunity-api.service` and loopback 3002. Preserve
 actual installed paths/users/listeners if the operator's reviewed host differs.
-Use the reviewed Node 26.13.0 prefix in the service; do not replace
+Use the reviewed Node 26.13.1 prefix in the service; do not replace
 host-wide `/usr/bin/node` to satisfy a template. npm is build tooling, not the
 production service entrypoint. Do not install a canonical template over an
 existing compatibility host.
