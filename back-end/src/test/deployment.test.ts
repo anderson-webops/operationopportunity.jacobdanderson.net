@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
@@ -98,6 +99,10 @@ describe("deployment invariants", () => {
 				`${packageName} must resolve identically in root and standalone API locks`
 			);
 		}
+		const require = createRequire(import.meta.url);
+		const mongooseRequire = createRequire(require.resolve("mongoose"));
+		const sessionRequire = createRequire(require.resolve("connect-mongo"));
+		assert.equal(mongooseRequire.resolve("mongodb"), sessionRequire.resolve("mongodb"));
 		assert.match(npmConfig, /^include=optional$/m);
 		assert.match(npmConfig, /^strict-allow-scripts=true$/m);
 		for (const packageName of ["argon2", "esbuild", "fsevents"]) {
@@ -140,7 +145,7 @@ describe("deployment invariants", () => {
 				setupNodeCount,
 				`${workflow} must select verified build-only tools after each Node setup`
 			);
-			for (const match of source.matchAll(/node-version:\s*([^\s]+)/g)) {
+			for (const match of source.matchAll(/node-version:\s*(\S+)/g)) {
 				assert.equal(match[1], nodeVersion, `${workflow} must use the pinned Node version`);
 			}
 			for (const line of source.split("\n").filter((line) => line.includes("uses:"))) {

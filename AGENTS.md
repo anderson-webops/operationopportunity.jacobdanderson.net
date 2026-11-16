@@ -57,6 +57,9 @@ Treat this as a standing instruction for this site.
   and EditorConfig while replacing the vulnerable matcher. Keep the compact
   configuration-matching regression in `scripts/test-layouts-brace-expansion.mjs`
   and review the consumers before changing those overrides.
+- The explicit MongoDB driver range satisfies Mongoose's supported range and
+  connect-mongo's peer dependency. Keep both consumers on the same installed
+  driver so sessions reuse the existing Mongoose client and bounded pool.
 
 - Treat the repo-root `npm ci` path as the source of truth for deploy readiness.
 - Any time `package.json`, any workspace `package.json`, dependency ranges, `package-lock.json`, or dependency update tooling changes, verify lockfile parity from the repo root before committing.
