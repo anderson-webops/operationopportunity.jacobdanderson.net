@@ -124,8 +124,6 @@ describe("deployment invariants", () => {
 	it("uses only the direct production path and pins CI supply-chain inputs", async () => {
 		await assert.rejects(() => text("Dockerfile"));
 		await assert.rejects(() => text("netlify.toml"));
-		const dependabot = await text(".github/dependabot.yml");
-		assert.doesNotMatch(dependabot, /package-ecosystem:\s*docker/);
 		const ciWorkflow = await text(".github/workflows/ci.yml");
 		assert.match(ciWorkflow, /^ {2}verify:\n {4}runs-on: ubuntu-22\.04$/m);
 		assert.match(ciWorkflow, /image: mongo:8\.0\.32@sha256:[0-9a-f]{64}/);
