@@ -34,7 +34,7 @@
 		"argon2": "^0.45.2",
 		"connect-mongo": "^6.0.0",
 		"express": "^5.2.1",
-		"express-rate-limit": "^8.7.4",
+		"express-rate-limit": "^8.7.5",
 		"express-session": "^1.19.0",
 		"helmet": "^8.1.0",
 		"mongodb": "7.9.1",
